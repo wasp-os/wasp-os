@@ -1,0 +1,12 @@
+[submodule "bootloader"]
+	path = bootloader
+	url = https://github.com/daniel-thompson/wasp-bootloader
+[submodule "micropython"]
+	path = micropython
+	url = https://github.com/daniel-thompson/micropython
+[submodule "tools/intelhex"]
+	path = tools/intelhex
+	url = https://github.com/python-intelhex/intelhex
+[submodule "tools/nrfutil"]
+	path = tools/nrfutil
+	url = https://github.com/adafruit/Adafruit_nRF52_nrfutil.git
