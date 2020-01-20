@@ -39,7 +39,8 @@ dfu:
 	python3 -m nordicsemi dfu serial --package micropython.zip --port /dev/ttyACM0
 
 flash:
-	cp bootloader.hex /run/media/$(USER)/MBED
+	pyocd erase -t nrf52 --mass-erase
+	pyocd flash -t nrf52 bootloader.hex
 
 .PHONY: bootloader micropython
 
