@@ -1,2 +1,2 @@
-bootloader.hex
-micropython.zip
+*.hex
+*.zip
