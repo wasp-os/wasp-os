@@ -24,6 +24,9 @@ bootloader:
 		bootloader/lib/softdevice/s132_nrf52_6.1.1/s132_nrf52_6.1.1_softdevice.hex \
 		-o bootloader.hex
 
+softdevice:
+	micropython/ports/nrf/drivers/bluetooth/download_ble_stack.sh
+
 micropython:
 	$(MAKE) -C micropython/mpy-cross
 	$(MAKE) -C micropython/ports/nrf BOARD=$(BOARD) SD=s132
@@ -31,7 +34,7 @@ micropython:
 		--dev-type 0x0052 \
 		--application micropython/ports/nrf/build-$(BOARD)-s132/firmware.hex \
 		micropython.zip
-	
+
 dfu:
 	python3 -m nordicsemi dfu serial --package micropython.zip --port /dev/ttyACM0
 
