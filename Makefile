@@ -15,6 +15,10 @@ submodules :
 
 bootloader:
 	$(MAKE) -C bootloader/ BOARD=$(BOARD)_nrf52832 all genhex
+	python3 -m nordicsemi dfu genpkg \
+		--bootloader bootloader/_build-$(BOARD)_nrf52832/$(BOARD)_nrf52832_bootloader-*-nosd.hex \
+		--softdevice bootloader/lib/softdevice/s132_nrf52_6.1.1/s132_nrf52_6.1.1_softdevice.hex \
+		bootloader.zip
 	python3 tools/hexmerge.py \
 		bootloader/_build-$(BOARD)_nrf52832/$(BOARD)_nrf52832_bootloader-*-nosd.hex \
 		bootloader/lib/softdevice/s132_nrf52_6.1.1/s132_nrf52_6.1.1_softdevice.hex \
