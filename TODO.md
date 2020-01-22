@@ -18,7 +18,7 @@ The TODO list helps keep track on progress towards that goal. It is not
 ## Micropython
 
  * [X] Basic board ports (PineTime, DS-D6, 96Boards Nitrogen)
- * [-] Long press reset (conditional feeding of the watchdog)
+ * [ ] Long press reset (conditional feeding of the watchdog)
    - [X] Feed dog from REPL polling loop
    - [ ] Feed dog from a tick interrupt
  * [ ] Basic (WFI) power saving
@@ -27,8 +27,8 @@ The TODO list helps keep track on progress towards that goal. It is not
  
 ## WASP
 
- * [-] Display driver
-   - [-] Display initialization
+ * [ ] Display driver
+   - [X] Display initialization
    - [ ] Bitmap blitting
    - [ ] RLE coder and decoder
  * [ ] Backlight driver
