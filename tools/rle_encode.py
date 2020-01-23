@@ -1,51 +1,67 @@
+#!/usr/bin/env python3
+
+import sys
 from PIL import Image
 
-im = Image.open('pine64.png')
-pixels = im.load()
+def encode(im):
+    pixels = im.load()
 
-rle = []
-rl = 0
-px = 0
-    
-for y in range(im.height):
-    for x in range(im.width):
-        newpx = pixels[x, y]
-        if newpx == px:
-            rl += 1
-            continue
-        assert(rl < 255)
-        rle.append(rl)
-        rl = 1
-        px = newpx
-rle.append(rl)
+    rle = []
+    rl = 0
+    px = 0
 
-sx = 240
-sy = 240
-image = bytes(rle)
+    for y in range(im.height):
+        for x in range(im.width):
+            newpx = pixels[x, y]
+            if newpx == px:
+                if rl < 255:
+                    rl += 1
+                else:
+                    # Handle overflow
+                    rle.append(255)
+                    rle.append(0)
+                    rl = 1
+                continue
 
+            # Start a new run
+            rle.append(rl)
+            rl = 1
+            px = newpx
+    # Handle the final run
+    rle.append(rl)
 
-data = bytearray(2*sx)
-dp = 0
-black = ord('#')
-white = ord(' ')
-color = black
+    return (im.width, im.height, bytes(rle))
 
-for rl in image:
-    while rl:
-        data[dp] = color
-        data[dp+1] = color
-        dp += 2
-        rl -= 1
+def decode_to_ascii(image):
+    (sx, sy, rle) = image
+    data = bytearray(2*sx)
+    dp = 0
+    black = ord('#')
+    white = ord(' ')
+    color = black
 
-        if dp >= (2*sx):
-            print(data.decode('utf-8'))
-            dp = 0
+    for rl in rle:
+        while rl:
+            data[dp] = color
+            data[dp+1] = color
+            dp += 2
+            rl -= 1
 
-    if color == black:
-        color = white
-    else:
-        color = black
+            if dp >= (2*sx):
+                print(data.decode('utf-8'))
+                dp = 0
 
-assert(dp == 0)
+        if color == black:
+            color = white
+        else:
+            color = black
 
+    # Check the image is the correct length
+    assert(dp == 0)
+
+image = encode(Image.open(sys.argv[1]))
+# This is kinda cool for testing but let's leave this disabled until we add
+# proper argument processing!
+#decode_to_ascii(image)
+print(f'# 1-bit RLE, generated from {sys.argv[1]}')
 print(image)
