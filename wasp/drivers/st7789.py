@@ -83,15 +83,16 @@ class ST7789(object):
         for y in range(self.height):
             self.write_data(self.linebuffer)
 
-    def rleblit(self, sx, sy, image, fg=0xffff, bg=0):
+    def rleblit(self, image, fg=0xffff, bg=0):
+        (sx, sy, rle) = image
         self.set_window()
 
-	# TODO: rework algorithm to allow us to reuse the line buffer
+        # TODO: rework algorithm to allow us to reuse the line buffer
         buf = bytearray(2*sx)
         bp = 0
         color = bg
 
-        for rl in image:
+        for rl in rle:
             while rl:
                 buf[bp] = color >> 8
                 buf[bp+1] = color & 0xff
