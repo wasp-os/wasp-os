@@ -1,0 +1,2 @@
+import demo
+demo.run()
