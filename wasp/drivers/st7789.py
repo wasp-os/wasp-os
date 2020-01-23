@@ -1,310 +1,145 @@
-# Copyright (c) 2014 Adafruit Industries
-# Author: Tony DiCola
-# Extensive further hacking by Pimoroni and Daniel Thompson
-#
-# Permission is hereby granted, free of charge, to any person obtaining a copy
-# of this software and associated documentation files (the "Software"), to deal
-# in the Software without restriction, including without limitation the rights
-# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-# copies of the Software, and to permit persons to whom the Software is
-# furnished to do so, subject to the following conditions:
-#
-# The above copyright notice and this permission notice shall be included in
-# all copies or substantial portions of the Software.
-#
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-# THE SOFTWARE.
+# MicroPython ST7789 display driver, currently only has an SPI interface
 
-import time
+from micropython import const
+from time import sleep_ms
 
-__version__ = '0.0.2'
-
-BG_SPI_CS_BACK = 0
-BG_SPI_CS_FRONT = 1
-
-ST7789_NOP = 0x00
-ST7789_SWRESET = 0x01
-ST7789_RDDID = 0x04
-ST7789_RDDST = 0x09
-
-ST7789_SLPIN = 0x10
-ST7789_SLPOUT = 0x11
-ST7789_PTLON = 0x12
-ST7789_NORON = 0x13
-
-ST7789_INVOFF = 0x20
-ST7789_INVON = 0x21
-ST7789_DISPOFF = 0x28
-ST7789_DISPON = 0x29
-
-ST7789_CASET = 0x2A
-ST7789_RASET = 0x2B
-ST7789_RAMWR = 0x2C
-ST7789_RAMRD = 0x2E
-
-ST7789_PTLAR = 0x30
-ST7789_MADCTL = 0x36
-ST7789_COLMOD = 0x3A
-
-ST7789_FRMCTR1 = 0xB1
-ST7789_FRMCTR2 = 0xB2
-ST7789_FRMCTR3 = 0xB3
-ST7789_INVCTR = 0xB4
-# ILI9341_DFUNCTR = 0xB6
-ST7789_DISSET5 = 0xB6
-
-ST7789_GCTRL = 0xB7
-ST7789_GTADJ = 0xB8
-ST7789_VCOMS = 0xBB
-
-ST7789_LCMCTRL = 0xC0
-ST7789_IDSET = 0xC1
-ST7789_VDVVRHEN = 0xC2
-ST7789_VRHS = 0xC3
-ST7789_VDVS = 0xC4
-ST7789_VMCTR1 = 0xC5
-ST7789_FRCTRL2 = 0xC6
-ST7789_CABCCTRL = 0xC7
-
-ST7789_RDID1 = 0xDA
-ST7789_RDID2 = 0xDB
-ST7789_RDID3 = 0xDC
-ST7789_RDID4 = 0xDD
-
-ST7789_GMCTRP1 = 0xE0
-ST7789_GMCTRN1 = 0xE1
-
-ST7789_PWCTR6 = 0xFC
+# register definitions
+_SWRESET            = const(0x01)
+_SLPOUT             = const(0x11)
+_NORON              = const(0x13)
+_INVOFF             = const(0x20)
+_INVON              = const(0x21)
+_DISPON             = const(0x29)
+_CASET              = const(0x2a)
+_RASET              = const(0x2b)
+_RAMWR              = const(0x2c)
+_COLMOD             = const(0x3a)
+_MADCTL             = const(0x36)
 
 class ST7789(object):
-    """Representation of an ST7789 TFT LCD."""
+    def __init__(self, width, height):
+        self.width = width
+        self.height = height
+        self.linebuffer = bytearray(2 * width)
+        self.init_display()
 
-    def __init__(self, spi, cs, dc, backlight=None, rst=None, width=240,
-                 height=240, rotation=90, invert=True, spi_speed_hz=4000000):
-        """Create an instance of the display using SPI communication.
-
-        Must provide the GPIO pin number for the D/C pin and the SPI driver.
-
-        Can optionally provide the GPIO pin number for the reset pin as the rst parameter.
-
-        :param spi: SPI instance to work with
-        :param cs: SPI chip-select Pin
-        :param backlight: Pin for controlling backlight
-        :param rst: reset Pin for ST7789
-        :param width: Width of display connected to ST7789
-        :param height: Height of display connected to ST7789
-        :param rotation: Rotation of display connected to ST7789
-        :param invert: Invert display
-        :param spi_speed_hz: SPI speed (in Hz)
-
-        """
-
-        self._spi = spi
-
-        self._cs = cs
-        self._dc = dc
-        self._rst = rst
-        self._width = width
-        self._height = height
-        self._rotation = rotation
-        self._invert = invert
-
-        self._offset_left = 0
-        self._offset_top = 0
-
-        # Initialize cs
-        self._cs.on()
-
-        # Setup backlight as output (if provided).
-        self._backlight = backlight
-        if backlight is not None:
-            backlight.off()
-            time.sleep(0.1)
-            backlight.on()
-
+    def init_display(self):
         self.reset()
-        self._init()
 
-    def send(self, data, is_data=True, chunk_size=4096):
-        """Write a byte or array of bytes to the display. Is_data parameter
-        controls if byte should be interpreted as display data (True) or command
-        data (False).  Chunk_size is an optional size of bytes to write in a
-        single SPI transaction, with a default of 4096.
-        """
-        # Set DC low for command, high for data.
-        self._dc.value(is_data)
-        # Convert scalar argument to list so either can be passed as parameter.
-        try:
-            data[0]
-        except:
-            data = [data & 0xFF]
-        data = bytearray(data)
-        # Write data a chunk at a time.
-        for start in range(0, len(data), chunk_size):
-            end = min(start + chunk_size, len(data))
-            self._cs.off()
-            self._spi.write(data[start:end])
-            self._cs.on()
+        self.write_cmd(_SLPOUT)
+        sleep_ms(10)
 
-    def set_backlight(self, value):
-        """Set the backlight on/off."""
-        if self._backlight is not None:
-            self._backlight.value(value)
+        for cmd in (
+            (_COLMOD,   b'\x05'), # MCU will send 16-bit RGB565
+            (_MADCTL,   b'\x00'), # Left to right, top to bottom
+            #(_INVOFF,   None), # Results in odd palette
+            (_INVON,   None),
+            (_NORON,   None),
+        ):
+            self.write_cmd(cmd[0])
+            if cmd[1]:
+                self.write_data(cmd[1])
+        self.fill(0)
+        self.write_cmd(_DISPON)
+        sleep_ms(125)
 
-    @property
-    def width(self):
-        return self._width if self._rotation == 0 or self._rotation == 180 else self._height
+    def poweroff(self):
+        pass
 
-    @property
-    def height(self):
-        return self._height if self._rotation == 0 or self._rotation == 180 else self._width
+    def poweron(self):
+        pass
 
-    def command(self, data):
-        """Write a byte or array of bytes to the display as command data."""
-        self.send(data, False)
+    def contrast(self, contrast):
+        pass
 
-    def data(self, data):
-        """Write a byte or array of bytes to the display as display data."""
-        self.send(data, True)
+    def invert(self, invert):
+        if invert:
+            self.write_cmd(_INVON)
+        else:
+            self.write_cmd(_INVOFF)
+
+    def set_window(self, x=0, y=0, width=None, height=None):
+        if not width:
+            width = self.width
+        if not height:
+            height = self.height
+
+        xp = x + width - 1
+        yp = y + height - 1
+
+        self.write_cmd(_CASET)
+        self.write_data(bytearray([x >> 8, x & 0xff, xp >> 8, xp & 0xff]))
+        self.write_cmd(_RASET)
+        self.write_data(bytearray([y >> 8, y & 0xff, yp >> 8, yp & 0xff]))
+        self.write_cmd(_RAMWR)
+
+    def fill(self, bg):
+        self.set_window()
+
+        # Populate the line buffer
+        for x in range(0, 2 * self.width, 2):
+            self.linebuffer[x] = bg >> 8
+            self.linebuffer[x+1] = bg & 0xff
+        for y in range(self.height):
+            self.write_data(self.linebuffer)
+
+    def rleblit(self, sx, sy, image, fg=0xffff, bg=0):
+        self.set_window()
+
+	# TODO: rework algorithm to allow us to reuse the line buffer
+        buf = bytearray(2*sx)
+        bp = 0
+        color = bg
+
+        for rl in image:
+            while rl:
+                buf[bp] = color >> 8
+                buf[bp+1] = color & 0xff
+                bp += 2
+                rl -= 1
+
+                if bp >= (2*sx):
+                    self.write_data(buf)
+                    bp = 0
+
+            if color == bg:
+                color = fg
+            else:
+                color = bg
+
+class ST7789_SPI(ST7789):
+    def __init__(self, width, height, spi, cs, dc, res=None, rate=8000000):
+        self.spi = spi
+        self.dc = dc
+        self.res = res
+        self.cs = cs
+        self.rate = rate
+
+        #self.spi.init(baudrate=self.rate, polarity=1, phase=1)
+        cs.init(cs.OUT, value=1)
+        dc.init(dc.OUT, value=0)
+        if res:
+            res.init(res.OUT, value=0)
+
+        super().__init__(width, height)
 
     def reset(self):
-        """Reset the display, if reset pin is connected."""
-        if self._rst is not None:
-            self._rst.on()
-            time.sleep(0.500)
-            self._rst.off()
-            time.sleep(0.500)
-            self._rst.on()
-            time.sleep(0.500)
-
-    def _init(self):
-        # Initialize the display.
-
-        self.command(ST7789_SWRESET)    # Software reset
-        time.sleep(0.150)               # delay 150 ms
-
-        self.command(ST7789_MADCTL)
-        self.data(0x70)
-
-        self.command(ST7789_FRMCTR2)    # Frame rate ctrl - idle mode
-        self.data(0x0C)
-        self.data(0x0C)
-        self.data(0x00)
-        self.data(0x33)
-        self.data(0x33)
-
-        self.command(ST7789_COLMOD)
-        self.data(0x05)
-
-        self.command(ST7789_GCTRL)
-        self.data(0x14)
-
-        self.command(ST7789_VCOMS)
-        self.data(0x37)
-
-        self.command(ST7789_LCMCTRL)    # Power control
-        self.data(0x2C)
-
-        self.command(ST7789_VDVVRHEN)   # Power control
-        self.data(0x01)
-
-        self.command(ST7789_VRHS)       # Power control
-        self.data(0x12)
-
-        self.command(ST7789_VDVS)       # Power control
-        self.data(0x20)
-
-        self.command(0xD0)
-        self.data(0xA4)
-        self.data(0xA1)
-
-        self.command(ST7789_FRCTRL2)
-        self.data(0x0F)
-
-        self.command(ST7789_GMCTRP1)    # Set Gamma
-        self.data(0xD0)
-        self.data(0x04)
-        self.data(0x0D)
-        self.data(0x11)
-        self.data(0x13)
-        self.data(0x2B)
-        self.data(0x3F)
-        self.data(0x54)
-        self.data(0x4C)
-        self.data(0x18)
-        self.data(0x0D)
-        self.data(0x0B)
-        self.data(0x1F)
-        self.data(0x23)
-
-        self.command(ST7789_GMCTRN1)    # Set Gamma
-        self.data(0xD0)
-        self.data(0x04)
-        self.data(0x0C)
-        self.data(0x11)
-        self.data(0x13)
-        self.data(0x2C)
-        self.data(0x3F)
-        self.data(0x44)
-        self.data(0x51)
-        self.data(0x2F)
-        self.data(0x1F)
-        self.data(0x1F)
-        self.data(0x20)
-        self.data(0x23)
-
-        if self._invert:
-            self.command(ST7789_INVON)   # Invert display
+        if self.res:
+            self.res(0)
+            sleep_ms(10)
+            self.res(1)
         else:
-            self.command(ST7789_INVOFF)  # Don't invert display
+            self.write_cmd(_SWRESET)
+        sleep_ms(130)
 
-        self.command(ST7789_SLPOUT)
+    def write_cmd(self, cmd):
+        self.dc(0)
+        self.cs(0)
+        self.spi.write(bytearray([cmd]))
+        self.cs(1)
 
-        self.command(ST7789_DISPON)     # Display on
-        time.sleep(0.100)               # 100 ms
-
-    def set_window(self, x0=0, y0=0, x1=None, y1=None):
-        """Set the pixel address window for proceeding drawing commands. x0 and
-        x1 should define the minimum and maximum x pixel bounds.  y0 and y1
-        should define the minimum and maximum y pixel bound.  If no parameters
-        are specified the default will be to update the entire display from 0,0
-        to width-1,height-1.
-        """
-        if x1 is None:
-            x1 = self._width - 1
-
-        if y1 is None:
-            y1 = self._height - 1
-
-        y0 += self._offset_top
-        y1 += self._offset_top
-
-        x0 += self._offset_left
-        x1 += self._offset_left
-
-        self.command(ST7789_CASET)       # Column addr set
-        self.data(x0 >> 8)
-        self.data(x0 & 0xFF)             # XSTART
-        self.data(x1 >> 8)
-        self.data(x1 & 0xFF)             # XEND
-        self.command(ST7789_RASET)       # Row addr set
-        self.data(y0 >> 8)
-        self.data(y0 & 0xFF)             # YSTART
-        self.data(y1 >> 8)
-        self.data(y1 & 0xFF)             # YEND
-        self.command(ST7789_RAMWR)       # write to RAM
-
-    def white(self):
-        self.set_window()
-        for i in range(self._height):
-            self.data([255] * self._width * 2)
-
-    def black(self):
-        self.set_window()
-        for i in range(self._height):
-            self.data([0] * self._width * 2)
+    def write_data(self, buf):
+        self.dc(1)
+        self.cs(0)
+        self.spi.write(buf)
+        self.cs(1)

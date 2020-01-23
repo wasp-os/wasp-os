@@ -1,7 +1,7 @@
 from machine import Pin
 from machine import SPI
 
-from drivers.st7789 import ST7789
+from drivers.st7789 import ST7789_SPI
 
 def st7789():
     spi = SPI(0)
@@ -14,6 +14,6 @@ def st7789():
     rst = Pin("P26", Pin.OUT)
     bl = Pin("P22", Pin.OUT)
 
-    tft = ST7789(spi, cs=cs, dc=dc, rst=rst)
+    tft = ST7789_SPI(240, 240, spi, cs=cs, dc=dc, res=rst)
     bl.off() # active low
     return tft
