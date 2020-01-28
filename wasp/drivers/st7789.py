@@ -83,6 +83,7 @@ class ST7789(object):
         for y in range(self.height):
             self.write_data(self.linebuffer)
 
+    @micropython.native
     def rleblit(self, image, fg=0xffff, bg=0):
         (sx, sy, rle) = image
         self.set_window()
