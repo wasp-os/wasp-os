@@ -31,7 +31,7 @@ micropython:
 	$(MAKE) -C micropython/mpy-cross
 	$(MAKE) -C micropython/ports/nrf \
 		BOARD=$(BOARD) SD=s132 \
-		FROZEN_MPY_DIR=$(PWD)/wasp
+		FROZEN_MANIFEST=$(PWD)/manifest/$(BOARD).py
 	python3 -m nordicsemi dfu genpkg \
 		--dev-type 0x0052 \
 		--application micropython/ports/nrf/build-$(BOARD)-s132/firmware.hex \
