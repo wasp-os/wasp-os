@@ -41,7 +41,12 @@ class ST7789(object):
                 self.write_data(cmd[1])
         self.fill(0)
         self.write_cmd(_DISPON)
-        sleep_ms(125)
+
+        # From the point we sent the SLPOUT there must be a
+        # 120ms gap before any subsequent SLPIN. In most cases
+        # (i.e. wen the SPI baud rate is slower than 8M then
+        # that time already elapsed as we zeroed the RAM).
+        #sleep_ms(125)
 
     def poweroff(self):
         pass
