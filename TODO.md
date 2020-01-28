@@ -13,7 +13,10 @@ The TODO list helps keep track on progress towards that goal. It is not
  * [X] OTA application update
  * [ ] OTA bootloader update
  * [X] Enable watchdog before starting the application
- * [ ] Splash screen
+ * [X] Splash screen
+ * [ ] Stay in bootloader after battery run down
+ * [X] Ignore start button for first few seconds
+ * [ ] Implement power off support (no splash screen)
   
 ## Micropython
 
@@ -23,14 +26,14 @@ The TODO list helps keep track on progress towards that goal. It is not
    - [ ] Feed dog from a tick interrupt
  * [ ] Basic (WFI) power saving
  * [ ] Implement machine.RTC for nrf52
- * [ ] Implement machine.ADC for nrf52
  
 ## WASP
 
  * [ ] Display driver
    - [X] Display initialization
    - [ ] Bitmap blitting
-   - [ ] RLE coder and decoder
+   - [X] RLE coder and decoder
+   - [ ] Optimized RLE inner loops
  * [ ] Backlight driver
  * [ ] Button driver (interrupt based)
  * [ ] Battery/charger driver
