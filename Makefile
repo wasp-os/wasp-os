@@ -44,5 +44,13 @@ flash:
 	pyocd erase -t nrf52 --mass-erase
 	pyocd flash -t nrf52 bootloader.hex
 
+debug:
+	arm-none-eabi-gdb \
+		bootloader/_build-$(BOARD)_nrf52832/$(BOARD)_nrf52832_bootloader-*-nosd.out \
+		-ex "target extended-remote /dev/ttyACM0" \
+		-ex "monitor swdp_scan" \
+		-ex "attach 1" \
+		-ex "load"
+
 .PHONY: bootloader micropython
 
