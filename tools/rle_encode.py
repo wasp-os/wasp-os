@@ -9,27 +9,74 @@ def encode(im):
 
     rle = []
     rl = 0
-    px = 0
+    px = pixels[0, 0]
+
+    def encode_pixel(px, rl):
+        while rl > 255:
+            rle.append(255)
+            rle.append(0)
+            rl -= 255
+        rle.append(rl)
 
     for y in range(im.height):
         for x in range(im.width):
             newpx = pixels[x, y]
             if newpx == px:
-                if rl < 255:
-                    rl += 1
-                else:
-                    # Handle overflow
-                    rle.append(255)
-                    rle.append(0)
-                    rl = 1
+                rl += 1
+                assert(rl < (1 << 21))
                 continue
 
+            # Code the previous run
+            encode_pixel(px, rl)
+
             # Start a new run
-            rle.append(rl)
             rl = 1
             px = newpx
+
     # Handle the final run
-    rle.append(rl)
+    encode_pixel(px, rl)
+
+    return (im.width, im.height, bytes(rle))
+
+def encode_8bit(im):
+    pixels = im.load()
+
+    rle = []
+    rl = 0
+    px = pixels[0, 0]
+
+    def encode_pixel(px, rl):
+        print(rl)
+        px = (px[0] & 0xe0) | ((px[1] & 0xe0) >> 3) | ((px[2] & 0xc0) >> 6)
+
+        rle.append(px)
+        if rl > 0:
+            rle.append(px)
+        rl -= 2
+        if rl > (1 << 14):
+            rle.append(0x80 | ((rl >> 14) & 0x7f))
+        if rl > (1 <<  7):
+            rle.append(0x80 | ((rl >>  7) & 0x7f))
+        if rl >= 0:
+            rle.append(         rl        & 0x7f )
+
+    for y in range(im.height):
+        for x in range(im.width):
+            newpx = pixels[x, y]
+            if newpx == px:
+                rl += 1
+                assert(rl < (1 << 21))
+                continue
+
+            # Code the previous run
+            encode_pixel(px, rl)
+
+            # Start a new run
+            rl = 1
+            px = newpx
+
+    # Handle the final run
+    encode_pixel(px, rl)
 
     return (im.width, im.height, bytes(rle))
 
