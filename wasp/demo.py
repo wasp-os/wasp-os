@@ -24,10 +24,6 @@ colors = (
         0xf81f, # magenta
     )
 
-# Let's keep this where we can find it if someone delivers ^C to the
-# demo
-tft = pinetime.st7789()
-
 def run():
     l = logo.pine64
     i = 0
@@ -42,8 +38,8 @@ def run():
                     l = logo.micropython
                 else:
                     l = logo.pine64
-                tft.fill(0)
+                pinetime.display.fill(0)
 
-            tft.rleblit(l, fg=c)
+            pinetime.display.rleblit(l, fg=c)
             time.sleep(2)
             gc.collect()

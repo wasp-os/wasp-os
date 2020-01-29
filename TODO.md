@@ -34,7 +34,7 @@ The TODO list helps keep track on progress towards that goal. It is not
    - [ ] Bitmap blitting
    - [X] RLE coder and decoder
    - [ ] Optimized RLE inner loops
- * [ ] Backlight driver
+ * [X] Backlight driver
  * [ ] Button driver (interrupt based)
  * [ ] Battery/charger driver
  * [ ] Simple clock and battery level application

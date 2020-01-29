@@ -1,6 +1,6 @@
 freeze('$(MPY_DIR)/../wasp',
     (
-        'main.py',
+        'boot.py',
         'demo.py',
         'drivers/st7789.py',
         'logo.py',
