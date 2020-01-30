@@ -29,6 +29,7 @@ softdevice:
 
 micropython:
 	$(MAKE) -C micropython/mpy-cross
+	$(RM) micropython/ports/nrf/build-$(BOARD)-s132/frozen_content.c
 	$(MAKE) -C micropython/ports/nrf \
 		BOARD=$(BOARD) SD=s132 \
 		FROZEN_MANIFEST=$(PWD)/manifest/$(BOARD).py
