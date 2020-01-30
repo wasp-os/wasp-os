@@ -1,6 +1,9 @@
 from machine import Pin
+#from machine import Signal
 from machine import SPI
 
+from drivers.battery import Battery
+from drivers.signal import Signal
 from drivers.st7789 import ST7789_SPI
 
 class Display(ST7789_SPI):
@@ -42,5 +45,9 @@ class Backlight(object):
 
 backlight = Backlight(0)
 display = Display()
-
 backlight.set(1)
+
+battery = Battery(
+        Pin('BATTERY', Pin.IN),
+        Signal(Pin('CHARGING', Pin.IN), invert=True),
+        Signal(Pin('USB_PWR', Pin.IN), invert=True))

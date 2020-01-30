@@ -36,5 +36,5 @@ The TODO list helps keep track on progress towards that goal. It is not
    - [ ] Optimized RLE inner loops
  * [X] Backlight driver
  * [ ] Button driver (interrupt based)
- * [ ] Battery/charger driver
+ * [X] Battery/charger driver
  * [ ] Simple clock and battery level application

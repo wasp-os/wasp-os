@@ -2,6 +2,8 @@ freeze('$(MPY_DIR)/../wasp',
     (
         'boot.py',
         'demo.py',
+        'drivers/battery.py',
+        'drivers/signal.py',
         'drivers/st7789.py',
         'logo.py',
         'pinetime.py'
