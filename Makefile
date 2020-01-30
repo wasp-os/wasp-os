@@ -32,7 +32,7 @@ micropython:
 	$(RM) micropython/ports/nrf/build-$(BOARD)-s132/frozen_content.c
 	$(MAKE) -C micropython/ports/nrf \
 		BOARD=$(BOARD) SD=s132 \
-		FROZEN_MANIFEST=$(PWD)/manifest/$(BOARD).py
+		FROZEN_MANIFEST=$(PWD)/wasp/boards/$(BOARD)/manifest.py
 	python3 -m nordicsemi dfu genpkg \
 		--dev-type 0x0052 \
 		--application micropython/ports/nrf/build-$(BOARD)-s132/firmware.hex \

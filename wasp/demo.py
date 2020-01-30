@@ -7,7 +7,7 @@
 # len(colors) is not a multiple of 5 ;-) ).
 #
 
-import pinetime, logo, time, gc
+import watch, logo, time, gc
 
 colors = (
         0xffff,
@@ -38,8 +38,8 @@ def run():
                     l = logo.micropython
                 else:
                     l = logo.pine64
-                pinetime.display.fill(0)
+                watch.display.fill(0)
 
-            pinetime.display.rleblit(l, fg=c)
+            watch.display.rleblit(l, fg=c)
             time.sleep(2)
             gc.collect()

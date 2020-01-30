@@ -1,4 +1,4 @@
-freeze('$(MPY_DIR)/../wasp',
+freeze('../..',
     (
         'boot.py',
         'demo.py',
@@ -6,7 +6,7 @@ freeze('$(MPY_DIR)/../wasp',
         'drivers/signal.py',
         'drivers/st7789.py',
         'logo.py',
-        'pinetime.py'
     ),
     opt=3
 )
+freeze('.', 'watch.py', opt=3)
