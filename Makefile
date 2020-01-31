@@ -53,5 +53,10 @@ debug:
 		-ex "attach 1" \
 		-ex "load"
 
+sim:
+	PYTHONDONTWRITEBYTECODE=1 \
+	PYTHONPATH=$(PWD)/wasp/boards/simulator:$(PWD)/wasp \
+	python3 -i wasp/boot.py
+
 .PHONY: bootloader micropython
 

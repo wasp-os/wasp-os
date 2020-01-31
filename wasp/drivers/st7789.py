@@ -1,5 +1,7 @@
 # MicroPython ST7789 display driver, currently only has an SPI interface
 
+import micropython
+
 from micropython import const
 from time import sleep_ms
 
