@@ -5,6 +5,7 @@ from machine import SPI
 from drivers.battery import Battery
 from drivers.signal import Signal
 from drivers.st7789 import ST7789_SPI
+from drivers.vibrator import Vibrator
 
 class Display(ST7789_SPI):
     def __init__(self):
@@ -51,3 +52,4 @@ battery = Battery(
         Pin('BATTERY', Pin.IN),
         Signal(Pin('CHARGING', Pin.IN), invert=True),
         Signal(Pin('USB_PWR', Pin.IN), invert=True))
+vibrator = Vibrator(Pin('MOTOR', Pin.OUT, value=0), active_low=True)
