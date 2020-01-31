@@ -12,6 +12,11 @@ form-factor devices without a reset button, power switch, SWD debugger
 or UART. This allows us to confidently develop on sealed devices relying
 only on BLE for updates.
 
+Video
+-----
+
+[![WASP bootloader and MicroPython running on Pine64 PineTime](https://img.youtube.com/vi/W0CmqOnl4jk/0.jpg)](https://www.youtube.com/watch?v=W0CmqOnl4jk)
+
 Building from a git clone
 -------------------------
 
