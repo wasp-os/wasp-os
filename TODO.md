@@ -1,11 +1,8 @@
-# TODO
+# M1: Dumb watch feature parity
 
-Currently the focus for WASP is both to meet feature parity with a dumb
+The focus for M1 is to get WASP both to meet feature parity with a dumb
 watch and to have a bootloader and watchdog strategy that is robust enough
 to allow a PineTime case to be confidently glued shut.
-
-The TODO list helps keep track on progress towards that goal. It is not
-(yet) a place for the wishlist!
 
 ## Bootloader
 
@@ -16,9 +13,8 @@ The TODO list helps keep track on progress towards that goal. It is not
  * [X] Splash screen
  * [ ] Stay in bootloader after battery run down
  * [X] Ignore start button for first few seconds
- * [ ] Implement power off support (no splash screen)
   
-## Micropython
+## MicroPython
 
  * [X] Basic board ports (PineTime, DS-D6, 96Boards Nitrogen)
  * [ ] Long press reset (conditional feeding of the watchdog)
@@ -38,3 +34,56 @@ The TODO list helps keep track on progress towards that goal. It is not
  * [ ] Button driver (interrupt based)
  * [X] Battery/charger driver
  * [ ] Simple clock and battery level application
+
+# M2: Great developer experience
+
+The focus for M2 is to make development faster and easier by providing
+a file system and file transfer code. This allows much faster
+development cycles compared to full downloads of frozen modules.
+Additionally support for multiple event-driven applications will be
+added during M2 to further help developers by providing example
+applications.
+
+## Bootloader
+
+ * [ ] Implement power off support (no splash screen)
+ * [ ] RTC time measurement whilst in bootloader
+
+## MicroPython
+
+ * [ ] SPI FLASH driver
+ * [ ] Enable LittleFS on SPI FLASH (at boot)
+ * [ ] BLE file transfer
+ * [ ] Full power saving
+
+## WASP
+
+ * [ ] Touch sensor driver
+ * [ ] Event driven application framework
+ * [ ] Stopwatch app
+ * [ ] Settings app
+ * [ ] PC-hosted simulation platform
+ * [ ] Documentation
+   - [ ] Sphinx framework and integration with github.io
+   - [ ] Document bootloader protocols
+   - [ ] Write full docstring documentation for all WASP components
+
+# M3: Smartwatch
+
+At M3 we start to build out full fitness tracking and notification
+functionality.
+
+## WASP
+
+ * [ ] Enable heart rate sensor
+   - [ ] HRS3300 driver
+   - [ ] HRS data post-processing
+   - [ ] Heart rate counter app
+ * [ ] Notifications
+   - [ ] BLE notification protocol
+   - [ ] Notification popups
+   - [ ] Notification app (show notification history)
+   - [ ] Find a recommended Android app
+ * [ ] Step counting
+   - [ ] BMA421 driver
+   - [ ] Step counter app
