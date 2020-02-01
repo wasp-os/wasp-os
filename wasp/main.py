@@ -1,2 +1,4 @@
-import demo
-demo.run()
+import machine
+
+while True
+    machine.deepsleep()

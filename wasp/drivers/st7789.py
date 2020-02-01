@@ -7,6 +7,7 @@ from time import sleep_ms
 
 # register definitions
 _SWRESET            = const(0x01)
+_SLPIN              = const(0x10)
 _SLPOUT             = const(0x11)
 _NORON              = const(0x13)
 _INVOFF             = const(0x20)
@@ -51,10 +52,12 @@ class ST7789(object):
         #sleep_ms(125)
 
     def poweroff(self):
-        pass
+        self.write_cmd(_SLPIN)
+        sleep_ms(125)
 
     def poweron(self):
-        pass
+        self.write_cmd(_SLPOUT)
+        sleep_ms(125)
 
     def contrast(self, contrast):
         pass
@@ -139,7 +142,7 @@ class ST7789_SPI(ST7789):
             self.res(1)
         else:
             self.write_cmd(_SWRESET)
-        sleep_ms(130)
+        sleep_ms(125)
 
     def write_cmd(self, cmd):
         self.dc(0)
