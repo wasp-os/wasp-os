@@ -2,10 +2,10 @@ export PYTHONPATH := $(PWD)/tools/nrfutil:$(PWD)/tools/intelhex:$(PYTHONPATH)
 
 all : bootloader micropython
 
-BOARD=$(error Please set BOARD=)
+BOARD ?= $(error Please set BOARD=)
 
 clean :
-	rm -rf \
+	$(RM) -r \
 		bootloader/_build-$(BOARD)_nrf52832 \
 		micropython/mpy-cross/build \
 		micropython/ports/nrf/build-$(BOARD)-s132
