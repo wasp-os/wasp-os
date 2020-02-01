@@ -9,6 +9,13 @@ from machine import SPI
 from drivers.st7789 import ST7789_SPI
 from drivers.vibrator import Vibrator
 
+class Backlight(object):
+    def __init__(self, level=1):
+        self.set(level)
+
+    def set(self, level):
+        print(f'BACKLIGHT: {level}')
+
 class Display(ST7789_SPI):
     def __init__(self):
         spi = SPI(0)
@@ -16,11 +23,12 @@ class Display(ST7789_SPI):
         spi.init(polarity=1, phase=1, baudrate=8000000)
     
         # Configure the display
-        cs = Pin("DISP_CS", Pin.OUT)
-        dc = Pin("DISP_DC", Pin.OUT)
-        rst = Pin("DISP_RST", Pin.OUT)
+        cs = Pin("DISP_CS", Pin.OUT, quiet=True)
+        dc = Pin("DISP_DC", Pin.OUT, quiet=True)
+        rst = Pin("DISP_RST", Pin.OUT, quiet=True)
 
         super().__init__(240, 240, spi, cs=cs, dc=dc, res=rst)
 
 display = Display()
+backlight = Backlight()
 vibrator = Vibrator(Pin('MOTOR', Pin.OUT, value=0), active_low=True)

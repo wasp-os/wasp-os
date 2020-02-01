@@ -1,3 +1,5 @@
+import display
+
 class Tracer(object):
     def __init__(self, *args, **kwargs):
         print(f'{self.__class__.__name__}.__init__{args} {kwargs}')
@@ -14,9 +16,10 @@ class Pin(object):
     IN = 'IN'
     OUT = 'OUT'
 
-    def __init__(self, id, direction, value=1):
+    def __init__(self, id, direction, value=1, quiet=False):
         self._id = id
         self._value = 0
+        self._quiet = quiet
 
     def init(self, d, value):
         self.value(value)
@@ -29,12 +32,16 @@ class Pin(object):
 
     def value(self, v=None):
         if v is None:
+            if not self._quiet:
+                print(f'{self._id}: read {self._value}')
             return self._value
         if v:
-            print(self._id + ": on")
+            if not self._quiet:
+                print(self._id + ": set on")
             self._value = False
         else:
-            print(self._id + ": off")
+            if not self._quiet:
+                print(self._id + ": set off")
             self._value = True
 
     def __call__(self, v=None):
@@ -46,9 +53,16 @@ class PWM(Tracer):
 class SPI(object):
     def __init__(self, id):
         self._id = id
+        if id == 0:
+            self.sim = display.ST7789Sim()
+        else:
+            self.sim = None
 
     def init(self, baudrate=1000000,  polarity=0, phase=0, bits=8, sck=None, mosi=None, miso=None):
         pass
 
     def write(self, buf):
-        print("Sending data: " + str(buf))
+        if self.sim:
+            self.sim.write(buf)
+        else:
+            print("Sending data: " + str(buf))
