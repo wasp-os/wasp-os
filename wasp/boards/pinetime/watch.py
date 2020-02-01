@@ -1,4 +1,5 @@
 from machine import Pin
+from machine import RTCounter as RTC
 #from machine import Signal
 from machine import SPI
 
@@ -12,7 +13,7 @@ class Display(ST7789_SPI):
         spi = SPI(0)
         # Mode 3, maximum clock speed!
         spi.init(polarity=1, phase=1, baudrate=8000000)
-    
+
         # Configure the display
         cs = Pin("DISP_CS", Pin.OUT)
         dc = Pin("DISP_DC", Pin.OUT)
@@ -47,6 +48,10 @@ class Backlight(object):
 backlight = Backlight(0)
 display = Display()
 backlight.set(1)
+
+# Start measuring time (and feeding the watchdog)
+rtc = RTC(1, mode=RTC.PERIODIC)
+rtc.start()
 
 battery = Battery(
         Pin('BATTERY', Pin.IN),
