@@ -2,7 +2,11 @@
 
 import argparse
 import sys
+import os.path
 from PIL import Image
+
+def varname(p):
+    return os.path.basename(os.path.splitext(p)[0])
 
 def encode(im):
     pixels = im.load()
@@ -82,7 +86,8 @@ def encode_8bit(im):
 
 def render_c(image, fname):
     print(f'// 1-bit RLE, generated from {fname}, {len(image[2])} bytes')
-    print('static const uint8_t rle[] = {\n ', end='')
+    print(f'static const uint8_t {varname(fname)}[] = {{')
+    print(' ', end='')
     i = 0
     for rl in image[2]:
         print(f' {hex(rl)},', end='')
@@ -139,7 +144,8 @@ for fname in args.files:
         render_c(image, fname)
     else:
         print(f'# 1-bit RLE, generated from {fname}, {len(image[2])} bytes')
-        print(f'rle = {image}')
+        print(f'{varname(fname)} = {image}')
+        print()
 
     if args.ascii:
         print()
