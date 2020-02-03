@@ -17,11 +17,9 @@ to allow a PineTime case to be confidently glued shut.
 ## MicroPython
 
  * [X] Basic board ports (PineTime, DS-D6, 96Boards Nitrogen)
- * [ ] Long press reset (conditional feeding of the watchdog)
+ * [X] Long press reset (conditional feeding of the watchdog)
    - [X] Feed dog from REPL polling loop
-   - [ ] Feed dog from a tick interrupt
- * [ ] Basic (WFI) power saving
- * [ ] Implement machine.RTC for nrf52
+   - [X] Feed dog from a tick interrupt
  
 ## WASP
 
@@ -31,9 +29,11 @@ to allow a PineTime case to be confidently glued shut.
    - [X] RLE coder and decoder
    - [ ] Optimized RLE inner loops
  * [X] Backlight driver
- * [ ] Button driver (interrupt based)
+ * [X] Button driver (polling)
  * [X] Battery/charger driver
  * [ ] Simple clock and battery level application
+ * [X] Basic (WFI) power saving
+ * [X] Implement simple RTC for nrf52
 
 # M2: Great developer experience
 
@@ -58,6 +58,7 @@ applications.
 
 ## WASP
 
+ * [ ] Button driver (interrupt based)
  * [ ] Touch sensor driver
  * [ ] Event driven application framework
  * [ ] Stopwatch app

@@ -1,4 +1,1 @@
-import machine
-
-while True
-    machine.deepsleep()
+wasp.run()
