@@ -29,6 +29,27 @@ class Display(ST7789_SPI):
 
         super().__init__(240, 240, spi, cs=cs, dc=dc, res=rst)
 
+class RTC(object):
+    def __init__(self):
+        self.uptime = 0
+
+    def update(self):
+        now = time.time()
+        if now == self.uptime:
+            return False
+        self.uptime = now
+        return True
+
+    def get_time(self):
+        now = time.localtime()
+        return (now[3], now[4], now[5])
+
+    def uptime(self):
+        return time.time
+
 display = Display()
 backlight = Backlight()
+rtc = RTC()
 vibrator = Vibrator(Pin('MOTOR', Pin.OUT, value=0), active_low=True)
+button = Pin('BUTTON', Pin.IN, quiet=True)
+
