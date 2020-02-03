@@ -62,11 +62,11 @@ class ST7789Sim(object):
                 pixelview[self.y][self.x] = pixel
 
                 self.x += 1
-                if self.x > self.rowclip[1]:
-                    self.x = self.rowclip[0]
+                if self.x > self.colclip[1]:
+                    self.x = self.colclip[0]
                     self.y += 1
-                if self.y > self.colclip[1]:
-                    self.y = self.colclip[0]
+                if self.y > self.rowclip[1]:
+                    self.y = self.rowclip[0]
             
             # Forcibly release the surface to ensure it is unlocked
             del pixelview
