@@ -1,9 +1,10 @@
 from machine import Pin
-from machine import RTCounter as RTC
+from machine import RTCounter
 #from machine import Signal
 from machine import SPI
 
 from drivers.battery import Battery
+from drivers.nrf_rtc import RTC
 from drivers.signal import Signal
 from drivers.st7789 import ST7789_SPI
 from drivers.vibrator import Vibrator
@@ -50,11 +51,12 @@ display = Display()
 backlight.set(1)
 
 # Start measuring time (and feeding the watchdog)
-rtc = RTC(1, mode=RTC.PERIODIC)
-rtc.start()
+rtc = RTC(RTCounter(1, mode=RTCounter.PERIODIC))
+rtc.counter.start()
 
 battery = Battery(
         Pin('BATTERY', Pin.IN),
         Signal(Pin('CHARGING', Pin.IN), invert=True),
         Signal(Pin('USB_PWR', Pin.IN), invert=True))
 vibrator = Vibrator(Pin('MOTOR', Pin.OUT, value=0), active_low=True)
+button = Pin('BUTTON', Pin.IN)
