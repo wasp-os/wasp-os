@@ -1,4 +1,5 @@
 import display
+import time
 
 class Tracer(object):
     def __init__(self, *args, **kwargs):
@@ -66,3 +67,10 @@ class SPI(object):
             self.sim.write(buf)
         else:
             print("Sending data: " + str(buf))
+
+def lightsleep(ms=10):
+    """TODO: This where we should manage the simulated components"""
+    time.sleep(ms / 1000)
+
+def deepsleep(ms=10):
+    lightsleep(ms)
