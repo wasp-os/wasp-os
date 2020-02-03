@@ -83,15 +83,22 @@ class ST7789(object):
         self.write_data(bytearray([y >> 8, y & 0xff, yp >> 8, yp & 0xff]))
         self.write_cmd(_RAMWR)
 
-    def fill(self, bg):
-        self.set_window()
+    def fill(self, bg, x=0, y=0, w=None, h=None):
+        if not w:
+            w = self.width - x
+        if not h:
+            h = self.height - y
+        self.set_window(x, y, w, h)
 
         # Populate the line buffer
-        for x in range(0, 2 * self.width, 2):
-            self.linebuffer[x] = bg >> 8
-            self.linebuffer[x+1] = bg & 0xff
-        for y in range(self.height):
-            self.write_data(self.linebuffer)
+        buf = memoryview(self.linebuffer)[0:2*w]
+        for xi in range(0, 2*w, 2):
+            buf[xi] = bg >> 8
+            buf[xi+1] = bg & 0xff
+
+        # Do the fill
+        for yi in range(h):
+            self.write_data(buf)
 
     @micropython.native
     def rleblit(self, image, pos=(0, 0), fg=0xffff, bg=0):
