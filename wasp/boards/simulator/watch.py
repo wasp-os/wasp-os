@@ -29,6 +29,40 @@ class Display(ST7789_SPI):
 
         super().__init__(240, 240, spi, cs=cs, dc=dc, res=rst)
 
+class Battery(object):
+    def __init__(self):
+        self.voltage = 3.9
+        self.step = -0.01
+        self.powered = False
+
+    def charging(self):
+        self.voltage_mv()
+        return self.powered
+
+    def power(self):
+        self.voltage_mv()
+        return self.powered
+
+    def voltage_mv(self):
+        if self.voltage > 4:
+            self.step = -0.005
+            self.powered = False
+        elif self.voltage < 3.4:
+            self.step = 0.01
+            self.powered = True
+        self.voltage += self.step
+
+        return int(self.voltage * 1000)
+
+    def level(self):
+        mv = self.voltage_mv()
+        level = ((19 * mv) // 100) - 660
+        if level > 100:
+            return 100
+        if level < 0:
+            return 0
+        return level
+
 class RTC(object):
     def __init__(self):
         self.uptime = 0
@@ -49,6 +83,7 @@ class RTC(object):
 
 display = Display()
 backlight = Backlight()
+battery = Battery()
 rtc = RTC()
 vibrator = Vibrator(Pin('MOTOR', Pin.OUT, value=0), active_low=True)
 button = Pin('BUTTON', Pin.IN, quiet=True)
