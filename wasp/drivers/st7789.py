@@ -98,8 +98,7 @@ class ST7789(object):
         (sx, sy, rle) = image
         self.set_window(pos[0], pos[1], sx, sy)
 
-        # TODO: rework algorithm to allow us to reuse the line buffer
-        buf = bytearray(2*sx)
+        buf = memoryview(self.linebuffer)[0:2*sx]
         bp = 0
         color = bg
 
