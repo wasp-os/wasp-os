@@ -24,6 +24,8 @@ class Manager(object):
                 self.watch.backlight.set(0)
                 self.watch.display.poweroff()
                 self.sleep_at = None
+
+            gc.collect()
         else:
             self.watch.rtc.update()
 
@@ -34,7 +36,6 @@ class Manager(object):
 
                 self.sleep_at = self.watch.rtc.uptime + 15
 
-        gc.collect()   
 
     def run(self):
         while True:
