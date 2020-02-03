@@ -94,9 +94,9 @@ class ST7789(object):
             self.write_data(self.linebuffer)
 
     @micropython.native
-    def rleblit(self, image, fg=0xffff, bg=0):
+    def rleblit(self, image, pos=(0, 0), fg=0xffff, bg=0):
         (sx, sy, rle) = image
-        self.set_window()
+        self.set_window(pos[0], pos[1], sx, sy)
 
         # TODO: rework algorithm to allow us to reuse the line buffer
         buf = bytearray(2*sx)
