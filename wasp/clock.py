@@ -1,4 +1,5 @@
 import fonts
+import widgets
 
 DIGITS = (
         fonts.clock_0,
@@ -17,6 +18,7 @@ class ClockApp(object):
 
     def __init__(self):
         self.on_screen = ( -1, -1 )
+        self.meter = widgets.BatteryMeter()
 
     def draw(self, watch):
         display = watch.display
@@ -24,12 +26,13 @@ class ClockApp(object):
         display.fill(0)
         display.rleblit(fonts.clock_colon, pos=(2*48, 80), fg=0xb5b6)
         self.update(watch)
+        self.meter.draw()
+
 
     def update(self, watch):
         now = watch.rtc.get_time()
         if now[0] == self.on_screen[0] and now[1] == self.on_screen[1]:
-            # Avoid the redraw
-            return False
+            self.meter.update()
 
         display = watch.display
         display.rleblit(DIGITS[now[1]  % 10], pos=(4*48, 80))
@@ -38,6 +41,4 @@ class ClockApp(object):
         display.rleblit(DIGITS[now[0] // 10], pos=(0*48, 80), fg=0xc638)
         self.on_screen = now
 
-        return True
-
-
+        self.meter.update()

@@ -9,9 +9,11 @@ freeze('../..',
         'drivers/st7789.py',
         'drivers/vibrator.py',
         'fonts.py',
+        'icons.py',
         'main.py',
         'manager.py',
         'logo.py',
+        'widgets.py',
     ),
     opt=3
 )
