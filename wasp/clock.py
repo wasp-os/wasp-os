@@ -25,14 +25,16 @@ class ClockApp(object):
 
         display.fill(0)
         display.rleblit(fonts.clock_colon, pos=(2*48, 80), fg=0xb5b6)
+        self.on_screen = ( -1, -1 )
         self.update(watch)
         self.meter.draw()
-
 
     def update(self, watch):
         now = watch.rtc.get_time()
         if now[0] == self.on_screen[0] and now[1] == self.on_screen[1]:
-            self.meter.update()
+            if now[1] % 2 == 0:
+                self.meter.update()
+            return False
 
         display = watch.display
         display.rleblit(DIGITS[now[1]  % 10], pos=(4*48, 80))
@@ -42,3 +44,4 @@ class ClockApp(object):
         self.on_screen = now
 
         self.meter.update()
+        return True
