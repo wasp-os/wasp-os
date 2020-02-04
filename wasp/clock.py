@@ -38,9 +38,9 @@ class ClockApp(object):
 
         display = watch.display
         display.rleblit(DIGITS[now[1]  % 10], pos=(4*48, 80))
-        display.rleblit(DIGITS[now[1] // 10], pos=(3*48, 80), fg=0xc638)
+        display.rleblit(DIGITS[now[1] // 10], pos=(3*48, 80), fg=0xbdb6)
         display.rleblit(DIGITS[now[0]  % 10], pos=(1*48, 80))
-        display.rleblit(DIGITS[now[0] // 10], pos=(0*48, 80), fg=0xc638)
+        display.rleblit(DIGITS[now[0] // 10], pos=(0*48, 80), fg=0xbdb6)
         self.on_screen = now
 
         self.meter.update()
