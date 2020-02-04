@@ -45,16 +45,33 @@ trying to program it.*
 * Connect to PineDFU using nRFConnect, click the DFU button and send
   `micropython.zip` to the device.
 
-At the end of this process your watch you will see a couple of splash
-screens (bootloader shows a small Pine64 logo, MicroPython shows are
-larger one). Once the second splash screen appears you will be able to 
-use the Nordic UART Service to access the MicroPython REPL.
+At the end of this process your watch will show the time (12:00) and a
+battery meter. When the watch goes into power saving mode you can use
+the side button to wake it again.
 
-Drivers are still in development, see the [TODO list](todo.md) for
-current status. In the mean time try the following and then take
-a look at the `wasp/` directory to see how it works:
+At this point you will also be able to use the Nordic UART Service to
+access the MicroPython REPL, although currently you must send ^C to
+interrupt the program that updates the watch display.
+
+Just for fun try:
 
 ~~~
+^C
 import demo
 demo.run()
+# After watching the demo for a bit...
+^C
+wasp.app.draw(watch)
+wasp.run()
 ~~~
+
+To set the time and restart the main application:
+
+~~~
+^C
+watch.rtc.set_time((hh, mm, ss))
+wasp.run()
+~~~
+
+At this stage there are many drivers and features still to be
+developed, see the [TODO list](todo.md) for current status.
