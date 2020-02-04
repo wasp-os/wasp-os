@@ -28,6 +28,9 @@ def run():
     l = logo.pine64
     i = 0
 
+    watch.display.poweron()
+    watch.backlight.set(2)
+
     while True:
         for c in colors:
             if i < 5:
