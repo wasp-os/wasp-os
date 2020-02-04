@@ -1,10 +1,12 @@
 Watch Application System in Python
 ==================================
 
-Currently WASP is primarily useful as a pre-packaged MicroPython
-development environment for PineTime. Whilst there are plans to grow 
-it into a smart watch runtime for Pine64 PineTime and the Desay
-DS-D6 fitness  tracker this goal has yet to be achieved.
+Currently in its infancy wasp-os provides nothing more than a simple
+digital clock application for PineTime together with access to the
+MicroPython REPL for interactive testing and tweaking. However it
+keeps time well and has enough power saving functions implemented
+that it can survive for well over 24 hours between charges so even
+at this early stage it is functional as a wearable timepiece.
 
 WASP includes a robust bootloader based on the Adafruit NRF52
 Bootloader. It has been extended to make it robust for development on
@@ -12,15 +14,18 @@ form-factor devices without a reset button, power switch, SWD debugger
 or UART. This allows us to confidently develop on sealed devices relying
 only on BLE for updates.
 
+![wasp-os digital clock app running on PineTime](res/clock_app.jpg)
+
 Video
 -----
 
-[![WASP bootloader and MicroPython running on Pine64 PineTime](https://img.youtube.com/vi/W0CmqOnl4jk/0.jpg)](https://www.youtube.com/watch?v=W0CmqOnl4jk)
+[![WASP bootloader and MicroPython running on Pine64 PineTime](https://img.youtube.com/vi/W0CmqOnl4jk/1.jpg)](https://www.youtube.com/watch?v=W0CmqOnl4jk)
 
 Building from a git clone
 -------------------------
 
 ~~~
+pip3 install --user click serial pyserial
 make submodules
 make softdevice
 make -j `nproc` BOARD=pinetime all
@@ -73,5 +78,5 @@ watch.rtc.set_time((hh, mm, ss))
 wasp.run()
 ~~~
 
-At this stage there are many drivers and features still to be
+As mentioned above there are many drivers and features still to be
 developed, see the [TODO list](todo.md) for current status.
