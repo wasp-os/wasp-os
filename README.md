@@ -31,6 +31,10 @@ make softdevice
 make -j `nproc` BOARD=pinetime all
 ~~~
 
+Note: *You will need a toolchain for the Arm Cortex-M4. wasp-os is developed and tested using the [GNU-RM toolchain](https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-rm) (9-2019-q4) from Arm.*
+
+Note #2: *There are known problems with toolchains older than gcc-7.3 due to problems with link-time-optimization (which is enabled by default)*
+
 Installing
 ----------
 
