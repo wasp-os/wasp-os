@@ -19,6 +19,16 @@ _RAMWR              = const(0x2c)
 _COLMOD             = const(0x3a)
 _MADCTL             = const(0x36)
 
+@micropython.viper
+def fastfill(mv, color: int, count: int, offset: int):
+    p = ptr8(mv)
+    colorhi = color >> 8
+    colorlo = color & 0xff
+
+    for x in range(count):
+        p[2*(x+offset)    ] = colorhi
+        p[2*(x+offset) + 1] = colorlo
+
 class ST7789(object):
     def __init__(self, width, height):
         self.width = width
@@ -111,12 +121,12 @@ class ST7789(object):
 
         for rl in rle:
             while rl:
-                buf[bp] = color >> 8
-                buf[bp+1] = color & 0xff
-                bp += 2
-                rl -= 1
+                count = min(sx - bp, rl)
+                fastfill(buf, color, count, bp)
+                bp += count
+                rl -= count
 
-                if bp >= (2*sx):
+                if bp >= sx:
                     self.write_data(buf)
                     bp = 0
 
