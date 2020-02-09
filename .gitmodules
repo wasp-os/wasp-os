@@ -10,3 +10,6 @@
 [submodule "tools/nrfutil"]
 	path = tools/nrfutil
 	url = https://github.com/adafruit/Adafruit_nRF52_nrfutil.git
+[submodule "wasp/drivers/flash"]
+	path = wasp/drivers/flash
+	url = https://github.com/daniel-thompson/micropython-eeprom
