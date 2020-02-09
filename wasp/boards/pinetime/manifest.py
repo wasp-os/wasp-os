@@ -1,3 +1,4 @@
+freeze('.', 'watch.py', opt=3)
 freeze('../..',
     (
         'boot.py',
@@ -10,11 +11,15 @@ freeze('../..',
         'drivers/vibrator.py',
         'fonts.py',
         'icons.py',
-        'main.py',
         'manager.py',
         'logo.py',
         'widgets.py',
     ),
     opt=3
 )
-freeze('.', 'watch.py', opt=3)
+freeze('../../drivers/flash',
+    (
+        'bdevice.py',
+        'flash/flash_spi.py'
+    ), opt=3
+)

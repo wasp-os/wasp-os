@@ -1,26 +1,21 @@
-from machine import Pin
+# Start measuring time (and feeding the watchdog) before *anything* else
 from machine import RTCounter
+from drivers.nrf_rtc import RTC
+rtc = RTC(RTCounter(1, mode=RTCounter.PERIODIC))
+rtc.counter.start()
+
+import os
+import time
+
+from machine import Pin
 #from machine import Signal
 from machine import SPI
 
 from drivers.battery import Battery
-from drivers.nrf_rtc import RTC
 from drivers.signal import Signal
 from drivers.st7789 import ST7789_SPI
 from drivers.vibrator import Vibrator
-
-class Display(ST7789_SPI):
-    def __init__(self):
-        spi = SPI(0)
-        # Mode 3, maximum clock speed!
-        spi.init(polarity=1, phase=1, baudrate=8000000)
-
-        # Configure the display
-        cs = Pin("DISP_CS", Pin.OUT)
-        dc = Pin("DISP_DC", Pin.OUT)
-        rst = Pin("DISP_RST", Pin.OUT)
-
-        super().__init__(240, 240, spi, cs=cs, dc=dc, res=rst)
+from flash.flash_spi import FLASH
 
 class Backlight(object):
     lo = Pin("BL_LO", Pin.OUT, value=0)
@@ -46,17 +41,43 @@ class Backlight(object):
         self.mid(mid)
         self.lo(lo)
 
+# Setup the display (and manage the backlight)
 backlight = Backlight(0)
-display = Display()
-backlight.set(1)
+spi = SPI(0)
+spi.init(polarity=1, phase=1, baudrate=8000000)
+display = ST7789_SPI(240, 240, spi,
+        cs=Pin("DISP_CS", Pin.OUT),
+        dc=Pin("DISP_DC", Pin.OUT),
+        res=Pin("DISP_RST", Pin.OUT))
 
-# Start measuring time (and feeding the watchdog)
-rtc = RTC(RTCounter(1, mode=RTCounter.PERIODIC))
-rtc.counter.start()
-
+# Setup the last few bits and pieces
 battery = Battery(
         Pin('BATTERY', Pin.IN),
         Signal(Pin('CHARGING', Pin.IN), invert=True),
         Signal(Pin('USB_PWR', Pin.IN), invert=True))
 vibrator = Vibrator(Pin('MOTOR', Pin.OUT, value=0), active_low=True)
 button = Pin('BUTTON', Pin.IN)
+
+# Mount the filesystem
+flash = FLASH(spi, (Pin('NOR_CS', Pin.OUT, value=1),))
+try:
+    os.mount(flash, '/flash')
+except AttributeError:
+    # Format the filesystem (and provide a default version of main.py)
+    os.VfsLfs2.mkfs(flash)
+    os.mount(flash,'/flash')
+    with open('/flash/main.py', 'w') as f:
+        f.write('''\
+import manager
+wasp = manager.Manager(watch)
+wasp.run()
+''')
+
+# Only change directory if the button is not pressed (this will
+# allow us access to fix any problems with main.py)!
+if not button.value():
+    os.chdir('/flash')
+    backlight.set(1)
+else:
+    display.poweroff()
+
