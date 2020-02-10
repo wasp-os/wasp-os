@@ -2,11 +2,12 @@ Watch Application System in Python
 ==================================
 
 Currently in its infancy wasp-os provides nothing more than a simple
-digital clock application for PineTime together with access to the
-MicroPython REPL for interactive testing and tweaking. However it
-keeps time well and has enough power saving functions implemented
-that it can survive for well over 24 hours between charges so even
-at this early stage it is functional as a wearable timepiece.
+digital clock application for [PineTime](https://www.pine64.org/pinetime/)
+together with access to the MicroPython REPL for interactive testing and
+tweaking. However it keeps time well and has enough power saving
+functions implemented that it can survive for well over 24 hours between
+charges so even at this early stage it is functional as a wearable
+timepiece.
 
 WASP includes a robust bootloader based on the Adafruit NRF52
 Bootloader. It has been extended to make it robust for development on
