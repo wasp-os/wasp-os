@@ -13,3 +13,6 @@
 [submodule "wasp/drivers/flash"]
 	path = wasp/drivers/flash
 	url = https://github.com/daniel-thompson/micropython-eeprom
+[submodule "tools/pynus"]
+	path = tools/pynus
+	url = https://github.com/aykevl/pynus
