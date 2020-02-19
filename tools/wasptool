@@ -83,11 +83,14 @@ def handle_rtc(c):
 def handle_upload(c, fname):
     verbose = bool(c.logfile)
 
+    c.sendline('from shell import upload')
+    c.expect('>>> ')
+
     with open(fname) as f:
         if not verbose:
             print(f'Uploading {fname} ...', end='', flush=True)
 
-        c.sendline(f'upload("{fname}")')
+        c.sendline(f'upload("{os.path.basename(fname)}")')
         c.expect('=== ')
         paste(c, f, verbose)
         c.send('\x04')
