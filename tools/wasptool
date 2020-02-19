@@ -77,7 +77,7 @@ def handle_rtc(c):
         now = time.localtime()
 
     # Set the time
-    c.sendline(f'watch.rtc.set_time(({now[3]}, {now[4]}, {now[5]}))')
+    c.sendline(f'watch.rtc.set_localtime(({now[0]}, {now[1]}, {now[2]}, {now[3]}, {now[4]}, {now[5]}, {now[6]}, {now[7]}))')
     c.expect('>>> ')
 
 def handle_upload(c, fname):

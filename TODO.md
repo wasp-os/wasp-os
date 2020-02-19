@@ -58,6 +58,7 @@ applications.
 
 ## WASP
 
+ * [X] Add dd/mm/yyyy support to RTC
  * [ ] Button driver (interrupt based)
  * [ ] Touch sensor driver
  * [ ] Event driven application framework

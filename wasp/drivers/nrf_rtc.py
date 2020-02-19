@@ -1,5 +1,7 @@
 """ Real Time Clock based on the nRF-family low power counter """
 
+import time
+
 #class Stim(object):
 #    def __init__(self):
 #        self(0)
@@ -11,16 +13,12 @@
 #        return self.c
 
 class RTC(object):
-    """Real Time Clock based on the nRF-family low power counter.
-
-    TODO: Maintain hh:mm:ss as an array so we can report time
-          without memory allocation.
-    """
+    """Real Time Clock based on the nRF-family low power counter."""
 
     def __init__(self, counter):
         self.counter = counter
         self.uptime = 0
-        self.set_time((12, 0, 0))
+        self.set_localtime((2020, 2, 18, 12, 0, 0, 0, 0))
 
     def update(self):
         newcount = self.counter.counter()
@@ -34,25 +32,28 @@ class RTC(object):
         self.lastcount &= (1 << 24) - 1   
 
         self.uptime += elapsed
-
-        self.ss += elapsed
-        if self.ss >= 60:
-            self.mm += self.ss // 60
-            self.ss %= 60
-
-            if self.mm >= 60:
-                self.hh += self.mm // 60
-                self.mm %= 60
-                self.hh %= 24
-
         return True
 
-    def set_time(self, t):
+    def set_localtime(self, t):
         self.lastcount = self.counter.counter()
-        self.hh = t[0]
-        self.mm = t[1]
-        self.ss = t[2]
+
+        if len(t) < 8:
+            yyyy = t[0]
+            mm = t[1]
+            dd = t[2]
+            HH = t[3]
+            MM = t[4]
+            SS = t[5]
+
+            t = (yyyy, mm, dd, HH, MM, SS, 0, 0)
+
+        lt = time.mktime(t)
+        self.offset = lt - self.uptime
+
+    def get_localtime(self):
+        self.update()
+        return time.localtime(self.offset + self.uptime)
 
     def get_time(self):
-        self.update()
-        return (self.hh, self.mm, self.ss)
+        localtime = self.get_localtime()
+        return localtime[3:6]

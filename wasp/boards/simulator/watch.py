@@ -74,6 +74,9 @@ class RTC(object):
         self.uptime = now
         return True
 
+    def get_localtime(self):
+        return time.localtime()
+
     def get_time(self):
         now = time.localtime()
         return (now[3], now[4], now[5])
