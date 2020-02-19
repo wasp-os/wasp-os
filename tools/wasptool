@@ -129,10 +129,6 @@ if __name__ == '__main__':
     time.sleep(0.5)
     sync(console)
 
-    if args.console:
-        console.close()
-        os.execl(pynus, pynus)
-
     if args.eval:
         handle_eval(console, args.eval)
 
@@ -144,5 +140,9 @@ if __name__ == '__main__':
 
     if args.rtc:
         handle_rtc(console)
+
+    if args.console:
+        console.close()
+        os.execl(pynus, pynus)
 
     unsync(console)
