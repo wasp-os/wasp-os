@@ -2,3 +2,4 @@
 *.zip
 .*.swp
 __pycache__
+attic/
