@@ -1,17 +1,17 @@
-import fonts
+import fonts.clock as digits
 import widgets
 
 DIGITS = (
-        fonts.clock_0,
-        fonts.clock_1,
-        fonts.clock_2,
-        fonts.clock_3,
-        fonts.clock_4,
-        fonts.clock_5,
-        fonts.clock_6,
-        fonts.clock_7,
-        fonts.clock_8,
-        fonts.clock_9
+        digits.clock_0,
+        digits.clock_1,
+        digits.clock_2,
+        digits.clock_3,
+        digits.clock_4,
+        digits.clock_5,
+        digits.clock_6,
+        digits.clock_7,
+        digits.clock_8,
+        digits.clock_9
 )
 
 class ClockApp(object):
