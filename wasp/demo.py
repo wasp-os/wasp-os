@@ -7,7 +7,7 @@
 # len(colors) is not a multiple of 5 ;-) ).
 #
 
-import watch, logo, time, gc
+import watch, logo, time, gc, draw565
 
 colors = (
         0xffff,
@@ -24,6 +24,18 @@ colors = (
         0xf81f, # magenta
     )
 
+draw = draw565.Draw565(watch.display)
+
+def textdemo():
+    watch.display.fill(0)
+    draw.string("The quick brown", 12, 24)
+    draw.string("fox jumped over", 12, 48)
+    draw.string("the lazy dog.", 12, 72)
+    time.sleep(2)
+    draw.string("0123456789", 12, 120)
+    draw.string('!"£$%^&*()', 12, 144)
+    time.sleep(3)
+
 def run():
     l = logo.pine64
     i = 0
@@ -33,6 +45,8 @@ def run():
 
     while True:
         for c in colors:
+            if i == 2:
+                textdemo()
             if i < 5:
                 i += 1
             else:
@@ -46,3 +60,4 @@ def run():
             watch.display.rleblit(l, fg=c)
             time.sleep(2)
             gc.collect()
+

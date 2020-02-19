@@ -93,6 +93,10 @@ class ST7789(object):
         self.write_data(bytearray([y >> 8, y & 0xff, yp >> 8, yp & 0xff]))
         self.write_cmd(_RAMWR)
 
+    def rawblit(self, buf, x, y, width, height):
+        self.set_window(x, y, width, height)
+        self.write_data(buf)
+
     def fill(self, bg, x=0, y=0, w=None, h=None):
         if not w:
             w = self.width - x
