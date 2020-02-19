@@ -8,10 +8,8 @@ to allow a PineTime case to be confidently glued shut.
 
  * [X] Basic board ports (PineTime, DS-D6, 96Boards Nitrogen)
  * [X] OTA application update
- * [ ] OTA bootloader update
  * [X] Enable watchdog before starting the application
  * [X] Splash screen
- * [ ] Stay in bootloader after battery run down
  * [X] Ignore start button for first few seconds
   
 ## MicroPython
@@ -23,15 +21,15 @@ to allow a PineTime case to be confidently glued shut.
  
 ## WASP
 
- * [ ] Display driver
+ * [X] Display driver
    - [X] Display initialization
-   - [ ] Bitmap blitting
+   - [X] Bitmap blitting
    - [X] RLE coder and decoder
-   - [ ] Optimized RLE inner loops
+   - [X] Optimized RLE inner loops
  * [X] Backlight driver
  * [X] Button driver (polling)
  * [X] Battery/charger driver
- * [ ] Simple clock and battery level application
+ * [X] Simple clock and battery level application
  * [X] Basic (WFI) power saving
  * [X] Implement simple RTC for nrf52
 
@@ -46,14 +44,16 @@ applications.
 
 ## Bootloader
 
+ * [ ] OTA bootloader update
+ * [ ] Stay in bootloader after battery run down
  * [ ] Implement power off support (no splash screen)
  * [ ] RTC time measurement whilst in bootloader
 
 ## MicroPython
 
- * [ ] SPI FLASH driver
- * [ ] Enable LittleFS on SPI FLASH (at boot)
- * [ ] BLE file transfer
+ * [X] SPI FLASH driver
+ * [X] Enable LittleFS on SPI FLASH (at boot)
+ * [X] BLE file transfer
  * [ ] Full power saving
 
 ## WASP
@@ -64,7 +64,7 @@ applications.
  * [ ] Event driven application framework
  * [ ] Stopwatch app
  * [ ] Settings app
- * [ ] PC-hosted simulation platform
+ * [X] PC-hosted simulation platform
  * [ ] Documentation
    - [ ] Sphinx framework and integration with github.io
    - [ ] Document bootloader protocols

@@ -84,4 +84,4 @@ wasp.run()
 ~~~
 
 As mentioned above there are many drivers and features still to be
-developed, see the [TODO list](todo.md) for current status.
+developed, see the [TODO list](TODO.md) for current status.
