@@ -1,6 +1,9 @@
 Watch Application System in Python
 ==================================
 
+Introduction
+------------
+
 Currently in its infancy wasp-os provides nothing more than a simple
 digital clock application for [PineTime](https://www.pine64.org/pinetime/)
 together with access to the MicroPython REPL for interactive testing and

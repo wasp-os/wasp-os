@@ -1,10 +1,12 @@
-# M1: Dumb watch feature parity
+# Roadmap
+
+## M1: Dumb watch feature parity
 
 The focus for M1 is to get WASP both to meet feature parity with a dumb
 watch and to have a bootloader and watchdog strategy that is robust enough
 to allow a PineTime case to be confidently glued shut.
 
-## Bootloader
+### Bootloader
 
  * [X] Basic board ports (PineTime, DS-D6, 96Boards Nitrogen)
  * [X] OTA application update
@@ -12,14 +14,14 @@ to allow a PineTime case to be confidently glued shut.
  * [X] Splash screen
  * [X] Ignore start button for first few seconds
   
-## MicroPython
+### MicroPython
 
  * [X] Basic board ports (PineTime, DS-D6, 96Boards Nitrogen)
  * [X] Long press reset (conditional feeding of the watchdog)
    - [X] Feed dog from REPL polling loop
    - [X] Feed dog from a tick interrupt
  
-## WASP
+### WASP
 
  * [X] Display driver
    - [X] Display initialization
@@ -33,7 +35,7 @@ to allow a PineTime case to be confidently glued shut.
  * [X] Basic (WFI) power saving
  * [X] Implement simple RTC for nrf52
 
-# M2: Great developer experience
+## M2: Great developer experience
 
 The focus for M2 is to make development faster and easier by providing
 a file system and file transfer code. This allows much faster
@@ -42,21 +44,21 @@ Additionally support for multiple event-driven applications will be
 added during M2 to further help developers by providing example
 applications.
 
-## Bootloader
+### Bootloader
 
  * [ ] OTA bootloader update
  * [ ] Stay in bootloader after battery run down
  * [ ] Implement power off support (no splash screen)
  * [ ] RTC time measurement whilst in bootloader
 
-## MicroPython
+### MicroPython
 
  * [X] SPI FLASH driver
  * [X] Enable LittleFS on SPI FLASH (at boot)
  * [X] BLE file transfer
  * [ ] Full power saving
 
-## WASP
+### WASP
 
  * [X] Add dd/mm/yyyy support to RTC
  * [ ] Button driver (interrupt based)
@@ -70,12 +72,12 @@ applications.
    - [ ] Document bootloader protocols
    - [ ] Write full docstring documentation for all WASP components
 
-# M3: Smartwatch
+## M3: Smartwatch
 
 At M3 we start to build out full fitness tracking and notification
 functionality.
 
-## WASP
+### WASP
 
  * [ ] Enable heart rate sensor
    - [ ] HRS3300 driver

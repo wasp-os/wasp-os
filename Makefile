@@ -54,10 +54,14 @@ debug:
 		-ex "attach 1" \
 		-ex "load"
 
+docs:
+	$(MAKE) -C docs html
+
+
 sim:
 	PYTHONDONTWRITEBYTECODE=1 \
 	PYTHONPATH=$(PWD)/wasp/boards/simulator:$(PWD)/wasp \
-	python3 -i wasp/boot.py
+	python3 -i wasp/main.py
 
-.PHONY: bootloader micropython
+.PHONY: bootloader docs micropython
 
