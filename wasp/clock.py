@@ -19,12 +19,17 @@ DIGITS = (
 MONTH = 'JanFebMarAprMayJunJulAugSepOctNovDec'
 
 class ClockApp(object):
+    """Simple digital clock application.
+
+    Shows a time (as HH:MM) together with a battery meter and the date.
+    """
 
     def __init__(self):
         self.on_screen = ( -1, -1, -1, -1, -1, -1 )
         self.meter = widgets.BatteryMeter()
 
     def draw(self, watch):
+        """Redraw the display from scratch."""
         display = watch.display
 
         display.fill(0)
@@ -34,6 +39,11 @@ class ClockApp(object):
         self.meter.draw()
 
     def update(self, watch):
+        """Update the display (if needed).
+
+        The updates are a lazy as possible and rely on an prior call to
+        draw() to ensure the screen is suitably prepared.
+        """
         now = watch.rtc.get_localtime()
         if now[3] == self.on_screen[3] and now[4] == self.on_screen[4]:
             if now[5] != self.on_screen[5]:
@@ -51,7 +61,7 @@ class ClockApp(object):
         draw = Draw565(display)
         month = now[1] - 1
         month = MONTH[month*3:(month+1)*3]
-        draw.string('{}-{}-{}'.format(now[2], month, now[0]),
+        draw.string('{} {} {}'.format(now[2], month, now[0]),
                 0, 180, width=240)
 
         self.meter.update()
