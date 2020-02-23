@@ -13,7 +13,7 @@
 import os
 import sys
 sys.path.insert(0, os.path.abspath('../wasp'))
-sys.path.insert(0, os.path.abspath('../wasp/boards/simulator'))
+sys.path.insert(0, os.path.abspath('../wasp/boards/sphinx'))
 
 
 # -- Project information -----------------------------------------------------
