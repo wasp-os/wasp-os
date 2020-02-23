@@ -9,12 +9,16 @@ from machine import SPI
 from drivers.st7789 import ST7789_SPI
 from drivers.vibrator import Vibrator
 
+button = Pin('BUTTON', Pin.IN, quiet=True)
+
 class Backlight(object):
     def __init__(self, level=1):
         self.set(level)
 
     def set(self, level):
         print(f'BACKLIGHT: {level}')
+
+        button.value(bool(level))
 
 class Display(ST7789_SPI):
     def __init__(self):
@@ -45,10 +49,10 @@ class Battery(object):
 
     def voltage_mv(self):
         if self.voltage > 4:
-            self.step = -0.005
+            self.step = -0.01
             self.powered = False
         elif self.voltage < 3.4:
-            self.step = 0.01
+            self.step = 0.04
             self.powered = True
         self.voltage += self.step
 
@@ -89,5 +93,4 @@ backlight = Backlight()
 battery = Battery()
 rtc = RTC()
 vibrator = Vibrator(Pin('MOTOR', Pin.OUT, value=0), active_low=True)
-button = Pin('BUTTON', Pin.IN, quiet=True)
 

@@ -36,8 +36,9 @@ class ClockApp(object):
     def update(self, watch):
         now = watch.rtc.get_localtime()
         if now[3] == self.on_screen[3] and now[4] == self.on_screen[4]:
-            if now[5] % 2 == 0:
+            if now[5] != self.on_screen[5]:
                 self.meter.update()
+                self.on_screen = now
             return False
 
         display = watch.display
