@@ -55,7 +55,9 @@ debug:
 		-ex "load"
 
 docs:
+	$(RM) -rf docs/build/html/*
 	$(MAKE) -C docs html
+	touch docs/build/html/.nojekyll
 
 
 sim:
