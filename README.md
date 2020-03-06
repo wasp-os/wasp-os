@@ -20,8 +20,11 @@ only on BLE for updates.
 
 ![wasp-os digital clock app running on PineTime](res/clock_app.jpg)
 
-Video
------
+Videos
+------
+
+[![Developing for Pine64 PineTime using wasp-os and
+MicroPython](https://img.youtube.com/vi/kf1VHj587Mc/1.jpg)](https://www.youtube.com/watch?v=kf1VHj587Mc)
 
 [![WASP bootloader and MicroPython running on Pine64 PineTime](https://img.youtube.com/vi/W0CmqOnl4jk/1.jpg)](https://www.youtube.com/watch?v=W0CmqOnl4jk)
 
