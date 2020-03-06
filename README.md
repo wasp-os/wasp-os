@@ -23,10 +23,11 @@ only on BLE for updates.
 Videos
 ------
 
-[![Developing for Pine64 PineTime using wasp-os and
-MicroPython](https://img.youtube.com/vi/kf1VHj587Mc/1.jpg)](https://www.youtube.com/watch?v=kf1VHj587Mc)
+[![Developing for Pine64 PineTime using wasp-os and MicroPython](https://img.youtube.com/vi/kf1VHj587Mc/1.jpg)](https://www.youtube.com/watch?v=kf1VHj587Mc)
+[Developing for Pine64 PineTime using wasp-os and MicroPython](https://www.youtube.com/watch?v=kf1VHj587Mc)
 
 [![WASP bootloader and MicroPython running on Pine64 PineTime](https://img.youtube.com/vi/W0CmqOnl4jk/1.jpg)](https://www.youtube.com/watch?v=W0CmqOnl4jk)
+[WASP bootloader and MicroPython running on Pine64 PineTime](https://www.youtube.com/watch?v=W0CmqOnl4jk)
 
 Building from a git clone
 -------------------------
