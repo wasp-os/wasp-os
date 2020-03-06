@@ -18,8 +18,6 @@ form-factor devices without a reset button, power switch, SWD debugger
 or UART. This allows us to confidently develop on sealed devices relying
 only on BLE for updates.
 
-![wasp-os digital clock app running on PineTime](res/clock_app.jpg)
-
 Videos
 ------
 
@@ -92,3 +90,9 @@ wasp.run()
 
 As mentioned above there are many drivers and features still to be
 developed, see the [TODO list](TODO.md) for current status.
+
+Screenshots
+-----------
+
+![wasp-os digital clock app running on PineTime](res/clock_app.jpg)
+
