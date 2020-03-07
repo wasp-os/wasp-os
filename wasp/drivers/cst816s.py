@@ -1,13 +1,11 @@
 """Hynitron CST816S touch contoller driver for MicroPython."""
 
-import watch
-
 class CST816S:
     """Hynitron CST816S I2C touch controller driver."""
     
-    def __init__(self):
+    def __init__(self, bus):
+        self.i2c = bus
         self.dbuf = bytearray(6)
-        pass
 
     def get_event(self, queue):
         """Receive a touch event.
@@ -20,7 +18,7 @@ class CST816S:
         dbuf = self.dbuf
 
         try:
-            watch.i2c.readfrom_mem_into(21, 1, dbuf)
+            self.i2c.readfrom_mem_into(21, 1, dbuf)
         except OSError:
             return False
 
