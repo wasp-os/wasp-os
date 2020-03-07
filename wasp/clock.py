@@ -1,5 +1,7 @@
 import fonts.clock as digits
+import watch
 import widgets
+import manager
 
 from draw565 import Draw565
 
@@ -25,20 +27,40 @@ class ClockApp(object):
     """
 
     def __init__(self):
-        self.on_screen = ( -1, -1, -1, -1, -1, -1 )
         self.meter = widgets.BatteryMeter()
 
-    def draw(self, watch):
+    def handle_event(self, event_view):
+        """Process events that the app is subscribed to."""
+        if event_view[0] == manager.EVENT_TICK:
+            self.update()
+        else:
+            # TODO: Raise an unexpected event exception
+            pass
+
+    def foreground(self, manager, effect=None):
+        """Activate the application."""
+        self.on_screen = ( -1, -1, -1, -1, -1, -1 )
+        self.draw(effect)
+        manager.request_tick(1000)
+
+    def tick(self, ticks):
+        self.update()
+
+    def background(self):
+        """De-activate the application (without losing state)."""
+        pass
+
+    def draw(self, effect=None):
         """Redraw the display from scratch."""
         display = watch.display
 
         display.fill(0)
         display.rleblit(digits.clock_colon, pos=(2*48, 80), fg=0xb5b6)
         self.on_screen = ( -1, -1, -1, -1, -1, -1 )
-        self.update(watch)
+        self.update()
         self.meter.draw()
 
-    def update(self, watch):
+    def update(self):
         """Update the display (if needed).
 
         The updates are a lazy as possible and rely on an prior call to
