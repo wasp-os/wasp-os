@@ -1,4 +1,4 @@
-""" Simulated ST7789 display. """
+""" Simulated ST7789 display and CST816S touchscreen. """
 
 import sys
 import sdl2
@@ -8,23 +8,17 @@ CASET = 0x2a
 RASET = 0x2b
 RAMWR = 0x2c
 
-class ST7789Sim(object):
-    def __init__(self, width=240, height=240):
-        sdl2.ext.init()
+WIDTH = 240
+HEIGHT = 240
 
-        self.width = width
-        self.height = height
+class ST7789Sim(object):
+    def __init__(self):
 
         self.x = 0
         self.y = 0
-        self.colclip = [0, width-1]
-        self.rowclip = [0, height-1]
+        self.colclip = [0, WIDTH-1]
+        self.rowclip = [0, HEIGHT-1]
         self.cmd = 0
-
-        self.window = sdl2.ext.Window("ST7789", size=(width, height))
-        self.window.show()
-        self.windowsurface = self.window.get_surface()
-        sdl2.ext.fill(self.windowsurface, (0, 0, 0))
 
     def write(self, data):
         if len(data) == 1:
@@ -44,7 +38,7 @@ class ST7789Sim(object):
             self.y = self.rowclip[0]
 
         elif self.cmd == RAMWR:
-            pixelview = sdl2.ext.PixelView(self.windowsurface)
+            pixelview = sdl2.ext.PixelView(windowsurface)
 
             half = False
             for d in data:
@@ -70,4 +64,61 @@ class ST7789Sim(object):
             
             # Forcibly release the surface to ensure it is unlocked
             del pixelview
-            self.window.refresh()
+            window.refresh()
+
+class CST816SSim():
+    def __init__(self):
+        self.regs = bytearray(64)
+
+    def readfrom_mem_into(self, addr, reg, dbuf):
+        tick()
+
+        if not self.regs[1]:
+            raise OSError
+
+        dbuf[:] = self.regs[reg:len(dbuf)+reg]
+        self.regs[1] = 0
+
+    def handle_key(self, key):
+        if key.keysym.sym == sdl2.SDLK_DOWN:
+            self.regs[1] = 1
+        elif key.keysym.sym == sdl2.SDLK_UP:
+            self.regs[1] = 2
+        elif key.keysym.sym == sdl2.SDLK_LEFT:
+            self.regs[1] = 3
+        elif key.keysym.sym == sdl2.SDLK_RIGHT:
+            self.regs[1] = 4
+        self.raise_interrupt()
+
+    def handle_mousebutton(self, button):
+        self.regs[1] = 5
+        self.regs[4] = button.x
+        self.regs[6] = button.y
+        self.raise_interrupt()
+
+    def raise_interrupt(self):
+        print('#INT')
+
+sdl2.ext.init()
+window = sdl2.ext.Window("ST7789", size=(WIDTH, HEIGHT))
+window.show()
+windowsurface = window.get_surface()
+sdl2.ext.fill(windowsurface, (0, 0, 0))
+
+spi_st7789_sim = ST7789Sim()
+i2c_cst816s_sim = CST816SSim()
+
+def tick():
+    events = sdl2.ext.get_events()
+    for event in events:
+        if event.type == sdl2.SDL_QUIT:
+            sdl2.ext.quit()
+            sys.exit(0)
+        elif event.type == sdl2.SDL_MOUSEBUTTONDOWN:
+            i2c_cst816s_sim.handle_mousebutton(event.button)
+        elif event.type == sdl2.SDL_KEYDOWN:
+            i2c_cst816s_sim.handle_key(event.key)
+        else:
+            #print(event)
+            pass
+    window.refresh()

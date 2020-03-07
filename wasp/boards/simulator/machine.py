@@ -55,7 +55,7 @@ class SPI(object):
     def __init__(self, id):
         self._id = id
         if id == 0:
-            self.sim = display.ST7789Sim()
+            self.sim = display.spi_st7789_sim
         else:
             self.sim = None
 
@@ -68,8 +68,22 @@ class SPI(object):
         else:
             print("Sending data: " + str(buf))
 
+class I2C():
+    def __init__(self, id):
+        self.id = id
+        if id == 0:
+            self.sim = display.i2c_cst816s_sim
+        else:
+            self.sim = None
+
+    def readfrom_mem_into(self, addr, reg, dbuf):
+        if self.sim:
+            self.sim.readfrom_mem_into(addr, reg, dbuf)
+        else:
+            raise OSError
+
 def lightsleep(ms=10):
-    """TODO: This where we should manage the simulated components"""
+    display.tick()
     time.sleep(ms / 1000)
 
 def deepsleep(ms=10):

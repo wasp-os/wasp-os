@@ -3,9 +3,11 @@ def sleep_ms(ms):
     time.sleep(ms / 1000)
 time.sleep_ms = sleep_ms
 
+from machine import I2C
 from machine import Pin
 from machine import SPI
 
+from drivers.cst816s import CST816S
 from drivers.st7789 import ST7789_SPI
 from drivers.vibrator import Vibrator
 
@@ -86,9 +88,13 @@ class RTC(object):
         return (now[3], now[4], now[5])
 
     def uptime(self):
-        return time.time
+        return time.time()
+
+    def get_uptime_ms(self):
+        return int(time.time() * 1000)
 
 display = Display()
+touch = CST816S(I2C(0))
 backlight = Backlight()
 battery = Battery()
 rtc = RTC()
