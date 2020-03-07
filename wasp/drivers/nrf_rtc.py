@@ -57,3 +57,7 @@ class RTC(object):
     def get_time(self):
         localtime = self.get_localtime()
         return localtime[3:6]
+
+    def get_uptime_ms(self):
+        """Return the current uptime in milliseconds."""
+        return self.uptime * 1000
