@@ -7,11 +7,13 @@ rtc.counter.start()
 import os
 import time
 
+from machine import I2C
 from machine import Pin
 #from machine import Signal
 from machine import SPI
 
 from drivers.battery import Battery
+from drivers.cst816s import CST816S
 from drivers.signal import Signal
 from drivers.st7789 import ST7789_SPI
 from drivers.vibrator import Vibrator
@@ -55,8 +57,10 @@ battery = Battery(
         Pin('BATTERY', Pin.IN),
         Signal(Pin('CHARGING', Pin.IN), invert=True),
         Signal(Pin('USB_PWR', Pin.IN), invert=True))
-vibrator = Vibrator(Pin('MOTOR', Pin.OUT, value=0), active_low=True)
 button = Pin('BUTTON', Pin.IN)
+i2c = I2C(1, scl='I2C_SCL', sda='I2C_SDA')
+touch = CST816S(i2c)
+vibrator = Vibrator(Pin('MOTOR', Pin.OUT, value=0), active_low=True)
 
 # Mount the filesystem
 flash = FLASH(spi, (Pin('NOR_CS', Pin.OUT, value=1),))
