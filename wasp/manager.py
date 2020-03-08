@@ -42,7 +42,9 @@ class Manager(object):
         self.tick_expiry = None
 
         self.app = app
+        self.watch.display.mute(True)
         app.foreground(self)
+        self.watch.display.mute(False)
 
     def navigate(self, direction=None):
         """Navigate between different applications.

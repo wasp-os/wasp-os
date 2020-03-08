@@ -1,4 +1,9 @@
-# MicroPython ST7789 display driver, currently only has an SPI interface
+"""Sitronix ST7789 display driver for MicroPython.
+
+Note: Although the ST7789 supports a variety of communication protocols
+currently this driver only has support for SPI interfaces. However it is
+structured such that other serial protocols can easily be added.
+"""
 
 import micropython
 
@@ -12,6 +17,7 @@ _SLPOUT             = const(0x11)
 _NORON              = const(0x13)
 _INVOFF             = const(0x20)
 _INVON              = const(0x21)
+_DISPOFF            = const(0x28)
 _DISPON             = const(0x29)
 _CASET              = const(0x2a)
 _RASET              = const(0x2b)
@@ -77,6 +83,12 @@ class ST7789(object):
             self.write_cmd(_INVON)
         else:
             self.write_cmd(_INVOFF)
+
+    def mute(self, mute):
+        if mute:
+            self.write_cmd(_DISPOFF)
+        else:
+            self.write_cmd(_DISPON)
 
     def set_window(self, x=0, y=0, width=None, height=None):
         if not width:
