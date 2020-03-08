@@ -1,11 +1,12 @@
 """Hynitron CST816S touch contoller driver for MicroPython.
 
-After modifying this file we can replace the frozen driver with the
-test driver with the following command::
+After modifying this file we can test the changes by replacing the
+frozen driver with the modified driver. The following command will
+upload the code and integrate it into the watch namespace::
 
-    ./tools/wasptool \
-            --exec wasp/drivers/cst816s.py \
-            --eval "watch.touch = CST816S(watch.i2c)"`
+    ./tools/wasptool\
+      --exec wasp/drivers/cst816s.py\
+      --eval "watch.touch = CST816S(watch.i2c)"`
 """
 
 import array
