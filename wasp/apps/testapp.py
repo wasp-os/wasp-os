@@ -3,8 +3,6 @@ import widgets
 import manager
 import machine
 
-from draw565 import Draw565
-
 class TestApp():
     """Simple test application.
     """
@@ -12,7 +10,6 @@ class TestApp():
     def __init__(self):
         self.tests = ('Touch', 'String')
         self.test = self.tests[0]
-        self.drawable = Draw565(watch.display)
 
     def foreground(self, system, effect=None):
         """Activate the application."""
@@ -36,7 +33,7 @@ class TestApp():
         self.draw()
 
     def touch(self, event):
-        draw = self.drawable
+        draw = watch.drawable
         if self.test == 'Touch':
             draw.string('({}, {})'.format(event[1], event[2]),
                     0, 108, width=240)
@@ -60,6 +57,6 @@ class TestApp():
         """Redraw the display from scratch."""
         watch.display.mute(True)
         watch.display.fill(0)
-        self.drawable.string('{} test'.format(self.test),
+        watch.drawable.string('{} test'.format(self.test),
                 0, 6, width=240)
         watch.display.mute(False)

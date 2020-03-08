@@ -101,7 +101,7 @@ class CST816SSim():
         self.raise_interrupt()
 
     def raise_interrupt(self):
-        print('#INT')
+        pass
 
 sdl2.ext.init()
 window = sdl2.ext.Window("ST7789", size=(WIDTH, HEIGHT))

@@ -3,6 +3,8 @@ def sleep_ms(ms):
     time.sleep(ms / 1000)
 time.sleep_ms = sleep_ms
 
+import draw565
+
 from machine import I2C
 from machine import Pin
 from machine import SPI
@@ -11,29 +13,21 @@ from drivers.cst816s import CST816S
 from drivers.st7789 import ST7789_SPI
 from drivers.vibrator import Vibrator
 
-button = Pin('BUTTON', Pin.IN, quiet=True)
 
 class Backlight(object):
     def __init__(self, level=1):
-        self.set(level)
+        pass
 
     def set(self, level):
+        """Set the simulated backlight level.
+
+        This function contains a subtle trick. As soon as the backlight is
+        turned off (e.g. the watch goes to sleep) then we will simulate
+        a button press in order to turn the watch back on again.
+        """
         print(f'BACKLIGHT: {level}')
 
         button.value(bool(level))
-
-class Display(ST7789_SPI):
-    def __init__(self):
-        spi = SPI(0)
-        # Mode 3, maximum clock speed!
-        spi.init(polarity=1, phase=1, baudrate=8000000)
-    
-        # Configure the display
-        cs = Pin("DISP_CS", Pin.OUT, quiet=True)
-        dc = Pin("DISP_DC", Pin.OUT, quiet=True)
-        rst = Pin("DISP_RST", Pin.OUT, quiet=True)
-
-        super().__init__(240, 240, spi, cs=cs, dc=dc, res=rst)
 
 class Battery(object):
     def __init__(self):
@@ -93,10 +87,18 @@ class RTC(object):
     def get_uptime_ms(self):
         return int(time.time() * 1000)
 
-display = Display()
-touch = CST816S(I2C(0))
 backlight = Backlight()
+spi = SPI(0)
+spi.init(polarity=1, phase=1, baudrate=8000000)
+display = ST7789_SPI(240, 240, spi,
+        cs=Pin("DISP_CS", Pin.OUT, quiet=True),
+        dc=Pin("DISP_DC", Pin.OUT, quiet=True),
+        res=Pin("DISP_RST", Pin.OUT, quiet=True))
+drawable = draw565.Draw565(display)
+
 battery = Battery()
+button = Pin('BUTTON', Pin.IN, quiet=True)
 rtc = RTC()
+touch = CST816S(I2C(0))
 vibrator = Vibrator(Pin('MOTOR', Pin.OUT, value=0), active_low=True)
 

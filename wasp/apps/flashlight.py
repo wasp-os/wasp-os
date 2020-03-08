@@ -1,8 +1,6 @@
 import watch
 import manager
 
-from draw565 import Draw565
-
 class FlashlightApp(object):
     """Trivial flashlight application.
 

@@ -3,8 +3,6 @@ import watch
 import widgets
 import manager
 
-from draw565 import Draw565
-
 DIGITS = (
         digits.clock_0,
         digits.clock_1,
@@ -86,7 +84,7 @@ class ClockApp(object):
         display.rleblit(DIGITS[now[3] // 10], pos=(0*48, 80), fg=0xbdb6)
         self.on_screen = now
 
-        draw = Draw565(display)
+        draw = watch.drawable
         month = now[1] - 1
         month = MONTH[month*3:(month+1)*3]
         draw.string('{} {} {}'.format(now[2], month, now[0]),

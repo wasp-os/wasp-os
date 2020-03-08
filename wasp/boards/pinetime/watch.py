@@ -7,6 +7,8 @@ rtc.counter.start()
 import os
 import time
 
+import draw565
+
 from machine import I2C
 from machine import Pin
 #from machine import Signal
@@ -51,6 +53,7 @@ display = ST7789_SPI(240, 240, spi,
         cs=Pin("DISP_CS", Pin.OUT),
         dc=Pin("DISP_DC", Pin.OUT),
         res=Pin("DISP_RST", Pin.OUT))
+drawable = draw565.Draw565(display)
 
 # Setup the last few bits and pieces
 battery = Battery(
