@@ -50,6 +50,12 @@ class ClockApp(object):
         """De-activate the application (without losing state)."""
         pass
 
+    def sleep(self):
+        return True
+
+    def wake(self):
+        self.update()
+
     def draw(self, effect=None):
         """Redraw the display from scratch."""
         display = watch.display

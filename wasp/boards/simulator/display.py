@@ -77,7 +77,10 @@ class CST816SSim():
             raise OSError
 
         dbuf[:] = self.regs[reg:len(dbuf)+reg]
-        self.regs[1] = 0
+        if self.regs[3]:
+            self.regs[3] = 0
+        else:
+            self.regs[1] = 0
 
     def handle_key(self, key):
         if key.keysym.sym == sdl2.SDLK_DOWN:
@@ -88,6 +91,7 @@ class CST816SSim():
             self.regs[1] = 3
         elif key.keysym.sym == sdl2.SDLK_RIGHT:
             self.regs[1] = 4
+        self.regs[3] = 0x80
         self.raise_interrupt()
 
     def handle_mousebutton(self, button):
