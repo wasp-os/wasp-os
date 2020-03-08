@@ -82,6 +82,27 @@ class I2C():
         else:
             raise OSError
 
+class Timer():
+    def __init__(self, id, period=1000000):
+        self.then = None
+        self.period = period
+
+    def start(self):
+        self.then = time.time()
+
+    def stop(self):
+        self.then = None
+
+    def time(self):
+        now = time.time()
+        elapsed_sec = now - self.then
+        elapsed_us = int(elapsed_sec * 1000000)
+
+        return elapsed_us % self.period
+
+    def period(self):
+        self.time()
+
 def lightsleep(ms=10):
     display.tick()
     time.sleep(ms / 1000)

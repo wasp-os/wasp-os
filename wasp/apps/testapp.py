@@ -1,6 +1,7 @@
 import watch
 import widgets
 import manager
+import machine
 
 from draw565 import Draw565
 
@@ -38,14 +39,20 @@ class TestApp():
         draw = self.drawable
         if self.test == 'Touch':
             draw.string('({}, {})'.format(event[1], event[2]),
-                    0, 180, width=240)
+                    0, 108, width=240)
         elif self.test == 'String':
             watch.display.fill(0, 0, 30, 240, 240-30)
+            t = machine.Timer(id=1, period=8000000)
+            t.start()
             draw.string("The quick brown", 12, 24+24)
             draw.string("fox jumped over", 12, 24+48)
             draw.string("the lazy dog.", 12, 24+72)
             draw.string("0123456789", 12, 24+120)
             draw.string('!"£$%^&*()', 12, 24+144)
+            elapsed = t.time()
+            t.stop()
+            del t
+            draw.string('{}s'.format(elapsed / 1000000), 12, 24+192)
 
         return True
 
