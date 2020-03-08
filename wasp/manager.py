@@ -1,8 +1,9 @@
-import clock
-import flashlight
-import testapp
 import gc
 import machine
+
+from apps.clock import ClockApp
+from apps.flashlight import FlashlightApp
+from apps.testapp import TouchTestApp
 
 DOWN = 1
 UP = 2
@@ -19,9 +20,9 @@ class Manager(object):
         self.app = None
 
         self.applications = [
-                clock.ClockApp(),
-                flashlight.FlashlightApp(),
-                testapp.TouchTestApp()
+                ClockApp(),
+                FlashlightApp(),
+                TouchTestApp()
             ]
 
         self.watch.display.poweron()

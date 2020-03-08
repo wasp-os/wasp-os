@@ -11,7 +11,7 @@ System management
 Applications
 ------------
 
-.. automodule:: clock
+.. automodule:: apps.clock
    :members:
    :undoc-members:
 
