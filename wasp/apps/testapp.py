@@ -58,6 +58,8 @@ class TestApp():
 
     def draw(self, effect=None):
         """Redraw the display from scratch."""
+        watch.display.mute(True)
         watch.display.fill(0)
         self.drawable.string('{} test'.format(self.test),
                 0, 6, width=240)
+        watch.display.mute(False)
