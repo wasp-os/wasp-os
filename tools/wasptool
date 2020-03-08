@@ -129,17 +129,17 @@ if __name__ == '__main__':
     time.sleep(0.5)
     sync(console)
 
-    if args.eval:
-        handle_eval(console, args.eval)
+    if args.rtc:
+        handle_rtc(console)
 
     if args.exec:
         handle_exec(console, args.exec)
 
+    if args.eval:
+        handle_eval(console, args.eval)
+
     if args.upload:
         handle_upload(console, args.upload)
-
-    if args.rtc:
-        handle_rtc(console)
 
     if args.console:
         console.close()
