@@ -3,7 +3,7 @@ import machine
 
 from apps.clock import ClockApp
 from apps.flashlight import FlashlightApp
-from apps.testapp import TouchTestApp
+from apps.testapp import TestApp
 
 DOWN = 1
 UP = 2
@@ -11,7 +11,9 @@ LEFT = 3
 RIGHT = 4
 
 EVENT_TOUCH = 0x0001
-EVENT_BUTTON = 0x0002
+EVENT_SWIPE_LEFTRIGHT = 0x0002
+EVENT_SWIPE_UPDOWN = 0x0004
+EVENT_BUTTON = 0x0008
 
 class Manager(object):
     def __init__(self, watch):
@@ -22,7 +24,7 @@ class Manager(object):
         self.applications = [
                 ClockApp(),
                 FlashlightApp(),
-                TouchTestApp()
+                TestApp()
             ]
 
         self.watch.display.poweron()
@@ -79,8 +81,15 @@ class Manager(object):
     def handle_event(self, event):
         self.sleep_at = self.watch.rtc.uptime + 15
 
+        event_mask = self.event_mask
         if event[0] < 5:
-            self.navigate(event[0])
+            updown = event[0] == 1 or event[0] == 2
+            if (bool(event_mask & EVENT_SWIPE_UPDOWN) and updown) or \
+               (bool(event_mask & EVENT_SWIPE_LEFTRIGHT) and not updown):
+                if not self.app.swipe(event):
+                    self.navigate(event[0])
+            else:
+                self.navigate(event[0])
         elif event[0] == 5 and self.event_mask & EVENT_TOUCH:
             self.app.touch(event)
 
