@@ -47,17 +47,19 @@ def _bounding_box(s, font):
 
     return (w, h)
 
+@micropython.native
 def _draw_glyph(display, glyph, x, y, bgfg):
     (px, h, w) = glyph
 
     buf = memoryview(display.linebuffer)[0:2*(w+1)]
+    buf[2*w] = 0
+    buf[2*w + 1] = 0
     bytes_per_row = (w + 7) // 8
 
+    display.set_window(x, y, w+1, h)
     for row in range(h):
         _bitblit(buf, px[row*bytes_per_row:], bgfg, w)
-        buf[2*w] = 0
-        buf[2*w + 1] = 0
-        display.rawblit(buf, x, y+row, w+1, 1)
+        display.write_data(buf)
 
 class Draw565(object):
     """Drawing library for RGB565 displays.
