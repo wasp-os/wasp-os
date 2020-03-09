@@ -29,6 +29,16 @@ def _bitblit(bitbuf, pixels, bgfg: int, count: int):
             bitselect = 0x80
             pxp += 1
 
+@micropython.viper
+def _fill(mv, color: int, count: int, offset: int):
+    p = ptr8(mv)
+    colorhi = color >> 8
+    colorlo = color & 0xff
+
+    for x in range(count):
+        p[2*(x+offset)    ] = colorhi
+        p[2*(x+offset) + 1] = colorlo
+
 def _bounding_box(s, font):
     w = 0
     for ch in s:
@@ -65,6 +75,44 @@ class Draw565(object):
         self._display = display
         self.set_color(0xffff)
         self.set_font(fonts.sans24)
+
+    def fill(self, bg=None, x=0, y=0, w=None, h=None):
+        """Draw a solid color rectangle.
+
+        If no arguments a provided the whole display will be filled with
+        the background color.
+        """
+        if bg is None:
+            bg = self._bgfg >> 16
+        self._display.fill(bg, x, y, w, h)
+
+    @micropython.native
+    def rleblit(self, image, pos=(0, 0), fg=0xffff, bg=0):
+        """Decode and draw a 1-bit RLE image."""
+        display = self._display
+        (sx, sy, rle) = image
+
+        display.set_window(pos[0], pos[1], sx, sy)
+
+        buf = memoryview(display.linebuffer)[0:2*sx]
+        bp = 0
+        color = bg
+
+        for rl in rle:
+            while rl:
+                count = min(sx - bp, rl)
+                _fill(buf, color, count, bp)
+                bp += count
+                rl -= count
+
+                if bp >= sx:
+                    display.write_data(buf)
+                    bp = 0
+
+            if color == bg:
+                color = fg
+            else:
+                color = bg
 
     def set_color(self, color, bg=0):
         """Set the foreground (color) and background (bg) color.

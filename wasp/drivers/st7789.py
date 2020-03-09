@@ -25,16 +25,6 @@ _RAMWR              = const(0x2c)
 _COLMOD             = const(0x3a)
 _MADCTL             = const(0x36)
 
-@micropython.viper
-def fastfill(mv, color: int, count: int, offset: int):
-    p = ptr8(mv)
-    colorhi = color >> 8
-    colorlo = color & 0xff
-
-    for x in range(count):
-        p[2*(x+offset)    ] = colorhi
-        p[2*(x+offset) + 1] = colorlo
-
 class ST7789(object):
     def __init__(self, width, height):
         self.width = width
@@ -125,31 +115,6 @@ class ST7789(object):
         # Do the fill
         for yi in range(h):
             self.write_data(buf)
-
-    @micropython.native
-    def rleblit(self, image, pos=(0, 0), fg=0xffff, bg=0):
-        (sx, sy, rle) = image
-        self.set_window(pos[0], pos[1], sx, sy)
-
-        buf = memoryview(self.linebuffer)[0:2*sx]
-        bp = 0
-        color = bg
-
-        for rl in rle:
-            while rl:
-                count = min(sx - bp, rl)
-                fastfill(buf, color, count, bp)
-                bp += count
-                rl -= count
-
-                if bp >= sx:
-                    self.write_data(buf)
-                    bp = 0
-
-            if color == bg:
-                color = fg
-            else:
-                color = bg
 
 class ST7789_SPI(ST7789):
     def __init__(self, width, height, spi, cs, dc, res=None, rate=8000000):

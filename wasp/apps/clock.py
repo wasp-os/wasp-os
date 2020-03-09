@@ -56,10 +56,10 @@ class ClockApp(object):
 
     def draw(self, effect=None):
         """Redraw the display from scratch."""
-        display = watch.display
+        draw = watch.drawable
 
-        display.fill(0)
-        display.rleblit(digits.clock_colon, pos=(2*48, 80), fg=0xb5b6)
+        draw.fill()
+        draw.rleblit(digits.clock_colon, pos=(2*48, 80), fg=0xb5b6)
         self.on_screen = ( -1, -1, -1, -1, -1, -1 )
         self.update()
         self.meter.draw()
@@ -77,14 +77,13 @@ class ClockApp(object):
                 self.on_screen = now
             return False
 
-        display = watch.display
-        display.rleblit(DIGITS[now[4]  % 10], pos=(4*48, 80))
-        display.rleblit(DIGITS[now[4] // 10], pos=(3*48, 80), fg=0xbdb6)
-        display.rleblit(DIGITS[now[3]  % 10], pos=(1*48, 80))
-        display.rleblit(DIGITS[now[3] // 10], pos=(0*48, 80), fg=0xbdb6)
+        draw = watch.drawable
+        draw.rleblit(DIGITS[now[4]  % 10], pos=(4*48, 80))
+        draw.rleblit(DIGITS[now[4] // 10], pos=(3*48, 80), fg=0xbdb6)
+        draw.rleblit(DIGITS[now[3]  % 10], pos=(1*48, 80))
+        draw.rleblit(DIGITS[now[3] // 10], pos=(0*48, 80), fg=0xbdb6)
         self.on_screen = now
 
-        draw = watch.drawable
         month = now[1] - 1
         month = MONTH[month*3:(month+1)*3]
         draw.string('{} {} {}'.format(now[2], month, now[0]),

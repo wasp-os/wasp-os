@@ -38,7 +38,7 @@ class TestApp():
             draw.string('({}, {})'.format(event[1], event[2]),
                     0, 108, width=240)
         elif self.test == 'String':
-            watch.display.fill(0, 0, 30, 240, 240-30)
+            draw.fill(0, 0, 30, 240, 240-30)
             t = machine.Timer(id=1, period=8000000)
             t.start()
             draw.string("The quick brown", 12, 24+24)
@@ -56,7 +56,7 @@ class TestApp():
     def draw(self, effect=None):
         """Redraw the display from scratch."""
         watch.display.mute(True)
-        watch.display.fill(0)
+        watch.drawable.fill()
         watch.drawable.string('{} test'.format(self.test),
                 0, 6, width=240)
         watch.display.mute(False)

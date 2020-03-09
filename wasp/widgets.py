@@ -11,10 +11,11 @@ class BatteryMeter(object):
         
     def update(self):
         icon = icons.battery
+        draw = watch.drawable
 
         if watch.battery.charging():
             if self.level != -1:
-                watch.display.rleblit(icon, pos=(239-icon[0], 0), fg=0x7bef)
+                draw.rleblit(icon, pos=(239-icon[0], 0), fg=0x7bef)
                 self.level = -1
         else:
             level = watch.battery.level()
@@ -33,16 +34,16 @@ class BatteryMeter(object):
 
             if (level > 5) ^ (self.level > 5):
                 if level  > 5:
-                    watch.display.rleblit(icon, pos=(239-icon[0], 0), fg=0x7bef)
+                    draw.rleblit(icon, pos=(239-icon[0], 0), fg=0x7bef)
                 else:
                     rgb = 0xf800
-                    watch.display.rleblit(icon, pos=(239-icon[0], 0), fg=0xf800)
+                    draw.rleblit(icon, pos=(239-icon[0], 0), fg=0xf800)
 
             x = 239 - 30
             w = 16
             if 24 - h:
-                watch.display.fill(0, x, 14, w, 24 - h)
+                draw.fill(0, x, 14, w, 24 - h)
             if h:
-                watch.display.fill(rgb, x, 38 - h, w, h)
+                draw.fill(rgb, x, 38 - h, w, h)
 
             self.level = level
