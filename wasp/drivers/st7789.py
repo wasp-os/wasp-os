@@ -146,9 +146,9 @@ class ST7789_SPI(ST7789):
         self.cs(0)
         self.spi.write(bytearray([cmd]))
         self.cs(1)
+        self.dc(1)
 
     def write_data(self, buf):
-        self.dc(1)
         self.cs(0)
         self.spi.write(buf)
         self.cs(1)
