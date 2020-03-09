@@ -355,14 +355,15 @@ b'\x50\x13'
 
 _mvfont = memoryview(_font)
 _mvi = memoryview(_index)
-ifb = lambda l : l[0] | (l[1] << 8)
 
 def get_ch(ch):
+    mvi = _mvi
+    mvfont = _mvfont
+
     oc = ord(ch)
     ioff = 2 * (oc - 32 + 1) if oc >= 32 and oc <= 126 else 0
-    doff = ifb(_mvi[ioff : ])
-    width = ifb(_mvfont[doff : ])
+    doff = mvi[ioff] | (mvi[ioff+1] << 8)
+    width = mvfont[doff] | (mvfont[doff+1] << 8)
 
     next_offs = doff + 2 + ((width - 1)//8 + 1) * 24
     return _mvfont[doff + 2:next_offs], 24, width
- 
