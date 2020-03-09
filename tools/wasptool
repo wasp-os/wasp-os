@@ -27,15 +27,28 @@ def unsync(c):
     c.sendline('wasp.run()')
 
 def paste(c, f, verbose=False):
+    docstring = False
     for ln in f.readlines():
         ln = ln.rstrip()
-        if not ln.lstrip().startswith('#'):
-            c.sendline(ln)
-            c.expect('=== ')
+
+        # This is a bit loose (definitely not PEP-257 compliant) but
+        # is enough for most code.
+        if ln.lstrip().startswith('"""'):
+            docstring = True
+        if docstring:
+            if ln.rstrip().endswith('"""'):
+                docstring = False
+            continue
+
+        if ln.lstrip().startswith('#'):
+            continue
+
+
+        c.sendline(ln)
+        c.expect('=== ')
 
         if not verbose:
             print('.', end='', flush=True)
-
 
 def handle_eval(c, cmd):
     verbose = bool(c.logfile)
