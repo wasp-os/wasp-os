@@ -15,7 +15,7 @@ class TestApp():
         """Activate the application."""
         self.on_screen = ( -1, -1, -1, -1, -1, -1 )
         self.draw(effect)
-        system.request_event(manager.EVENT_TOUCH | manager.EVENT_SWIPE_LEFTRIGHT)
+        system.request_event(manager.EVENT_TOUCH | manager.EVENT_SWIPE_UPDOWN)
 
     def background(self):
         """De-activate the application (without losing state)."""

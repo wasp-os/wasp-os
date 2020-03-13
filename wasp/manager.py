@@ -55,12 +55,12 @@ class Manager(object):
         """
         app_list = self.applications
 
-        if direction == DOWN:
+        if direction == LEFT:
             i = app_list.index(self.app) + 1
             if i >= len(app_list):
                 i = 0
             self.switch(app_list[i])
-        elif direction == UP:
+        elif direction == RIGHT:
             i = app_list.index(self.app) - 1
             if i < 0:
                 i = len(app_list)-1
