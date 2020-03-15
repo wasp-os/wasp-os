@@ -65,6 +65,12 @@ i2c = I2C(1, scl='I2C_SCL', sda='I2C_SDA')
 touch = CST816S(i2c)
 vibrator = Vibrator(Pin('MOTOR', Pin.OUT, value=0), active_low=True)
 
+# Release flash from deep power-down
+nor_cs = Pin('NOR_CS', Pin.OUT, value=1)
+nor_cs(0)
+spi.write('\xAB')
+nor_cs(1)
+
 # Mount the filesystem
 flash = FLASH(spi, (Pin('NOR_CS', Pin.OUT, value=1),))
 try:
