@@ -84,7 +84,7 @@ To set the time and restart the main application:
 
 ~~~
 ^C
-watch.rtc.set_time((hh, mm, ss))
+watch.rtc.set_localtime((yyyy, mm, dd, HH, MM, SS))
 wasp.run()
 ~~~
 
