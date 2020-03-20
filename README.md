@@ -88,6 +88,12 @@ watch.rtc.set_localtime((yyyy, mm, dd, HH, MM, SS))
 wasp.run()
 ~~~
 
+Or just use:
+~~~
+./tools/wasptool --rtc
+~~~
+which can run these commands automatically.
+
 As mentioned above there are many drivers and features still to be
 developed, see the [TODO list](TODO.md) for current status.
 
