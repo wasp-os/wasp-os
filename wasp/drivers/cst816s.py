@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: LGPL-3.0-or-later
+# Copyright (C) 2020 Daniel Thompson
+
 """Hynitron CST816S touch contoller driver for MicroPython.
 
 After modifying this file we can test the changes by replacing the

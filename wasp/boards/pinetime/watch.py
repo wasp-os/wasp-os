@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: LGPL-3.0-or-later
+# Copyright (C) 2020 Daniel Thompson
+
 # Start measuring time (and feeding the watchdog) before *anything* else
 from machine import RTCounter
 from drivers.nrf_rtc import RTC

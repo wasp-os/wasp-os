@@ -13,6 +13,7 @@ Welcome to WASP-OS's documentation!
    README
    wasp
    TODO
+   license
 
 
 Indices and tables

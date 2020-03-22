@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: LGPL-3.0-or-later
+# Copyright (C) 2020 Daniel Thompson
+
 # Generic lithium ion battery driver
 
 from machine import Pin, ADC

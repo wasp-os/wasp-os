@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: LGPL-3.0-or-later
+# Copyright (C) 2020 Daniel Thompson
+
 # SPDX-License-Identifier: MIT
 # Copyright (c) 2020 Daniel Thompson
 # Copyright (c) 2016 Paul Sokolovsky

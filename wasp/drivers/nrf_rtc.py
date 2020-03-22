@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: LGPL-3.0-or-later
+# Copyright (C) 2020 Daniel Thompson
+
 """ Real Time Clock based on the nRF-family low power counter """
 
 import time

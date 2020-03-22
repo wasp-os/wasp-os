@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: LGPL-3.0-or-later
+# Copyright (C) 2020 Daniel Thompson
+
 """Sitronix ST7789 display driver for MicroPython.
 
 Note: Although the ST7789 supports a variety of communication protocols
