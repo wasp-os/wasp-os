@@ -77,7 +77,7 @@ demo.run()
 # After watching the demo for a bit...
 ^C
 wasp.app.draw(watch)
-wasp.run()
+wasp.system.run()
 ~~~
 
 To set the time and restart the main application:
@@ -85,7 +85,7 @@ To set the time and restart the main application:
 ~~~
 ^C
 watch.rtc.set_localtime((yyyy, mm, dd, HH, MM, SS))
-wasp.run()
+wasp.system.run()
 ~~~
 
 Or just use:
