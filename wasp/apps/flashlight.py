@@ -1,5 +1,4 @@
-import watch
-import manager
+import wasp
 
 class FlashlightApp(object):
     """Trivial flashlight application.
@@ -10,11 +9,11 @@ class FlashlightApp(object):
     def __init__(self):
         self.backlight = None
 
-    def foreground(self, manager, effect=None):
+    def foreground(self, effect=None):
         """Activate the application."""
         self.on_screen = ( -1, -1, -1, -1, -1, -1 )
         self.draw(effect)
-        manager.request_tick(1000)
+        wasp.system.request_tick(1000)
 
     def background(self):
         """De-activate the application (without losing state)."""
@@ -28,5 +27,5 @@ class FlashlightApp(object):
 
     def draw(self, effect=None):
         """Redraw the display from scratch."""
-        display = watch.display
+        display = wasp.watch.display
         display.fill(0xffff)

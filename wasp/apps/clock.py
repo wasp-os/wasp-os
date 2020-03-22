@@ -1,7 +1,6 @@
+import wasp
+
 import fonts.clock as digits
-import watch
-import widgets
-import manager
 
 DIGITS = (
         digits.clock_0,
@@ -18,28 +17,28 @@ DIGITS = (
 
 MONTH = 'JanFebMarAprMayJunJulAugSepOctNovDec'
 
-class ClockApp(object):
+class ClockApp():
     """Simple digital clock application.
 
     Shows a time (as HH:MM) together with a battery meter and the date.
     """
 
     def __init__(self):
-        self.meter = widgets.BatteryMeter()
+        self.meter = wasp.widgets.BatteryMeter()
 
     def handle_event(self, event_view):
         """Process events that the app is subscribed to."""
-        if event_view[0] == manager.EVENT_TICK:
+        if event_view[0] == wasp.EVENT_TICK:
             self.update()
         else:
             # TODO: Raise an unexpected event exception
             pass
 
-    def foreground(self, manager, effect=None):
+    def foreground(self, effect=None):
         """Activate the application."""
         self.on_screen = ( -1, -1, -1, -1, -1, -1 )
         self.draw(effect)
-        manager.request_tick(1000)
+        wasp.system.request_tick(1000)
 
     def tick(self, ticks):
         self.update()
@@ -56,7 +55,7 @@ class ClockApp(object):
 
     def draw(self, effect=None):
         """Redraw the display from scratch."""
-        draw = watch.drawable
+        draw = wasp.watch.drawable
 
         draw.fill()
         draw.rleblit(digits.clock_colon, pos=(2*48, 80), fg=0xb5b6)
@@ -70,14 +69,14 @@ class ClockApp(object):
         The updates are a lazy as possible and rely on an prior call to
         draw() to ensure the screen is suitably prepared.
         """
-        now = watch.rtc.get_localtime()
+        now = wasp.watch.rtc.get_localtime()
         if now[3] == self.on_screen[3] and now[4] == self.on_screen[4]:
             if now[5] != self.on_screen[5]:
                 self.meter.update()
                 self.on_screen = now
             return False
 
-        draw = watch.drawable
+        draw = wasp.watch.drawable
         draw.rleblit(DIGITS[now[4]  % 10], pos=(4*48, 80))
         draw.rleblit(DIGITS[now[4] // 10], pos=(3*48, 80), fg=0xbdb6)
         draw.rleblit(DIGITS[now[3]  % 10], pos=(1*48, 80))

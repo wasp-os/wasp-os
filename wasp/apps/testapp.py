@@ -1,7 +1,5 @@
-import watch
-import widgets
-import manager
 import machine
+import wasp
 
 class TestApp():
     """Simple test application.
@@ -11,11 +9,11 @@ class TestApp():
         self.tests = ('Touch', 'String')
         self.test = self.tests[0]
 
-    def foreground(self, system, effect=None):
+    def foreground(self, effect=None):
         """Activate the application."""
         self.on_screen = ( -1, -1, -1, -1, -1, -1 )
         self.draw(effect)
-        system.request_event(manager.EVENT_TOUCH | manager.EVENT_SWIPE_UPDOWN)
+        wasp.system.request_event(wasp.EVENT_TOUCH | wasp.EVENT_SWIPE_UPDOWN)
 
     def background(self):
         """De-activate the application (without losing state)."""
@@ -33,7 +31,7 @@ class TestApp():
         self.draw()
 
     def touch(self, event):
-        draw = watch.drawable
+        draw = wasp.watch.drawable
         if self.test == 'Touch':
             draw.string('({}, {})'.format(event[1], event[2]),
                     0, 108, width=240)
@@ -55,8 +53,8 @@ class TestApp():
 
     def draw(self, effect=None):
         """Redraw the display from scratch."""
-        watch.display.mute(True)
-        watch.drawable.fill()
-        watch.drawable.string('{} test'.format(self.test),
+        wasp.watch.display.mute(True)
+        wasp.watch.drawable.fill()
+        wasp.watch.drawable.string('{} test'.format(self.test),
                 0, 6, width=240)
-        watch.display.mute(False)
+        wasp.watch.display.mute(False)

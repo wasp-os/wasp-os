@@ -1,5 +1,7 @@
 import gc
 import machine
+import watch
+import widgets
 
 from apps.clock import ClockApp
 from apps.flashlight import FlashlightApp
@@ -16,9 +18,7 @@ EVENT_SWIPE_UPDOWN = 0x0004
 EVENT_BUTTON = 0x0008
 
 class Manager(object):
-    def __init__(self, watch):
-        self.watch = watch
-
+    def __init__(self):
         self.app = None
 
         self.applications = [
@@ -26,17 +26,17 @@ class Manager(object):
                 FlashlightApp(),
                 TestApp()
             ]
-
-        self.watch.display.poweron()
-        self.switch(self.applications[0])
-        self.watch.backlight.set(2)
-
-        self.sleep_at = watch.rtc.uptime + 90
         self.charging = True
 
     def switch(self, app):
         if self.app:
             self.app.background()
+        else:
+            # System start up...
+            watch.display.poweron()
+            watch.display.mute(True)
+            watch.backlight.set(2)
+            self.sleep_at = watch.rtc.uptime + 90
 
         # Clear out any configuration from the old application
         self.event_mask = 0
@@ -44,9 +44,9 @@ class Manager(object):
         self.tick_expiry = None
 
         self.app = app
-        self.watch.display.mute(True)
-        app.foreground(self)
-        self.watch.display.mute(False)
+        watch.display.mute(True)
+        app.foreground()
+        watch.display.mute(False)
 
     def navigate(self, direction=None):
         """Navigate between different applications.
@@ -76,10 +76,10 @@ class Manager(object):
         tick intervals are not possible.
         """
         self.tick_period_ms = period_ms
-        self.tick_expiry = self.watch.rtc.get_uptime_ms() + period_ms
+        self.tick_expiry = watch.rtc.get_uptime_ms() + period_ms
 
     def handle_event(self, event):
-        self.sleep_at = self.watch.rtc.uptime + 15
+        self.sleep_at = watch.rtc.uptime + 15
 
         event_mask = self.event_mask
         if event[0] < 5:
@@ -94,7 +94,7 @@ class Manager(object):
             self.app.touch(event)
 
     def tick(self):
-        rtc = self.watch.rtc
+        rtc = watch.rtc
 
         if self.sleep_at:
             if rtc.update() and self.tick_expiry:
@@ -107,36 +107,36 @@ class Manager(object):
                         ticks += 1
                     self.app.tick(ticks)
 
-            if self.watch.button.value():
-                self.sleep_at = self.watch.rtc.uptime + 15
+            if watch.button.value():
+                self.sleep_at = watch.rtc.uptime + 15
 
-            event = self.watch.touch.get_event()
+            event = watch.touch.get_event()
             if event:
                 self.handle_event(event)
 
-            if self.watch.rtc.uptime > self.sleep_at:
-                self.watch.backlight.set(0)
+            if watch.rtc.uptime > self.sleep_at:
+                watch.backlight.set(0)
                 if not self.app.sleep():
                     self.switch(self.applications[0])
                     self.app.sleep()
-                self.watch.display.poweroff()
-                self.charging = self.watch.battery.charging()
+                watch.display.poweroff()
+                self.charging = watch.battery.charging()
                 self.sleep_at = None
 
             gc.collect()
         else:
-            self.watch.rtc.update()
+            watch.rtc.update()
 
-            charging = self.watch.battery.charging()
-            if self.watch.button.value() or self.charging != charging:
-                self.watch.display.poweron()
+            charging = watch.battery.charging()
+            if watch.button.value() or self.charging != charging:
+                watch.display.poweron()
                 self.app.wake()
-                self.watch.backlight.set(2)
+                watch.backlight.set(2)
 
                 # Discard any pending touch events
-                _ = self.watch.touch.get_event()
+                _ = watch.touch.get_event()
 
-                self.sleep_at = self.watch.rtc.uptime + 15
+                self.sleep_at = watch.rtc.uptime + 15
 
     def run(self):
         """Run the system manager synchronously.
@@ -145,6 +145,13 @@ class Manager(object):
         normal execution context meaning any exceptions and other problems
         can be observed interactively via the console.
         """
+        if not self.app:
+            self.switch(self.applications[0])
+
+        print('Watch is running, use Ctrl-C to stop')
+
         while True:
             self.tick()
             machine.deepsleep()
+
+system = Manager()

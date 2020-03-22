@@ -14,6 +14,11 @@ import string
 import sys
 
 def sync(c):
+    """Stop the watch and synchronize with the command prompt.
+
+    Sending a random print ensure the final export (of the prompt)
+    does not accidentally match a previously issued prompt.
+    """
     tag = ''.join([random.choice(string.ascii_uppercase) for i in range(6)])
 
     c.send('\x03')
@@ -23,8 +28,14 @@ def sync(c):
     c.expect('>>> ')
 
 def unsync(c):
-    # Set the watch running again
-    c.sendline('wasp.run()')
+    """Set the watch running again.
+
+    There must be an expect (or a sleep) since if we kill the subordinate
+    process too early then the sendline will not have completed.
+    """
+    c.sendline('wasp.system.run()')
+    c.expect('Watch is running, use Ctrl-C to stop')
+    c.send('\x18')
 
 def paste(c, f, verbose=False):
     docstring = False

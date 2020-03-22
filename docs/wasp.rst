@@ -4,7 +4,7 @@ WASP Internals
 System management
 -----------------
 
-.. automodule:: manager
+.. automodule:: wasp
    :members:
    :undoc-members:
 
