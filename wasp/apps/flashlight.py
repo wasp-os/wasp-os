@@ -9,24 +9,24 @@ class FlashlightApp(object):
     Shows a pure white screen with the backlight set to maximum.
     """
 
-    def __init__(self):
-        self.backlight = None
-
     def foreground(self, effect=None):
         """Activate the application."""
         self.on_screen = ( -1, -1, -1, -1, -1, -1 )
         self.draw(effect)
         wasp.system.request_tick(1000)
 
+        self._brightness = wasp.system.brightness
+        wasp.system.brightness = 3
+
     def background(self):
         """De-activate the application (without losing state)."""
-        pass
+        wasp.system.brightness = self._brightness
 
     def sleep(self):
         return False
 
     def tick(self, ticks):
-        pass
+        wasp.system.keep_awake()
 
     def draw(self, effect=None):
         """Redraw the display from scratch."""

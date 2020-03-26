@@ -57,6 +57,18 @@ class Manager():
             ]
         self.charging = True
 
+        self._brightness = 2
+
+    @property
+    def brightness(self):
+        """Cached copy of the brightness current written to the hardware."""
+        return self._brightness
+
+    @brightness.setter
+    def brightness(self, value):
+        self._brightness = value
+        watch.backlight.set(self._brightness)
+
     def switch(self, app):
         """Switch to the requested application.
         """
@@ -66,7 +78,7 @@ class Manager():
             # System start up...
             watch.display.poweron()
             watch.display.mute(True)
-            watch.backlight.set(2)
+            watch.backlight.set(self._brightness)
             self.sleep_at = watch.rtc.uptime + 90
 
         # Clear out any configuration from the old application
@@ -117,6 +129,10 @@ class Manager():
         self.tick_period_ms = period_ms
         self.tick_expiry = watch.rtc.get_uptime_ms() + period_ms
 
+    def keep_awake(self):
+        """Reset the keep awake timer."""
+        self.sleep_at = watch.rtc.uptime + 15
+
     def _handle_event(self, event):
         """Process an event.
         """
@@ -155,7 +171,7 @@ class Manager():
                     self.app.tick(ticks)
 
             if watch.button.value():
-                self.sleep_at = watch.rtc.uptime + 15
+                self.keep_awake()
 
             event = watch.touch.get_event()
             if event:
@@ -178,7 +194,7 @@ class Manager():
             if watch.button.value() or self.charging != charging:
                 watch.display.poweron()
                 self.app.wake()
-                watch.backlight.set(2)
+                watch.backlight.set(self._brightness)
 
                 # Discard any pending touch events
                 _ = watch.touch.get_event()
