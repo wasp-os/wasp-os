@@ -31,7 +31,7 @@ class ClockApp():
 
     def handle_event(self, event_view):
         """Process events that the app is subscribed to."""
-        if event_view[0] == wasp.EVENT_TICK:
+        if event_view[0] == wasp.Event.TICK:
             self.update()
         else:
             # TODO: Raise an unexpected event exception

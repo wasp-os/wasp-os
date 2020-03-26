@@ -10,18 +10,22 @@ from apps.clock import ClockApp
 from apps.flashlight import FlashlightApp
 from apps.testapp import TestApp
 
-DOWN = 1
-UP = 2
-LEFT = 3
-RIGHT = 4
+class Direction():
+    DOWN = 1
+    UP = 2
+    LEFT = 3
+    RIGHT = 4
 
-EVENT_TOUCH = 0x0001
-EVENT_SWIPE_LEFTRIGHT = 0x0002
-EVENT_SWIPE_UPDOWN = 0x0004
-EVENT_BUTTON = 0x0008
+class Event():
+    TOUCH = 0x0001
+    SWIPE_LEFTRIGHT = 0x0002
+    SWIPE_UPDOWN = 0x0004
+    BUTTON = 0x0008
 
-class Manager(object):
+class Manager():
     def __init__(self):
+        """System management
+        """
         self.app = None
 
         self.applications = [
@@ -58,12 +62,12 @@ class Manager(object):
         """
         app_list = self.applications
 
-        if direction == LEFT:
+        if direction == Direction.LEFT:
             i = app_list.index(self.app) + 1
             if i >= len(app_list):
                 i = 0
             self.switch(app_list[i])
-        elif direction == RIGHT:
+        elif direction == Direction.RIGHT:
             i = app_list.index(self.app) - 1
             if i < 0:
                 i = len(app_list)-1
@@ -87,13 +91,13 @@ class Manager(object):
         event_mask = self.event_mask
         if event[0] < 5:
             updown = event[0] == 1 or event[0] == 2
-            if (bool(event_mask & EVENT_SWIPE_UPDOWN) and updown) or \
-               (bool(event_mask & EVENT_SWIPE_LEFTRIGHT) and not updown):
+            if (bool(event_mask & Event.SWIPE_UPDOWN) and updown) or \
+               (bool(event_mask & Event.SWIPE_LEFTRIGHT) and not updown):
                 if not self.app.swipe(event):
                     self.navigate(event[0])
             else:
                 self.navigate(event[0])
-        elif event[0] == 5 and self.event_mask & EVENT_TOUCH:
+        elif event[0] == 5 and self.event_mask & Event.TOUCH:
             self.app.touch(event)
 
     def tick(self):
