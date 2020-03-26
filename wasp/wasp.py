@@ -1,5 +1,12 @@
 # SPDX-License-Identifier: LGPL-3.0-or-later
 # Copyright (C) 2020 Daniel Thompson
+"""WASP system management (including constants)
+
+.. data:: system = Manager()
+
+   system is the system-wide instance of the Manager class. Applications
+   can use this instance to access system services.
+"""
 
 import gc
 import machine
@@ -11,21 +18,36 @@ from apps.flashlight import FlashlightApp
 from apps.testapp import TestApp
 
 class Direction():
+    """Enumerated directions.
+
+    MicroPython does not implement the enum module so Direction
+    is simply a regular object which acts as a namespace.
+    """
     DOWN = 1
     UP = 2
     LEFT = 3
     RIGHT = 4
 
 class Event():
+    """Enumerated event types
+    """
     TOUCH = 0x0001
     SWIPE_LEFTRIGHT = 0x0002
     SWIPE_UPDOWN = 0x0004
     BUTTON = 0x0008
 
 class Manager():
+    """WASP system manager
+
+    The manager is responsible for handling top-level UI events and
+    dispatching them to the foreground application. It also provides
+    services to the application.
+
+    The manager is expected to have a single system-wide instance
+    which can be accessed via :py:data:`wasp.system` .
+    """
+
     def __init__(self):
-        """System management
-        """
         self.app = None
 
         self.applications = [
@@ -36,6 +58,8 @@ class Manager():
         self.charging = True
 
     def switch(self, app):
+        """Switch to the requested application.
+        """
         if self.app:
             self.app.background()
         else:
@@ -56,9 +80,13 @@ class Manager():
         watch.display.mute(False)
 
     def navigate(self, direction=None):
-        """Navigate between different applications.
+        """Navigate to a new application.
 
-        Currently the direction is ignored.
+        Left/right navigation is used to switch between applications in the
+        quick application ring. Applications on the ring are not permitted
+        to subscribe to :py:data`Event.SWIPE_LEFTRIGHT` events.
+
+        :param int direction: The direction of the navigation
         """
         app_list = self.applications
 
@@ -74,6 +102,10 @@ class Manager():
             self.switch(app_list[i])
 
     def request_event(self, event_mask):
+        """Subscribe to events.
+
+        :param int event_mask: The set of events to subscribe to.
+        """
         self.event_mask |= event_mask
 
     def request_tick(self, period_ms=None):
@@ -85,7 +117,9 @@ class Manager():
         self.tick_period_ms = period_ms
         self.tick_expiry = watch.rtc.get_uptime_ms() + period_ms
 
-    def handle_event(self, event):
+    def _handle_event(self, event):
+        """Process an event.
+        """
         self.sleep_at = watch.rtc.uptime + 15
 
         event_mask = self.event_mask
@@ -100,7 +134,13 @@ class Manager():
         elif event[0] == 5 and self.event_mask & Event.TOUCH:
             self.app.touch(event)
 
-    def tick(self):
+    def _tick(self):
+        """Handle the system tick.
+
+        This function may be called frequently and includes short
+        circuit logic to quickly exit if we haven't reached a tick
+        expiry point.
+        """
         rtc = watch.rtc
 
         if self.sleep_at:
@@ -119,7 +159,7 @@ class Manager():
 
             event = watch.touch.get_event()
             if event:
-                self.handle_event(event)
+                self._handle_event(event)
 
             if watch.rtc.uptime > self.sleep_at:
                 watch.backlight.set(0)
@@ -155,10 +195,16 @@ class Manager():
         if not self.app:
             self.switch(self.applications[0])
 
+        # Reminder: wasptool uses this string to confirm the device has
+        # been set running again.
         print('Watch is running, use Ctrl-C to stop')
 
         while True:
-            self.tick()
+            self._tick()
+            # Currently there is no code to control how fast the system
+            # ticks. In other words this code will break if we improve the
+            # power management... we are currently relying on no being able
+            # to stay in the low-power state for very long.
             machine.deepsleep()
 
 system = Manager()
