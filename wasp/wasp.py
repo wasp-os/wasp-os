@@ -133,10 +133,33 @@ class Manager():
         """Reset the keep awake timer."""
         self.sleep_at = watch.rtc.uptime + 15
 
+    def sleep(self):
+        """Enter the deepest sleep state possible.
+        """
+        watch.backlight.set(0)
+        if not self.app.sleep():
+            self.switch(self.applications[0])
+            self.app.sleep()
+        watch.display.poweroff()
+        self.charging = watch.battery.charging()
+        self.sleep_at = None
+
+    def wake(self):
+        """Return to a running state.
+        """
+        watch.display.poweron()
+        self.app.wake()
+        watch.backlight.set(self._brightness)
+
+        # Discard any pending touch events
+        _ = watch.touch.get_event()
+
+        self.keep_awake()
+
     def _handle_event(self, event):
         """Process an event.
         """
-        self.sleep_at = watch.rtc.uptime + 15
+        self.keep_awake()
 
         event_mask = self.event_mask
         if event[0] < 5:
@@ -178,13 +201,7 @@ class Manager():
                 self._handle_event(event)
 
             if watch.rtc.uptime > self.sleep_at:
-                watch.backlight.set(0)
-                if not self.app.sleep():
-                    self.switch(self.applications[0])
-                    self.app.sleep()
-                watch.display.poweroff()
-                self.charging = watch.battery.charging()
-                self.sleep_at = None
+                self.sleep()
 
             gc.collect()
         else:
@@ -192,14 +209,7 @@ class Manager():
 
             charging = watch.battery.charging()
             if watch.button.value() or self.charging != charging:
-                watch.display.poweron()
-                self.app.wake()
-                watch.backlight.set(self._brightness)
-
-                # Discard any pending touch events
-                _ = watch.touch.get_event()
-
-                self.sleep_at = watch.rtc.uptime + 15
+                self.wake()
 
     def run(self):
         """Run the system manager synchronously.
