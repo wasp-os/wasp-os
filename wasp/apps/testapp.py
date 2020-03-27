@@ -16,7 +16,8 @@ class TestApp():
         """Activate the application."""
         self.on_screen = ( -1, -1, -1, -1, -1, -1 )
         self.draw(effect)
-        wasp.system.request_event(wasp.Event.TOUCH | wasp.Event.SWIPE_UPDOWN)
+        wasp.system.request_event(wasp.EventMask.TOUCH |
+                                  wasp.EventMask.SWIPE_UPDOWN)
 
     def background(self):
         """De-activate the application (without losing state)."""

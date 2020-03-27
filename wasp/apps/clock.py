@@ -29,14 +29,6 @@ class ClockApp():
     def __init__(self):
         self.meter = wasp.widgets.BatteryMeter()
 
-    def handle_event(self, event_view):
-        """Process events that the app is subscribed to."""
-        if event_view[0] == wasp.Event.TICK:
-            self.update()
-        else:
-            # TODO: Raise an unexpected event exception
-            pass
-
     def foreground(self, effect=None):
         """Activate the application."""
         self.on_screen = ( -1, -1, -1, -1, -1, -1 )

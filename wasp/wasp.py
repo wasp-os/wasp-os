@@ -17,19 +17,22 @@ from apps.clock import ClockApp
 from apps.flashlight import FlashlightApp
 from apps.testapp import TestApp
 
-class Direction():
-    """Enumerated directions.
+class EventType():
+    """Enumerated interface actions.
 
-    MicroPython does not implement the enum module so Direction
+    MicroPython does not implement the enum module so EventType
     is simply a regular object which acts as a namespace.
     """
     DOWN = 1
     UP = 2
     LEFT = 3
     RIGHT = 4
+    TOUCH = 5
 
-class Event():
-    """Enumerated event types
+    HOME = 256
+
+class EventMask():
+    """Enumerated event masks.
     """
     TOUCH = 0x0001
     SWIPE_LEFTRIGHT = 0x0002
@@ -96,18 +99,18 @@ class Manager():
 
         Left/right navigation is used to switch between applications in the
         quick application ring. Applications on the ring are not permitted
-        to subscribe to :py:data`Event.SWIPE_LEFTRIGHT` events.
+        to subscribe to :py:data`EventMask.SWIPE_LEFTRIGHT` events.
 
         :param int direction: The direction of the navigation
         """
         app_list = self.applications
 
-        if direction == Direction.LEFT:
+        if direction == EventType.LEFT:
             i = app_list.index(self.app) + 1
             if i >= len(app_list):
                 i = 0
             self.switch(app_list[i])
-        elif direction == Direction.RIGHT:
+        elif direction == EventType.RIGHT:
             i = app_list.index(self.app) - 1
             if i < 0:
                 i = len(app_list)-1
@@ -156,21 +159,21 @@ class Manager():
 
         self.keep_awake()
 
-    def _handle_event(self, event):
-        """Process an event.
+    def _handle_touch(self, event):
+        """Process a touch event.
         """
         self.keep_awake()
 
         event_mask = self.event_mask
         if event[0] < 5:
             updown = event[0] == 1 or event[0] == 2
-            if (bool(event_mask & Event.SWIPE_UPDOWN) and updown) or \
-               (bool(event_mask & Event.SWIPE_LEFTRIGHT) and not updown):
-                if not self.app.swipe(event):
+            if (bool(event_mask & EventMask.SWIPE_UPDOWN) and updown) or \
+               (bool(event_mask & EventMask.SWIPE_LEFTRIGHT) and not updown):
+                if self.app.swipe(event):
                     self.navigate(event[0])
             else:
                 self.navigate(event[0])
-        elif event[0] == 5 and self.event_mask & Event.TOUCH:
+        elif event[0] == 5 and self.event_mask & EventMask.TOUCH:
             self.app.touch(event)
 
     def _tick(self):
@@ -198,7 +201,7 @@ class Manager():
 
             event = watch.touch.get_event()
             if event:
-                self._handle_event(event)
+                self._handle_touch(event)
 
             if watch.rtc.uptime > self.sleep_at:
                 self.sleep()
