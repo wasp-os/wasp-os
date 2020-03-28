@@ -29,10 +29,10 @@ class ClockApp():
     def __init__(self):
         self.meter = wasp.widgets.BatteryMeter()
 
-    def foreground(self, effect=None):
+    def foreground(self):
         """Activate the application."""
         self.on_screen = ( -1, -1, -1, -1, -1, -1 )
-        self.draw(effect)
+        self.draw()
         wasp.system.request_tick(1000)
 
     def tick(self, ticks):
@@ -48,7 +48,7 @@ class ClockApp():
     def wake(self):
         self.update()
 
-    def draw(self, effect=None):
+    def draw(self):
         """Redraw the display from scratch."""
         draw = wasp.watch.drawable
 

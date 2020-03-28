@@ -12,10 +12,10 @@ class TestApp():
         self.tests = ('Touch', 'String')
         self.test = self.tests[0]
 
-    def foreground(self, effect=None):
+    def foreground(self):
         """Activate the application."""
         self.on_screen = ( -1, -1, -1, -1, -1, -1 )
-        self.draw(effect)
+        self.draw()
         wasp.system.request_event(wasp.EventMask.TOUCH |
                                   wasp.EventMask.SWIPE_UPDOWN)
 
@@ -55,7 +55,7 @@ class TestApp():
 
         return True
 
-    def draw(self, effect=None):
+    def draw(self):
         """Redraw the display from scratch."""
         wasp.watch.display.mute(True)
         wasp.watch.drawable.fill()
