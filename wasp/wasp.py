@@ -39,6 +39,36 @@ class EventMask():
     SWIPE_UPDOWN = 0x0004
     BUTTON = 0x0008
 
+class Debounce(object):
+    """Pin (and Signal) debounce wrapper.
+
+    TODO: Currently this driver doesn't actually implement any
+    debounce but it will!
+    """
+
+    def __init__(self, pin):
+        """
+        :param Pin pin: The pin to generate events from
+        """
+        self._pin = pin
+        self._value = pin.value()
+
+    def get_event(self):
+        """Receive a pin change event.
+
+        Check for a pending pin change event and, if an event is pending,
+        return it.
+
+        :return: boolean of the pin state if an event is received, None
+        otherwise.
+        """
+        new_value = self._pin.value()
+        if self._value == new_value:
+            return None
+
+        self._value = new_value
+        return new_value
+
 class Manager():
     """WASP system manager
 
@@ -53,14 +83,23 @@ class Manager():
     def __init__(self):
         self.app = None
 
-        self.applications = [
-                ClockApp(),
-                FlashlightApp(),
-                TestApp()
-            ]
-        self.charging = True
+        self.applications = []
 
+        self.charging = True
         self._brightness = 2
+        self._button = Debounce(watch.button)
+
+        # TODO: Eventually these should move to main.py
+        self.register(ClockApp(), True)
+        self.register(FlashlightApp(), True)
+        self.register(TestApp(), True)
+
+    def register(self, app, quick_ring=True):
+        """Register an application with the system.
+
+        :param object app: The application to regsister
+        """
+        self.applications.append(app)
 
     @property
     def brightness(self):
@@ -115,6 +154,12 @@ class Manager():
             if i < 0:
                 i = len(app_list)-1
             self.switch(app_list[i])
+        elif direction == EventType.HOME:
+            i = app_list.index(self.app)
+            if i != 0:
+                self.switch(app_list[0])
+            else:
+                self.sleep()
 
     def request_event(self, event_mask):
         """Subscribe to events.
@@ -159,6 +204,20 @@ class Manager():
 
         self.keep_awake()
 
+    def _handle_button(self, state):
+        """Process a button-press (or unpress) event.
+        """
+        self.keep_awake()
+
+        if bool(self.event_mask & EventMask.BUTTON):
+            # Currently we only support one button
+            if not self.app.press(EventType.HOME, state):
+                # If app reported None or False then we are done
+                return
+
+        if state:
+            self.navigate(EventType.HOME)
+
     def _handle_touch(self, event):
         """Process a touch event.
         """
@@ -196,14 +255,15 @@ class Manager():
                         ticks += 1
                     self.app.tick(ticks)
 
-            if watch.button.value():
-                self.keep_awake()
+            state = self._button.get_event()
+            if None != state:
+                self._handle_button(state)
 
             event = watch.touch.get_event()
             if event:
                 self._handle_touch(event)
 
-            if watch.rtc.uptime > self.sleep_at:
+            if self.sleep_at and watch.rtc.uptime > self.sleep_at:
                 self.sleep()
 
             gc.collect()
@@ -211,7 +271,7 @@ class Manager():
             watch.rtc.update()
 
             charging = watch.battery.charging()
-            if watch.button.value() or self.charging != charging:
+            if 1 == self._button.get_event() or self.charging != charging:
                 self.wake()
 
     def run(self):
