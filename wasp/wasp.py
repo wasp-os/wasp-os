@@ -84,7 +84,7 @@ class Manager():
         self.app = None
 
         self.applications = []
-
+        self.blank_after = 15
         self.charging = True
         self._brightness = 2
         self._button = PinHandler(watch.button)
@@ -180,7 +180,7 @@ class Manager():
 
     def keep_awake(self):
         """Reset the keep awake timer."""
-        self.sleep_at = watch.rtc.uptime + 15
+        self.sleep_at = watch.rtc.uptime + self.blank_after
 
     def sleep(self):
         """Enter the deepest sleep state possible.
