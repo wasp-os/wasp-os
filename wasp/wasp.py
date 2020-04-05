@@ -130,6 +130,7 @@ class Manager():
 
         self.app = app
         watch.display.mute(True)
+        watch.drawable.reset()
         app.foreground()
         watch.display.mute(False)
 

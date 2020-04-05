@@ -78,6 +78,10 @@ class Draw565(object):
         and 24 pt Sans Serif text.
         """
         self._display = display
+        self.reset()
+
+    def reset(self):
+        """Restore the default colour and font."""
         self.set_color(0xffff)
         self.set_font(fonts.sans24)
 
