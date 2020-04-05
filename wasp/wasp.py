@@ -115,7 +115,8 @@ class Manager():
         """Switch to the requested application.
         """
         if self.app:
-            self.app.background()
+            if 'background' in dir(self.app):
+                self.app.background()
         else:
             # System start up...
             watch.display.poweron()
@@ -186,7 +187,7 @@ class Manager():
         """Enter the deepest sleep state possible.
         """
         watch.backlight.set(0)
-        if not self.app.sleep():
+        if 'sleep' not in dir(self.app) or not self.app.sleep():
             self.switch(self.applications[0])
             self.app.sleep()
         watch.display.poweroff()

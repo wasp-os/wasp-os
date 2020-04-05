@@ -35,17 +35,13 @@ class ClockApp():
         self.draw()
         wasp.system.request_tick(1000)
 
-    def tick(self, ticks):
-        self.update()
-
-    def background(self):
-        """De-activate the application (without losing state)."""
-        pass
-
     def sleep(self):
         return True
 
     def wake(self):
+        self.update()
+
+    def tick(self, ticks):
         self.update()
 
     def draw(self):

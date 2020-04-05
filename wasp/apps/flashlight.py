@@ -11,7 +11,6 @@ class FlashlightApp(object):
 
     def foreground(self):
         """Activate the application."""
-        self.on_screen = ( -1, -1, -1, -1, -1, -1 )
         self.draw()
         wasp.system.request_tick(1000)
 
@@ -22,13 +21,9 @@ class FlashlightApp(object):
         """De-activate the application (without losing state)."""
         wasp.system.brightness = self._brightness
 
-    def sleep(self):
-        return False
-
     def tick(self, ticks):
         wasp.system.keep_awake()
 
     def draw(self):
         """Redraw the display from scratch."""
-        display = wasp.watch.display
-        display.fill(0xffff)
+        wasp.watch.display.fill(0xffff)

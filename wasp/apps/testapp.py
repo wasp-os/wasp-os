@@ -20,13 +20,6 @@ class TestApp():
                                   wasp.EventMask.SWIPE_UPDOWN |
                                   wasp.EventMask.BUTTON)
 
-    def background(self):
-        """De-activate the application (without losing state)."""
-        pass
-
-    def sleep(self):
-        return False
-
     def press(self, button, state):
         draw = wasp.watch.drawable
         if self.test == 'Touch':
