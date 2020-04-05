@@ -14,7 +14,7 @@ class Vibrator(object):
         self.period = 16000
         self.active_low = active_low
 
-    def pulse(self, duty=50, ms=100):
+    def pulse(self, duty=25, ms=40):
         pwm = PWM(0, self.pin, freq=self.freq, duty=duty, period=self.period)
         pwm.init()
         time.sleep_ms(ms)
