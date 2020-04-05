@@ -11,7 +11,7 @@ class BatteryMeter(object):
     def draw(self):
         self.level = -2
         self.update()
-        
+
     def update(self):
         icon = icons.battery
         draw = watch.drawable
@@ -50,3 +50,19 @@ class BatteryMeter(object):
                 draw.fill(rgb, x, 38 - h, w, h)
 
             self.level = level
+
+class ScrollIndicator():
+    def __init__(self, x=240-18, y=240-24):
+        self._pos = (x, y)
+        self.up = True
+        self.down = True
+
+    def draw(self):
+        self.update()
+
+    def update(self):
+        draw = watch.drawable
+        if self.up:
+            draw.rleblit(icons.up_arrow, pos=self._pos, fg=0x7bef)
+        if self.down:
+            draw.rleblit(icons.down_arrow, pos=(self._pos[0], self._pos[1] + 13), fg=0x7bef)

@@ -11,6 +11,7 @@ class TestApp():
     def __init__(self):
         self.tests = ('Touch', 'String', 'Button', 'Crash')
         self.test = self.tests[0]
+        self.scroll = wasp.widgets.ScrollIndicator()
 
     def foreground(self):
         """Activate the application."""
@@ -75,6 +76,7 @@ class TestApp():
         draw.fill()
         draw.string('{} test'.format(self.test),
                 0, 6, width=240)
+        self.scroll.draw()
 
         if self.test == 'Crash':
             draw.string("Press button to", 12, 24+24)
