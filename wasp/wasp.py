@@ -39,8 +39,8 @@ class EventMask():
     SWIPE_UPDOWN = 0x0004
     BUTTON = 0x0008
 
-class Debounce(object):
-    """Pin (and Signal) debounce wrapper.
+class PinHandler():
+    """Pin (and Signal) event generator.
 
     TODO: Currently this driver doesn't actually implement any
     debounce but it will!
@@ -87,7 +87,7 @@ class Manager():
 
         self.charging = True
         self._brightness = 2
-        self._button = Debounce(watch.button)
+        self._button = PinHandler(watch.button)
 
         # TODO: Eventually these should move to main.py
         self.register(ClockApp(), True)
