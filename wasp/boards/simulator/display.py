@@ -86,14 +86,22 @@ class CST816SSim():
             self.regs[1] = 0
 
     def handle_key(self, key):
+        """Use key presses to provoke different touchscreen events.
+
+        Note: The Down key provokes an upward swipe and vice versa.
+              Same for left and right. That is because the swipe up
+              gesture means show me the screen the is below me (hence
+              the controls are inverted compared to joystick-like
+              direction control).
+        """
         if key.keysym.sym == sdl2.SDLK_DOWN:
-            self.regs[1] = 1
-        elif key.keysym.sym == sdl2.SDLK_UP:
             self.regs[1] = 2
+        elif key.keysym.sym == sdl2.SDLK_UP:
+            self.regs[1] = 1
         elif key.keysym.sym == sdl2.SDLK_LEFT:
-            self.regs[1] = 3
-        elif key.keysym.sym == sdl2.SDLK_RIGHT:
             self.regs[1] = 4
+        elif key.keysym.sym == sdl2.SDLK_RIGHT:
+            self.regs[1] = 3
         self.regs[3] = 0x80
         self.raise_interrupt()
 
