@@ -9,7 +9,7 @@ class TestApp():
     """
 
     def __init__(self):
-        self.tests = ('Touch', 'String', 'Button')
+        self.tests = ('Touch', 'String', 'Button', 'Crash')
         self.test = self.tests[0]
 
     def foreground(self):
@@ -28,6 +28,8 @@ class TestApp():
             self.benchmark_string()
         elif self.test == 'Button':
             draw.string('{}: {}'.format(button, state), 0, 108, width=240)
+        elif self.test == 'Crash':
+            self.crash()
 
     def swipe(self, event):
         tests = self.tests
@@ -69,7 +71,13 @@ class TestApp():
     def draw(self):
         """Redraw the display from scratch."""
         wasp.watch.display.mute(True)
-        wasp.watch.drawable.fill()
-        wasp.watch.drawable.string('{} test'.format(self.test),
+        draw = wasp.watch.drawable
+        draw.fill()
+        draw.string('{} test'.format(self.test),
                 0, 6, width=240)
+
+        if self.test == 'Crash':
+            draw.string("Press button to", 12, 24+24)
+            draw.string("throw exception.", 12, 24+48)
+
         wasp.watch.display.mute(False)
