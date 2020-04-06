@@ -41,7 +41,8 @@ class ST7789Sim(object):
             self.y = self.rowclip[0]
 
         elif self.cmd == RAMWR:
-            pixelview = sdl2.ext.PixelView(windowsurface)
+            #pixelview = sdl2.ext.PixelView(windowsurface)
+            pixelview = sdl2.ext.pixels2d(windowsurface)
 
             half = False
             for d in data:
@@ -52,11 +53,14 @@ class ST7789Sim(object):
                 rgb |= d
                 half = False
 
-                pixel = ((rgb & 0xf800) >> 8,
-                         (rgb & 0x07e0) >> 3,
-                         (rgb & 0x001f) << 3)
+                #pixel = ((rgb & 0xf800) >> 8,
+                #         (rgb & 0x07e0) >> 3,
+                #         (rgb & 0x001f) << 3)
+                pixel = (((rgb & 0xf800) << 8) +
+                         ((rgb & 0x07e0) << 5) +
+                         ((rgb & 0x001f) << 3))
             
-                pixelview[self.y][self.x] = pixel
+                pixelview[self.x][self.y] = pixel
 
                 self.x += 1
                 if self.x > self.colclip[1]:
