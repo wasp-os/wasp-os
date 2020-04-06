@@ -33,6 +33,17 @@ def _bitblit(bitbuf, pixels, bgfg: int, count: int):
             pxp += 1
 
 @micropython.viper
+def _expand_rgb(eightbit: int) -> int:
+    r = eightbit >> 5
+    r = (r << 2) | (r >> 1)
+    g = (eightbit >> 2) & 7
+    g *= 9
+    b = eightbit & 3
+    b *= 10
+
+    return (r << 11) | (g << 5) | b
+
+@micropython.viper
 def _fill(mv, color: int, count: int, offset: int):
     p = ptr8(mv)
     colorhi = color >> 8
@@ -122,6 +133,53 @@ class Draw565(object):
                 color = fg
             else:
                 color = bg
+
+    @micropython.native
+    def rle2bit(self, image, x, y):
+        """Decode and draw a 2-bit RLE image."""
+        display = self._display
+        (sx, sy, rle) = image
+
+        display.set_window(x, y, sx, sy)
+
+        buf = memoryview(display.linebuffer)[0:2*sx]
+        bp = 0
+        rl = 0
+        palette = [ 0, 0xfffe, 0x7bef, 0xffff ]
+        next_color = 1
+
+        def blit_run(color, rl):
+            nonlocal bp
+            while rl:
+                count = min(sx - bp, rl)
+                _fill(buf, color, count, bp)
+                bp += count
+                rl -= count
+
+                if bp >= sx:
+                    display.write_data(buf)
+                    bp = 0
+
+        for op in rle:
+            if rl == 0:
+                px = op >> 6
+                rl = op & 0x3f
+                if 0 == rl:
+                    rl = -1
+                elif rl < 63:
+                    blit_run(palette[px], rl)
+                    rl = 0
+            elif rl > 0:
+                rl += op
+                if op < 255:
+                    blit_run(palette[px], rl)
+                    rl = 0
+            else:
+                palette[next_color] = _expand_rgb(op)
+                next_color += 1
+                if next_color >= len(palette):
+                    next_color = 1
+                rl = 0
 
     def set_color(self, color, bg=0):
         """Set the foreground (color) and background (bg) color.
