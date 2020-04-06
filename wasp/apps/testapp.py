@@ -3,10 +3,13 @@
 
 import machine
 import wasp
+import icons
 
 class TestApp():
     """Simple test application.
     """
+    NAME = 'Self Test'
+    ICON = icons.app
 
     def __init__(self):
         self.tests = ('Touch', 'String', 'Button', 'Crash')
@@ -57,6 +60,7 @@ class TestApp():
     def benchmark_string(self):
         draw = wasp.watch.drawable
         draw.fill(0, 0, 30, 240, 240-30)
+        self.scroll.draw()
         t = machine.Timer(id=1, period=8000000)
         t.start()
         draw.string("The quick brown", 12, 24+24)

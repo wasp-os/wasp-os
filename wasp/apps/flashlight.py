@@ -3,11 +3,15 @@
 
 import wasp
 
+import icons
+
 class FlashlightApp(object):
     """Trivial flashlight application.
 
     Shows a pure white screen with the backlight set to maximum.
     """
+    NAME = 'Torch'
+    ICON = icons.torch
 
     def foreground(self):
         """Activate the application."""

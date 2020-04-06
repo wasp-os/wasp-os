@@ -5,8 +5,9 @@ freeze('.', 'watch.py', opt=3)
 freeze('../..',
     (
         'apps/clock.py',
-        'apps/testapp.py',
         'apps/flashlight.py',
+        'apps/launcher.py',
+        'apps/testapp.py',
         'boot.py',
         'demo.py',
         'draw565.py',

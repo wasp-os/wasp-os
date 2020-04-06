@@ -15,6 +15,7 @@ import widgets
 
 from apps.clock import ClockApp
 from apps.flashlight import FlashlightApp
+from apps.launcher import LauncherApp
 from apps.testapp import TestApp
 
 class EventType():
@@ -86,6 +87,8 @@ class Manager():
         self.applications = []
         self.blank_after = 15
         self.charging = True
+        self.launcher = LauncherApp()
+
         self._brightness = 2
         self._button = PinHandler(watch.button)
 
@@ -142,23 +145,40 @@ class Manager():
         quick application ring. Applications on the ring are not permitted
         to subscribe to :py:data`EventMask.SWIPE_LEFTRIGHT` events.
 
+        Swipe up is used to bring up the launcher. Clock applications are not
+        permitted to subscribe to :py:data`EventMask.SWIPE_UPDOWN` events since
+        they should expect to be the default application (and is important that
+        we can trigger the launcher from the default application).
+
         :param int direction: The direction of the navigation
         """
         app_list = self.applications
 
         if direction == EventType.LEFT:
-            i = app_list.index(self.app) + 1
-            if i >= len(app_list):
+            if self.app in app_list:
+                i = app_list.index(self.app) + 1
+                if i >= len(app_list):
+                    i = 0
+            else:
                 i = 0
             self.switch(app_list[i])
         elif direction == EventType.RIGHT:
-            i = app_list.index(self.app) - 1
-            if i < 0:
-                i = len(app_list)-1
+            if self.app in app_list:
+                i = app_list.index(self.app) - 1
+                if i < 0:
+                    i = len(app_list)-1
+            else:
+                i = 0
             self.switch(app_list[i])
+        elif direction == EventType.UP:
+            self.switch(self.launcher)
+        elif direction == EventType.DOWN:
+            if self.app != app_list[0]:
+                self.switch(app_list[0])
+            else:
+                watch.vibrator.pulse()
         elif direction == EventType.HOME:
-            i = app_list.index(self.app)
-            if i != 0:
+            if self.app != app_list[0]:
                 self.switch(app_list[0])
             else:
                 self.sleep()

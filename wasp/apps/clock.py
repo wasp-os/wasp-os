@@ -3,6 +3,7 @@
 
 import wasp
 
+import icons
 import fonts.clock as digits
 
 DIGITS = (
@@ -25,6 +26,8 @@ class ClockApp():
 
     Shows a time (as HH:MM) together with a battery meter and the date.
     """
+    NAME = 'Clock'
+    ICON = icons.clock
 
     def __init__(self):
         self.meter = wasp.widgets.BatteryMeter()
