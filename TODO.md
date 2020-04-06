@@ -61,16 +61,19 @@ applications.
 ### WASP
 
  * [X] Add dd/mm/yyyy support to RTC
- * [ ] Button driver (interrupt based)
- * [ ] Touch sensor driver
- * [ ] Event driven application framework
+ * [X] Button driver (interrupt based)
+ * [X] Touch sensor driver
+ * [X] Event driven application framework
  * [ ] Stopwatch app
- * [ ] Settings app
+ * [X] Settings app
  * [X] PC-hosted simulation platform
- * [ ] Documentation
-   - [ ] Sphinx framework and integration with github.io
+ * [.] Documentation
+   - [X] Sphinx framework and integration with github.io
    - [ ] Document bootloader protocols
    - [ ] Write full docstring documentation for all WASP components
+ * [ ] Application Launcher
+ * [ ] Debug notifications
+ * [ ] Multi-colour RLE images
 
 ## M3: Smartwatch
 
