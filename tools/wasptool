@@ -11,6 +11,17 @@ import time
 import string
 import sys
 
+def pbar(iterable, quiet=False):
+    step = 100 / len(iterable)
+    for i, v in enumerate(iterable):
+        if not quiet:
+            percent = round(step * i, 1)
+            bar = int(percent) // 2
+            print(f'[{"="*bar}{"-"*(50-bar)}] {percent}%', end='\r', flush=True)
+        yield v
+    if not quiet:
+        print(f'[{"="*50}] 100% ')
+
 def sync(c):
     """Stop the watch and synchronize with the command prompt.
 
@@ -37,6 +48,9 @@ def unsync(c):
 
 def paste(c, f, verbose=False):
     docstring = False
+
+    tosend = []
+
     for ln in f.readlines():
         ln = ln.rstrip()
 
@@ -52,12 +66,11 @@ def paste(c, f, verbose=False):
         if ln.lstrip().startswith('#'):
             continue
 
+        tosend.append(ln)
 
-        c.sendline(ln)
-        c.expect('=== ')
-
-        if not verbose:
-            print('.', end='', flush=True)
+    for ln in pbar(tosend, verbose):
+            c.sendline(ln)
+            c.expect('=== ')
 
 def handle_eval(c, cmd):
     verbose = bool(c.logfile)
@@ -78,14 +91,13 @@ def handle_exec(c, fname):
 
     with open(fname) as f:
         if not verbose:
-            print(f'Preparing to run {fname} ...', end='', flush=True)
+            print(f'Preparing to run {fname}:')
 
         c.send('\x05')
         c.expect('=== ')
 
         paste(c, f, verbose)
 
-        print(' done')
         c.logfile = sys.stdout
         c.send('\x04')
         c.expect('>>> ')
@@ -110,14 +122,13 @@ def handle_upload(c, fname):
 
     with open(fname) as f:
         if not verbose:
-            print(f'Uploading {fname} ...', end='', flush=True)
+            print(f'Uploading {fname}:')
 
         c.sendline(f'upload("{os.path.basename(fname)}")')
         c.expect('=== ')
         paste(c, f, verbose)
         c.send('\x04')
 
-        print(' done')
         c.expect('>>> ')
 
 if __name__ == '__main__':
