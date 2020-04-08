@@ -121,13 +121,13 @@ class ST7789(object):
 
 class ST7789_SPI(ST7789):
     def __init__(self, width, height, spi, cs, dc, res=None, rate=8000000):
-        self.spi = spi
-        self.dc = dc
+        self.quick_write = spi.write
+        self.cs = cs.value
+        self.dc = dc.value
         self.res = res
-        self.cs = cs
         self.rate = rate
 
-        #self.spi.init(baudrate=self.rate, polarity=1, phase=1)
+        #spi.init(baudrate=self.rate, polarity=1, phase=1)
         cs.init(cs.OUT, value=1)
         dc.init(dc.OUT, value=0)
         if res:
@@ -145,13 +145,23 @@ class ST7789_SPI(ST7789):
         sleep_ms(125)
 
     def write_cmd(self, cmd):
-        self.dc(0)
-        self.cs(0)
-        self.spi.write(bytearray([cmd]))
-        self.cs(1)
-        self.dc(1)
+        dc = self.dc
+        cs = self.cs
+
+        dc(0)
+        cs(0)
+        self.quick_write(bytearray([cmd]))
+        cs(1)
+        dc(1)
 
     def write_data(self, buf):
+        cs = self.cs
+        cs(0)
+        self.quick_write(buf)
+        cs(1)
+
+    def quick_start(self):
         self.cs(0)
-        self.spi.write(buf)
+
+    def quick_end(self):
         self.cs(1)

@@ -1,6 +1,7 @@
 # SPDX-License-Identifier: LGPL-3.0-or-later
 # Copyright (C) 2020 Daniel Thompson
 
+import array
 import fonts.sans24
 import micropython
 
@@ -45,13 +46,10 @@ def _expand_rgb(eightbit: int) -> int:
 
 @micropython.viper
 def _fill(mv, color: int, count: int, offset: int):
-    p = ptr8(mv)
-    colorhi = color >> 8
-    colorlo = color & 0xff
+    p = ptr16(mv)
 
-    for x in range(count):
-        p[2*(x+offset)    ] = colorhi
-        p[2*(x+offset) + 1] = colorlo
+    for x in range(offset, offset+count):
+        p[x] = color
 
 def _bounding_box(s, font):
     w = 0
@@ -110,6 +108,7 @@ class Draw565(object):
     def rleblit(self, image, pos=(0, 0), fg=0xffff, bg=0):
         """Decode and draw a 1-bit RLE image."""
         display = self._display
+        write_data = display.write_data
         (sx, sy, rle) = image
 
         display.set_window(pos[0], pos[1], sx, sy)
@@ -126,7 +125,7 @@ class Draw565(object):
                 rl -= count
 
                 if bp >= sx:
-                    display.write_data(buf)
+                    write_data(buf)
                     bp = 0
 
             if color == bg:
@@ -138,48 +137,50 @@ class Draw565(object):
     def rle2bit(self, image, x, y):
         """Decode and draw a 2-bit RLE image."""
         display = self._display
+        quick_write = display.quick_write
         (sx, sy, rle) = image
 
         display.set_window(x, y, sx, sy)
 
+        palette = array.array('H', (0, 0xfffe, 0x7bef, 0xffff))
+        next_color = 1
+        rl = 0
         buf = memoryview(display.linebuffer)[0:2*sx]
         bp = 0
-        rl = 0
-        palette = [ 0, 0xfffe, 0x7bef, 0xffff ]
-        next_color = 1
 
-        def blit_run(color, rl):
-            nonlocal bp
-            while rl:
-                count = min(sx - bp, rl)
-                _fill(buf, color, count, bp)
-                bp += count
-                rl -= count
-
-                if bp >= sx:
-                    display.write_data(buf)
-                    bp = 0
-
+        display.quick_start()
         for op in rle:
             if rl == 0:
                 px = op >> 6
                 rl = op & 0x3f
                 if 0 == rl:
                     rl = -1
-                elif rl < 63:
-                    blit_run(palette[px], rl)
-                    rl = 0
+                    continue
+                if rl >= 63:
+                    continue
             elif rl > 0:
                 rl += op
-                if op < 255:
-                    blit_run(palette[px], rl)
-                    rl = 0
+                if op >= 255:
+                    continue
             else:
                 palette[next_color] = _expand_rgb(op)
-                next_color += 1
-                if next_color >= len(palette):
+                if next_color < 3:
+                    next_color += 1
+                else:
                     next_color = 1
                 rl = 0
+                continue
+
+            while rl:
+                count = min(sx - bp, rl)
+                _fill(buf, palette[px], count, bp)
+                bp += count
+                rl -= count
+
+                if bp >= sx:
+                    quick_write(buf)
+                    bp = 0
+        display.quick_end()
 
     def set_color(self, color, bg=0):
         """Set the foreground (color) and background (bg) color.
