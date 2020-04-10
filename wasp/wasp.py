@@ -16,6 +16,7 @@ import widgets
 from apps.clock import ClockApp
 from apps.flashlight import FlashlightApp
 from apps.launcher import LauncherApp
+from apps.settings import SettingsApp
 from apps.testapp import TestApp
 
 class EventType():
@@ -95,6 +96,7 @@ class Manager():
         # TODO: Eventually these should move to main.py
         self.register(ClockApp(), True)
         self.register(FlashlightApp(), True)
+        self.register(SettingsApp(), True)
         self.register(TestApp(), True)
 
     def register(self, app, quick_ring=True):
