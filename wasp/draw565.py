@@ -106,6 +106,15 @@ class Draw565(object):
         self._display.fill(bg, x, y, w, h)
 
     @micropython.native
+    def blit(self, image, x, y):
+        if len(image) == 3:
+            # Legacy 1-bit image
+            self.rleblit(image, (x, y))
+        else: #elif image[0] == 2:
+            # 2-bit RLE image, (255x255, v1)
+            self._rle2bit(image, x, y)
+
+    @micropython.native
     def rleblit(self, image, pos=(0, 0), fg=0xffff, bg=0):
         """Decode and draw a 1-bit RLE image."""
         display = self._display
@@ -135,13 +144,19 @@ class Draw565(object):
                 color = bg
 
     @micropython.native
-    def rle2bit(self, image, x, y):
+    def _rle2bit(self, image, x, y):
         """Decode and draw a 2-bit RLE image."""
         display = self._display
         quick_write = display.quick_write
-        (sx, sy, rle) = image
+        sx = image[1]
+        sy = image[2]
+        rle = memoryview(image)[3:]
 
         display.set_window(x, y, sx, sy)
+
+        if sx <= (len(display.linebuffer) / 2) and not bool(sy & 1):
+            sx *= 2
+            sy /= 2
 
         palette = array.array('H', (0, 0xfffe, 0x7bef, 0xffff))
         next_color = 1
