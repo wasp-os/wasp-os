@@ -7,13 +7,12 @@ import micropython
 
 @micropython.viper
 def _bitblit(bitbuf, pixels, bgfg: int, count: int):
-    mv = ptr8(bitbuf)
+    mv = ptr16(bitbuf)
     px = ptr8(pixels)
 
-    bghi = (bgfg >> 24) & 0xff
-    bglo = (bgfg >> 16) & 0xff
-    fghi = (bgfg >>  8) & 0xff
-    fglo = (bgfg      ) & 0xff
+    # Extract and byte-swap
+    bg = ((bgfg >> 24) & 0xff) + ((bgfg >> 8) & 0xff00)
+    fg = ((bgfg >>  8) & 0xff) + ((bgfg & 0xff) << 8)
 
     bitselect = 0x80
     pxp = 0
@@ -22,9 +21,7 @@ def _bitblit(bitbuf, pixels, bgfg: int, count: int):
     for bit in range(count):
         # Draw the pixel
         active = px[pxp] & bitselect
-        mv[mvp] = fghi if active else bghi
-        mvp += 1
-        mv[mvp] = fglo if active else bglo
+        mv[mvp] = fg if active else bg
         mvp += 1
 
         # Advance to the next bit
