@@ -59,6 +59,8 @@ def encode_2bit(im):
     this encoding is about 30% larger than a 1-bit encoding.
     """
     pixels = im.load()
+    assert(im.width <= 255)
+    assert(im.height <= 255)
 
     rle = []
     rl = 0
@@ -87,6 +89,11 @@ def encode_2bit(im):
         else:
             rle.append((px << 6) + rl)
 
+    # Issue the descriptor
+    rle.append(2)
+    rle.append(im.width)
+    rle.append(im.height)
+
     for y in range(im.height):
         for x in range(im.width):
             newpx = pixels[x, y]
@@ -105,7 +112,7 @@ def encode_2bit(im):
     # Handle the final run
     encode_pixel(px, rl)
 
-    return (im.width, im.height, bytes(rle))
+    return bytes(rle)
 
 def encode_8bit(im):
     """Experimental 8-bit RLE encoder.
@@ -212,29 +219,41 @@ parser.add_argument('--2bit', action='store_true', dest='twobit',
                     help='Generate 2-bit image')
 parser.add_argument('--8bit', action='store_true', dest='eightbit',
                     help='Generate 8-bit image')
+
 args = parser.parse_args()
+extra_indent = ' ' * args.indent
+if args.eightbit:
+    encoder = encode_8bit
+    depth = 8
+elif args.twobit:
+    encoder = encode_2bit
+    depth = 2
+else:
+    encoder = encode
+    depth =1
 
 for fname in args.files:
-    if args.eightbit:
-        image = encode_8bit(Image.open(fname))
-        depth = 8
-    elif args.twobit:
-        image = encode_2bit(Image.open(fname))
-        depth = 2
-    else:
-        image = encode(Image.open(fname))
-        depth = 1
+    image = encoder(Image.open(fname))
 
     if args.c:
         render_c(image, fname)
     else:
-        print(f'# {depth}-bit RLE, generated from {fname}, {len(image[2])} bytes')
-        # Split the bytestring to ensure each line is short enough to be absorbed
-        # on the target if needed.
-        #print(f'{varname(fname)} = {image}')
-        (x, y, pixels) = image
-        extra_indent = ' ' * args.indent
-        print(f'{extra_indent}{varname(fname)} = (\n{extra_indent}    {x}, {y},')
+        if len(image) == 3:
+            print(f'{extra_indent}# {depth}-bit RLE, generated from {fname}, '
+                  f'{len(image[2])} bytes')
+            (x, y, pixels) = image
+            print(f'{extra_indent}{varname(fname)} = (')
+            print(f'{extra_indent}    {x}, {y},')
+        else:
+            print(f'{extra_indent}# {depth}-bit RLE, generated from {fname}, '
+                  f'{len(image)} bytes')
+            pixels = image[3:]
+            print(f'{extra_indent}{varname(fname)} = (')
+            print(f'{extra_indent}    {image[0:1]}')
+            print(f'{extra_indent}    {image[1:3]}')
+
+        # Split the bytestring to ensure each line is short enough to
+        # be absorbed on the target if needed.
         for i in range(0, len(pixels), 16):
             print(f'{extra_indent}    {pixels[i:i+16]}')
         print(f'{extra_indent})')
