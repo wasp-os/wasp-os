@@ -47,6 +47,7 @@ def _expand_rgb(eightbit: int) -> int:
 @micropython.viper
 def _fill(mv, color: int, count: int, offset: int):
     p = ptr16(mv)
+    color = (color >> 8) + ((color & 0xff) << 8)
 
     for x in range(offset, offset+count):
         p[x] = color
