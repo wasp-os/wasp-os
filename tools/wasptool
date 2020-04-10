@@ -17,10 +17,10 @@ def pbar(iterable, quiet=False):
         if not quiet:
             percent = round(step * i, 1)
             bar = int(percent) // 2
-            print(f'[{"="*bar}{"-"*(50-bar)}] {percent}%', end='\r', flush=True)
+            print(f'[{"#"*bar}{"."*(50-bar)}] {percent}%', end='\r', flush=True)
         yield v
     if not quiet:
-        print(f'[{"="*50}] 100% ')
+        print(f'[{"#"*50}] 100% ')
 
 def sync(c):
     """Stop the watch and synchronize with the command prompt.
