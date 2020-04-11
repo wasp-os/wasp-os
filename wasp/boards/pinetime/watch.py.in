@@ -84,9 +84,7 @@ except AttributeError:
     os.mount(flash,'/flash')
     with open('/flash/main.py', 'w') as f:
         f.write('''\
-import manager
-wasp = manager.Manager(watch)
-wasp.run()
+#include('main.py')
 ''')
 
 # Only change directory if the button is not pressed (this will

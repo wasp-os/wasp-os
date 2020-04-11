@@ -4,3 +4,4 @@
 __pycache__
 docs/build
 attic/
+wasp/boards/pinetime/watch.py

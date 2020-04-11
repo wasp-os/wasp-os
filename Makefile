@@ -27,7 +27,7 @@ bootloader:
 softdevice:
 	micropython/ports/nrf/drivers/bluetooth/download_ble_stack.sh
 
-micropython:
+micropython: wasp/boards/pinetime/watch.py
 	$(MAKE) -C micropython/mpy-cross
 	$(RM) micropython/ports/nrf/build-$(BOARD)-s132/frozen_content.c
 	$(MAKE) -C micropython/ports/nrf \
@@ -38,6 +38,10 @@ micropython:
 		--dev-type 0x0052 \
 		--application micropython/ports/nrf/build-$(BOARD)-s132/firmware.hex \
 		micropython.zip
+
+wasp/boards/pinetime/watch.py : wasp/boards/pinetime/watch.py.in
+	(cd wasp; ../tools/preprocess.py boards/pinetime/watch.py.in > \
+		                         boards/pinetime/watch.py)
 
 dfu:
 	python3 -m nordicsemi dfu serial --package micropython.zip --port /dev/ttyACM0
