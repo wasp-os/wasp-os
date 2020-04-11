@@ -19,6 +19,18 @@ Applications
    :members:
    :undoc-members:
 
+.. automodule:: apps.launcher
+   :members:
+   :undoc-members:
+
+.. automodule:: apps.pager
+   :members:
+   :undoc-members:
+
+.. automodule:: apps.template
+   :members:
+   :undoc-members:
+
 .. automodule:: apps.testapp
    :members:
    :undoc-members:

@@ -64,7 +64,7 @@ class PinHandler():
         return it.
 
         :return: boolean of the pin state if an event is received, None
-        otherwise.
+                 otherwise.
         """
         new_value = self._pin.value()
         if self._value == new_value:
