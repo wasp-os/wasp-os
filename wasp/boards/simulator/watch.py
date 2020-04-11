@@ -6,6 +6,12 @@ def sleep_ms(ms):
     time.sleep(ms / 1000)
 time.sleep_ms = sleep_ms
 
+import sys, traceback
+def print_exception(exc, file=sys.stdout):
+    exc_type, exc_value, exc_traceback = sys.exc_info()
+    traceback.print_exception(exc_type, exc_value, exc_traceback, file=file)
+sys.print_exception = print_exception
+
 import draw565
 
 from machine import I2C

@@ -12,7 +12,7 @@ class TestApp():
     ICON = icons.app
 
     def __init__(self):
-        self.tests = ('Touch', 'String', 'Button', 'Crash', 'RLE')
+        self.tests = ('Touch', 'String', 'Wrap', 'Button', 'Crash', 'RLE')
         self.test = self.tests[0]
         self.scroll = wasp.widgets.ScrollIndicator()
 
@@ -56,6 +56,8 @@ class TestApp():
                     event[1], event[2]), 0, 108, width=240)
         elif self.test == 'String':
             self.benchmark_string()
+        elif self.test == 'Wrap':
+            self.benchmark_wrap()
         elif self.test == 'RLE':
             self.benchmark_rle()
 
@@ -83,6 +85,24 @@ class TestApp():
         draw.string("the lazy dog.", 12, 24+72)
         draw.string("0123456789", 12, 24+120)
         draw.string('!"£$%^&*()', 12, 24+144)
+        elapsed = t.time()
+        t.stop()
+        del t
+        draw.string('{}s'.format(elapsed / 1000000), 12, 24+192)
+
+    def benchmark_wrap(self):
+        draw = wasp.watch.drawable
+        draw.fill(0, 0, 30, 240, 240-30)
+        self.scroll.draw()
+        t = machine.Timer(id=1, period=8000000)
+        t.start()
+        draw = wasp.watch.drawable
+        s = 'This\nis a very long string that will need to be wrappedinmultipledifferentways!'
+        chunks = draw.wrap(s, 240)
+
+        for i in range(len(chunks)-1):
+            sub = s[chunks[i]:chunks[i+1]].rstrip()
+            draw.string(sub, 0, 48+24*i)
         elapsed = t.time()
         t.stop()
         del t

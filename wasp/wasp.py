@@ -16,6 +16,7 @@ import widgets
 from apps.clock import ClockApp
 from apps.flashlight import FlashlightApp
 from apps.launcher import LauncherApp
+from apps.pager import CrashApp
 from apps.settings import SettingsApp
 from apps.testapp import TestApp
 
@@ -32,6 +33,7 @@ class EventType():
     TOUCH = 5
 
     HOME = 256
+    BACK = 257
 
 class EventMask():
     """Enumerated event masks.
@@ -179,7 +181,7 @@ class Manager():
                 self.switch(app_list[0])
             else:
                 watch.vibrator.pulse()
-        elif direction == EventType.HOME:
+        elif direction == EventType.HOME or direction == EventType.BACK:
             if self.app != app_list[0]:
                 self.switch(app_list[0])
             else:
@@ -298,7 +300,7 @@ class Manager():
             if 1 == self._button.get_event() or self.charging != charging:
                 self.wake()
 
-    def run(self):
+    def run(self, no_except=True):
         """Run the system manager synchronously.
 
         This allows all watch management activities to handle in the
@@ -312,8 +314,21 @@ class Manager():
         # been set running again.
         print('Watch is running, use Ctrl-C to stop')
 
+        if not no_except:
+            # This is a simplified (uncommented) version of the loop
+            # below
+            while True:
+                self._tick()
+                machine.deepsleep()
+
         while True:
-            self._tick()
+            try:
+                self._tick()
+            except KeyboardInterrupt:
+                raise
+            except Exception as e:
+                self.switch(CrashApp(e))
+
             # Currently there is no code to control how fast the system
             # ticks. In other words this code will break if we improve the
             # power management... we are currently relying on no being able

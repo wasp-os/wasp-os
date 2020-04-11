@@ -235,3 +235,32 @@ class Draw565(object):
 
         if width:
             display.fill(0, x, y, rightpad, h)
+
+    def wrap(self, s, width):
+        font = self._font
+        max = len(s)
+        chunks = [ 0, ]
+        end = 0
+
+        while end < max:
+            start = end
+            l = 0
+
+            for i in range(start, max+1):
+                if i >= len(s):
+                    break
+                ch = s[i]
+                if ch == '\n':
+                    end = i+1
+                    break
+                if ch == ' ':
+                    end = i+1
+                (_, h, w) = font.get_ch(ch)
+                l += w + 1
+                if l > width:
+                    break
+            if end <= start:
+                end = i
+            chunks.append(end)
+
+        return chunks
