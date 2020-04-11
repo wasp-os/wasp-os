@@ -20,10 +20,15 @@ class Pin(object):
     IN = 'IN'
     OUT = 'OUT'
 
+    pins = {}
+
     def __init__(self, id, direction, value=1, quiet=False):
         self._id = id
         self._value = 0
         self._quiet = quiet
+
+        # Update the pin registry
+        self.pins[id] = self
 
     def init(self, d, value):
         self.value(value)
@@ -81,7 +86,7 @@ class I2C():
 
     def readfrom_mem_into(self, addr, reg, dbuf):
         if self.sim:
-            self.sim.readfrom_mem_into(addr, reg, dbuf)
+            self.sim.readfrom_mem_into(addr, reg, dbuf, Pin.pins)
         else:
             raise OSError
 
@@ -107,7 +112,7 @@ class Timer():
         self.time()
 
 def lightsleep(ms=10):
-    display.tick()
+    display.tick(Pin.pins)
     time.sleep(ms / 1000)
 
 def deepsleep(ms=10):

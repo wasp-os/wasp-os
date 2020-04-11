@@ -77,8 +77,8 @@ class CST816SSim():
     def __init__(self):
         self.regs = bytearray(64)
 
-    def readfrom_mem_into(self, addr, reg, dbuf):
-        tick()
+    def readfrom_mem_into(self, addr, reg, dbuf, pins):
+        tick(pins)
 
         if not self.regs[1]:
             raise OSError
@@ -127,7 +127,7 @@ sdl2.ext.fill(windowsurface, (0, 0, 0))
 spi_st7789_sim = ST7789Sim()
 i2c_cst816s_sim = CST816SSim()
 
-def tick():
+def tick(pins):
     events = sdl2.ext.get_events()
     for event in events:
         if event.type == sdl2.SDL_QUIT:
@@ -136,7 +136,13 @@ def tick():
         elif event.type == sdl2.SDL_MOUSEBUTTONDOWN:
             i2c_cst816s_sim.handle_mousebutton(event.button)
         elif event.type == sdl2.SDL_KEYDOWN:
-            i2c_cst816s_sim.handle_key(event.key)
+            if event.key.keysym.sym == sdl2.SDLK_TAB:
+                pins['BUTTON'].value(0)
+            else:
+                i2c_cst816s_sim.handle_key(event.key)
+        elif event.type == sdl2.SDL_KEYUP:
+            if event.key.keysym.sym == sdl2.SDLK_TAB:
+                pins['BUTTON'].value(1)
         else:
             #print(event)
             pass
