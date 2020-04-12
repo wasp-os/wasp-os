@@ -82,26 +82,29 @@ class Manager():
     def __init__(self):
         self.app = None
 
-        self.applications = []
-        self.blank_after = 15
-        self.charging = True
+        self.quick_ring = []
         self.launcher = LauncherApp()
+        self.launcher_ring = []
+
+        self.blank_after = 15
 
         self._brightness = 2
         self._button = PinHandler(watch.button)
+        self._charging = True
 
         # TODO: Eventually these should move to main.py
         self.register(ClockApp(), True)
-        self.register(FlashlightApp(), True)
-        self.register(SettingsApp(), True)
-        self.register(TestApp(), True)
+        self.register(StopwatchApp(), True)
+        self.register(FlashlightApp(), False)
+        self.register(SettingsApp(), False)
+        self.register(TestApp(), False)
 
     def register(self, app, quick_ring=True):
         """Register an application with the system.
 
         :param object app: The application to regsister
         """
-        self.applications.append(app)
+        self.quick_ring.append(app)
 
     @property
     def brightness(self):
@@ -151,7 +154,7 @@ class Manager():
 
         :param int direction: The direction of the navigation
         """
-        app_list = self.applications
+        app_list = self.quick_ring
 
         if direction == EventType.LEFT:
             if self.app in app_list:
@@ -207,10 +210,10 @@ class Manager():
         """
         watch.backlight.set(0)
         if 'sleep' not in dir(self.app) or not self.app.sleep():
-            self.switch(self.applications[0])
+            self.switch(self.quick_ring[0])
             self.app.sleep()
         watch.display.poweroff()
-        self.charging = watch.battery.charging()
+        self._charging = watch.battery.charging()
         self.sleep_at = None
 
     def wake(self):
@@ -291,8 +294,8 @@ class Manager():
         else:
             watch.rtc.update()
 
-            charging = watch.battery.charging()
-            if 1 == self._button.get_event() or self.charging != charging:
+            if 1 == self._button.get_event() or \
+                    self._charging != watch.battery.changing():
                 self.wake()
 
     def run(self, no_except=True):
@@ -303,7 +306,7 @@ class Manager():
         can be observed interactively via the console.
         """
         if not self.app:
-            self.switch(self.applications[0])
+            self.switch(self.quick_ring[0])
 
         # Reminder: wasptool uses this string to confirm the device has
         # been set running again.
