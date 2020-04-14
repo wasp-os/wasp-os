@@ -72,8 +72,10 @@ applications.
    - [ ] Document bootloader protocols
    - [ ] Write full docstring documentation for all WASP components
  * [ ] Application Launcher
- * [ ] Debug notifications
- * [ ] Multi-colour RLE images
+ * [X] Debug notifications
+ * [o] Multi-colour RLE images
+   - [X] Optimized "2-bit" RLE encoder and decoder
+   - [ ] Logarithmic RBG332 <-> RGB56516bit color space conversion
 
 ## M3: Smartwatch
 
