@@ -29,7 +29,7 @@ class LauncherApp():
         else:
             i -= 1
             if i < 0:
-                wasp.system.switch(wasp.system.applications[0])
+                wasp.system.switch(wasp.system.quick_ring[0])
                 return
 
         self._page = i
@@ -50,11 +50,11 @@ class LauncherApp():
     @property
     def _num_pages(self):
         """Work out what the highest possible pages it."""
-        num_apps = len(wasp.system.applications)
+        num_apps = len(wasp.system.launcher_ring)
         return (num_apps + 3) // 4
 
     def _get_page(self, i):
-        apps = wasp.system.applications
+        apps = wasp.system.launcher_ring
         page = apps[4*i: 4*(i+1)]
         while len(page) < 4:
             page.append(None)

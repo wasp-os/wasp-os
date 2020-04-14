@@ -100,12 +100,16 @@ class Manager():
         self.register(SettingsApp(), False)
         self.register(TestApp(), False)
 
-    def register(self, app, quick_ring=True):
+    def register(self, app, quick_ring=False):
         """Register an application with the system.
 
         :param object app: The application to regsister
         """
-        self.quick_ring.append(app)
+        if quick_ring == True:
+            self.quick_ring.append(app)
+        else:
+            self.launcher_ring.append(app)
+            self.launcher_ring.sort(key = lambda x: x.NAME)
 
     @property
     def brightness(self):
@@ -296,7 +300,7 @@ class Manager():
             watch.rtc.update()
 
             if 1 == self._button.get_event() or \
-                    self._charging != watch.battery.changing():
+                    self._charging != watch.battery.charging():
                 self.wake()
 
     def run(self, no_except=True):
