@@ -12,12 +12,17 @@ def viper(fn):
         return buf
 
     def ptr16(buf):
-        return memoryview(buf).cast('H')
+        return memoryview(buf).cast('b').cast('H')
 
-    # This is a bit of a hack since the scope for ptr8 won't be right
-    # but it does mean no changes to the client
+    def ptr32(buf):
+        return memoryview(buf).cast('b').cast('I')
+
+    # This is a bit of a hack since the scopes don't exactly match where
+    # they would be in micropython but for the simple cases it does mean
+    # no changes to the client
     fn.__globals__['ptr8'] = ptr8
     fn.__globals__['ptr16'] = ptr16
+    fn.__globals__['ptr32'] = ptr32
 
     return fn
 
