@@ -46,7 +46,7 @@ def unsync(c):
     c.expect('Watch is running, use Ctrl-C to stop')
     c.send('\x18')
 
-def paste(c, f, verbose=False):
+def paste(c, f, verbose=False, chunk=None):
     docstring = False
 
     tosend = []
@@ -66,11 +66,17 @@ def paste(c, f, verbose=False):
         if ln.lstrip().startswith('#'):
             continue
 
+        if ln.strip() == '':
+            continue
+
         tosend.append(ln)
 
     for ln in pbar(tosend, verbose):
-            c.sendline(ln)
-            c.expect('=== ')
+        if chunk and ln.startswith('class'):
+            chunk()
+
+        c.sendline(ln)
+        c.expect('=== ')
 
 def handle_eval(c, cmd):
     verbose = bool(c.logfile)
@@ -89,6 +95,15 @@ def handle_eval(c, cmd):
 def handle_exec(c, fname):
     verbose = bool(c.logfile)
 
+    def chunk():
+        c.logfile = sys.stdout
+        c.send('\x04')
+        c.expect('>>> ')
+        if not verbose:
+            c.logfile = None
+        c.send('\x05')
+        c.expect('=== ')
+
     with open(fname) as f:
         if not verbose:
             print(f'Preparing to run {fname}:')
@@ -96,7 +111,7 @@ def handle_exec(c, fname):
         c.send('\x05')
         c.expect('=== ')
 
-        paste(c, f, verbose)
+        paste(c, f, verbose, chunk)
 
         c.logfile = sys.stdout
         c.send('\x04')
