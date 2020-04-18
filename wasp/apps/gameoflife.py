@@ -163,7 +163,7 @@ class GameOfLifeApp():
         """Activate the application."""
         self._draw()
         wasp.system.request_event(wasp.EventMask.TOUCH)
-        wasp.system.request_tick(1000)
+        wasp.system.request_tick(625)
 
     def tick(self, ticks):
         """Notify the application that its periodic tick is due."""

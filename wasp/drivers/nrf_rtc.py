@@ -20,8 +20,8 @@ class RTC(object):
 
     def __init__(self, counter):
         self.counter = counter
-        self.uptime = 0
-        self.set_localtime((2020, 2, 18, 12, 0, 0, 0, 0))
+        self._uptime = 0
+        self.set_localtime((2020, 3, 1, 3, 0, 0, 0, 0))
 
     def update(self):
         newcount = self.counter.counter()
@@ -30,11 +30,11 @@ class RTC(object):
             return False
         if split < 0:
             split += (1 << 24)
-        elapsed = split // 8
-        self.lastcount += elapsed * 8 
-        self.lastcount &= (1 << 24) - 1   
 
-        self.uptime += elapsed
+        self.lastcount += split
+        self.lastcount &= (1 << 24) - 1   
+        self._uptime += split
+
         return True
 
     def set_localtime(self, t):
@@ -51,16 +51,21 @@ class RTC(object):
             t = (yyyy, mm, dd, HH, MM, SS, 0, 0)
 
         lt = time.mktime(t)
-        self.offset = lt - self.uptime
+        self.offset = lt - self._uptime
 
     def get_localtime(self):
         self.update()
-        return time.localtime(self.offset + self.uptime)
+        return time.localtime(self.offset + (self._uptime >> 3))
 
     def get_time(self):
         localtime = self.get_localtime()
         return localtime[3:6]
 
+    @property
+    def uptime(self):
+        """Provide the current uptime in seconds."""
+        return self._uptime // 8
+
     def get_uptime_ms(self):
         """Return the current uptime in milliseconds."""
-        return self.uptime * 1000
+        return self._uptime * 125
