@@ -12,7 +12,6 @@ import gc
 import machine
 import watch
 import widgets
-import sys
 
 from apps import *
 
@@ -330,7 +329,9 @@ class Manager():
             except KeyboardInterrupt:
                 raise
             except Exception as e:
-                sys.print_exception(e)
+                # Only print the exception if the watch provides a way to do so!
+                if 'print_exception' in dir(watch):
+                    watch.print_exception(e)
                 self.switch(CrashApp(e))
 
             # Currently there is no code to control how fast the system
