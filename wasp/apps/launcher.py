@@ -10,6 +10,9 @@ class LauncherApp():
     NAME = 'Launcher'
     ICON = icons.app
 
+    def __init__(self):
+        self._scroll = wasp.widgets.ScrollIndicator(y=6)
+
     def foreground(self):
         """Activate the application."""
         self._page = 0
@@ -71,10 +74,16 @@ class LauncherApp():
             draw.string(app.NAME, x, y+120-30, 120)
 
         draw = wasp.watch.drawable
-        page = self._get_page(self._page)
+        page_num = self._page
+        page = self._get_page(page_num)
         
         draw.fill()
         draw_app(page[0],   0,   0)
         draw_app(page[1], 120,   0)
         draw_app(page[2],   0, 120)
         draw_app(page[3], 120, 120)
+
+        scroll = self._scroll
+        scroll.up = page_num > 0
+        scroll.down = page_num < (self._num_pages-1)
+        scroll.draw()
