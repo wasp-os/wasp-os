@@ -4,6 +4,7 @@
 # Copyright (c) 2020 Daniel Thompson
 
 import argparse
+import io
 import random
 import os.path
 import pexpect
@@ -78,6 +79,16 @@ def paste(c, f, verbose=False, chunk=None):
         c.sendline(ln)
         c.expect('=== ')
 
+def print_log(logfile):
+    lines = logfile.getvalue().split('\n')
+    lines = [ l.strip('\x04\r') for l in lines ]
+
+    output = [ l for l in lines if l and l != '>>> ' ]
+    if output:
+        print('~~~')
+        print('\n'.join(output))
+        print('~~~')
+
 def handle_eval(c, cmd):
     verbose = bool(c.logfile)
 
@@ -86,17 +97,23 @@ def handle_eval(c, cmd):
     c.sendline(cmd)
     c.expect('=== ')
 
-    c.logfile = sys.stdout
+    if not verbose:
+        c.logfile = io.StringIO()
     c.send('\x04')
     c.expect('>>> ')
     if not verbose:
+        print_log(c.logfile)
+        c.logfile.close()
         c.logfile = None
 
 def handle_exec(c, fname):
     verbose = bool(c.logfile)
 
+    log = io.StringIO()
+
     def chunk():
-        c.logfile = sys.stdout
+        if not verbose:
+            c.logfile = log
         c.send('\x04')
         c.expect('>>> ')
         if not verbose:
@@ -113,11 +130,15 @@ def handle_exec(c, fname):
 
         paste(c, f, verbose, chunk)
 
-        c.logfile = sys.stdout
+        if not verbose:
+            c.logfile = log
         c.send('\x04')
         c.expect('>>> ')
         if not verbose:
             c.logfile = None
+
+    print_log(log)
+    log.close()
 
 def handle_reset(c):
     c.send('\x05')
