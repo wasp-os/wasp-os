@@ -66,7 +66,7 @@ class LauncherApp():
             if not app:
                 return
             draw.set_color(0xffff)
-            draw.blit(app.ICON, x+13, y+12)
+            draw.blit(app.ICON if 'ICON' in dir(app) else icons.app, x+13, y+12)
             draw.set_color(0xbdb6)
             draw.string(app.NAME, x, y+120-30, 120)
 
