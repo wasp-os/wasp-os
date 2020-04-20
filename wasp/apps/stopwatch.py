@@ -12,7 +12,7 @@ class StopwatchApp():
     def __init__(self):
         self._meter = wasp.widgets.BatteryMeter()
         self._reset()
-        self._count = 999*6000
+        self._count = 0
 
     def foreground(self):
         """Activate the application."""
@@ -90,6 +90,7 @@ class StopwatchApp():
         draw = wasp.watch.drawable
         draw.fill()
 
+        self._last_count = -1
         self._update()
         self._meter.draw()
         self._draw_splits()
