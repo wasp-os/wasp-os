@@ -4,11 +4,11 @@ Watch Application System in Python
 Introduction
 ------------
 
-Currently in its infancy wasp-os provides nothing more than a simple
+Currently in its infancy wasp-os provides only a little more than a simple
 digital clock application for [PineTime](https://www.pine64.org/pinetime/)
 together with access to the MicroPython REPL for interactive testing and
 tweaking. However it keeps time well and has enough power saving
-functions implemented that it can survive for well over 24 hours between
+functions implemented that it can survive for well over 72 hours between
 charges so even at this early stage it is functional as a wearable
 timepiece.
 
@@ -20,6 +20,10 @@ only on BLE for updates.
 
 Videos
 ------
+
+[![An M2 pre-release running on Pine64 PineTime](https://img.youtube.com/vi/YktiGUSRJB4/0.jpg)](https://www.youtube.com/watch?v=YktiGUSRJB4)\
+[An M2 pre-release running on Pine64 PineTime](https://www.youtube.com/watch?v=YktiGUSRJB4)
+
 [![How to develop wasp-os python applications on a Pine64 PineTime](https://img.youtube.com/vi/tuk9Nmr3Jo8/0.jpg)](https://www.youtube.com/watch?v=tuk9Nmr3Jo8)\
 [How to develop wasp-os python applications on a Pine64 PineTime](https://www.youtube.com/watch?v=tuk9Nmr3Jo8)
 
@@ -51,7 +55,8 @@ trying to program it.*
   This file is an Intel HEX file containing both the bootloader and
   the Nordic SoftDevice. Be careful to disconnect cleanly from the
   debug software since just pulling out the SWD cable will mean the
-  nRF52 will still believe it is being debugged.
+  nRF52 will still believe it is being debugged (and won't properly
+  enter deep sleep modes).
 * Copy `micropython.zip` to your Android device and download nRF Connect
   for Android if you do not already have it.
 * In nRF Connect, choose settings and reduce the DFU packet count from
@@ -59,9 +64,9 @@ trying to program it.*
 * Connect to PineDFU using nRFConnect, click the DFU button and send
   `micropython.zip` to the device.
 
-At the end of this process your watch will show the time (12:00) and a
-battery meter. When the watch goes into power saving mode you can use
-the side button to wake it again.
+At the end of this process your watch will show the time (03:00) together
+with a date and battery meter. When the watch goes into power saving mode
+you can use the side button to wake it again.
 
 At this point you will also be able to use the Nordic UART Service to
 access the MicroPython REPL, although currently you must send ^C to
