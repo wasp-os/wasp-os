@@ -23,6 +23,8 @@ bootloader:
 		bootloader/_build-$(BOARD)_nrf52832/$(BOARD)_nrf52832_bootloader-*-nosd.hex \
 		bootloader/lib/softdevice/s132_nrf52_6.1.1/s132_nrf52_6.1.1_softdevice.hex \
 		-o bootloader.hex
+	python3 tools/hex2c.py bootloader.hex > \
+		reloader/src/boards/$(BOARD)/bootloader.h
 
 softdevice:
 	micropython/ports/nrf/drivers/bluetooth/download_ble_stack.sh

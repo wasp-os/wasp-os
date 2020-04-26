@@ -46,7 +46,7 @@ applications.
 
 ### Bootloader
 
- * [ ] OTA bootloader update
+ * [X] OTA bootloader update
  * [ ] Stay in bootloader after battery run down
  * [ ] Implement power off support (no splash screen)
  * [ ] RTC time measurement whilst in bootloader
@@ -64,14 +64,14 @@ applications.
  * [X] Button driver (interrupt based)
  * [X] Touch sensor driver
  * [X] Event driven application framework
- * [ ] Stopwatch app
+ * [X] Stopwatch app
  * [X] Settings app
  * [X] PC-hosted simulation platform
  * [.] Documentation
    - [X] Sphinx framework and integration with github.io
    - [ ] Document bootloader protocols
    - [ ] Write full docstring documentation for all WASP components
- * [ ] Application Launcher
+ * [X] Application Launcher
  * [X] Debug notifications
  * [o] Multi-colour RLE images
    - [X] Optimized "2-bit" RLE encoder and decoder
