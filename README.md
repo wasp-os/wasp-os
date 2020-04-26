@@ -51,18 +51,27 @@ Note: *If you have a new PineTime then it will have been delivered with
 flash protection enabled. You must disable the flash protection before
 trying to program it.*
 
-* Use an SWD programmer to install `bootloader.hex` to the PineTime.
-  This file is an Intel HEX file containing both the bootloader and
-  the Nordic SoftDevice. Be careful to disconnect cleanly from the
-  debug software since just pulling out the SWD cable will mean the
-  nRF52 will still believe it is being debugged (and won't properly
-  enter deep sleep modes).
+Use an SWD programmer to install `bootloader.hex` to the PineTime.  This
+file is an Intel HEX file containing both the bootloader and the Nordic
+SoftDevice. Be careful to disconnect cleanly from the debug software
+since just pulling out the SWD cable will mean the nRF52 will still
+believe it is being debugged (and won't properly enter deep sleep
+modes).
+
+To install using Android device:
+
 * Copy `micropython.zip` to your Android device and download nRF Connect
   for Android if you do not already have it.
 * In nRF Connect, choose settings and reduce the DFU packet count from
   10 to 4.
 * Connect to PineDFU using nRFConnect, click the DFU button and send
   `micropython.zip` to the device.
+
+To install using Linux and ota-dfu:
+
+* Look up the MAC address for your watch (try: `sudo hcitool lescan`).
+* Use ota-dfu to upload `micropython.zip` to the device. For example:
+  `tools/ota-dfu/dfu.py -z micropython.zip -a A0:B1:C2:D3:E3:F5 --legacy`
 
 At the end of this process your watch will show the time (03:00) together
 with a date and battery meter. When the watch goes into power saving mode

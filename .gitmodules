@@ -19,3 +19,6 @@
 [submodule "tools/micropython-font-to-py"]
 	path = tools/micropython-font-to-py
 	url = https://github.com/peterhinch/micropython-font-to-py
+[submodule "tools/ota-dfu"]
+	path = tools/ota-dfu
+	url = https://github.com/daniel-thompson/ota-dfu-python
