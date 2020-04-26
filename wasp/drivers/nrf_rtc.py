@@ -51,7 +51,7 @@ class RTC(object):
             t = (yyyy, mm, dd, HH, MM, SS, 0, 0)
 
         lt = time.mktime(t)
-        self.offset = lt - self._uptime
+        self.offset = lt - (self._uptime >> 3)
 
     def get_localtime(self):
         self.update()
