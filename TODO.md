@@ -47,7 +47,7 @@ applications.
 ### Bootloader
 
  * [X] OTA bootloader update
- * [ ] RTC time measurement whilst in bootloader
+ * [X] RTC time measurement whilst in bootloader
 
 ### MicroPython
 
