@@ -47,8 +47,6 @@ applications.
 ### Bootloader
 
  * [X] OTA bootloader update
- * [ ] Stay in bootloader after battery run down
- * [ ] Implement power off support (no splash screen)
  * [ ] RTC time measurement whilst in bootloader
 
 ### MicroPython
@@ -56,7 +54,6 @@ applications.
  * [X] SPI FLASH driver
  * [X] Enable LittleFS on SPI FLASH (at boot)
  * [X] BLE file transfer
- * [ ] Full power saving
 
 ### WASP
 
@@ -81,6 +78,16 @@ applications.
 
 At M3 we start to build out full fitness tracking and notification
 functionality.
+
+### Bootloader
+
+ * [ ] Stay in bootloader after battery run down
+ * [ ] Implement power off support (no splash screen)
+
+### Micropython
+
+ * [ ] Use SoftDevice sleep logic
+ * [ ] Automatically enter SPI flash power saving mode
 
 ### WASP
 
