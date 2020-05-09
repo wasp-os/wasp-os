@@ -1,12 +1,13 @@
 export PYTHONPATH := $(PWD)/tools/nrfutil:$(PWD)/tools/intelhex:$(PYTHONPATH)
 
-all : bootloader micropython
+all : bootloader reloader micropython
 
 BOARD ?= $(error Please set BOARD=)
 
 clean :
 	$(RM) -r \
 		bootloader/_build-$(BOARD)_nrf52832 \
+		reloader/build-$(BOARD) reloader/src/boards/$(BOARD)/bootloader.h \
 		micropython/mpy-cross/build \
 		micropython/ports/nrf/build-$(BOARD)-s132
 
@@ -25,6 +26,10 @@ bootloader:
 		-o bootloader.hex
 	python3 tools/hex2c.py bootloader.hex > \
 		reloader/src/boards/$(BOARD)/bootloader.h
+
+reloader: bootloader
+	$(MAKE) -C reloader/ BOARD=$(BOARD)
+	mv reloader/build-$(BOARD)/reloader.zip .
 
 softdevice:
 	micropython/ports/nrf/drivers/bluetooth/download_ble_stack.sh
@@ -71,5 +76,5 @@ sim:
 	PYTHONPATH=$(PWD)/wasp/boards/simulator:$(PWD)/wasp \
 	python3 -i wasp/main.py
 
-.PHONY: bootloader docs micropython
+.PHONY: bootloader reloader docs micropython
 
