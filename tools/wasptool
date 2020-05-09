@@ -158,6 +158,22 @@ def handle_rtc(c):
     c.sendline(f'watch.rtc.set_localtime(({now[0]}, {now[1]}, {now[2]}, {now[3]}, {now[4]}, {now[5]}, {now[6]}, {now[7]}))')
     c.expect('>>> ')
 
+def check_rtc(c):
+    c.sendline('print(watch.rtc.get_localtime())')
+    c.expect('\(([0-9]+), ([0-9]+), ([0-9]+), ([0-9]+), ([0-9]+), ([0-9]+), ([0-9]+), ([0-9]+)\)')
+    t = time.localtime()
+
+    watch_hms = (int(c.match[4]), int(c.match[5]), int(c.match[6]))
+    watch_str = f'{watch_hms[0]:02d}:{watch_hms[1]:02d}:{watch_hms[2]:02d}'
+    host_hms = (t.tm_hour, t.tm_min, t.tm_sec)
+    host_str = f'{host_hms[0]:02d}:{host_hms[1]:02d}:{host_hms[2]:02d}'
+    delta = 3600 * (host_hms[0] - watch_hms[0]) + \
+              60 * (host_hms[1] - watch_hms[1]) + \
+                   (host_hms[2] - watch_hms[2])
+    print(f"PC <-> watch:  {watch_str} <-> {host_str} (delta {delta})")
+
+    c.expect('>>> ')
+
 def handle_upload(c, fname):
     verbose = bool(c.logfile)
 
@@ -180,6 +196,8 @@ if __name__ == '__main__':
             description='WASP command and control client')
     parser.add_argument('--console', action='store_true',
             help='Launch a REPL session')
+    parser.add_argument('--check-rtc', action='store_true',
+            help='Compare workstation and watch times')
     parser.add_argument('--device',
             help='Connect only to a specific named device')
     parser.add_argument('--exec',
@@ -210,6 +228,9 @@ if __name__ == '__main__':
 
     if args.rtc:
         handle_rtc(console)
+
+    if args.check_rtc:
+        check_rtc(console)
 
     if args.exec:
         handle_exec(console, args.exec)
