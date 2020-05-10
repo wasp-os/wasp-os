@@ -64,10 +64,10 @@ applications.
  * [X] Stopwatch app
  * [X] Settings app
  * [X] PC-hosted simulation platform
- * [o] Documentation
+ * [O] Documentation
    - [X] Sphinx framework and integration with github.io
    - [X] Document bootloader protocols
-   - [ ] Application writer's guide
+   - [X] Application writer's guide
    - [ ] Write full docstring documentation for all WASP components
  * [X] Application Launcher
  * [X] Debug notifications

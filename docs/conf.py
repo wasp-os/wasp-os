@@ -30,6 +30,7 @@ author = 'Daniel Thompson'
 # ones.
 extensions = [
     'sphinx.ext.autodoc',
+    'sphinx.ext.graphviz',
     'recommonmark',
 ]
 

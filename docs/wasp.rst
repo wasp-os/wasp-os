@@ -1,5 +1,7 @@
-WASP Internals
-==============
+.. _WASP Reference Manual:
+
+WASP Reference Manual
+=====================
 
 System management
 -----------------
@@ -24,10 +26,6 @@ Applications
    :undoc-members:
 
 .. automodule:: apps.pager
-   :members:
-   :undoc-members:
-
-.. automodule:: apps.template
    :members:
    :undoc-members:
 
@@ -79,7 +77,6 @@ Libraries
 
 .. automodule:: fonts.sans24
    :members:
-   :undoc-members:
 
 .. automodule:: logo
    :members:

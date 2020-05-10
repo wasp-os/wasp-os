@@ -1,13 +1,40 @@
 # SPDX-License-Identifier: LGPL-3.0-or-later
 # Copyright (C) 2020 Daniel Thompson
-"""Template application implementing all application method calls.
+"""The complete set of wasp-os application entry points are documented
+below as part of a template application. Note that the template does
+not rely on any specific parent class. This is because applications in
+wasp-os can rely on *duck typing* making a class hierarchy pointless.
 """
 
 import wasp
 import icons
 
 class TemplateApp():
-    """Template application ready to use as a basis for new applications.
+    """Template application.
+
+    The template application includes every application entry point. It
+    is used as a reference guide and can also be used as a template for
+    creating new applications.
+
+    .. data:: NAME = 'Template'
+
+       Applications must provide a short ``NAME`` that is used by the
+       launcher to describe the application. Names that are longer than
+       8 characters are likely to be abridged by the launcher in order
+       to fit on the screen.
+
+    .. data:: ICON = RLE2DATA
+
+       Applications can optionally provide an icon for display by the
+       launcher. Applications that expect to be installed on the quick
+       ring will not be listed by the launcher and need not provide any
+       icon. When no icon is provided the system will use a default
+       icon.
+
+       The icon is an opportunity to differentiate your application from others
+       so supplying an icon is strongly recommended. The icon, when provided,
+       must not be larger than 96x64.
+
     """
     NAME = 'Template'
     ICON = icons.app

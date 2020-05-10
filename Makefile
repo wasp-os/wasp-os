@@ -72,8 +72,7 @@ docs:
 
 
 sim:
-	PYTHONDONTWRITEBYTECODE=1 \
-	PYTHONPATH=$(PWD)/wasp/boards/simulator:$(PWD)/wasp \
+	PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=.:wasp/boards/simulator:wasp \
 	python3 -i wasp/main.py
 
 .PHONY: bootloader reloader docs micropython
