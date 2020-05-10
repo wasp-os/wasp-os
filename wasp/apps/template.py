@@ -67,5 +67,5 @@ class TemplateApp():
         self._update()
 
     def _update(self):
-        """Update the dynamic parts of the application display
+        """Update the dynamic parts of the application display."""
         pass
