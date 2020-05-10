@@ -4,7 +4,6 @@
 freeze('.', 'watch.py', opt=3)
 freeze('../..',
     (
-        'apps/__init__.py',
         'apps/clock.py',
         'apps/flashlight.py',
         'apps/launcher.py',

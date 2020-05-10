@@ -13,7 +13,13 @@ import machine
 import watch
 import widgets
 
-from apps import *
+from apps.clock import ClockApp
+from apps.flashlight import FlashlightApp
+from apps.launcher import LauncherApp
+from apps.pager import PagerApp, CrashApp
+from apps.settings import SettingsApp
+from apps.stopwatch import StopwatchApp
+from apps.testapp import TestApp
 
 class EventType():
     """Enumerated interface actions.
