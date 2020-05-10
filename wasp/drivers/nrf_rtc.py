@@ -22,16 +22,16 @@ class RTC(object):
     def __init__(self, counter):
         self.counter = counter
 
-	if machine.mem32[0x200039c0] == 0x1abe11ed and \
-	   machine.mem32[0x200039dc] == 0x10adab1e:
+        if machine.mem32[0x200039c0] == 0x1abe11ed and \
+           machine.mem32[0x200039dc] == 0x10adab1e:
             self.lastcount = self.counter.counter()
-	    self.offset = machine.mem32[0x200039c4]
-	    self._uptime = machine.mem32[0x200039c8] // 125
-	else:
-	    machine.mem32[0x200039c0] = 0x1abe11ed
-	    machine.mem32[0x200039dc] = 0x10adab1e
-	    self._uptime = 0
-	    self.set_localtime((2020, 3, 1, 3, 0, 0, 0, 0))
+            self.offset = machine.mem32[0x200039c4]
+            self._uptime = machine.mem32[0x200039c8] // 125
+        else:
+            machine.mem32[0x200039c0] = 0x1abe11ed
+            machine.mem32[0x200039dc] = 0x10adab1e
+            self._uptime = 0
+            self.set_localtime((2020, 3, 1, 3, 0, 0, 0, 0))
 
     def update(self):
         newcount = self.counter.counter()
