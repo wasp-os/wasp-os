@@ -82,13 +82,16 @@ class Draw565(object):
         """Initialise the library.
 
         Defaults to white-on-black for monochrome drawing operations
-        and 24 pt Sans Serif text.
+        and 24pt Sans Serif text.
         """
         self._display = display
         self.reset()
 
     def reset(self):
-        """Restore the default colour and font."""
+        """Restore the default colours and font.
+
+        Default colours are white-on-block (white foreground, black
+        background) and the default font is 24pt Sans Serif."""
         self.set_color(0xffff)
         self.set_font(fonts.sans24)
 
@@ -96,7 +99,15 @@ class Draw565(object):
         """Draw a solid color rectangle.
 
         If no arguments a provided the whole display will be filled with
-        the background color.
+        the background colour (typically black).
+
+        :param bg: Background colour (in RGB565 format)
+        :param x:  X coordinate of the left-most pixels of the rectangle
+        :param y:  Y coordinate of the top-most pixels of the rectangle
+        :param w:  Width of the rectangle, defaults to None (which means select
+                   the right-most pixel of the display)
+        :param h:  Height of the rectangle, defaults to None (which means select
+                   the bottom-most pixel of the display)
         """
         if bg is None:
             bg = self._bgfg >> 16
@@ -104,6 +115,13 @@ class Draw565(object):
 
     @micropython.native
     def blit(self, image, x, y):
+        """Decode and draw an encoded image.
+
+        :param image: Image data in either 1-bit RLE or 2-bit RLE formats. The
+                      format will be autodetected
+        :param x: X coordinate for the left-most pixels in the image
+        :param y: Y coordinate for the top-most pixels in the image
+        """
         if len(image) == 3:
             # Legacy 1-bit image
             self.rleblit(image, (x, y))
@@ -113,7 +131,11 @@ class Draw565(object):
 
     @micropython.native
     def rleblit(self, image, pos=(0, 0), fg=0xffff, bg=0):
-        """Decode and draw a 1-bit RLE image."""
+        """Decode and draw a 1-bit RLE image.
+
+        .. deprecated:: M2
+            Use :py:meth:`~.blit` instead.
+        """
         display = self._display
         write_data = display.write_data
         (sx, sy, rle) = image
@@ -196,26 +218,36 @@ class Draw565(object):
         display.quick_end()
 
     def set_color(self, color, bg=0):
-        """Set the foreground (color) and background (bg) color.
+        """Set the foreground and background colours.
 
-        The supplied color will be used for all monochrome drawing operations.
-        If no background color is provided then the background will be set
+        The supplied colour will be used for all monochrome drawing operations.
+        If no background colour is provided then the background will be set
         to black.
+
+        :param color: Foreground colour
+        :param bg:    Background colour, defaults to black
         """
         self._bgfg = (bg << 16) + color
 
     def set_font(self, font):
-        """Set the font used for rendering text."""
+        """Set the font used for rendering text.
+
+        :param font:  A font module generated using ``font_to_py.py``.
+        """
         self._font = font
 
     def string(self, s, x, y, width=None):
         """Draw a string at the supplied position.
 
-        If no width is provided then the text will be left justified,
-        otherwise the text will be centered within the provided width and,
-        importantly, the remaining width will be filled with the background
-        color (to ensure that if we update one string with a narrower one
-        there is no need to "undraw" it)
+        :param s:     String to render
+        :param x:     X coordinate for the left-most pixels in the image
+        :param y:     Y coordinate for the top-most pixels in the image
+        :param width: If no width is provided then the text will be left
+                      justified, otherwise the text will be centred within the
+                      provided width and, importantly, the remaining width will
+                      be filled with the background colour (to ensure that if
+                      we update one string with a narrower one there is no
+                      need to "undraw" it)
         """
         display = self._display
         bgfg = self._bgfg
@@ -237,6 +269,24 @@ class Draw565(object):
             display.fill(0, x, y, rightpad, h)
 
     def wrap(self, s, width):
+        """Chunk a string so it can rendered within a specified width.
+
+        Example:
+
+        .. code-block:: python
+
+            draw = wasp.watch.drawable
+            chunks = draw.wrap(long_string, 240)
+
+            # line(1) will provide the first line
+            # line(len(chunks)-1) will provide the last line
+            def line(n):
+                return long_string[chunks[n-1]:chunks[n]]
+
+        :param s:     String to be chunked
+        :param width: Width to wrap the text into
+        :returns:     List of chunk boundaries
+        """
         font = self._font
         max = len(s)
         chunks = [ 0, ]
