@@ -30,8 +30,20 @@ Videos
 [![Developing for Pine64 PineTime using wasp-os and MicroPython](https://img.youtube.com/vi/kf1VHj587Mc/0.jpg)](https://www.youtube.com/watch?v=kf1VHj587Mc)\
 [Developing for Pine64 PineTime using wasp-os and MicroPython](https://www.youtube.com/watch?v=kf1VHj587Mc)
 
+Documentation
+-------------
+
+WASP is has [extensive
+documentation](https://daniel-thompson.github.io/wasp-os/) which includes a
+detailed [Applicaiton Writer's
+Guide](https://daniel-thompson.github.io/wasp-os/appguide.html) to help you get
+started coding for WASP as quickly as possible.
+
 Building from a git clone
 -------------------------
+
+Get the code from
+[https://github.com/daniel-thompson/wasp-os](https://github.com/daniel-thompson/wasp-os) .
 
 ~~~
 pip3 install --user click serial pyserial
