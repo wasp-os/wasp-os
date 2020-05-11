@@ -34,8 +34,8 @@ Let's start by examining a simple "Hello, World!" application for WASP.
 
 There are a couple of points of interest:
 
-1. Applications have a :py:data:`~.TemplateApp.NAME`, which is shown in the
-   launcher. Most applications also provide an :py:data:`~.TemplateApp.ICON`
+1. Applications have a :py:attr:`~.TemplateApp.NAME`, which is shown in the
+   launcher. Most applications also provide an :py:attr:`~.TemplateApp.ICON`
    but a default is displayed if this is omitted.
 2. This example uses :py:meth:`~.TemplateApp.__init__` to initialize 
    the state of the application, this ensure the state remains "sticky" 
@@ -107,9 +107,11 @@ can also return False from :py:meth:`~.TemplateApp.sleep` if this is preferred.
 In this case the system manager will automatically return to the default
 application, typically the main clock face.
 
-Note: *Most applications do not need to support sleep() since it is often
-a better user experience for the watch to return to the default application
-when they complete an interaction.*
+.. note::
+
+    Most applications do not need to support :py:meth:`~.TemplateApp.sleep`
+    since it is often a better user experience for the watch to return to the
+    default application when they complete an interaction.
     
 API primer
 ----------
@@ -202,9 +204,11 @@ downloading them to the device. The simulator is useful for ensuring the
 code is syntactically correct and that there are not major runtime problems
 (e.g. missing symbols).
 
-Note: *The simulator does not model the RAM or code size limits of the
-real device. It may still be necessary to tune the application for minimal
-footprint after testing on the simulator.*
+.. note::
+
+    The simulator does not model the RAM or code size limits of the real
+    device. It may still be necessary to tune the application for minimal
+    footprint after testing on the simulator.
 
 Firstly launch the simulator:
 
@@ -264,9 +268,11 @@ Like the simulator, when an application is registered it does not start
 automatically but it will have been added to the launcher and can be launched
 using the normal gestures to control the device.
 
-Note: *If the progress bar jams at the same point each time then it is likely
-your application is too large to be compiled on the target. You may have to
-adopt the frozen module approach from the next section.*
+.. note::
+
+    If the progress bar jams at the same point each time then it is likely your
+    application is too large to be compiled on the target. You may have to
+    adopt the frozen module approach from the next section.
 
 Making it permanent
 ~~~~~~~~~~~~~~~~~~~
@@ -276,9 +282,11 @@ button for around five seconds until the splash screen is seen, wait
 five seconds and then press again) then we must copy it to the device
 and ensure it gets launched during system startup.
 
-Note: *Applications stored in external FLASH have a greater RAM overhead
-than applications that are frozen into the WASP binary. See next section
-for additional details.*
+.. note::
+
+    Applications stored in external FLASH have a greater RAM overhead than
+    applications that are frozen into the WASP binary. See next section for
+    additional details.
 
 To copy your application to the external FLASH try:
 
@@ -313,11 +321,12 @@ to the watch:
     Uploading wasp/main.py:
     [##################################################] 100% 
 
-Note: *If the new code on the watch throws an exception (including
-an out-of-memory exception) then your watch will display a black
-screen at startup. If that happens, and you don't know how to debug
-the problem, then you can use wasptool to restore the original version 
-of main.py .*
+.. note::
+
+    If the new code on the watch throws an exception (including an
+    out-of-memory exception) then your watch will display a black screen at
+    startup. If that happens, and you don't know how to debug the problem, then
+    you can use wasptool to restore the original version of main.py .
 
 Freezing your application into the WASP binary
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -334,9 +343,11 @@ your application and then the whole binary must be re-compiled as normal.
 After that you an use the same technique described in the previous 
 section to add an import and register for you application to ``main.py``
 
-Note: *The micropython import path "prefers" frozen modules to those
-found in the external filesystem. If your application is both frozen and
-copied to external FLASH then the frozen version will be loaded.*
+.. note::
+
+    The micropython import path "prefers" frozen modules to those found in the
+    external filesystem. If your application is both frozen and copied to
+    external FLASH then the frozen version will be loaded.
  
 Application entry points
 ------------------------
