@@ -348,6 +348,17 @@ section to add an import and register for you application to ``main.py``
     The micropython import path "prefers" frozen modules to those found in the
     external filesystem. If your application is both frozen and copied to
     external FLASH then the frozen version will be loaded.
+
+    In many cases it is possible to avoid rebuilding the binary in order to
+    test new features by parsing the code in the global namespace and then
+    patching it into the existing code. For example the following can be used
+    to adopt a new version of the CST816S driver:
+
+    .. code-block::
+
+        ./tools/wasptool\
+            --exec wasp/drivers/cst816s.py\
+            --eval "watch.touch = CST816S(watch.i2c)"`
  
 Application entry points
 ------------------------
