@@ -12,6 +12,8 @@ System
 .. automodule:: wasp
    :members:
 
+.. automodule:: watch
+
 .. automodule:: draw565
    :members:
 
