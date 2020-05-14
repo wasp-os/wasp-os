@@ -44,7 +44,6 @@ Device drivers
 
 .. automodule:: drivers.nrf_rtc
    :members:
-   :undoc-members:
 
 .. automodule:: drivers.signal
    :members:
