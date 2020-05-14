@@ -38,7 +38,6 @@ Device drivers
 
 .. automodule:: drivers.battery
    :members:
-   :undoc-members:
 
 .. automodule:: drivers.cst816s
    :members:
