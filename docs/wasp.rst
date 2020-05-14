@@ -53,7 +53,6 @@ Device drivers
 
 .. automodule:: drivers.st7789
    :members:
-   :undoc-members:
 
 .. automodule:: drivers.vibrator
    :members:
