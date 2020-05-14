@@ -1,23 +1,23 @@
 # SPDX-License-Identifier: LGPL-3.0-or-later
 # Copyright (C) 2020 Daniel Thompson
 
-"""Hynitron CST816S touch contoller driver for MicroPython.
-
-After modifying this file we can test the changes by replacing the
-frozen driver with the modified driver. The following command will
-upload the code and integrate it into the watch namespace::
-
-    ./tools/wasptool\
-      --exec wasp/drivers/cst816s.py\
-      --eval "watch.touch = CST816S(watch.i2c)"`
+"""Hynitron CST816S touch contoller driver
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 """
 
 import array
 
 class CST816S:
-    """Hynitron CST816S I2C touch controller driver."""
+    """Hynitron CST816S I2C touch controller driver.
+
+    .. automethod:: __init__
+    """
     
     def __init__(self, bus):
+        """Specify the bus used by the touch controller.
+
+        :param machine.I2C bus: I2C bus for the CST816S.
+        """
         self.i2c = bus
         self.dbuf = bytearray(6)
         self.event = array.array('H', (0, 0, 0))

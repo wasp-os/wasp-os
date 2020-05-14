@@ -41,7 +41,6 @@ Device drivers
 
 .. automodule:: drivers.cst816s
    :members:
-   :undoc-members:
 
 .. automodule:: drivers.nrf_rtc
    :members:
