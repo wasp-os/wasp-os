@@ -64,11 +64,11 @@ applications.
  * [X] Stopwatch app
  * [X] Settings app
  * [X] PC-hosted simulation platform
- * [O] Documentation
+ * [X] Documentation
    - [X] Sphinx framework and integration with github.io
    - [X] Document bootloader protocols
    - [X] Application writer's guide
-   - [ ] Write full docstring documentation for all wasp-os components
+   - [X] Write full docstring documentation for all wasp-os components
  * [X] Application Launcher
  * [X] Debug notifications
  * [o] Multi-colour RLE images
@@ -104,3 +104,5 @@ functionality.
  * [ ] Step counting
    - [ ] BMA421 driver
    - [ ] Step counter app
+ * [ ] Documentation
+   - [ ] Debugging guide
