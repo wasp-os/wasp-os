@@ -3,6 +3,9 @@
 WASP Reference Manual
 =====================
 
+.. contents::
+    :local:
+
 System management
 -----------------
 
@@ -47,7 +50,6 @@ Device drivers
 
 .. automodule:: drivers.signal
    :members:
-   :undoc-members:
 
 .. automodule:: drivers.st7789
    :members:
