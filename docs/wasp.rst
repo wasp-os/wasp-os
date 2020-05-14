@@ -56,7 +56,6 @@ Device drivers
 
 .. automodule:: drivers.vibrator
    :members:
-   :undoc-members:
 
 Libraries
 ---------
