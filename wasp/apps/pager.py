@@ -1,20 +1,22 @@
 # SPDX-License-Identifier: LGPL-3.0-or-later
 # Copyright (C) 2020 Daniel Thompson
 
+"""Pager applications
+~~~~~~~~~~~~~~~~~~~~~
+
+The pager is used to present text based information to the user. It is
+primarily intended for notifications but is also used to provide debugging
+information when applications crash.
+"""
+
 import wasp
 import icons
 
 import io
 import sys
 
-
 class PagerApp():
-    """Show long text in a pager.
-
-    This is used to present text based information to the user. It is primarily
-    intended for notifications but is also used to provide debugging
-    information when applications crash.
-    """
+    """Show a long text message in a pager."""
     NAME = 'Pager'
     ICON = icons.app
 
@@ -31,10 +33,12 @@ class PagerApp():
         self._draw()
 
     def background(self):
+        """De-activate the application."""
         del self._chunks
         del self._numpages
 
     def swipe(self, event):
+        """Swipe to page up/down."""
         mute = wasp.watch.display.mute
 
         if event[0] == wasp.EventType.UP:
@@ -114,6 +118,5 @@ class CrashApp():
         wasp.watch.display.invert(True)
 
     def swipe(self, event):
-        """Show the exception message in a pager.
-        """
+        """Show the exception message in a pager."""
         wasp.system.switch(PagerApp(self._msg))

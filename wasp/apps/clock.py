@@ -1,6 +1,12 @@
 # SPDX-License-Identifier: LGPL-3.0-or-later
 # Copyright (C) 2020 Daniel Thompson
 
+"""Digital clock
+~~~~~~~~~~~~~~~~
+
+Shows a time (as HH:MM) together with a battery meter and the date.
+"""
+
 import wasp
 
 import icons
@@ -23,8 +29,6 @@ MONTH = 'JanFebMarAprMayJunJulAugSepOctNovDec'
 
 class ClockApp():
     """Simple digital clock application.
-
-    Shows a time (as HH:MM) together with a battery meter and the date.
     """
     NAME = 'Clock'
     ICON = icons.clock

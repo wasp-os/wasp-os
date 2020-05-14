@@ -6,35 +6,32 @@ WASP Reference Manual
 .. contents::
     :local:
 
-System management
------------------
+System
+------
 
 .. automodule:: wasp
    :members:
-   :undoc-members:
 
-Applications
-------------
+.. automodule:: draw565
+   :members:
 
-.. automodule:: apps.clock
+.. automodule:: icons
    :members:
    :undoc-members:
 
-.. automodule:: apps.flashlight
+.. automodule:: fonts.clock
    :members:
    :undoc-members:
 
-.. automodule:: apps.launcher
+.. automodule:: fonts.sans24
+   :members:
+
+.. automodule:: logo
    :members:
    :undoc-members:
 
-.. automodule:: apps.pager
+.. automodule:: widgets
    :members:
-   :undoc-members:
-
-.. automodule:: apps.testapp
-   :members:
-   :undoc-members:
 
 Device drivers
 --------------
@@ -57,28 +54,26 @@ Device drivers
 .. automodule:: drivers.vibrator
    :members:
 
-Libraries
----------
+Applications
+------------
 
-.. automodule:: draw565
-   :members:
-
-.. automodule:: icons
+.. automodule:: apps.clock
    :members:
    :undoc-members:
 
-.. automodule:: fonts.clock
+.. automodule:: apps.flashlight
    :members:
    :undoc-members:
 
-.. automodule:: fonts.sans24
-   :members:
-
-.. automodule:: logo
+.. automodule:: apps.launcher
    :members:
    :undoc-members:
 
-.. automodule:: widgets
+.. automodule:: apps.pager
+   :members:
+   :undoc-members:
+
+.. automodule:: apps.testapp
    :members:
    :undoc-members:
 
@@ -139,8 +134,8 @@ active (during splash screen or early UART recovery mode, during an
 update). It can be consumed by the application to prevent the current
 time being lost during an update.
 
-Watchdog
---------
+Watchdog protocol
+~~~~~~~~~~~~~~~~~
 
 Form-factor devices such as smart watches and fitness trackers do not usually
 have any hardware mechanism to allow the user to force a failed device into
@@ -155,9 +150,6 @@ replaced.
 The software responsibilities to implement this are split between the
 bootloader and the application, although the application responsibilities
 are intentionally minimal.
-
-Bootloader
-~~~~~~~~~~
 
 The bootloader implements an over-the-air recovery mode, as well as handling
 normal boot, where it's role is to display the splash screen.
@@ -183,14 +175,9 @@ From this list #1 and #2 are needed to ensure robust WDT handling whilst #3
 and # 4 ensure the user can switch back to application from the device
 itself if they ever accidentally trigger entry to recovery mode.
 
-Application
-~~~~~~~~~~~
-
 The application's role is to carefully pet the watchdog so that it will
 trigger automatically if the hardware button is held down for five
-seconds.
-
-Key points for robustness:
+seconds. Key points for application robustness include:
 
 1. Unlike a normal watchdog we can be fairly reckless about where in the
    code we pet the dog. For example petting the dog from a timer interrupt

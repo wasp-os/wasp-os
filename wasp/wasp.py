@@ -1,11 +1,18 @@
 # SPDX-License-Identifier: LGPL-3.0-or-later
 # Copyright (C) 2020 Daniel Thompson
-"""WASP system management (including constants)
+"""Wasp-os system manager
+~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. data:: system = Manager()
+.. data:: wasp.system
 
-   system is the system-wide instance of the Manager class. Applications
-   can use this instance to access system services.
+    wasp.system is the system-wide singleton instance of :py:class:`.Manager`.
+    Application must use this instance to access the system services provided
+    by the manager.
+
+.. data:: wasp.watch
+
+    wasp.watch is an import of :py:mod:`watch` and is simply provided as a
+    shortcut (and to reduce memory by keeping it out of other namespaces).
 """
 
 import gc

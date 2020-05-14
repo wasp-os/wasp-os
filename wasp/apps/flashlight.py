@@ -1,15 +1,18 @@
 # SPDX-License-Identifier: LGPL-3.0-or-later
 # Copyright (C) 2020 Daniel Thompson
 
+"""Flashlight
+~~~~~~~~~~~~~
+
+Shows a pure white screen with the backlight set to maximum.
+"""
+
 import wasp
 
 import icons
 
 class FlashlightApp(object):
-    """Trivial flashlight application.
-
-    Shows a pure white screen with the backlight set to maximum.
-    """
+    """Trivial flashlight application."""
     NAME = 'Torch'
     ICON = icons.torch
 
