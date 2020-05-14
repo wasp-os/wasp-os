@@ -7,7 +7,7 @@ Application Writer's Guide
 Introduction
 ------------
 
-WASP, the Watch Application System in Python, has one pervasive goal that
+Wasp-os, the Watch Application System in Python, has one pervasive goal that
 influences almost everything about it, from its name to its development
 roadmap: make writing applications easy (and fun).
 
@@ -16,7 +16,7 @@ are what **really** distinguishes a smart watch from a "feature watch"[#]_.
 In other words if we want a watch built around a tiny microcontroller to be
 sufficiently "smart" then it has to be all about the applications.
 
-This guide will help you get started writing applications for WASP. Have fun!
+This guide will help you get started writing applications for wasp-os. Have fun!
 
 .. [#] The fixed function mobile phones that existed before iOS and Android
    took over the industry were retrospectively renamed "feature phones" to
@@ -24,10 +24,10 @@ This guide will help you get started writing applications for WASP. Have fun!
    to early Android devices but is was the application ecosystem that really
    made smart phones smart.
 
-Hello World for WASP
-~~~~~~~~~~~~~~~~~~~~
+Hello World for wasp-os
+~~~~~~~~~~~~~~~~~~~~~~~
 
-Let's start by examining a simple "Hello, World!" application for WASP.
+Let's start by examining a simple "Hello, World!" application for wasp-os.
 
 .. literalinclude:: hello.py
    :linenos:
@@ -46,13 +46,13 @@ There are a couple of points of interest:
    for us to do!
 4. The use of :py:meth:`~.TemplateApp._draw` is optional. We could just do
    the work in :py:meth:`~.TemplateApp.foreground` but this application follows
-   a common WASP idiom that is normally used to pattern to distinguish a full
+   a common wasp-os idiom that is normally used to pattern to distinguish a full
    refresh of the screen from an fast update (a redraw).
 
 Application life-cycle
 ----------------------
 
-Applications in WASP are triggered by and do all their processing
+Applications in wasp-os are triggered by and do all their processing
 from calls their entry points. The entry points can be coarsely categorized
 event notifications, timer callbacks (the application tick) and
 system notifications.
@@ -82,7 +82,7 @@ calls, together with the implicit application states are shown below.
 When an application is initialized is enters the ``BACKGROUND`` state. A
 backgrounded application will not execute but it should nevertheless 
 maintain its user visible state whilst in the background. To conserve
-memory WASP does not permit two applications to run simultaneously but
+memory wasp-os does not permit two applications to run simultaneously but
 because each application preserves its state when in the background it will
 appear to the user as though all applications are running all the time.
 
@@ -117,9 +117,9 @@ API primer
 ----------
 
 This API primer introduces some of the most important and frequently used
-interfaces for WASP. For more comprehensive coverage see the
-:ref:`WASP Reference Manual` which contains extensive API documentation
-covering the entire of WASP, including its drivers.
+interfaces for wasp-os. For more comprehensive coverage see the
+:ref:`Wasp-os Reference Manual` which contains extensive API documentation
+covering the entire of wasp-os, including its drivers.
 
 System management
 ~~~~~~~~~~~~~~~~~
@@ -175,8 +175,8 @@ Some applications customize the above code slightly if they require a custom
 background colour and it may even be omitted entirely if the application
 explicitly draws every pixel on the display.
 
-Finally, WASP provides a small number of widgets that allow common fragments of
-logic and redrawing code to be shared between applications:
+Finally, wasp-os provides a small number of widgets that allow common fragments
+of logic and redrawing code to be shared between applications:
 
 * :py:class:`.BatteryMeter`
 * :py:class:`.ScrollingIndicator`
@@ -184,7 +184,7 @@ logic and redrawing code to be shared between applications:
 MicroPython
 ~~~~~~~~~~~
 
-Many of the features of WASP are inherited directly from MicroPython_. It is
+Many of the features of wasp-os are inherited directly from MicroPython_. It is
 useful to have a basic understanding of MicroPython and, in particular, put
 in a little time learning the best ways to copy with running
 `MicroPython on microcontrollers`__.
@@ -199,7 +199,7 @@ How to run your application
 Testing on the simulator
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
-WASP provides a simulator that can be used to test applications before
+wasp-os provides a simulator that can be used to test applications before
 downloading them to the device. The simulator is useful for ensuring the
 code is syntactically correct and that there are not major runtime problems
 (e.g. missing symbols).
@@ -285,7 +285,7 @@ and ensure it gets launched during system startup.
 .. note::
 
     Applications stored in external FLASH have a greater RAM overhead than
-    applications that are frozen into the WASP binary. See next section for
+    applications that are frozen into the wasp-os binary. See next section for
     additional details.
 
 To copy your application to the external FLASH try:
@@ -298,7 +298,7 @@ To copy your application to the external FLASH try:
 
 At this point your application is stored on the external FLASH but it will
 not automatically be loaded. This requires you to update the ``main.py`` file
-stored in the external FLASH. When WASP runs for the first time it
+stored in the external FLASH. When wasp-os runs for the first time it
 automatically generates this file (using ``wasp/main.py`` as a template)
 and copies it to the external FLASH. After this point ``main.py`` is user
 modifiable and can be used to tweak the configuration of the watch before
@@ -328,8 +328,8 @@ to the watch:
     startup. If that happens, and you don't know how to debug the problem, then
     you can use wasptool to restore the original version of main.py .
 
-Freezing your application into the WASP binary
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Freezing your application into the wasp-os binary
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Freezing your application causes it to consume dramatically less RAM.  That is
 because the code is both pre-compiled (meaning we don't need any RAM budget to

@@ -12,7 +12,7 @@ functions implemented that it can survive for well over 72 hours between
 charges so even at this early stage it is functional as a wearable
 timepiece.
 
-WASP includes a robust bootloader based on the Adafruit NRF52
+Wasp-os includes a robust bootloader based on the Adafruit NRF52
 Bootloader. It has been extended to make it robust for development on
 form-factor devices without a reset button, power switch, SWD debugger
 or UART. This allows us to confidently develop on sealed devices relying
@@ -33,11 +33,11 @@ Videos
 Documentation
 -------------
 
-WASP is has [extensive
+Wasp-os is has [extensive
 documentation](https://daniel-thompson.github.io/wasp-os/) which includes a
 detailed [Applicaiton Writer's
 Guide](https://daniel-thompson.github.io/wasp-os/appguide.html) to help you get
-started coding for WASP as quickly as possible.
+started coding for wasp-os as quickly as possible.
 
 Building from a git clone
 -------------------------

@@ -193,7 +193,7 @@ def handle_upload(c, fname):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
-            description='WASP command and control client')
+            description='Wasp-os command and control client')
     parser.add_argument('--console', action='store_true',
             help='Launch a REPL session')
     parser.add_argument('--check-rtc', action='store_true',
@@ -207,11 +207,11 @@ if __name__ == '__main__':
     parser.add_argument('--reset', action='store_true',
             help="Reboot the device (and don't stay in bootloader mode)")
     parser.add_argument('--rtc', action='store_true',
-            help='Set the time on the WASP device')
+            help='Set the time on the wasp-os device')
     parser.add_argument('--upload',
-            help='Copy the specified file to the WASP device')
+            help='Copy the specified file to the wasp-os device')
     parser.add_argument('--verbose', action='store_true',
-            help='Log interaction with the WASP device')
+            help='Log interaction with the wasp-os device')
 
     args = parser.parse_args()
     device_name = args.device

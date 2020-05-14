@@ -82,7 +82,7 @@ class PinHandler():
         return new_value
 
 class Manager():
-    """WASP system manager
+    """Wasp-os system manager
 
     The manager is responsible for handling top-level UI events and
     dispatching them to the foreground application. It also provides

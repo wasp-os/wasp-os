@@ -1,7 +1,7 @@
-.. _WASP Reference Manual:
+.. _Wasp-os Reference Manual:
 
-WASP Reference Manual
-=====================
+Wasp-os Reference Manual
+========================
 
 .. contents::
     :local:
@@ -142,7 +142,7 @@ have any hardware mechanism to allow the user to force a failed device into
 bootloader mode. This makes them difficult to develop on because opening the
 case to access a SWD or reset pins may compromise their waterproofing.
 
-WASP uses a watchdog timer (WDT) combined with a single hardware button in
+wasp-os uses a watchdog timer (WDT) combined with a single hardware button in
 order to provide a robust mechanism to allow the user to force entry into a
 over-the-air firmware recovery mode that allows the buggy application to be
 replaced.

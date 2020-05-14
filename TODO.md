@@ -2,7 +2,7 @@
 
 ## M1: Dumb watch feature parity
 
-The focus for M1 is to get WASP both to meet feature parity with a dumb
+The focus for M1 is to get wasp-os both to meet feature parity with a dumb
 watch and to have a bootloader and watchdog strategy that is robust enough
 to allow a PineTime case to be confidently glued shut.
 
@@ -21,7 +21,7 @@ to allow a PineTime case to be confidently glued shut.
    - [X] Feed dog from REPL polling loop
    - [X] Feed dog from a tick interrupt
  
-### WASP
+### Wasp-os
 
  * [X] Display driver
    - [X] Display initialization
@@ -55,7 +55,7 @@ applications.
  * [X] Enable LittleFS on SPI FLASH (at boot)
  * [X] BLE file transfer
 
-### WASP
+### Wasp-os
 
  * [X] Add dd/mm/yyyy support to RTC
  * [X] Button driver (interrupt based)
@@ -68,7 +68,7 @@ applications.
    - [X] Sphinx framework and integration with github.io
    - [X] Document bootloader protocols
    - [X] Application writer's guide
-   - [ ] Write full docstring documentation for all WASP components
+   - [ ] Write full docstring documentation for all wasp-os components
  * [X] Application Launcher
  * [X] Debug notifications
  * [o] Multi-colour RLE images
@@ -90,7 +90,7 @@ functionality.
  * [ ] Use SoftDevice sleep logic
  * [ ] Automatically enter SPI flash power saving mode
 
-### WASP
+### Wasp-os
 
  * [ ] Enable heart rate sensor
    - [ ] HRS3300 driver
