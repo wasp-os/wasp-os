@@ -1,6 +1,10 @@
 # SPDX-License-Identifier: LGPL-3.0-or-later
 # Copyright (C) 2020 Daniel Thompson
 
+"""RGB565 drawing library
+~~~~~~~~~~~~~~~~~~~~~~~~~
+"""
+
 import array
 import fonts.sans24
 import micropython
@@ -76,6 +80,8 @@ class Draw565(object):
 
     A full framebufer is not required although the library will
     'borrow' a line buffer from the underlying display driver.
+
+    .. automethod:: __init__
     """
 
     def __init__(self, display):
@@ -96,7 +102,7 @@ class Draw565(object):
         self.set_font(fonts.sans24)
 
     def fill(self, bg=None, x=0, y=0, w=None, h=None):
-        """Draw a solid color rectangle.
+        """Draw a solid colour rectangle.
 
         If no arguments a provided the whole display will be filled with
         the background colour (typically black).

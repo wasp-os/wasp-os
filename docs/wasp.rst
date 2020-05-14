@@ -62,7 +62,6 @@ Libraries
 
 .. automodule:: draw565
    :members:
-   :undoc-members:
 
 .. automodule:: icons
    :members:
