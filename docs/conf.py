@@ -47,6 +47,10 @@ source_suffix = {
     '.md': 'markdown',
 }
 
+# Workaround for readthedocs.org. See:
+# https://github.com/readthedocs/readthedocs.org/issues/2569#issuecomment-485117471)
+master_doc = 'index'
+
 # -- Options for HTML output -------------------------------------------------
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
