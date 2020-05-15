@@ -105,4 +105,6 @@ functionality.
    - [ ] BMA421 driver
    - [ ] Step counter app
  * [ ] Documentation
-   - [ ] Debugging guide
+   - [ ] Debugging and troubleshooting guide
+   - [ ] Screenshots for bootloader and all applications
+   - [ ] Improve the install guide
