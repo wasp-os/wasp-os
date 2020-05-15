@@ -15,7 +15,7 @@
 	url = https://github.com/daniel-thompson/micropython-eeprom
 [submodule "tools/pynus"]
 	path = tools/pynus
-	url = https://github.com/aykevl/pynus
+	url = https://github.com/daniel-thompson/pynus
 [submodule "tools/micropython-font-to-py"]
 	path = tools/micropython-font-to-py
 	url = https://github.com/peterhinch/micropython-font-to-py
