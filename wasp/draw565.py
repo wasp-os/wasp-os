@@ -179,9 +179,9 @@ class Draw565(object):
 
         display.set_window(x, y, sx, sy)
 
-        if sx <= (len(display.linebuffer) / 2) and not bool(sy & 1):
+        if sx <= (len(display.linebuffer) // 4) and not bool(sy & 1):
             sx *= 2
-            sy /= 2
+            sy //= 2
 
         palette = array.array('H', (0, 0xfffe, 0x7bef, 0xffff))
         next_color = 1
