@@ -109,18 +109,6 @@ At this point you will also be able to use the Nordic UART Service to
 access the MicroPython REPL, although currently you must send ^C to
 interrupt the program that updates the watch display.
 
-Just for fun try:
-
-.. code-block:: python
-
-   ^C
-   import demo
-   demo.run()
-   # After watching the demo for a bit...
-   ^C
-   wasp.app.draw(watch)
-   wasp.system.run()
-
 To set the time and restart the main application:
 
 .. code-block:: python
