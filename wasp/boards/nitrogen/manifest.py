@@ -3,7 +3,6 @@
 
 freeze('../..',
     (
-        'demo.py',
         'drivers/battery.py',
         'drivers/signal.py',
         'drivers/st7789.py',
