@@ -8,6 +8,109 @@ import sys
 import os.path
 from PIL import Image
 
+def clut8_rgb888(i):
+    """Reference CLUT for wasp-os.
+
+    Technically speaking this is not a CLUT because the we lookup the colours
+    algorithmically to avoid the cost of a genuine CLUT. The palette is
+    designed to be fairly easy to generate algorithmically.
+
+    The palette includes all 216 web-safe colours together 4 grays and
+    36 additional colours that target "gaps" at the brighter end of the web
+    safe set. There are 11 greys (plus black and white) although two are
+    fairly close together.
+
+    :param int i: Index (from 0..255 inclusive) into the CLUT
+    :return:      24-bit colour in RGB888 format
+    """
+    if i < 216:
+        rgb888  = ( i  % 6) * 0x33
+        rg = i // 6
+        rgb888 += (rg  % 6) * 0x3300
+        rgb888 += (rg // 6) * 0x330000
+    elif i < 252:
+        i -= 216
+        rgb888  =     0x7f + (( i  % 3) * 0x33)
+        rg = i // 3
+        rgb888 +=   0x4c00 + ((rg  % 4) * 0x3300)
+        rgb888 += 0x7f0000 + ((rg // 4) * 0x330000)
+    else:
+        i -= 252
+        rgb888 = 0x2c2c2c + (0x101010 * i)
+
+    return rgb888
+
+def clut8_rgb565(i):
+    """RBG565 CLUT for wasp-os.
+
+    This CLUT implements the same palette as :py:meth:`clut8_888` but
+    outputs RGB565 pixels.
+
+    .. note::
+
+        This function is unused within this file but needs to be
+        maintained alongside the reference clut so it is reproduced
+        here.
+
+    :param int i: Index (from 0..255 inclusive) into the CLUT
+    :return:      16-bit colour in RGB565 format
+    """
+    if i < 216:
+        rgb565  = (( i  % 6) * 0x33) >> 3
+        rg = i // 6
+        rgb565 += ((rg  % 6) * (0x33 << 3)) & 0x07e0
+        rgb565 += ((rg // 6) * (0x33 << 8)) & 0xf800
+    elif i < 252:
+        i -= 216
+        rgb565  = (0x7f + (( i  % 3) * 0x33)) >> 3
+        rg = i // 3
+        rgb565 += ((0x4c << 3) + ((rg  % 4) * (0x33 << 3))) & 0x07e0
+        rgb565 += ((0x7f << 8) + ((rg // 4) * (0x33 << 8))) & 0xf800
+    else:
+        i -= 252
+        gr6 = (0x2c + (0x10 * i)) >> 2
+        gr5 = gr6 >> 1
+        rgb565 = (gr5 << 11) + (gr6 << 5) + gr5
+
+    return rgb565
+
+class ReverseCLUT:
+    def __init__(self, clut):
+        l = []
+        for i in range(256):
+            l.append(clut(i))
+        self.clut = tuple(l)
+        self.lookup = {}
+
+    def __call__(self, rgb888):
+        """Compare rgb888 to every element of the CLUT and pick the
+        closest match.
+        """
+        if rgb888 in self.lookup:
+            return self.lookup[rgb888]
+
+        best = 200000
+        index = -1
+        clut = self.clut
+        r = rgb888 >> 16
+        g = (rgb888 >> 8) & 0xff
+        b = rgb888 & 0xff
+
+        for i in range(256):
+            candidate = clut[i]
+            rd = r - (candidate >> 16)
+            gd = g - ((candidate >> 8) & 0xff)
+            bd = b - (candidate & 0xff)
+            # This is the Euclidian distance (squared)
+            distance = rd * rd + gd * gd + bd * bd
+            if distance < best:
+                best = distance
+                index = i
+
+        self.lookup[rgb888] = index
+        #print(f'# #{rgb888:06x} -> #{clut8_rgb888(index):06x}')
+        return index
+
 def varname(p):
     return os.path.basename(os.path.splitext(p)[0])
 
@@ -62,15 +165,18 @@ def encode_2bit(im):
     assert(im.width <= 255)
     assert(im.height <= 255)
 
+    full_palette = ReverseCLUT(clut8_rgb888)
+
     rle = []
     rl = 0
     px = pixels[0, 0]
-    palette = [0, 0xfc, 0x2d, 0xff]
+    # black, grey25, grey50, white
+    palette = [0, 254, 219, 215]
     next_color = 1
 
     def encode_pixel(px, rl):
         nonlocal next_color
-        px = (px[0] & 0xe0) | ((px[1] & 0xe0) >> 3) | ((px[2] & 0xc0) >> 6)
+        px = full_palette((px[0] << 16) + (px[1] << 8) + px[2])
         if px not in palette:
             rle.append(next_color << 6)
             rle.append(px)
