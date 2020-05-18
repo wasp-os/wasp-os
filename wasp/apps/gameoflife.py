@@ -36,11 +36,11 @@ def xorshift12(v: int) -> int:
 
 @micropython.viper
 def get_color(v: int) -> int:
-    r = v >> 10
-    g = (v >> 8) & 7
-    b = (v >> 5) & 3
-
-    return (r << 13) | (g << 7) | (b << 1) | 0x9c73
+    """Convert a 12-bit number into a reasonably bright RGB565 pixel"""
+    rgb = v ^ (v << 4)
+    while 0 == (rgb & 0xc710):
+        rgb += 0x2104
+    return rgb
 
 @micropython.viper
 def get_cell(board, stride: int, x: int, y: int) -> bool:
