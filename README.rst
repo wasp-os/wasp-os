@@ -107,7 +107,8 @@ you can use the side button to wake it again.
 
 At this point you will also be able to use the Nordic UART Service to
 access the MicroPython REPL, although currently you must send ^C to
-interrupt the program that updates the watch display.
+interrupt the program that updates the watch display. You can use 
+``tools/wasptool --console`` to access the MicroPython REPL.
 
 To set the time and restart the main application:
 
