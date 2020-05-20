@@ -47,28 +47,58 @@ which includes a detailed `Applicaiton Writer's Guide
 <https://daniel-thompson.github.io/wasp-os/appguide.html>`_ to help you
 get started coding for wasp-os as quickly as possible.
 
-Building from a git clone
--------------------------
+Building from source
+--------------------
 
-Get the code from
-`https://github.com/daniel-thompson/wasp-os <https://github.com/daniel-thompson/wasp-os>`_ .
+Building wasp-os and launching the wasp-os simulator requires the
+following python modules: click, numpy, pexpect, PIL (or Pillow),
+pyserial, pysdl2.
+
+On Debian Buster the requires python modules can be obtain with the
+following commands:
 
 .. code-block:: sh
 
-   pip3 install --user click serial pyserial
-   make submodules
-   make softdevice
-   make -j `nproc` BOARD=pinetime all
+    sudo apt install \
+      git build-essential libsdl2-2.0.0 \
+      python3-click python3-numpy python3-pexpect \
+      python3-pil python3-pip python3-serial
+    pip3 install --user pysdl2
+
+You will need a toolchain for the Arm Cortex-M4. wasp-os is developed and
+tested using the `GNU-RM toolchain
+<https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-rm>`_
+(9-2019-q4) from Arm.
 
 .. note::
 
-    You will need a toolchain for the Arm Cortex-M4. wasp-os is developed and
-    tested using the `GNU-RM toolchain
-    <https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-rm>`_
-    (9-2019-q4) from Arm.
-
     There are known problems with toolchains older than gcc-7.3 due to problems
     with link-time-optimization (which is enabled by default).
+
+Get the code from
+`https://github.com/daniel-thompson/wasp-os <https://github.com/daniel-thompson/wasp-os>`_ :
+
+.. code-block:: sh
+
+   git clone https://github.com/daniel-thompson/wasp-os
+   cd wasp-os
+   make submodules
+   make softdevice
+
+Build the firmware:
+
+.. code-block:: sh
+
+   make -j `nproc` BOARD=pinetime all
+
+Finally to test out ideas and concepts on the simulator try:
+
+.. code-block:: sh
+
+    make sim
+
+See :ref:`Testing on the simulator` for more details on how
+to use the simulator.
 
 Installing
 ----------

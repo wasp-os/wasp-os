@@ -196,6 +196,8 @@ __ http://docs.micropython.org/en/latest/reference/constrained.html
 How to run your application
 ---------------------------
 
+.. _Testing on the simulator:
+
 Testing on the simulator
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
