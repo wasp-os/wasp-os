@@ -103,12 +103,14 @@ to use the simulator.
 Installing
 ----------
 
-Use an SWD programmer to install ``bootloader.hex`` to the PineTime.  This
-file is an Intel HEX file containing both the bootloader and the Nordic
-SoftDevice. Be careful to disconnect cleanly from the debug software
-since just pulling out the SWD cable will mean the nRF52 will still
-believe it is being debugged (and won't properly enter deep sleep
-modes).
+Use an SWD programmer to install ``bootloader.hex`` to the PineTime.
+This file is an Intel HEX file containing both the bootloader and the Nordic
+SoftDevice. Once the bootloader is installed the watch will boot, display the
+Pine64 logo and wait for a OTA update.
+
+See the `PineTime SWD programming guide <https://wiki.pine64.org/index.php/Reprogramming_the_PineTime>`_
+for instructions on how to reprogram the PineTime using various different SWD
+programmers.
 
 .. note::
 
@@ -116,7 +118,12 @@ modes).
     protection enabled. You must disable the flash protection before trying to
     program it.
 
-To install using Android device:
+    Be careful to disconnect cleanly from the debug software since just pulling
+    out the SWD cable will mean the nRF52 will still believe it is being
+    debugged (which harms battery life because the device won't properly enter
+    deep sleep states).
+
+To install the main firmware using an Android device:
 
 * Copy ``micropython.zip`` to your Android device and download nRF Connect
   for Android if you do not already have it.
@@ -125,7 +132,7 @@ To install using Android device:
 * Connect to PineDFU using nRFConnect, click the DFU button and send
   ``micropython.zip`` to the device.
 
-To install using Linux and ota-dfu:
+To install the main firmware from a GNU/Linux workstation:
 
 * Look up the MAC address for your watch (try: ``sudo hcitool lescan``\ ).
 * Use ota-dfu to upload ``micropython.zip`` to the device. For example:
@@ -157,7 +164,7 @@ Or just use:
 which can run these commands automatically.
 
 As mentioned above there are many drivers and features still to be
-developed, see the `TODO list <TODO.md>`_ for current status.
+developed, see the :ref:`Roadmap` for current status.
 
 Screenshots
 -----------
