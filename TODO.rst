@@ -87,10 +87,10 @@ Wasp-os
 
 * [X] Application Launcher
 * [X] Debug notifications
-* [o] Multi-colour RLE images
+* [X] Multi-colour RLE images
 
   * [X] Optimized "2-bit" RLE encoder and decoder
-  * [ ] Logarithmic RBG332 <-> RGB56516bit color space conversion
+  * [X] Logarithmic RBG332 <-> RGB56516bit color space conversion
 
 M3: Smartwatch
 --------------
@@ -103,6 +103,14 @@ Bootloader
 
 * [ ] Stay in bootloader after battery run down
 * [ ] Implement power off support (no splash screen)
+
+Reloader
+~~~~~~~~
+
+* [ ] Board identity check
+* [ ] Pre-flash image verification
+* [ ] Post-flash image verification
+* [ ] Error checking
 
 Micropython
 ~~~~~~~~~~~
