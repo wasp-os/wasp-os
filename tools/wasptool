@@ -140,11 +140,16 @@ def handle_exec(c, fname):
     print_log(log)
     log.close()
 
-def handle_reset(c):
+def handle_reset(c, ota=True):
+    cmd = 'reset'
+    if ota:
+        cmd = 'enter_ota_dfu'
+
     c.send('\x05')
     c.expect('=== ')
     c.sendline('import machine')
-    c.sendline('machine.reset()')
+    c.expect('=== ')
+    c.sendline(f'machine.{cmd}()')
     c.expect('=== ')
     c.send('\x04')
 
@@ -194,6 +199,8 @@ def handle_upload(c, fname):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
             description='Wasp-os command and control client')
+    parser.add_argument('--bootloader', action='store_true',
+            help="Reboot into the bootloader mode for OTA update")
     parser.add_argument('--console', action='store_true',
             help='Launch a REPL session')
     parser.add_argument('--check-rtc', action='store_true',
@@ -206,6 +213,8 @@ if __name__ == '__main__':
             help='Execute the provided python string')
     parser.add_argument('--reset', action='store_true',
             help="Reboot the device (and don't stay in bootloader mode)")
+    parser.add_argument('--ota',
+            help="Deliver an OTA update to the device")
     parser.add_argument('--rtc', action='store_true',
             help='Set the time on the wasp-os device')
     parser.add_argument('--upload',
@@ -221,7 +230,8 @@ if __name__ == '__main__':
     if args.verbose:
         console.logfile = sys.stdout
 
-    console.expect('Connect')
+    console.expect('Connect.*\(([0-9A-F:]*)\)')
+    macaddr = console.match.group(1)
     console.expect('Exit console using Ctrl-X')
     time.sleep(0.5)
     sync(console)
@@ -245,8 +255,18 @@ if __name__ == '__main__':
         console.close()
         os.execl(pynus, pynus)
 
+    if args.ota:
+        handle_reset(console, ota=True)
+        time.sleep(0.5)
+        dfu = os.path.dirname(sys.argv[0]) + '/ota-dfu/dfu.py'
+        os.execl(dfu, dfu, '-z', args.ota, '-a', macaddr, '--legacy')
+
     if args.reset:
         handle_reset(console)
+        sys.exit(0)
+
+    if args.bootloader:
+        handle_reset(console, ota=True)
         sys.exit(0)
 
     unsync(console)
