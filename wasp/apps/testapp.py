@@ -16,9 +16,15 @@ class TestApp():
     ICON = icons.app
 
     def __init__(self):
-        self.tests = ('Button', 'Crash', 'RLE', 'String', 'Touch', 'Wrap')
+        self.tests = ('Button', 'Crash', 'Colours', 'RLE', 'String', 'Touch', 'Wrap')
         self.test = self.tests[0]
         self.scroll = wasp.widgets.ScrollIndicator()
+
+        self._sliders = (
+                wasp.widgets.Slider(32, 10, 90, 0xf800),
+                wasp.widgets.Slider(64, 10, 140, 0x27e4),
+                wasp.widgets.Slider(32, 10, 190, 0x211f),
+        )
 
     def foreground(self):
         """Activate the application."""
@@ -55,7 +61,14 @@ class TestApp():
         self._draw()
 
     def touch(self, event):
-        if self.test == 'RLE':
+        if self.test == 'Colours':
+            if event[2] > 90:
+                s = self._sliders[(event[2] - 90) // 50]
+                s.touch(event)
+                s.update()
+                self.scroll.draw()
+                self._update_colours()
+        elif self.test == 'RLE':
             self._benchmark_rle()
         elif self.test == 'String':
             self._benchmark_string()
@@ -119,12 +132,26 @@ class TestApp():
         draw.fill()
         draw.string('{} test'.format(self.test),
                 0, 6, width=240)
-        self.scroll.draw()
 
         if self.test == 'Crash':
             draw.string("Press button to", 12, 24+24)
             draw.string("throw exception.", 12, 24+48)
+        elif self.test == 'Colours':
+            for s in self._sliders:
+                s.draw()
+            self._update_colours()
         elif self.test == 'RLE':
             draw.blit(self.ICON, 120-48, 120-32)
 
+        self.scroll.draw()
         wasp.watch.display.mute(False)
+
+    def _update_colours(self):
+        draw = wasp.watch.drawable
+        r = self._sliders[0].value
+        g = self._sliders[1].value
+        b = self._sliders[2].value
+        rgb = (r << 11) + (g << 5) + b
+
+        draw.string('RGB565 #{:04x}'.format(rgb), 0, 6, width=240)
+        draw.fill(rgb, 60, 35, 120, 50)
