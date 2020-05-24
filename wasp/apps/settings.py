@@ -12,22 +12,22 @@ class SettingsApp():
     NAME = 'Settings'
     ICON = icons.settings
 
+    def __init__(self):
+        self._slider = wasp.widgets.Slider(3, 10, 90)
+
     def foreground(self):
         self._draw()
         wasp.system.request_event(wasp.EventMask.TOUCH)
 
     def touch(self, event):
-        brightness = wasp.system.brightness + 1
-        if brightness > 3:
-            brightness = 1
-        wasp.system.brightness = brightness
+        self._slider.touch(event)
+        wasp.system.brightness = self._slider.value + 1
         self._update()
 
     def _draw(self):
         """Redraw the display from scratch."""
         wasp.watch.drawable.fill()
-        wasp.watch.drawable.string('Settings', 0, 6, width=240)
-        wasp.watch.drawable.string('Brightness', 0, 120 - 3 - 24, width=240)
+        wasp.watch.drawable.string('Brightness', 0, 6, width=240)
         self._update()
 
     def _update(self):
@@ -37,4 +37,5 @@ class SettingsApp():
             say = "Mid"
         else:
             say = "Low"
-        wasp.watch.drawable.string(say, 0, 120 + 3, width=240)
+        wasp.watch.drawable.string(say, 0, 150, width=240)
+        self._slider.update()
