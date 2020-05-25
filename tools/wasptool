@@ -77,7 +77,20 @@ def paste(c, f, verbose=False, chunk=None):
             chunk()
 
         c.sendline(ln)
-        c.expect('=== ')
+
+        choice = c.expect(['=== ', 'FATAL: uncaught exception [0-9a-f\r]*\n'])
+        if choice == 1:
+            # Capture and display the error message, then exit
+            if not verbose:
+                print('\n~~~')
+            while choice == 1:
+                if not verbose:
+                    print(c.match.group(0).rstrip(), file=sys.stderr)
+                choice = c.expect([pexpect.TIMEOUT, '.*\n'], timeout=2)
+            if not verbose:
+                print('~~~')
+            print('\nPlease reboot your device', file=sys.stderr)
+            sys.exit(16)
 
 def print_log(logfile):
     lines = logfile.getvalue().split('\n')
