@@ -132,7 +132,7 @@ class Slider():
         light = self._lowlight
 
         knob_x = x + ((_SLIDER_TRACK * self.value) // (self._steps-1))
-        draw.blit(icons.knob2, knob_x, y, color)
+        draw.blit(icons.knob, knob_x, y, color)
 
         w = knob_x - x
         if w > 0:
