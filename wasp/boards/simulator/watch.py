@@ -13,6 +13,7 @@ def print_exception(exc, file=sys.stdout):
 sys.print_exception = print_exception
 
 import draw565
+import array
 
 from machine import I2C
 from machine import Pin
