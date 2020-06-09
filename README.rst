@@ -50,9 +50,9 @@ get started coding for wasp-os as quickly as possible.
 Building from source
 --------------------
 
-Building wasp-os and launching the wasp-os simulator requires the
-following python modules: click, numpy, pexpect, PIL (or Pillow),
-pyserial, pysdl2.
+Building wasp-os and launching the wasp-os simulator requires Python 3.6
+(or later) and the following python modules: click, numpy, pexpect, PIL
+(or Pillow), pyserial, pysdl2.
 
 On Debian Buster the requires python modules can be obtain with the
 following commands:
