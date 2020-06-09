@@ -6,21 +6,52 @@
 """
 
 import array
+import time
+from machine import Pin
 
 class CST816S:
     """Hynitron CST816S I2C touch controller driver.
 
     .. automethod:: __init__
     """
-    
-    def __init__(self, bus):
+
+    def __init__(self, bus, intr, rst):
         """Specify the bus used by the touch controller.
 
         :param machine.I2C bus: I2C bus for the CST816S.
         """
         self.i2c = bus
+        self.tp_int = intr
+        self.tp_rst = rst
         self.dbuf = bytearray(6)
         self.event = array.array('H', (0, 0, 0))
+
+        self._reset()
+        self.tp_int.irq(trigger=Pin.IRQ_FALLING, handler=self.get_touch_data)
+
+    def _reset(self):
+        self.tp_rst.off()
+        time.sleep_ms(5)
+        self.tp_rst.on()
+        time.sleep_ms(50)
+
+    def get_touch_data(self, pin_obj):
+        """Receive a touch event by interrupt.
+
+        Check for a pending touch event and, if an event is pending,
+        prepare it ready to go in the event queue.
+        """
+        dbuf = self.dbuf
+        event = self.event
+
+        try:
+            self.i2c.readfrom_mem_into(21, 1, dbuf)
+        except OSError:
+            return None
+
+        event[0] = dbuf[0] # event
+        event[1] = ((dbuf[2] & 0xf) << 8) + dbuf[3] # x coord
+        event[2] = ((dbuf[4] & 0xf) << 8) + dbuf[5] # y coord
 
     def get_event(self):
         """Receive a touch event.
@@ -30,38 +61,32 @@ class CST816S:
 
         :return: An event record if an event is received, None otherwise.
         """
-        dbuf = self.dbuf
-        event = self.event
-
-        # TODO: check the interrupt pin
-
-        try:
-            self.i2c.readfrom_mem_into(21, 1, dbuf)
-        except OSError:
+        if self.event[0] == 0:
             return None
 
-        # Skip junk events
-        if dbuf[0] == 0:
-            return None
+        return self.event
 
-        x = ((dbuf[2] & 0xf) << 8) + dbuf[3]
-        y = ((dbuf[4] & 0xf) << 8) + dbuf[5]
-        swipe_start = dbuf[2] & 0x80
-        
-        # Skip identical events... when the I2C interface comes alive
-        # we can still get back stale events
-        if dbuf[0] == event[0] and x == event[1] and y == event[2] \
-                and not swipe_start:
-            return None
+    def reset_touch_data(self):
+        """Reset touch data.
 
-        # This is a good event, lets save it
-        event[0] = dbuf[0]
-        event[1] = x
-        event[2] = y
+        Reset touch data, call this function after processing an event.
+        """
+        self.event[0] = 0
 
-        # Do not forward swipe start events
-        if dbuf[2] & 0x80:
-            event[0] = 0
-            return None
+    def wake(self):
+        """Wake up touch controller chip.
 
-        return event
+        Just reset the chip in order to wake it up
+        """
+        self._reset()
+
+    def sleep(self):
+        """Put touch controller chip on sleep mode to save power.
+        """
+        # Before we can sent the sleep command we have to reset the
+        # panel to get the I2C hardware running again...
+        self._reset()
+        self.i2c.writeto_mem(21, 0xa5, b'\x03')
+
+        # Ensure get_event() cannot return anything
+        self.event[0] = 0

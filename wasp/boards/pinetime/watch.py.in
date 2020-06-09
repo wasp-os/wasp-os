@@ -81,7 +81,7 @@ try:
             Signal(Pin('USB_PWR', Pin.IN), invert=True))
     i2c = I2C(1, scl='I2C_SCL', sda='I2C_SDA')
     accel = BMA421(i2c)
-    touch = CST816S(i2c)
+    touch = CST816S(i2c, Pin('TP_INT', Pin.IN), Pin('TP_RST', Pin.OUT, value=0))
     vibrator = Vibrator(Pin('MOTOR', Pin.OUT, value=0), active_low=True)
 
     # Release flash from deep power-down
