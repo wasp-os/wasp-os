@@ -25,3 +25,6 @@
 [submodule "reloader"]
 	path = reloader
 	url = https://github.com/daniel-thompson/wasp-reloader
+[submodule "wasp/modules/bma42x-upy"]
+	path = wasp/modules/bma42x-upy
+	url = https://github.com/daniel-thompson/bma42x-upy

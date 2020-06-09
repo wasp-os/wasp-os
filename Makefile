@@ -16,10 +16,6 @@ submodules :
 
 bootloader:
 	$(MAKE) -C bootloader/ BOARD=$(BOARD)_nrf52832 all genhex
-	python3 -m nordicsemi dfu genpkg \
-		--bootloader bootloader/_build-$(BOARD)_nrf52832/$(BOARD)_nrf52832_bootloader-*-nosd.hex \
-		--softdevice bootloader/lib/softdevice/s132_nrf52_6.1.1/s132_nrf52_6.1.1_softdevice.hex \
-		bootloader.zip
 	python3 tools/hexmerge.py \
 		bootloader/_build-$(BOARD)_nrf52832/$(BOARD)_nrf52832_bootloader-*-nosd.hex \
 		bootloader/lib/softdevice/s132_nrf52_6.1.1/s132_nrf52_6.1.1_softdevice.hex \
@@ -40,7 +36,8 @@ micropython: wasp/boards/pinetime/watch.py
 	$(MAKE) -C micropython/ports/nrf \
 		BOARD=$(BOARD) SD=s132 \
 		MICROPY_VFS_LFS2=1 \
-		FROZEN_MANIFEST=$(PWD)/wasp/boards/$(BOARD)/manifest.py
+		FROZEN_MANIFEST=$(PWD)/wasp/boards/$(BOARD)/manifest.py \
+		USER_C_MODULES=$(PWD)/wasp/modules
 	python3 -m nordicsemi dfu genpkg \
 		--dev-type 0x0052 \
 		--application micropython/ports/nrf/build-$(BOARD)-s132/firmware.hex \

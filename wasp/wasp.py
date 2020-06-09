@@ -25,6 +25,7 @@ from apps.flashlight import FlashlightApp
 from apps.launcher import LauncherApp
 from apps.pager import PagerApp, CrashApp
 from apps.settings import SettingsApp
+from apps.steps import StepCounterApp
 from apps.stopwatch import StopwatchApp
 from apps.testapp import TestApp
 
@@ -108,6 +109,7 @@ class Manager():
         # TODO: Eventually these should move to main.py
         self.register(ClockApp(), True)
         self.register(StopwatchApp(), True)
+        self.register(StepCounterApp(), True)
         self.register(FlashlightApp(), False)
         self.register(SettingsApp(), False)
         self.register(TestApp(), False)
