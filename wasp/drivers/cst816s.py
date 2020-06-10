@@ -84,7 +84,6 @@ class CST816S:
         """
         self._reset()
         self.touch_en = True
-        self.event[0] = 0
 
     def sleep(self):
         """Put touch controller chip on sleep mode to save power.
@@ -94,3 +93,4 @@ class CST816S:
         dbuf = bytearray([0xA5, 0x03])
         self.i2c.writeto(21, dbuf)
         self.touch_en = False
+        self.event[0] = 0
