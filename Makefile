@@ -15,6 +15,7 @@ submodules :
 	git submodule update --init --recursive
 
 bootloader:
+	$(RM) bootloader/_build-$(BOARD)_nrf52832//$(BOARD)_nrf52832_bootloader-*-nosd.hex
 	$(MAKE) -C bootloader/ BOARD=$(BOARD)_nrf52832 all genhex
 	python3 tools/hexmerge.py \
 		bootloader/_build-$(BOARD)_nrf52832/$(BOARD)_nrf52832_bootloader-*-nosd.hex \
