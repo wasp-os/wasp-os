@@ -2,6 +2,7 @@
 # Copyright (C) 2020 Daniel Thompson
 
 import fonts.sans24 as sans24
+import fonts.sans28 as sans28
 import fonts.sans36 as sans36
 
 def height(font):
