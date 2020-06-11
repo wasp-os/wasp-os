@@ -89,7 +89,16 @@ class CST816SSim():
         else:
             self.regs[1] = 0
 
-    def handle_key(self, key):
+    def writeto_mem(self, addr, reg, buf, pins):
+        tick(pins)
+
+        if reg == 0xa5:
+            # This will be a sleep command... which we can ignore
+            return
+
+        raise OSError
+
+    def handle_key(self, key, pins):
         """Use key presses to provoke different touchscreen events.
 
         Note: The Down key provokes an upward swipe and vice versa.
@@ -107,16 +116,16 @@ class CST816SSim():
         elif key.keysym.sym == sdl2.SDLK_RIGHT:
             self.regs[1] = 3
         self.regs[3] = 0x80
-        self.raise_interrupt()
+        self.raise_interrupt(pins)
 
-    def handle_mousebutton(self, button):
+    def handle_mousebutton(self, button, pins):
         self.regs[1] = 5
         self.regs[4] = button.x
         self.regs[6] = button.y
-        self.raise_interrupt()
+        self.raise_interrupt(pins)
 
-    def raise_interrupt(self):
-        pass
+    def raise_interrupt(self, pins):
+        pins['TP_INT'].raise_irq()
 
 sdl2.ext.init()
 window = sdl2.ext.Window("ST7789", size=(WIDTH, HEIGHT))
@@ -134,12 +143,12 @@ def tick(pins):
             sdl2.ext.quit()
             sys.exit(0)
         elif event.type == sdl2.SDL_MOUSEBUTTONDOWN:
-            i2c_cst816s_sim.handle_mousebutton(event.button)
+            i2c_cst816s_sim.handle_mousebutton(event.button, pins)
         elif event.type == sdl2.SDL_KEYDOWN:
             if event.key.keysym.sym == sdl2.SDLK_TAB:
                 pins['BUTTON'].value(0)
             else:
-                i2c_cst816s_sim.handle_key(event.key)
+                i2c_cst816s_sim.handle_key(event.key, pins)
         elif event.type == sdl2.SDL_KEYUP:
             if event.key.keysym.sym == sdl2.SDLK_TAB:
                 pins['BUTTON'].value(1)

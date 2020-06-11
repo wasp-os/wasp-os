@@ -19,6 +19,7 @@ class ADC(Tracer):
 class Pin(object):
     IN = 'IN'
     OUT = 'OUT'
+    IRQ_FALLING = 'IRQ_FALLING'
 
     pins = {}
 
@@ -30,6 +31,9 @@ class Pin(object):
         # Update the pin registry
         self.pins[id] = self
 
+    def irq(self, trigger, handler):
+        self._handler = handler
+
     def init(self, d, value):
         self.value(value)
 
@@ -38,6 +42,9 @@ class Pin(object):
 
     def off(self):
         self.value(0)
+
+    def raise_irq(self):
+        self._handler(self)
 
     def value(self, v=None):
         if v is None:
@@ -87,6 +94,12 @@ class I2C():
     def readfrom_mem_into(self, addr, reg, dbuf):
         if self.sim:
             self.sim.readfrom_mem_into(addr, reg, dbuf, Pin.pins)
+        else:
+            raise OSError
+
+    def writeto_mem(self, addr, reg, dbuf):
+        if self.sim:
+            self.sim.writeto_mem(addr, reg, dbuf, Pin.pins)
         else:
             raise OSError
 
