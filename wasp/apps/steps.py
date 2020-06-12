@@ -37,10 +37,13 @@ class StepCounterApp():
         watch.accel.reset()
         self._meter = wasp.widgets.BatteryMeter()
         self._count = 0
+        self._last_clock = ( -1, -1, -1, -1, -1, -1 )
 
     def foreground(self):
         """Activate the application."""
-        self._last_clock = ( -1, -1, -1, -1, -1, -1 )
+        # Force a redraw (without forgetting the current date)
+        lc = self._last_clock
+        self._last_clock = (lc[0], lc[1], lc[2], -1, -1, -1)
 
         self._draw()
         wasp.system.request_tick(1000)
@@ -68,12 +71,13 @@ class StepCounterApp():
             t1 = '{:02}:{:02}'.format(now[3], now[4])
             draw.set_font(fonts.sans24)
             draw.string(t1, 48, 16, 240-96)
-            self._last_clock = now
-            self._meter.update()
 
             if now[2] != self._last_clock[2]:
                 watch.accel.steps = 0
-                draw.fill(60, 132-18, 180, 36)
+                draw.fill(0, 60, 132-18, 180, 36)
+
+            self._last_clock = now
+            self._meter.update()
 
         count = watch.accel.steps
         t = str(count)
