@@ -97,27 +97,32 @@ class Battery(object):
 
 class RTC(object):
     def __init__(self):
-        self.uptime = 0
+        self._epoch = time.time()
+        self._lasttime = 0
 
     def update(self):
         now = time.time()
-        if now == self.uptime:
+        if now == self._lasttime:
             return False
-        self.uptime = now
+        self._lasttime = now
         return True
 
     def get_localtime(self):
+        #if self.uptime < 60:
+        #    # Jump back a little over a day
+        #    return time.localtime(time.time() - 100000)
         return time.localtime()
 
     def get_time(self):
-        now = time.localtime()
+        now = self.get_localtime()
         return (now[3], now[4], now[5])
 
+    @property
     def uptime(self):
-        return time.time()
+        return time.time() - self._epoch
 
     def get_uptime_ms(self):
-        return int(time.time() * 1000)
+        return int(self.uptime * 1000)
 
 backlight = Backlight()
 spi = SPI(0)
