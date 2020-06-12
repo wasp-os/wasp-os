@@ -69,8 +69,9 @@ class StepCounterApp():
         now = wasp.watch.rtc.get_localtime()
         if now[4] != self._last_clock[4]:
             t1 = '{:02}:{:02}'.format(now[3], now[4])
-            draw.set_font(fonts.sans24)
-            draw.string(t1, 48, 16, 240-96)
+            draw.set_font(fonts.sans28)
+            draw.set_color(0x7bef)
+            draw.string(t1, 48, 12, 240-96)
 
             if now[2] != self._last_clock[2]:
                 watch.accel.steps = 0
@@ -83,4 +84,5 @@ class StepCounterApp():
         t = str(count)
         w = fonts.width(fonts.sans36, t)
         draw.set_font(fonts.sans36)
+        draw.set_color(0xfff0)
         draw.string(t, 228-w, 132-18)
