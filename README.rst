@@ -95,7 +95,7 @@ Finally to test out ideas and concepts on the simulator try:
 
 .. code-block:: sh
 
-    make sim
+    make sim BOARD=sim
 
 See :ref:`Testing on the simulator` for more details on how
 to use the simulator.
