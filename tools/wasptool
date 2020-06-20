@@ -153,7 +153,7 @@ def handle_exec(c, fname):
     print_log(log)
     log.close()
 
-def handle_reset(c, ota=True):
+def handle_reset(c, ota=False):
     cmd = 'reset'
     if ota:
         cmd = 'enter_ota_dfu'
