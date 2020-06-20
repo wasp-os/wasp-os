@@ -192,6 +192,33 @@ def check_rtc(c):
 
     c.expect('>>> ')
 
+def handle_binary_upload(c, fname):
+    verbose = bool(c.logfile)
+
+    c.sendline(f'f = open("{os.path.basename(fname)}", "wb")')
+    c.expect('>>> ')
+
+    # Absorb the file to be uploaded
+    with open(fname, 'rb') as f:
+        data = f.read()
+    chunksz = 24
+    nchunks = len(data) // chunksz
+    lastchunk = len(data) % chunksz
+
+    if not verbose:
+        print(f'Uploading {fname}:')
+
+    # Send the data
+    for i in pbar(range(0, chunksz*nchunks, chunksz), verbose):
+        c.sendline(f'f.write({repr(data[i:i+chunksz])})')
+        c.expect('>>> ')
+    if lastchunk:
+        c.sendline(f'f.write({repr(data[-lastchunk:])})')
+        c.expect('>>> ')
+
+    c.sendline('f.close()')
+    c.expect('>>> ')
+
 def handle_upload(c, fname):
     verbose = bool(c.logfile)
 
@@ -214,6 +241,8 @@ if __name__ == '__main__':
             description='Wasp-os command and control client')
     parser.add_argument('--bootloader', action='store_true',
             help="Reboot into the bootloader mode for OTA update")
+    parser.add_argument('--binary', action='store_true',
+            help="Enable non-ASCII mode for suitable commands (such as upload)")
     parser.add_argument('--console', action='store_true',
             help='Launch a REPL session')
     parser.add_argument('--check-rtc', action='store_true',
@@ -262,7 +291,10 @@ if __name__ == '__main__':
         handle_eval(console, args.eval)
 
     if args.upload:
-        handle_upload(console, args.upload)
+        if args.binary:
+            handle_binary_upload(console, args.upload)
+        else:
+            handle_upload(console, args.upload)
 
     if args.console:
         console.close()
