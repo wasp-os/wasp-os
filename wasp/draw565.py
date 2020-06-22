@@ -125,9 +125,32 @@ class Draw565(object):
         :param h:  Height of the rectangle, defaults to None (which means select
                    the bottom-most pixel of the display)
         """
+        display = self._display
+        quick_write = display.quick_write
+
         if bg is None:
             bg = self._bgfg >> 16
-        self._display.fill(bg, x, y, w, h)
+        if w is None:
+            w = display.width - x
+        if h is None:
+            h = display.height - y
+
+        display.set_window(x, y, w, h)
+
+        remaining = w * h
+
+        # Populate the line buffer
+        buf = display.linebuffer
+        sz = len(display.linebuffer) // 2
+        _fill(buf, bg, min(sz, remaining), 0)
+
+        display.quick_start()
+        while remaining >= sz:
+            quick_write(buf)
+            remaining -= sz
+        if remaining:
+            quick_write(memoryview(display.linebuffer)[0:2*remaining])
+        display.quick_end()
 
     @micropython.native
     def blit(self, image, x, y, fg=0xffff, c1=0x4a69, c2=0x7bef):
