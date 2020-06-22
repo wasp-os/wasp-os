@@ -16,7 +16,7 @@ class TestApp():
     ICON = icons.app
 
     def __init__(self):
-        self.tests = ('Button', 'Crash', 'Colours', 'RLE', 'String', 'Touch', 'Wrap')
+        self.tests = ('Button', 'Crash', 'Colours', 'Fill', 'Fill-H', 'Fill-V', 'RLE', 'String', 'Touch', 'Wrap')
         self.test = self.tests[0]
         self.scroll = wasp.widgets.ScrollIndicator()
 
@@ -68,6 +68,8 @@ class TestApp():
                 s.update()
                 self.scroll.draw()
                 self._update_colours()
+        elif self.test.startswith('Fill'):
+            self._benchmark_fill()
         elif self.test == 'RLE':
             self._benchmark_rle()
         elif self.test == 'String':
@@ -87,6 +89,30 @@ class TestApp():
         for i in range(0, 128, 16):
             draw.blit(self.ICON, i+16, i+32)
         elapsed = t.time()
+        t.stop()
+        del t
+        draw.string('{}s'.format(elapsed / 1000000), 12, 24+192)
+
+    def _benchmark_fill(self):
+        draw = wasp.watch.drawable
+        draw.fill(0, 0, 30, 240, 240-30)
+        self.scroll.draw()
+        t = machine.Timer(id=1, period=8000000)
+        if self.test == 'Fill':
+            t.start()
+            draw.fill(0xffff, 60, 60, 120, 120)
+            elapsed = t.time()
+        elif self.test == 'Fill-H':
+            t.start()
+            for i in range(60, 180, 2):
+                draw.fill(0xffff, 60, i, 120, 1)
+            elapsed = t.time()
+        elif self.test == 'Fill-V':
+            t.start()
+            for i in range(60, 180, 2):
+                draw.fill(0xffff, i, 60, 1, 120)
+            elapsed = t.time()
+
         t.stop()
         del t
         draw.string('{}s'.format(elapsed / 1000000), 12, 24+192)
