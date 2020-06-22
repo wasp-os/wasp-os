@@ -22,6 +22,7 @@ import widgets
 
 from apps.clock import ClockApp
 from apps.flashlight import FlashlightApp
+from apps.heart import HeartApp
 from apps.launcher import LauncherApp
 from apps.pager import PagerApp, CrashApp
 from apps.settings import SettingsApp
@@ -108,8 +109,9 @@ class Manager():
 
         # TODO: Eventually these should move to main.py
         self.register(ClockApp(), True)
-        self.register(StopwatchApp(), True)
         self.register(StepCounterApp(), True)
+        self.register(StopwatchApp(), True)
+        self.register(HeartApp(), True)
         self.register(FlashlightApp(), False)
         self.register(SettingsApp(), False)
         self.register(TestApp(), False)

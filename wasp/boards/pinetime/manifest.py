@@ -6,6 +6,7 @@ freeze('../..',
     (
         'apps/clock.py',
         'apps/flashlight.py',
+        'apps/heart.py',
         'apps/launcher.py',
         'apps/pager.py',
         'apps/settings.py',
