@@ -33,4 +33,4 @@ class FlashlightApp(object):
 
     def draw(self):
         """Redraw the display from scratch."""
-        wasp.watch.display.fill(0xffff)
+        wasp.watch.drawable.fill(0xffff)

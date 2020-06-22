@@ -296,7 +296,7 @@ class Draw565(object):
             (w, h) = _bounding_box(s, font)
             leftpad = (width - w) // 2
             rightpad = width - w - leftpad
-            display.fill(0, x, y, leftpad, h)
+            self.fill(0, x, y, leftpad, h)
             x += leftpad
 
         for ch in s:
@@ -305,7 +305,7 @@ class Draw565(object):
             x += glyph[2] + 1
 
         if width:
-            display.fill(0, x, y, rightpad, h)
+            self.fill(0, x, y, rightpad, h)
 
     def wrap(self, s, width):
         """Chunk a string so it can rendered within a specified width.
