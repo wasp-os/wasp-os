@@ -20,6 +20,7 @@ from machine import SPI
 from drivers.battery import Battery
 from drivers.bma421 import BMA421
 from drivers.cst816s import CST816S
+from drivers.hrs3300 import HRS3300
 from drivers.signal import Signal
 from drivers.st7789 import ST7789_SPI
 from drivers.vibrator import Vibrator
@@ -81,6 +82,7 @@ try:
             Signal(Pin('USB_PWR', Pin.IN), invert=True))
     i2c = I2C(1, scl='I2C_SCL', sda='I2C_SDA')
     accel = BMA421(i2c)
+    hrs = HRS3300(i2c)
     touch = CST816S(i2c, Pin('TP_INT', Pin.IN), Pin('TP_RST', Pin.OUT, value=0))
     vibrator = Vibrator(Pin('MOTOR', Pin.OUT, value=0), active_low=True)
 
@@ -93,7 +95,7 @@ try:
 
     # Mount the filesystem
     boot_msg("Init SPINOR")
-    flash = FLASH(spi, (Pin('NOR_CS', Pin.OUT, value=1),))
+    flash = FLASH(spi, (nor_cs,))
     try:
         boot_msg("Mount FS")
         os.mount(flash, '/flash')
