@@ -5,7 +5,7 @@ all : bootloader reloader micropython
 ifdef BOARD
 WASP_WATCH_PY = wasp/boards/$(BOARD)/watch.py
 $(WASP_WATCH_PY) : $(WASP_WATCH_PY).in
-	(cd wasp; ../tools/preprocess.py $(WASP_WATCH_PY).in $(WASP_WATCH_PY))
+	(cd wasp; ../tools/preprocess.py ../$(WASP_WATCH_PY).in > ../$(WASP_WATCH_PY))
 else
 BOARD ?= $(error Please set BOARD=)
 endif
@@ -15,7 +15,8 @@ clean :
 		bootloader/_build-$(BOARD)_nrf52832 \
 		reloader/build-$(BOARD) reloader/src/boards/$(BOARD)/bootloader.h \
 		micropython/mpy-cross/build \
-		micropython/ports/nrf/build-$(BOARD)-s132
+		micropython/ports/nrf/build-$(BOARD)-s132 \
+		$(WASP_WATCH_PY)
 
 submodules :
 	git submodule update --init --recursive
