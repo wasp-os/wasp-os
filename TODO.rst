@@ -108,8 +108,8 @@ Reloader
 ~~~~~~~~
 
 * [ ] Board identity check
-* [ ] Pre-flash image verification
-* [ ] Post-flash image verification
+* [X] Pre-flash image verification
+* [X] Post-flash image verification
 * [ ] Error checking
 
 Micropython
@@ -121,11 +121,11 @@ Micropython
 Wasp-os
 ~~~~~~~
 
-* [ ] Enable heart rate sensor
+* [X] Enable heart rate sensor
 
-  * [ ] HRS3300 driver
-  * [ ] HRS data post-processing
-  * [ ] Heart rate counter app
+  * [X] HRS3300 driver
+  * [X] HRS data post-processing
+  * [X] Heart rate counter app
 
 * [ ] Notifications
 
@@ -134,10 +134,10 @@ Wasp-os
   * [ ] Notification app (show notification history)
   * [ ] Find a recommended Android app
 
-* [ ] Step counting
+* [X] Step counting
 
-  * [ ] BMA421 driver
-  * [ ] Step counter app
+  * [X] BMA421 driver
+  * [X] Step counter app
 
 * [ ] Documentation
 
