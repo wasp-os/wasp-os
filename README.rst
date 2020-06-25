@@ -4,13 +4,13 @@ Watch Application System in Python
 Introduction
 ------------
 
-Currently in its infancy wasp-os provides only a little more than a simple
-digital clock application for `PineTime <https://www.pine64.org/pinetime/>`_
-together with access to the MicroPython REPL for interactive testing and
-tweaking. However it keeps time well and has enough power saving
-functions implemented that it can survive for well over 72 hours between
-charges so even at this early stage it is functional as a wearable
-timepiece.
+Although still in its infancy wasp-os provides many example applications
+including a simple digital clock, a stopwatch, a step counter and a heart rate
+monitor. All of these, together with access to the MicroPython REPL for
+interactive tweaking and testing, are running on `PineTime
+<https://www.pine64.org/pinetime/>`_.  It keeps time well and has enough power
+saving functions implemented that it can survive for well over 72 hours between
+charges so even at this early stage it is functional as a wearable timepiece.
 
 Wasp-os includes a robust bootloader based on the Adafruit NRF52
 Bootloader. It has been extended to make it robust for development on
@@ -54,7 +54,7 @@ Building wasp-os and launching the wasp-os simulator requires Python 3.6
 (or later) and the following python modules: click, numpy, pexpect, PIL
 (or Pillow), pyserial, pysdl2.
 
-On Debian Buster the requires python modules can be obtain with the
+On Debian Buster the required python modules can be obtained using the
 following commands:
 
 .. code-block:: sh
@@ -65,15 +65,16 @@ following commands:
       python3-pil python3-pip python3-serial
     pip3 install --user pysdl2
 
-You will need a toolchain for the Arm Cortex-M4. wasp-os is developed and
+You will also need a toolchain for the Arm Cortex-M4. wasp-os is developed and
 tested using the `GNU-RM toolchain
 <https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-rm>`_
 (9-2019-q4) from Arm.
 
 .. note::
 
-    There are known problems with toolchains older than gcc-7.3 due to problems
-    with link-time-optimization (which is enabled by default).
+    There are known problems with toolchains older than gcc-7.3 when
+    link time optimization is enabled during the MicroPython build
+    (and LTO is enabled by default).
 
 Get the code from
 `https://github.com/daniel-thompson/wasp-os <https://github.com/daniel-thompson/wasp-os>`_ :
@@ -132,7 +133,7 @@ To install the main firmware using an Android device:
 * Connect to PineDFU using nRFConnect, click the DFU button and send
   ``micropython.zip`` to the device.
 
-To install the main firmware from a GNU/Linux workstation:
+Alternatively, to install the main firmware from a GNU/Linux workstation:
 
 * Look up the MAC address for your watch (try: ``sudo hcitool lescan``\ ).
 * Use ota-dfu to upload ``micropython.zip`` to the device. For example:
