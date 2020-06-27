@@ -144,3 +144,8 @@ Wasp-os
   * [ ] Debugging and troubleshooting guide
   * [ ] Screenshots for bootloader and all applications
   * [ ] Improve the install guide
+
+* [X] Simulator
+
+  * [X] Add a simple skin for better screenshots
+  * [X] Full swipe detection (avoid keyboard)
