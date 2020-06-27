@@ -47,6 +47,7 @@ class StopwatchApp():
             self._update()
             self._splits.insert(0, self._count)
             del self._splits[4:]
+            self._nsplits += 1
         else:
             self._reset()
             self._update()
@@ -61,6 +62,7 @@ class StopwatchApp():
         self._count = 0
         self._last_count = -1
         self._splits = []
+        self._nsplits = 0
 
     def _draw_splits(self):
         draw = wasp.watch.drawable
@@ -68,21 +70,21 @@ class StopwatchApp():
         if 0 == len(splits):
             draw.fill(0, 0, 120, 240, 120)
             return
-        y = 240 - 12 - (len(splits) * 24)
+        y = 240 - 6 - (len(splits) * 24)
+        
+        n = self._nsplits
         for i, s in enumerate(splits):
-            if s:
-                centisecs = s
-                secs = centisecs // 100
-                centisecs %= 100
-                minutes = secs // 60
-                secs %= 60
+            centisecs = s
+            secs = centisecs // 100
+            centisecs %= 100
+            minutes = secs // 60
+            secs %= 60
 
-                t = '#{}  {:02}:{:02}.{:02}'.format(i+1, minutes, secs, centisecs)
-            else:
-                t = ''
+            t = '# {}   {:02}:{:02}.{:02}'.format(n, minutes, secs, centisecs)
+            n -= 1
 
             draw.set_font(fonts.sans24)
-            draw.set_color(0xfff0)
+            draw.set_color(0xe73c)
             w = fonts.width(fonts.sans24, t)
             draw.string(t, 0, y + (i*24), 240)
 
@@ -113,7 +115,7 @@ class StopwatchApp():
         if now[4] != self._last_clock[4]:
             t1 = '{:02}:{:02}'.format(now[3], now[4])
             draw.set_font(fonts.sans28)
-            draw.set_color(0x7bef)
+            draw.set_color(0xe73c)
             draw.string(t1, 48, 12, 240-96)
             self._last_clock = now
             self._meter.update()
@@ -129,7 +131,7 @@ class StopwatchApp():
             t2 = '{:02}'.format(centisecs)
 
             draw.set_font(fonts.sans36)
-            draw.set_color(0xffff)
+            draw.set_color(0xc67f)
             w = fonts.width(fonts.sans36, t1)
             draw.string(t1, 180-w, 120-36)
             draw.fill(0, 0, 120-36, 180-w, 36)
