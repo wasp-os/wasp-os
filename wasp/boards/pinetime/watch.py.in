@@ -1,10 +1,16 @@
 # SPDX-License-Identifier: LGPL-3.0-or-later
 # Copyright (C) 2020 Daniel Thompson
 
+def nop():
+    pass
+schedule = nop
+def _callback(obj):
+    schedule()
+
 # Start measuring time (and feeding the watchdog) before *anything* else
 from machine import RTCounter
 from drivers.nrf_rtc import RTC
-rtc = RTC(RTCounter(1, mode=RTCounter.PERIODIC))
+rtc = RTC(RTCounter(1, mode=RTCounter.PERIODIC, period=1, callback=_callback))
 rtc.counter.start()
 
 import os
@@ -83,7 +89,9 @@ try:
     i2c = I2C(1, scl='I2C_SCL', sda='I2C_SDA')
     accel = BMA421(i2c)
     hrs = HRS3300(i2c)
-    touch = CST816S(i2c, Pin('TP_INT', Pin.IN), Pin('TP_RST', Pin.OUT, value=0))
+    touch = CST816S(i2c,
+                    Pin('TP_INT', Pin.IN), Pin('TP_RST', Pin.OUT, value=0),
+                    _callback)
     vibrator = Vibrator(Pin('MOTOR', Pin.OUT, value=0), active_low=True)
 
     # Release flash from deep power-down

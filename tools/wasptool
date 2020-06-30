@@ -44,7 +44,8 @@ def unsync(c):
     process too early then the sendline will not have completed.
     """
     c.sendline('wasp.system.run()')
-    c.expect('Watch is running, use Ctrl-C to stop')
+    c.expect(['Watch is running, use Ctrl-C to stop',
+              'Watch already running in the background'])
     c.send('\x18')
 
 def paste(c, f, verbose=False, chunk=None):

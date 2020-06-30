@@ -2,4 +2,4 @@
 # Copyright (C) 2020 Daniel Thompson
 
 import wasp
-wasp.system.run()
+wasp.system.schedule()

@@ -15,7 +15,7 @@ class CST816S:
     .. automethod:: __init__
     """
 
-    def __init__(self, bus, intr, rst):
+    def __init__(self, bus, intr, rst, schedule=None):
         """Specify the bus used by the touch controller.
 
         :param machine.I2C bus: I2C bus for the CST816S.
@@ -23,6 +23,7 @@ class CST816S:
         self.i2c = bus
         self.tp_int = intr
         self.tp_rst = rst
+        self.schedule = schedule
         self.dbuf = bytearray(6)
         self.event = array.array('H', (0, 0, 0))
 
@@ -52,6 +53,9 @@ class CST816S:
         event[0] = dbuf[0] # event
         event[1] = ((dbuf[2] & 0xf) << 8) + dbuf[3] # x coord
         event[2] = ((dbuf[4] & 0xf) << 8) + dbuf[5] # y coord
+
+        if self.schedule:
+            self.schedule(self)
 
     def get_event(self):
         """Receive a touch event.

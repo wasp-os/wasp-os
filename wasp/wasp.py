@@ -17,6 +17,7 @@
 
 import gc
 import machine
+import micropython
 import watch
 import widgets
 
@@ -106,6 +107,8 @@ class Manager():
         self._brightness = 2
         self._button = PinHandler(watch.button)
         self._charging = True
+        self._scheduled = False
+        self._scheduling = False
 
         # TODO: Eventually these should move to main.py
         self.register(ClockApp(), True)
@@ -242,7 +245,8 @@ class Manager():
         """Return to a running state.
         """
         watch.display.poweron()
-        self.app.wake()
+        if 'wake' in dir(self.app):
+            self.app.wake()
         watch.backlight.set(self._brightness)
         watch.touch.wake()
 
@@ -326,6 +330,10 @@ class Manager():
         normal execution context meaning any exceptions and other problems
         can be observed interactively via the console.
         """
+        if self._scheduling:
+            print('Watch already running in the background')
+            return
+
         if not self.app:
             self.switch(self.quick_ring[0])
 
@@ -353,8 +361,36 @@ class Manager():
 
             # Currently there is no code to control how fast the system
             # ticks. In other words this code will break if we improve the
-            # power management... we are currently relying on no being able
+            # power management... we are currently relying on not being able
             # to stay in the low-power state for very long.
             machine.deepsleep()
+
+    def _work(self):
+        self._scheduled = False
+        try:
+            self._tick()
+        except Exception as e:
+            # Only print the exception if the watch provides a way to do so!
+            if 'print_exception' in dir(watch):
+                watch.print_exception(e)
+            self.switch(CrashApp(e))
+
+    def _schedule(self):
+        """Asynchronously schedule a system management cycle."""
+        if not self._scheduled:
+            self._scheduled = True
+            micropython.schedule(Manager._work, self)
+
+    def schedule(self, enable=True):
+        """Run the system manager synchronously."""
+        if not self.app:
+            self.switch(self.quick_ring[0])
+
+        if enable:
+            watch.schedule = self._schedule
+        else:
+            watch.schedule = watch.nop
+
+        self._scheduling = enable
 
 system = Manager()
