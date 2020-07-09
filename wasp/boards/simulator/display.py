@@ -153,7 +153,7 @@ class CST816SSim():
         elif abs(mv_x) > abs(mv_y):
             self.regs[1] = 4 if mv_x > 0 else 3
         else:
-            self.regs[1] = 2 if mv_y > 0 else 1
+            self.regs[1] = 1 if mv_y > 0 else 2
 
         self.regs[4] = up_x;
         self.regs[6] = up_y;
