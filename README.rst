@@ -21,21 +21,35 @@ only on BLE for updates.
 Videos
 ------
 
+.. image:: https://img.youtube.com/vi/lIo2-djNR48/0.jpg
+   :target: https://www.youtube.com/watch?v=lIo2-djNR48
+   :alt: wasp-os: Open source heart rate monitoring for Pine64 PineTime
+   :width: 320
+   :height: 240
+
+`Open source heart rate monitoring for Pine64 PineTime <https://www.youtube.com/watch?v=lIo2-djNR48>`_
+
 .. image:: https://img.youtube.com/vi/YktiGUSRJB4/0.jpg
    :target: https://www.youtube.com/watch?v=YktiGUSRJB4
    :alt: An M2 pre-release running on Pine64 PineTime
+   :width: 320
+   :height: 240
 
 `An M2 pre-release running on Pine64 PineTime <https://www.youtube.com/watch?v=YktiGUSRJB4>`_
 
 .. image:: https://img.youtube.com/vi/tuk9Nmr3Jo8/0.jpg
    :target: https://www.youtube.com/watch?v=tuk9Nmr3Jo8
    :alt: How to develop wasp-os python applications on a Pine64 PineTime
+   :width: 320
+   :height: 240
 
 `How to develop wasp-os python applications on a Pine64 PineTime <https://www.youtube.com/watch?v=tuk9Nmr3Jo8>`_
 
 .. image:: https://img.youtube.com/vi/kf1VHj587Mc/0.jpg
    :target: https://www.youtube.com/watch?v=kf1VHj587Mc
    :alt: Developing for Pine64 PineTime using wasp-os and MicroPython
+   :width: 320
+   :height: 240
 
 `Developing for Pine64 PineTime using wasp-os and MicroPython <https://www.youtube.com/watch?v=kf1VHj587Mc>`_
 
