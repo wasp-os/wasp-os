@@ -25,7 +25,7 @@ from apps.clock import ClockApp
 from apps.flashlight import FlashlightApp
 from apps.heart import HeartApp
 from apps.launcher import LauncherApp
-from apps.pager import PagerApp, CrashApp
+from apps.pager import PagerApp, CrashApp, NotificationApp
 from apps.settings import SettingsApp
 from apps.steps import StepCounterApp
 from apps.stopwatch import StopwatchApp
@@ -101,6 +101,8 @@ class Manager():
         self.quick_ring = []
         self.launcher = LauncherApp()
         self.launcher_ring = []
+        self.notifier = NotificationApp()
+        self.notifications = {}
 
         self.blank_after = 15
 
@@ -202,12 +204,25 @@ class Manager():
             if self.app != app_list[0]:
                 self.switch(app_list[0])
             else:
-                watch.vibrator.pulse()
+                if len(self.notifications):
+                    self.switch(self.notifier)
+                else:
+                    # Nothing to notify... we must handle that here
+                    # otherwise the display will flicker.
+                    watch.vibrator.pulse()
+
         elif direction == EventType.HOME or direction == EventType.BACK:
             if self.app != app_list[0]:
                 self.switch(app_list[0])
             else:
                 self.sleep()
+
+    def notify(self, id, msg):
+        self.notifications[id] = msg
+
+    def unnotify(self, id):
+        if id in self.notifications:
+            del self.notifications[id]
 
     def request_event(self, event_mask):
         """Subscribe to events.

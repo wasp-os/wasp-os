@@ -26,16 +26,13 @@ class PagerApp():
 
     def foreground(self):
         """Activate the application."""
-        self._page = 0
-        self._chunks = wasp.watch.drawable.wrap(self._msg, 240)
-        self._numpages = (len(self._chunks) - 2) // 9
         wasp.system.request_event(wasp.EventMask.SWIPE_UPDOWN)
-        self._draw()
+        self._redraw()
 
     def background(self):
         """De-activate the application."""
-        del self._chunks
-        del self._numpages
+        self._chunks = None
+        self._numpages = None
 
     def swipe(self, event):
         """Swipe to page up/down."""
@@ -55,8 +52,15 @@ class PagerApp():
         self._draw()
         mute(False)
 
+    def _redraw(self):
+        """Redraw from scratch (jump to the first page)"""
+        self._page = 0
+        self._chunks = wasp.watch.drawable.wrap(self._msg, 240)
+        self._numpages = (len(self._chunks) - 2) // 9
+        self._draw()
+
     def _draw(self):
-        """Draw the display from scratch."""
+        """Draw a page from scratch."""
         draw = wasp.watch.drawable
         draw.fill()
 
@@ -72,6 +76,22 @@ class PagerApp():
         scroll.up = page > 0
         scroll.down = page < self._numpages
         scroll.draw()
+
+class NotificationApp(PagerApp):
+    NAME = 'Notifications'
+
+    def __init__(self):
+        super().__init__('')
+
+    def foreground(self):
+        notes = wasp.system.notifications
+
+        id = next(iter(notes))
+        note = notes[id]
+        del notes[id]
+        self._msg = '{}\n\n{}'.format(note['title'], note['body'])
+
+        super().foreground()
 
 class CrashApp():
     """Crash handler application.

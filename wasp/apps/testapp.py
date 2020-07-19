@@ -16,7 +16,7 @@ class TestApp():
     ICON = icons.app
 
     def __init__(self):
-        self.tests = ('Button', 'Crash', 'Colours', 'Fill', 'Fill-H', 'Fill-V', 'RLE', 'String', 'Touch', 'Wrap')
+        self.tests = ('Button', 'Crash', 'Colours', 'Fill', 'Fill-H', 'Fill-V', 'Notifications', 'RLE', 'String', 'Touch', 'Wrap')
         self.test = self.tests[0]
         self.scroll = wasp.widgets.ScrollIndicator()
 
@@ -70,6 +70,19 @@ class TestApp():
                 self._update_colours()
         elif self.test.startswith('Fill'):
             self._benchmark_fill()
+        elif self.test == 'Notifications':
+            if event[1] < 120:
+                wasp.system.notify(wasp.watch.rtc.get_uptime_ms(),
+                    {
+                        "src":"Hangouts",
+                        "title":"A Name",
+                        "body":"message contents"
+                    })
+            else:
+                if wasp.system.notifications:
+                    wasp.system.unnotify(
+                            next(iter(wasp.system.notifications.keys())))
+            self._update_notifications()
         elif self.test == 'RLE':
             self._benchmark_rle()
         elif self.test == 'String':
@@ -166,6 +179,10 @@ class TestApp():
             for s in self._sliders:
                 s.draw()
             self._update_colours()
+        elif self.test == 'Notifications':
+            draw.string('+', 24, 100)
+            draw.string('-', 210, 100)
+            self._update_notifications()
         elif self.test == 'RLE':
             draw.blit(self.ICON, 120-48, 120-32)
 
@@ -181,3 +198,6 @@ class TestApp():
 
         draw.string('RGB565 #{:04x}'.format(rgb), 0, 6, width=240)
         draw.fill(rgb, 60, 35, 120, 50)
+
+    def _update_notifications(self):
+        wasp.watch.drawable.string(str(len(wasp.system.notifications)), 0, 140, 240)

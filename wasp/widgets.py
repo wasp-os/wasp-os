@@ -9,10 +9,11 @@ shared between applications.
 """
 
 import icons
+import wasp
 import watch
 from micropython import const
 
-class BatteryMeter(object):
+class BatteryMeter:
     """Battery meter widget.
 
     A simple battery meter with a charging indicator, will draw at the
@@ -69,7 +70,33 @@ class BatteryMeter(object):
 
             self.level = level
 
-class ScrollIndicator():
+class Notifier:
+    """Show if there are pending notifications."""
+    def __init__(self, x=8, y=8):
+        self._pos = (x, y)
+
+    def draw(self):
+        """Update the notification widget.
+
+        For this simple widget :py:meth:`~.draw` is simply a synonym for
+        :py:meth:`~.update`.
+        """
+        self.update()
+
+    def update(self):
+        """Update the widget.
+
+        For this simple widget :py:meth:~.update` does nothing!
+        """
+        draw = watch.drawable
+        (x, y) = self._pos
+
+        if wasp.system.notifications:
+            draw.blit(icons.notification, x, y, fg=0x7bef)
+        else:
+            draw.fill(0, x, y, 32, 32)
+
+class ScrollIndicator:
     """Scrolling indicator.
 
     A simple battery meter with a charging indicator, will draw at the
