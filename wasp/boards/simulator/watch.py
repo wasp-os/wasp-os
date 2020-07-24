@@ -182,3 +182,5 @@ rtc = RTC()
 touch = CST816S(I2C(0), Pin('TP_INT', Pin.IN, quiet=True), Pin('TP_RST', Pin.OUT, quiet=True))
 vibrator = Vibrator(Pin('MOTOR', Pin.OUT, value=0), active_low=True)
 
+def connected():
+    return not (int(rtc.uptime / 30) & 1)

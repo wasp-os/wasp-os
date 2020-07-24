@@ -35,7 +35,7 @@ class ClockApp():
 
     def __init__(self):
         self.meter = wasp.widgets.BatteryMeter()
-        self.notifier = wasp.widgets.Notifier()
+        self.notifier = wasp.widgets.StatusBar()
 
     def foreground(self):
         """Activate the application."""
@@ -72,6 +72,7 @@ class ClockApp():
         if now[3] == self.on_screen[3] and now[4] == self.on_screen[4]:
             if now[5] != self.on_screen[5]:
                 self.meter.update()
+                self.notifier.update()
                 self.on_screen = now
             return False
 

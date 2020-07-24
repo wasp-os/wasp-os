@@ -70,8 +70,8 @@ class BatteryMeter:
 
             self.level = level
 
-class Notifier:
-    """Show if there are pending notifications."""
+class StatusBar:
+    """Show BT status and if there are pending notifications."""
     def __init__(self, x=8, y=8):
         self._pos = (x, y)
 
@@ -85,16 +85,21 @@ class Notifier:
 
     def update(self):
         """Update the widget.
-
-        For this simple widget :py:meth:~.update` does nothing!
         """
         draw = watch.drawable
         (x, y) = self._pos
 
-        if wasp.system.notifications:
+        if wasp.watch.connected():
+            draw.blit(icons.blestatus, x, y, fg=0x7bef)
+            if wasp.system.notifications:
+                draw.blit(icons.notification, x+24, y, fg=0x7bef)
+            else:
+                draw.fill(0, x+24, y, 32, 32)
+        elif wasp.system.notifications:
             draw.blit(icons.notification, x, y, fg=0x7bef)
+            draw.fill(0, x+32, y, 32, 32)
         else:
-            draw.fill(0, x, y, 32, 32)
+            draw.fill(0, x, y, 56, 32)
 
 class ScrollIndicator:
     """Scrolling indicator.

@@ -32,6 +32,8 @@ from drivers.st7789 import ST7789_SPI
 from drivers.vibrator import Vibrator
 from flash.flash_spi import FLASH
 
+from ubluepy import uart_connected as connected
+
 class Backlight(object):
     lo = Pin("BL_LO", Pin.OUT, value=0)
     mid = Pin("BL_MID", Pin.OUT, value=1)
