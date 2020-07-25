@@ -57,7 +57,7 @@ Documentation
 -------------
 
 Wasp-os is has `extensive documentation <https://wasp-os.readthedocs.io>`_
-which includes a detailed `Applicaiton Writer's Guide
+which includes a detailed `Application Writer's Guide
 <https://wasp-os.readthedocs.io/en/latest/appguide.html>`_ to help you
 get started coding for wasp-os as quickly as possible.
 
