@@ -30,6 +30,10 @@ bootloader:
 		-o bootloader.hex
 	python3 tools/hex2c.py bootloader.hex > \
 		reloader/src/boards/$(BOARD)/bootloader.h
+	python3 -m nordicsemi dfu genpkg \
+		--bootloader bootloader/_build-$(BOARD)_nrf52832//$(BOARD)_nrf52832_bootloader-*-nosd.hex \
+		--softdevice bootloader/lib/softdevice/s132_nrf52_6.1.1/s132_nrf52_6.1.1_softdevice.hex \
+		bootloader-daflasher.zip
 
 reloader: bootloader
 	$(MAKE) -C reloader/ BOARD=$(BOARD)
