@@ -249,7 +249,7 @@ if __name__ == '__main__':
     parser.add_argument('--check-rtc', action='store_true',
             help='Compare workstation and watch times')
     parser.add_argument('--device',
-            help='Connect only to a specific named device')
+            help='Connect only to a specific named device (or MAC address)')
     parser.add_argument('--exec',
             help='Execute the contents of a file')
     parser.add_argument('--eval',
@@ -266,9 +266,16 @@ if __name__ == '__main__':
             help='Log interaction with the wasp-os device')
 
     args = parser.parse_args()
-    device_name = args.device
 
-    pynus = os.path.dirname(sys.argv[0]) + '/pynus/pynus.py'
+    if args.device:
+        if ':' in args.device:
+            device_args = ' --address ' + args.device
+        else:
+            device_args = ' --device ' + args.device
+    else:
+        device_args = ''
+
+    pynus = os.path.dirname(sys.argv[0]) + '/pynus/pynus.py' + device_args
     console = pexpect.spawn(pynus, encoding='UTF-8')
     if args.verbose:
         console.logfile = sys.stdout
@@ -299,7 +306,8 @@ if __name__ == '__main__':
 
     if args.console:
         console.close()
-        os.execl(pynus, pynus)
+        argv = pynus.split()
+        os.execv(argv[0], argv)
 
     if args.ota:
         handle_reset(console, ota=True)
