@@ -115,52 +115,26 @@ Finally to test out ideas and concepts on the simulator try:
 See :ref:`Testing on the simulator` for more details on how
 to use the simulator.
 
-Installing
-----------
+Getting Started
+---------------
 
-Use an SWD programmer to install ``bootloader.hex`` to the PineTime.
-This file is an Intel HEX file containing both the bootloader and the Nordic
-SoftDevice. Once the bootloader is installed the watch will boot, display the
-Pine64 logo and wait for a OTA update.
+Wasp-os can be installed without using any tools onto the following
+devices:
 
-See the `PineTime SWD programming guide <https://wiki.pine64.org/index.php/Reprogramming_the_PineTime>`_
-for instructions on how to reprogram the PineTime using various different SWD
-programmers.
+ * Pine64 PineTime (developer edition)
+ * Colmi P8
 
-.. note::
+The
+`Installation Guide <https://wasp-os.readthedocs.io/en/latest/install.html>`_
+contains detailed instructions on how to install wasp-os.
 
-    If you have a new PineTime then it will have been delivered with flash
-    protection enabled. You must disable the flash protection before trying to
-    program it.
-
-    Be careful to disconnect cleanly from the debug software since just pulling
-    out the SWD cable will mean the nRF52 will still believe it is being
-    debugged (which harms battery life because the device won't properly enter
-    deep sleep states).
-
-To install the main firmware using an Android device:
-
-* Copy ``micropython.zip`` to your Android device and download nRF Connect
-  for Android if you do not already have it.
-* In nRF Connect, choose settings and reduce the DFU packet count from
-  10 to 4.
-* Connect to PineDFU using nRFConnect, click the DFU button and send
-  ``micropython.zip`` to the device.
-
-Alternatively, to install the main firmware from a GNU/Linux workstation:
-
-* Look up the MAC address for your watch (try: ``sudo hcitool lescan``\ ).
-* Use ota-dfu to upload ``micropython.zip`` to the device. For example:
-  ``tools/ota-dfu/dfu.py -z micropython.zip -a A0:B1:C2:D3:E3:F5 --legacy``
-
-At the end of this process your watch will show the time (03:00) together
-with a date and battery meter. When the watch goes into power saving mode
-you can use the side button to wake it again.
+At the end of the install process your watch will show the time (03:00)
+together with a date and battery meter. When the watch goes into power
+saving mode you can use the button to wake it again.
 
 At this point you will also be able to use the Nordic UART Service to
-access the MicroPython REPL, although currently you must send ^C to
-interrupt the program that updates the watch display. You can use 
-``tools/wasptool --console`` to access the MicroPython REPL.
+access the MicroPython REPL. You can use ``tools/wasptool --console``
+to access the MicroPython REPL.
 
 To set the time and restart the main application:
 

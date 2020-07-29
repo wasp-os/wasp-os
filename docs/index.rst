@@ -11,6 +11,7 @@ Welcome to WASP-OS's documentation!
    :caption: Contents:
 
    README
+   install
    appguide
    wasp
    TODO
