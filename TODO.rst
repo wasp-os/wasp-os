@@ -45,7 +45,7 @@ Wasp-os
 * [X] Basic (WFI) power saving
 * [X] Implement simple RTC for nrf52
 
-M2: Great developer experience
+0.2 (a.k.a. M2): Great developer experience
 ------------------------------
 
 The focus for M2 is to make development faster and easier by providing
@@ -92,8 +92,8 @@ Wasp-os
   * [X] Optimized "2-bit" RLE encoder and decoder
   * [X] Logarithmic RBG332 <-> RGB56516bit color space conversion
 
-M3: Smartwatch
---------------
+0.3 (a.k.a. M3): Smartwatch
+---------------------------
 
 At M3 we start to build out full fitness tracking and notification
 functionality.
@@ -127,12 +127,12 @@ Wasp-os
   * [X] HRS data post-processing
   * [X] Heart rate counter app
 
-* [ ] Notifications
+* [X] Notifications
 
-  * [ ] BLE notification protocol
-  * [ ] Notification popups
-  * [ ] Notification app (show notification history)
-  * [ ] Find a recommended Android app
+  * [X] BLE notification protocol
+  * [X] Notification popups
+  * [X] Notification app (show notification history)
+  * [X] Add (out-of-tree) Gadgetbridge support
 
 * [X] Step counting
 
@@ -143,9 +143,22 @@ Wasp-os
 
   * [ ] Debugging and troubleshooting guide
   * [ ] Screenshots for bootloader and all applications
-  * [ ] Improve the install guide
+  * [X] Improve the install guide
 
 * [X] Simulator
 
   * [X] Add a simple skin for better screenshots
   * [X] Full swipe detection (avoid keyboard)
+
+0.4: Fit and finish
+-------------------
+
+For 0.4 we will be making steps to improve the general fit and finish.
+
+Wasp-os
+~~~~~~~
+
+* [ ] Notifications
+
+  * [ ] Music player support
+  * [ ] Upstream the Gadgetbridge changes
