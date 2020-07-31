@@ -46,7 +46,7 @@ Wasp-os
 * [X] Implement simple RTC for nrf52
 
 0.2 (a.k.a. M2): Great developer experience
-------------------------------
+-------------------------------------------
 
 The focus for M2 is to make development faster and easier by providing
 a file system and file transfer code. This allows much faster

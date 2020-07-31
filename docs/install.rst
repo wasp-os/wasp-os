@@ -65,6 +65,63 @@ display with touch screen, a step counter and a heart rate sensor.
 Both the wasp-bootloader and the main OS image can be installed onto a
 P8 using DaFlasher for Android. No tools are required.
 
+.. _Building wasp-os from source:
+
+Building wasp-os from source
+----------------------------
+
+
+Building wasp-os and launching the wasp-os simulator requires Python 3.6
+(or later) and the following python modules: click, numpy, pexpect, PIL
+(or Pillow), pyserial, pysdl2.
+
+On Debian Buster the required python modules can be obtained using the
+following commands:
+
+.. code-block:: sh
+
+    sudo apt install \
+      git build-essential libsdl2-2.0.0 \
+      python3-click python3-numpy python3-pexpect \
+      python3-pil python3-pip python3-serial
+    pip3 install --user pysdl2
+
+You will also need a toolchain for the Arm Cortex-M4. wasp-os is developed and
+tested using the `GNU-RM toolchain
+<https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-rm>`_
+(9-2019-q4) from Arm.
+
+.. note::
+
+    There are known problems with toolchains older than gcc-7.3 when
+    link time optimization is enabled during the MicroPython build
+    (and LTO is enabled by default).
+
+Get the code from
+`https://github.com/daniel-thompson/wasp-os <https://github.com/daniel-thompson/wasp-os>`_ :
+
+.. code-block:: sh
+
+   git clone https://github.com/daniel-thompson/wasp-os
+   cd wasp-os
+   make submodules
+   make softdevice
+
+Build the firmware:
+
+.. code-block:: sh
+
+   make -j `nproc` BOARD=pinetime all
+
+Finally to test out ideas and concepts on the simulator try:
+
+.. code-block:: sh
+
+    make sim
+
+See :ref:`Testing on the simulator` for more details on how
+to use the simulator.
+
 Installing wasp-bootloader
 --------------------------
 
@@ -78,7 +135,8 @@ To install the bootloader using DaFlasher for Android:
   and copy the DaFlasher bootloaders to your Android device. You will need
   `DaFitBootloader23Hacked.bin <https://github.com/atc1441/DaFlasherFiles/blob/master/DaFitBootloader23Hacked.bin>`_ and
   `FitBootloaderDFU2.0.1.zip <https://github.com/atc1441/DaFlasherFiles/blob/master/FitBootloaderDFU2.0.1.zip>`_.
-* Copy ``bootloader-daflasher.zip`` to your Android device.
+* Copy ``bootloader-daflasher.zip`` (see :ref:`Building wasp-os from source`
+  above) to your Android device.
 * Open the app and connect to the device (e.g. *Y7S* if you have a developer
   edition PineTime).
 * Read the disclaimer carefully, then click **Ok**.
@@ -160,7 +218,8 @@ DaFlasher for Android
 
 To install the main firmware using DaFlasher for Android:
 
-* Copy ``micropython.zip`` to your Android device and download
+* Copy ``micropython.zip`` (see :ref:`Building wasp-os from source`) to 
+  your Android device and download
   `DaFlasher <https://play.google.com/store/apps/details?id=com.atcnetz.paatc.patc>`_
   if you do not already have it.
 * Open the app and connect to the device (e.g. *PineDFU* if you have a
@@ -175,7 +234,8 @@ nRF Connect for Android
 
 To install the main firmware using nRF Connect for Android:
 
-* Copy ``micropython.zip`` to your Android device and download
+* Copy ``micropython.zip`` (see :ref:`Building wasp-os from source`) to 
+  your Android device and download
   `nRF Connect <https://play.google.com/store/apps/details?id=no.nordicsemi.android.mcp>`_
   for Android if you do not already have it.
 * Connect to the device (e.g. *PineDFU* if you have a PineTime) using
@@ -189,5 +249,6 @@ wasptool for GNU/Linux
 To install the main firmware from a GNU/Linux workstation:
 
 * Look up the MAC address for your watch (try: ``sudo hcitool lescan``\ ).
-* Use ota-dfu to upload ``micropython.zip`` to the device. For example:
+* Use ota-dfu to upload ``micropython.zip`` (see
+  :ref:`Building wasp-os from source`) to the device. For example:
   ``tools/ota-dfu/dfu.py -z micropython.zip -a A0:B1:C2:D3:E3:F5 --legacy``
