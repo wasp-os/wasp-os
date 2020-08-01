@@ -8,11 +8,14 @@ on:
         required: true
         default: 'warning'
       tags:
-        description: 'Test scenario tags'
+        description: 'Build firmware'
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        board: [pinetime, p8]
+    runs-on: ubuntu-20.04
     steps:
       - name: Install dependencies
         run: sudo apt-get update -y && sudo apt-get install git build-essential
@@ -20,20 +23,22 @@ jobs:
       - name: Install Python dependencies
         run: pip3 install --user pysdl2
       - name: Setup toolchain
-        run: sudo apt-get install gcc-arm-none-eabi
+        run: sudo apt-get update -y && sudo apt-get install gcc-arm-none-eabi
       - name: Checkout wasp-os
         uses: actions/checkout@v2
-      - name: Build dependencies
-        run: make submodules && make softdevice
+      - name: Setup submodules
+        run: make submodules
+      - name: Setup softdevice
+        run: make softdevice
       - name: Build firmware
-        run: make -j `nproc` BOARD=p8 all
+        run: make -j `nproc` BOARD=${{ matrix.board }} all
       - name: Persist bootloader
         uses: actions/upload-artifact@v2
         with:
-          name: bootloader-daflasher
+          name: ${{ matrix.board }}-bootloader-daflasher-artifact
           path: bootloader-daflasher.zip
       - name: Persist micropython
         uses: actions/upload-artifact@v2
         with:
-          name: micropython
+          name: ${{ matrix.board }}-micropython-artifact
           path: micropython.zip
