@@ -1,0 +1,39 @@
+name: wasp-os
+
+on:
+  workflow_dispatch:
+    inputs:
+      logLevel:
+        description: 'Log level'
+        required: true
+        default: 'warning'
+      tags:
+        description: 'Test scenario tags'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install dependencies
+        run: sudo apt-get update -y && sudo apt-get install git build-essential
+          libsdl2-2.0.0 python3-click python3-numpy python3-pexpect python3-pil python3-pip python3-serial
+      - name: Install Python dependencies
+        run: pip3 install --user pysdl2
+      - name: Checkout wasp-os
+        uses: actions/checkout@v2
+        with:
+          submodules: recursive
+      - name: Build dependencies
+        run: make submodules && make softdevice
+      - name: Build firmware
+        run: make -j `nproc` BOARD=p8 all
+      - name: Persist bootloader
+        uses: actions/upload-artifact@v2
+        with:
+          name: bootloader-daflasher
+          path: bootloader-daflasher.zip
+      - name: Persist micropython
+        uses: actions/upload-artifact@v2
+        with:
+          name: micropython
+          path: micropython.zip
