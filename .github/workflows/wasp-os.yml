@@ -1,0 +1,41 @@
+name: wasp-os
+
+on:
+  workflow_dispatch:
+    inputs:
+      logLevel:
+        description: 'Log level'
+        required: true
+        default: 'warning'
+      tags:
+        description: 'Build firmware'
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        board: [pinetime, p8]
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Install dependencies
+        run: sudo apt-get update -y && sudo apt-get install git build-essential
+          libsdl2-2.0.0 python3-click python3-numpy python3-pexpect python3-pil python3-pip python3-serial
+      - name: Install Python dependencies
+        run: pip3 install --user pysdl2
+      - name: Setup toolchain
+        run: sudo apt-get update -y && sudo apt-get install gcc-arm-none-eabi
+      - name: Checkout wasp-os
+        uses: actions/checkout@v2
+      - name: Setup submodules
+        run: make submodules
+      - name: Setup softdevice
+        run: make softdevice
+      - name: Build firmware
+        run: make -j `nproc` BOARD=${{ matrix.board }} all
+      - name: Persist artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: ${{ matrix.board }}-artifact
+          path: |
+            bootloader-daflasher.zip
+            micropython.zip
