@@ -8,11 +8,14 @@ on:
         required: true
         default: 'warning'
       tags:
-        description: 'Test scenario tags'
+        description: 'Build firmware'
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        board: [pinetime, p8]
+    runs-on: ubuntu-20.04
     steps:
       - name: Install dependencies
         run: sudo apt-get update -y && sudo apt-get install git build-essential
@@ -20,25 +23,22 @@ jobs:
       - name: Install Python dependencies
         run: pip3 install --user pysdl2
       - name: Setup toolchain
-        run: curl -o gcc-arm-none-eabi-9-2019-q4-major-x86_64-linux.tar.bz2 -O https://developer.arm.com/-/media/Files/downloads/gnu-rm/9-2019q4/gcc-arm-none-eabi-9-2019-q4-major-x86_64-linux.tar.bz2?revision=108bd959-44bd-4619-9c19-26187abf5225&la=en&hash=E788CE92E5DFD64B2A8C246BBA91A249CB8E2D2D &&
-          tar xvzf gcc-arm-none-eabi-9-2019-q4-major-x86_64-linux.tar.bz2 &&
-          echo "export PATH=$PATH:$(eval pwd)/gcc-arm-none-eabi-9-2019-q4-major-x86_64-linux/gcc-arm-none-eabi-9-2019-q4-major/bin" >> ~/.bashrc &&
-          source ~/.bashrc
+        run: sudo apt-get update -y && sudo apt-get install gcc-arm-none-eabi
       - name: Checkout wasp-os
         uses: actions/checkout@v2
-        with:
-          submodules: recursive
-      - name: Build dependencies
-        run: make submodules && make softdevice
+      - name: Setup submodules
+        run: make submodules
+      - name: Setup softdevice
+        run: make softdevice
       - name: Build firmware
-        run: make -j `nproc` BOARD=p8 all
+        run: make -j `nproc` BOARD=${{ matrix.board }} all
       - name: Persist bootloader
         uses: actions/upload-artifact@v2
         with:
-          name: bootloader-daflasher
+          name: ${{ matrix.board }}-bootloader-daflasher-artifact
           path: bootloader-daflasher.zip
       - name: Persist micropython
         uses: actions/upload-artifact@v2
         with:
-          name: micropython
+          name: ${{ matrix.board }}-micropython-artifact
           path: micropython.zip
