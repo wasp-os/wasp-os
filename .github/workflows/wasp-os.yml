@@ -32,13 +32,10 @@ jobs:
         run: make softdevice
       - name: Build firmware
         run: make -j `nproc` BOARD=${{ matrix.board }} all
-      - name: Persist bootloader
+      - name: Persist artifact
         uses: actions/upload-artifact@v2
         with:
-          name: ${{ matrix.board }}-bootloader-daflasher-artifact
-          path: bootloader-daflasher.zip
-      - name: Persist micropython
-        uses: actions/upload-artifact@v2
-        with:
-          name: ${{ matrix.board }}-micropython-artifact
-          path: micropython.zip
+          name: ${{ matrix.board }}-artifact
+          path: |
+            bootloader-daflasher.zip
+            micropython.zip
