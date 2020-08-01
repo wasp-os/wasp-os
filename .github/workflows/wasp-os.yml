@@ -21,12 +21,10 @@ jobs:
         run: pip3 install --user pysdl2
       - name: Setup toolchain
         run: sudo apt-get install gcc-arm-none-eabi
-      - name: Sync submodules
-        run: git submodule sync --recursive && git submodule update
       - name: Checkout wasp-os
         uses: actions/checkout@v2
-        with:
-          submodules: recursive
+      - name: Sync submodules
+        run: git submodule sync --recursive && git submodule update
       - name: Build dependencies
         run: make submodules && make softdevice
       - name: Build firmware
