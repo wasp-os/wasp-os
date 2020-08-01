@@ -22,9 +22,7 @@ jobs:
       - name: Setup toolchain
         run: sudo apt-get install gcc-arm-none-eabi
       - name: Checkout wasp-os
-        uses: actions/checkout@v2
-      - name: Sync submodules
-        run: git submodule sync --recursive && git submodule update
+        run: git clone https://github.com/MirkoCovizzi/wasp-os --recursive
       - name: Build dependencies
         run: make submodules && make softdevice
       - name: Build firmware
