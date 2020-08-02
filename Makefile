@@ -22,28 +22,28 @@ clean :
 submodules :
 	git submodule update --init --recursive
 
-bootloader:
+bootloader: build-$(BOARD)
 	$(RM) bootloader/_build-$(BOARD)_nrf52832//$(BOARD)_nrf52832_bootloader-*-nosd.hex
 	$(MAKE) -C bootloader/ BOARD=$(BOARD)_nrf52832 all genhex
 	python3 tools/hexmerge.py \
 		bootloader/_build-$(BOARD)_nrf52832/$(BOARD)_nrf52832_bootloader-*-nosd.hex \
 		bootloader/lib/softdevice/s132_nrf52_6.1.1/s132_nrf52_6.1.1_softdevice.hex \
-		-o bootloader.hex
-	python3 tools/hex2c.py bootloader.hex > \
+		-o build-$(BOARD)/bootloader.hex
+	python3 tools/hex2c.py build-$(BOARD)/bootloader.hex > \
 		reloader/src/boards/$(BOARD)/bootloader.h
 	python3 -m nordicsemi dfu genpkg \
 		--bootloader bootloader/_build-$(BOARD)_nrf52832//$(BOARD)_nrf52832_bootloader-*-nosd.hex \
 		--softdevice bootloader/lib/softdevice/s132_nrf52_6.1.1/s132_nrf52_6.1.1_softdevice.hex \
-		bootloader-daflasher.zip
+		build-$(BOARD)/bootloader-daflasher.zip
 
-reloader: bootloader
+reloader: bootloader build-$(BOARD)
 	$(MAKE) -C reloader/ BOARD=$(BOARD)
-	mv reloader/build-$(BOARD)/reloader.zip .
+	mv reloader/build-$(BOARD)/reloader.zip build-$(BOARD)/
 
 softdevice:
 	micropython/ports/nrf/drivers/bluetooth/download_ble_stack.sh
 
-micropython: $(WASP_WATCH_PY)
+micropython: $(WASP_WATCH_PY) build-$(BOARD)
 	$(MAKE) -C micropython/mpy-cross
 	$(RM) micropython/ports/nrf/build-$(BOARD)-s132/frozen_content.c
 	$(MAKE) -C micropython/ports/nrf \
@@ -54,7 +54,10 @@ micropython: $(WASP_WATCH_PY)
 	python3 -m nordicsemi dfu genpkg \
 		--dev-type 0x0052 \
 		--application micropython/ports/nrf/build-$(BOARD)-s132/firmware.hex \
-		micropython.zip
+		build-$(BOARD)/micropython.zip
+
+build-$(BOARD):
+	mkdir -p $@
 
 dfu:
 	python3 -m nordicsemi dfu serial --package micropython.zip --port /dev/ttyACM0
