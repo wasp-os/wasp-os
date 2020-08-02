@@ -83,7 +83,7 @@ following commands:
     sudo apt install \
       git build-essential libsdl2-2.0.0 \
       python3-click python3-numpy python3-pexpect \
-      python3-pil python3-pip python3-serial
+      python3-pil python3-pip python3-serial python
     pip3 install --user pysdl2
 
 You will also need a toolchain for the Arm Cortex-M4. wasp-os is developed and
