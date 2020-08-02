@@ -5,7 +5,8 @@ all : bootloader reloader micropython
 ifdef BOARD
 WASP_WATCH_PY = wasp/boards/$(BOARD)/watch.py
 $(WASP_WATCH_PY) : $(WASP_WATCH_PY).in
-	(cd wasp; ../tools/preprocess.py ../$(WASP_WATCH_PY).in > ../$(WASP_WATCH_PY))
+	(cd wasp; ../tools/preprocess.py ../$(WASP_WATCH_PY).in > ../$(WASP_WATCH_PY)) \
+		|| ($(RM) $(WASP_WATCH_PY); false)
 else
 BOARD ?= $(error Please set BOARD=)
 endif
