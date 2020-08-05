@@ -1,0 +1,86 @@
+name: CI for wasp-os
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        board: [pinetime, p8]
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout files
+      id:   checkout-files
+      uses: actions/checkout@v2
+
+    - name: Check cached Python modules
+      id:   cache-pip
+      uses: actions/cache@v2
+      with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+          restore-keys: |
+              ${{ runner.os }}-pip-
+
+    - name: Check the cached arm-none-eabi-gcc compiler
+      id:   cache-toolchain
+      uses: actions/cache@v2
+      env:
+        cache-name: cache-toolchain
+      with:
+          path: ${{ runner.temp }}/arm-none-eabi
+          key:  ${{ runner.os }}-build-${{ env.cache-name }}
+          restore-keys: ${{ runner.os }}-build-${{ env.cache-name }}
+
+    - name: Install arm-none-eabi-gcc
+      id:   install-toolchain
+      # installs arm-none-eabi if the CI environment can't find it in the cache
+      if:   steps.cache-toolchain.outputs.cache-hit != 'true'
+      uses: fiam/arm-none-eabi-gcc@v1.0.2
+      with:
+          release: 9-2019-q4
+          directory: ${{ runner.temp }}/arm-none-eabi
+
+    - name: Make submodules
+      id:   make-submodules
+      run:  |
+          export PATH=$PATH:${{ runner.temp }}/arm-none-eabi/bin
+          make -j BOARD=${{ matrix.board }} submodules
+    
+    - name: Make softdevice
+      id:   make-softdevice
+      run:  |  
+          export PATH=$PATH:${{ runner.temp }}/arm-none-eabi/bin
+          make -j BOARD=${{ matrix.board }} softdevice
+
+    - name: Build firmware
+      id:   make-firmware
+      run:  |
+          export PATH=$PATH:${{ runner.temp }}/arm-none-eabi/bin
+          make -j BOARD=${{ matrix.board }} all
+
+    - name: Create archive
+      id:   create-archive
+      run:  |
+          tar -cJf wasp-os-${{ github.sha }}-${{ matrix.board }}.tar.gz \
+          build-${{ matrix.board }} \
+          COPYING \
+          COPYING.LGPL \
+          README.rst \
+          TODO.rst \
+          tools \
+          docs
+
+    - name: Upload build
+      id:   upload-firmware
+      uses: actions/upload-artifact@v2
+      with:
+          name: wasp-os-${{ github.sha }}-${{ matrix.board }}.tar.gz
+          path: wasp-os-${{ github.sha }}-${{ matrix.board }}.tar.gz
+
