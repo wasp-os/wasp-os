@@ -23,6 +23,7 @@ import widgets
 
 from apps.clock import ClockApp
 from apps.flashlight import FlashlightApp
+from apps.gameoflife import GameOfLifeApp
 from apps.heart import HeartApp
 from apps.launcher import LauncherApp
 from apps.pager import PagerApp, CrashApp, NotificationApp
@@ -118,6 +119,7 @@ class Manager():
         self.register(StopwatchApp(), True)
         self.register(HeartApp(), True)
         self.register(FlashlightApp(), False)
+        self.register(GameOfLifeApp(), False)
         self.register(SettingsApp(), False)
         self.register(TestApp(), False)
 
