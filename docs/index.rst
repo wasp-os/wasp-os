@@ -14,6 +14,7 @@ Welcome to WASP-OS's documentation!
    install
    appguide
    wasp
+   contributing
    TODO
    license
 
