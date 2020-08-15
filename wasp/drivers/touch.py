@@ -40,7 +40,7 @@ class TouchButton:
     def get_touch_data(self, pin_obj):
         """Synthesize a right swipe during interrupt.
         """
-        self.event[0] = 4
+        self.event[0] = 253 # NEXT
 
         if self.schedule:
             self.schedule(self)

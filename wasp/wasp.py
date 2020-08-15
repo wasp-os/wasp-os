@@ -43,8 +43,9 @@ class EventType():
     RIGHT = 4
     TOUCH = 5
 
-    HOME = 256
-    BACK = 257
+    HOME = 255
+    BACK = 254
+    NEXT = 253
 
 class EventMask():
     """Enumerated event masks.
@@ -53,6 +54,7 @@ class EventMask():
     SWIPE_LEFTRIGHT = 0x0002
     SWIPE_UPDOWN = 0x0004
     BUTTON = 0x0008
+    NEXT = 0x0010
 
 class PinHandler():
     """Pin (and Signal) event generator.
@@ -285,8 +287,20 @@ class Manager():
         """Process a touch event.
         """
         self.keep_awake()
-
         event_mask = self.event_mask
+
+        # Handle context sensitive events such as NEXT
+        if event[0] == EventType.NEXT:
+            if bool(event_mask & EventMask.NEXT) and not self.app.swipe(event):
+                # The app has already handled this one (mark as no event)
+                event[0] = 0
+            elif self.app == self.quick_ring[0] and len(self.notifications):
+                event[0] = EventType.DOWN
+            elif self.app == self.notifier:
+                event[0] = EventType.UP
+            else:
+                event[0] = EventType.RIGHT
+
         if event[0] < 5:
             updown = event[0] == 1 or event[0] == 2
             if (bool(event_mask & EventMask.SWIPE_UPDOWN) and updown) or \
@@ -297,6 +311,7 @@ class Manager():
                 self.navigate(event[0])
         elif event[0] == 5 and self.event_mask & EventMask.TOUCH:
             self.app.touch(event)
+
         watch.touch.reset_touch_data()
 
     def _tick(self):

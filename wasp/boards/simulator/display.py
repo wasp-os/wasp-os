@@ -124,6 +124,9 @@ class CST816SSim():
             self.regs[1] = 4
         elif key.keysym.sym == sdl2.SDLK_RIGHT:
             self.regs[1] = 3
+        elif key.keysym.sym == sdl2.SDLK_n:
+            # Allow NEXT to be tested on the simulator
+            self.regs[1] = 253
         self.regs[3] = 0x80
         self.raise_interrupt(pins)
 
