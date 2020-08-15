@@ -79,7 +79,7 @@ def boot_msg(s):
     if safe_mode:
         time.sleep_ms(500)
 
-safe_mode = True
+safe_mode = False
 boot_msg("Init button")
 button = Pin('BUTTON', Pin.IN)
 safe_mode = button.value()
