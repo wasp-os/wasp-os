@@ -21,13 +21,24 @@ class StopwatchApp():
         self._draw()
         wasp.system.request_tick(97)
         wasp.system.request_event(wasp.EventMask.TOUCH |
-                                  wasp.EventMask.BUTTON)
+                                  wasp.EventMask.BUTTON |
+                                  wasp.EventMask.NEXT)
 
     def sleep(self):
         return True
 
     def wake(self):
         self._update()
+
+    def swipe(self, event):
+        """Handle NEXT events by augmenting the default processing by resetting
+        the count if we are not currently timing something.
+
+        No other swipe event is possible for this application.
+        """
+        if not self._started_at:
+            self._reset()
+        return True     # Request system default handling
 
     def press(self, button, state):
         if not state:
