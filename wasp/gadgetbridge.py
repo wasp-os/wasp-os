@@ -50,7 +50,8 @@ def GB(cmd):
         elif task == 'notify-':
             wasp.system.unnotify(cmd['id'])
         else:
-            _info('Command "{}" is not implemented'.format(cmd))
+            pass
+            #_info('Command "{}" is not implemented'.format(cmd))
     except Exception as e:
         msg = io.StringIO()
         sys.print_exception(e, msg)
