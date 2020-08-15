@@ -87,10 +87,14 @@ class CST816S:
     def sleep(self):
         """Put touch controller chip on sleep mode to save power.
         """
-        # Before we can sent the sleep command we have to reset the
+        # Before we can send the sleep command we have to reset the
         # panel to get the I2C hardware running again...
         self._reset()
-        self.i2c.writeto_mem(21, 0xa5, b'\x03')
+        try:
+            self.i2c.writeto_mem(21, 0xa5, b'\x03')
+        except:
+            # If we can't power down then let's just put it in reset instead
+            self.tp_rst.off()
 
         # Ensure get_event() cannot return anything
         self.event[0] = 0
