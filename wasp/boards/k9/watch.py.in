@@ -43,6 +43,9 @@ class Backlight(object):
         self.set(level)
 
     def set(self, level):
+        """K9 backlight is very weak so we avoid lo in its own because it is
+        pointless.
+        """
         hi = 1
         mid = 1
         lo = 0
@@ -54,6 +57,8 @@ class Backlight(object):
             hi = 0
         elif level == 1:
             mid = 0
+        else:
+            lo = 1
 
         self.hi(hi)
         self.mid(mid)
