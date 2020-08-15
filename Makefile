@@ -2,14 +2,16 @@ export PYTHONPATH := $(PWD)/tools/nrfutil:$(PWD)/tools/intelhex:$(PYTHONPATH)
 
 all : bootloader reloader micropython
 
+# If BOARD is undefined then set it up so that expanding it issues an
+# error. That ensures that rules that expand BOARD will be automatically
+# disabled (and give a useful error message) but it creates an additional
+# problem which is that we must never unconditionally expand BOARD.
+# We workaround this by using BOARD_SAFE for every unconditional
+# expansion.
 ifdef BOARD
-WASP_WATCH_PY = wasp/boards/$(BOARD)/watch.py
-$(WASP_WATCH_PY) : $(WASP_WATCH_PY).in
-	(cd wasp; ../tools/preprocess.py ../$(WASP_WATCH_PY).in > ../$(WASP_WATCH_PY)) \
-		|| ($(RM) $(WASP_WATCH_PY); false)
-else
-BOARD ?= $(error Please set BOARD=)
+BOARD_SAFE = $(BOARD)
 endif
+BOARD ?= $(error Please set BOARD=)
 
 clean :
 	$(RM) -r \
@@ -17,12 +19,12 @@ clean :
 		reloader/build-$(BOARD) reloader/src/boards/$(BOARD)/bootloader.h \
 		micropython/mpy-cross/build \
 		micropython/ports/nrf/build-$(BOARD)-s132 \
-		$(WASP_WATCH_PY)
+		wasp/boards/$(BOARD)/watch.py
 
 submodules :
 	git submodule update --init --recursive
 
-bootloader: build-$(BOARD)
+bootloader: build-$(BOARD_SAFE)
 	$(RM) bootloader/_build-$(BOARD)_nrf52832//$(BOARD)_nrf52832_bootloader-*-nosd.hex
 	$(MAKE) -C bootloader/ BOARD=$(BOARD)_nrf52832 all genhex
 	python3 tools/hexmerge.py \
@@ -36,14 +38,18 @@ bootloader: build-$(BOARD)
 		--softdevice bootloader/lib/softdevice/s132_nrf52_6.1.1/s132_nrf52_6.1.1_softdevice.hex \
 		build-$(BOARD)/bootloader-daflasher.zip
 
-reloader: bootloader build-$(BOARD)
+reloader: bootloader build-$(BOARD_SAFE)
 	$(MAKE) -C reloader/ BOARD=$(BOARD)
 	mv reloader/build-$(BOARD)/reloader.zip build-$(BOARD)/
 
 softdevice:
 	micropython/ports/nrf/drivers/bluetooth/download_ble_stack.sh
 
-micropython: $(WASP_WATCH_PY) build-$(BOARD)
+wasp/boards/$(BOARD_SAFE)/watch.py : wasp/boards/$(BOARD_SAFE)/watch.py.in
+	(cd wasp; ../tools/preprocess.py boards/$(BOARD)/watch.py.in > boards/$(BOARD)/watch.py) \
+		|| ($(RM) wasp/boards/$(BOARD)/watch.py; false)
+
+micropython: build-$(BOARD_SAFE) wasp/boards/$(BOARD_SAFE)/watch.py
 	$(MAKE) -C micropython/mpy-cross
 	$(RM) micropython/ports/nrf/build-$(BOARD)-s132/frozen_content.c
 	$(MAKE) -C micropython/ports/nrf \
@@ -56,8 +62,8 @@ micropython: $(WASP_WATCH_PY) build-$(BOARD)
 		--application micropython/ports/nrf/build-$(BOARD)-s132/firmware.hex \
 		build-$(BOARD)/micropython.zip
 
-build-$(BOARD):
-	mkdir -p $@
+build-$(BOARD_SAFE):
+	mkdir -p build-$(BOARD)
 
 dfu:
 	python3 -m nordicsemi dfu serial --package micropython.zip --port /dev/ttyACM0
