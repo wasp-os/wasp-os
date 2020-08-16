@@ -83,8 +83,9 @@ Wasp-os
 
 * [ ] Documentation
 
+  * [X] Contributors guide (and code of conduct)
   * [ ] Debugging and troubleshooting guide
-  * [ ] Screenshots for bootloader and all applications
+  * [X] Screenshots for bootloader and all applications
   * [X] Improve the install guide
 
 * [X] Simulator
