@@ -6,6 +6,9 @@
 import sys
 import sdl2
 import sdl2.ext
+import numpy as np
+from PIL import Image
+import wasp
 
 CASET = 0x2a
 RASET = 0x2b
@@ -189,6 +192,26 @@ window.refresh()
 spi_st7789_sim = ST7789Sim()
 i2c_cst816s_sim = CST816SSim()
 
+def save_image(surface, fname):
+    """Save a surface as an image."""
+    raw = sdl2.ext.pixels2d(surface)
+
+    # Crop and swap the axes to ensure the final rotation is correct
+    cropped = raw[SKIN['top_pad']:-SKIN['bottom_pad']]
+    cropped = np.swapaxes(cropped, 0, 1)
+    cropped = cropped[SKIN['left_pad']:-SKIN['right_pad']]
+
+    # Split into r, g and b
+    r = cropped >> 16
+    g = (cropped >> 8) & 0xff
+    b = cropped & 0xff
+
+    # Combine into the final pixel data
+    rgb = np.uint8(np.dstack((r, g, b)))
+
+    # Save the image
+    Image.fromarray(rgb).save(fname)
+
 def tick(pins):
     events = sdl2.ext.get_events()
     for event in events:
@@ -200,7 +223,11 @@ def tick(pins):
         elif event.type == sdl2.SDL_MOUSEBUTTONUP:
             i2c_cst816s_sim.handle_mousebuttonup(event.button, pins)
         elif event.type == sdl2.SDL_KEYDOWN:
-            if event.key.keysym.sym == sdl2.SDLK_TAB:
+            if event.key.keysym.sym == sdl2.SDLK_s:
+                fname = f'res/{wasp.system.app.NAME}App.png'.replace(' ', '')
+                save_image(windowsurface, fname)
+                print(f'Saved: {fname}')
+            elif event.key.keysym.sym == sdl2.SDLK_TAB:
                 pins['BUTTON'].value(0)
             else:
                 i2c_cst816s_sim.handle_key(event.key, pins)
