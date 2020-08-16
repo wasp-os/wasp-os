@@ -3,6 +3,10 @@
 Roadmap
 =======
 
+.. contents::
+   :local:
+   :depth: 1
+
 0.4: Integration, Fit and finish
 --------------------------------
 
