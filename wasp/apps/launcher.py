@@ -10,6 +10,11 @@ import icons
 
 class LauncherApp():
     """An application launcher application.
+
+    .. figure:: res/LauncherApp.png
+        :width: 179
+
+        Screenshot of the application launcher
     """
     NAME = 'Launcher'
     ICON = icons.app

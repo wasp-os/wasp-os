@@ -8,6 +8,10 @@ import ppg
 class HeartApp():
     """Heart Rate Sensing application.
 
+    .. figure:: res/HeartApp.png
+        :width: 179
+
+        Screenshot of the heart rate application
     """
     NAME = 'Heart'
 

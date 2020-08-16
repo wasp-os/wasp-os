@@ -6,6 +6,13 @@ import icons
 import fonts
 
 class StopwatchApp():
+    """Stopwatch application.
+
+    .. figure:: res/TimerApp.png
+        :width: 179
+
+        Screenshot of the stopwatch application
+    """
     NAME = 'Timer'
     ICON = icons.app
 

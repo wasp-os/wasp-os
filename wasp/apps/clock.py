@@ -29,6 +29,11 @@ MONTH = 'JanFebMarAprMayJunJulAugSepOctNovDec'
 
 class ClockApp():
     """Simple digital clock application.
+
+    .. figure:: res/ClockApp.png
+        :width: 179
+
+        Screenshot of the clock application
     """
     NAME = 'Clock'
     ICON = icons.clock

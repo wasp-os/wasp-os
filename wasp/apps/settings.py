@@ -1,14 +1,19 @@
 # SPDX-License-Identifier: LGPL-3.0-or-later
 # Copyright (C) 2020 Daniel Thompson
-"""Ultra-simple settings application.
-
-Currently the settings application contains only one setting: brightness
-"""
 
 import wasp
 import icons
 
 class SettingsApp():
+    """Ultra-simple settings application.
+
+    Currently the settings application contains only one setting: brightness
+
+    .. figure:: res/SettingsApp.png
+        :width: 179
+
+        Screenshot of the settings application
+    """
     NAME = 'Settings'
     ICON = icons.settings
 

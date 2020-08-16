@@ -30,6 +30,13 @@ feet = (
 )
 
 class StepCounterApp():
+    """Step counter application.
+
+    .. figure:: res/StepsApp.png
+        :width: 179
+
+        Screenshot of the step counter application
+    """
     NAME = 'Steps'
     ICON = icons.app
 

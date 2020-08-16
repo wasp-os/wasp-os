@@ -102,5 +102,46 @@ Videos
 Screenshots
 -----------
 
+(An older version of) the digital clock application running on a Pine64 PineTime:
+
 .. image:: res/clock_app.jpg
    :alt: wasp-os digital clock app running on PineTime
+
+Screenshots of the built in applications running on the wasp-os
+simulator (the "blank" screen is the torch application):
+
+.. image:: res/Bootloader.png
+   :alt: Bootloader splash screen overlaid on the simulator watch art
+   :width: 179
+
+.. image:: res/ClockApp.png
+   :alt: Digital clock application running on the wasp-os simulator
+   :width: 179
+
+.. image:: res/HeartApp.png
+   :alt: Heart rate application running on the wasp-os simulator
+   :width: 179
+
+.. image:: res/TimerApp.png
+   :alt: Stop watch application running on the wasp-os simulator
+   :width: 179
+
+.. image:: res/StepsApp.png
+   :alt: Step counter application running on the wasp-os simulator
+   :width: 179
+
+.. image:: res/LauncherApp.png
+   :alt: Application launcher running on the wasp-os simulator
+   :width: 179
+
+.. image:: res/SelfTestApp.png
+   :alt: Self test application running a rendering benchmark on the simulator
+   :width: 179
+
+.. image:: res/SettingsApp.png
+   :alt: Settings application running on the wasp-os simulator
+   :width: 179
+
+.. image:: res/TorchApp.png
+   :alt: Torch application running on the wasp-o simulator
+   :width: 179

@@ -11,6 +11,11 @@ import icons
 
 class TestApp():
     """Simple test application.
+
+    .. figure:: res/SelfTestApp.png
+        :width: 179
+
+        Screenshot of the self test application
     """
     NAME = 'Self Test'
     ICON = icons.app
