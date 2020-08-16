@@ -98,25 +98,11 @@ Wasp-os
 At M3 we start to build out full fitness tracking and notification
 functionality.
 
-Bootloader
-~~~~~~~~~~
-
-* [ ] Stay in bootloader after battery run down
-* [ ] Implement power off support (no splash screen)
-
 Reloader
 ~~~~~~~~
 
-* [ ] Board identity check
 * [X] Pre-flash image verification
 * [X] Post-flash image verification
-* [ ] Error checking
-
-Micropython
-~~~~~~~~~~~
-
-* [ ] Use SoftDevice sleep logic
-* [ ] Automatically enter SPI flash power saving mode
 
 Wasp-os
 ~~~~~~~
@@ -150,15 +136,43 @@ Wasp-os
   * [X] Add a simple skin for better screenshots
   * [X] Full swipe detection (avoid keyboard)
 
-0.4: Fit and finish
--------------------
+0.4: Integration, Fit and finish
+--------------------------------
 
-For 0.4 we will be making steps to improve the general fit and finish.
+For 0.4 we focus on improving the watch/phone integration whilst also taking steps
+to improve the general fit and finish. In addition the reloader will be extended
+to ensure we retain the capability to install wasp-os over-the-air on newer
+PineTime models.
+
+Bootloader
+~~~~~~~~~~
+
+* [ ] Stay in bootloader after battery run down
+* [ ] Implement power off support (no splash screen)
+
+Reloader
+~~~~~~~~
+
+* [ ] Board identity check
+* [ ] UICR update support
+* [ ] Improve linker map (everything except linker table at +256K)
+* [ ] mcuboot
+
+  * [ ] Reconfigurable entry point (allow reloader to run from mcuboot)
+  * [ ] Allow reloader to install mcuboot and flash app (from wasp-bootloader)
+  * [ ] Allow reloader to install wasp-os (from mcuboot)
+
+Micropython
+~~~~~~~~~~~
+
+* [ ] Use SoftDevice sleep logic
+* [ ] Automatically enter SPI flash power saving mode
 
 Wasp-os
 ~~~~~~~
 
-* [ ] Notifications
+* [ ] Watch/phone integration
 
   * [ ] Music player support
-  * [ ] Upstream the Gadgetbridge changes
+  * [ ] Set date/time
+  * [ ] Fully fledged wasp-os device class
