@@ -3,47 +3,90 @@
 Roadmap
 =======
 
-M1: Dumb watch feature parity
------------------------------
+0.4: Integration, Fit and finish
+--------------------------------
 
-The focus for M1 is to get wasp-os both to meet feature parity with a dumb
-watch and to have a bootloader and watchdog strategy that is robust enough
-to allow a PineTime case to be confidently glued shut.
+For 0.4 we focus on improving the watch/phone integration whilst also taking steps
+to improve the general fit and finish. In addition the reloader will be extended
+to ensure we retain the capability to install wasp-os over-the-air on newer
+PineTime models.
 
 Bootloader
 ~~~~~~~~~~
 
-* [X] Basic board ports (PineTime, DS-D6, 96Boards Nitrogen)
-* [X] OTA application update
-* [X] Enable watchdog before starting the application
-* [X] Splash screen
-* [X] Ignore start button for first few seconds
+* [ ] Stay in bootloader after battery run down
+* [ ] Implement power off support (no splash screen)
 
-MicroPython
+Reloader
+~~~~~~~~
+
+* [ ] Board identity check
+* [ ] UICR update support
+* [ ] Improve linker map (everything except linker table at +256K)
+* [ ] mcuboot
+
+  * [ ] Reconfigurable entry point (allow reloader to run from mcuboot)
+  * [ ] Allow reloader to install mcuboot and flash app (from wasp-bootloader)
+  * [ ] Allow reloader to install wasp-os (from mcuboot)
+
+Micropython
 ~~~~~~~~~~~
 
-* [X] Basic board ports (PineTime, DS-D6, 96Boards Nitrogen)
-* [X] Long press reset (conditional feeding of the watchdog)
-
-  * [X] Feed dog from REPL polling loop
-  * [X] Feed dog from a tick interrupt
+* [ ] Use SoftDevice sleep logic
+* [ ] Automatically enter SPI flash power saving mode
 
 Wasp-os
 ~~~~~~~
 
-* [X] Display driver
+* [ ] Watch/phone integration
 
-  * [X] Display initialization
-  * [X] Bitmap blitting
-  * [X] RLE coder and decoder
-  * [X] Optimized RLE inner loops
+  * [ ] Music player support
+  * [ ] Set date/time
+  * [ ] Fully fledged wasp-os device class
 
-* [X] Backlight driver
-* [X] Button driver (polling)
-* [X] Battery/charger driver
-* [X] Simple clock and battery level application
-* [X] Basic (WFI) power saving
-* [X] Implement simple RTC for nrf52
+0.3 (a.k.a. M3): Smartwatch
+---------------------------
+
+At M3 we start to build out full fitness tracking and notification
+functionality.
+
+Reloader
+~~~~~~~~
+
+* [X] Pre-flash image verification
+* [X] Post-flash image verification
+
+Wasp-os
+~~~~~~~
+
+* [X] Enable heart rate sensor
+
+  * [X] HRS3300 driver
+  * [X] HRS data post-processing
+  * [X] Heart rate counter app
+
+* [X] Notifications
+
+  * [X] BLE notification protocol
+  * [X] Notification popups
+  * [X] Notification app (show notification history)
+  * [X] Add (out-of-tree) Gadgetbridge support
+
+* [X] Step counting
+
+  * [X] BMA421 driver
+  * [X] Step counter app
+
+* [ ] Documentation
+
+  * [ ] Debugging and troubleshooting guide
+  * [ ] Screenshots for bootloader and all applications
+  * [X] Improve the install guide
+
+* [X] Simulator
+
+  * [X] Add a simple skin for better screenshots
+  * [X] Full swipe detection (avoid keyboard)
 
 0.2 (a.k.a. M2): Great developer experience
 -------------------------------------------
@@ -92,87 +135,44 @@ Wasp-os
   * [X] Optimized "2-bit" RLE encoder and decoder
   * [X] Logarithmic RBG332 <-> RGB56516bit color space conversion
 
-0.3 (a.k.a. M3): Smartwatch
----------------------------
+M1: Dumb watch feature parity
+-----------------------------
 
-At M3 we start to build out full fitness tracking and notification
-functionality.
-
-Reloader
-~~~~~~~~
-
-* [X] Pre-flash image verification
-* [X] Post-flash image verification
-
-Wasp-os
-~~~~~~~
-
-* [X] Enable heart rate sensor
-
-  * [X] HRS3300 driver
-  * [X] HRS data post-processing
-  * [X] Heart rate counter app
-
-* [X] Notifications
-
-  * [X] BLE notification protocol
-  * [X] Notification popups
-  * [X] Notification app (show notification history)
-  * [X] Add (out-of-tree) Gadgetbridge support
-
-* [X] Step counting
-
-  * [X] BMA421 driver
-  * [X] Step counter app
-
-* [ ] Documentation
-
-  * [ ] Debugging and troubleshooting guide
-  * [ ] Screenshots for bootloader and all applications
-  * [X] Improve the install guide
-
-* [X] Simulator
-
-  * [X] Add a simple skin for better screenshots
-  * [X] Full swipe detection (avoid keyboard)
-
-0.4: Integration, Fit and finish
---------------------------------
-
-For 0.4 we focus on improving the watch/phone integration whilst also taking steps
-to improve the general fit and finish. In addition the reloader will be extended
-to ensure we retain the capability to install wasp-os over-the-air on newer
-PineTime models.
+The focus for M1 is to get wasp-os both to meet feature parity with a dumb
+watch and to have a bootloader and watchdog strategy that is robust enough
+to allow a PineTime case to be confidently glued shut.
 
 Bootloader
 ~~~~~~~~~~
 
-* [ ] Stay in bootloader after battery run down
-* [ ] Implement power off support (no splash screen)
+* [X] Basic board ports (PineTime, DS-D6, 96Boards Nitrogen)
+* [X] OTA application update
+* [X] Enable watchdog before starting the application
+* [X] Splash screen
+* [X] Ignore start button for first few seconds
 
-Reloader
-~~~~~~~~
-
-* [ ] Board identity check
-* [ ] UICR update support
-* [ ] Improve linker map (everything except linker table at +256K)
-* [ ] mcuboot
-
-  * [ ] Reconfigurable entry point (allow reloader to run from mcuboot)
-  * [ ] Allow reloader to install mcuboot and flash app (from wasp-bootloader)
-  * [ ] Allow reloader to install wasp-os (from mcuboot)
-
-Micropython
+MicroPython
 ~~~~~~~~~~~
 
-* [ ] Use SoftDevice sleep logic
-* [ ] Automatically enter SPI flash power saving mode
+* [X] Basic board ports (PineTime, DS-D6, 96Boards Nitrogen)
+* [X] Long press reset (conditional feeding of the watchdog)
+
+  * [X] Feed dog from REPL polling loop
+  * [X] Feed dog from a tick interrupt
 
 Wasp-os
 ~~~~~~~
 
-* [ ] Watch/phone integration
+* [X] Display driver
 
-  * [ ] Music player support
-  * [ ] Set date/time
-  * [ ] Fully fledged wasp-os device class
+  * [X] Display initialization
+  * [X] Bitmap blitting
+  * [X] RLE coder and decoder
+  * [X] Optimized RLE inner loops
+
+* [X] Backlight driver
+* [X] Button driver (polling)
+* [X] Battery/charger driver
+* [X] Simple clock and battery level application
+* [X] Basic (WFI) power saving
+* [X] Implement simple RTC for nrf52
