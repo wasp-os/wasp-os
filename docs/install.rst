@@ -86,6 +86,16 @@ following commands:
       python3-pil python3-pip python3-serial
     pip3 install --user pysdl2
 
+Alternatively, if your operating system does not package some or any of
+the aforementioned Python modules that were included in the previous
+command, you can install all of them with pip instead. Make sure to 
+adapt the following command appropriately:
+
+.. code-block:: sh
+
+    pip3 install --user click numpy pexpect \
+      Pillow pyserial pysdl2
+
 You will also need a toolchain for the Arm Cortex-M4. wasp-os is developed and
 tested using the `GNU-RM toolchain
 <https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-rm>`_
