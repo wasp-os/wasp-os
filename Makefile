@@ -96,15 +96,23 @@ dist: DIST=../wasp-os-$(VERSION)
 dist: k9
 k9: p8
 p8: pinetime
+pinetime : mrproper
+mrproper :
+	$(RM) -r \
+		$(DIST) build-* \
+		bootloader/_build-* \
+		reloader/build-* \
+		reloader/src/boards/*/bootloader.h \
+		micropython/mpy-cross/build \
+		micropython/ports/nrf/build-*
 k9 p8 pinetime:
-	$(MAKE) BOARD=$@ clean
+	$(RM) wasp/boards/$@/watch.py
 	$(MAKE) BOARD=$@ all
 dist: docs
-	$(RM) -rf $(DIST)
 	mkdir -p $(DIST)/docs
 	cp COPYING COPYING.LGPL README.rst $(DIST)
 	cp -r docs/build/html/* $(DIST)/docs
-	cp -r build-pinetime/ build-p8/ build-k9/ $(DIST)
+	cp -r build-*/ $(DIST)
 	cp -r tools/ $(DIST)
 	(cd $(DIST); ln -s docs/_images/ res)
 	find $(DIST) -name __pycache__ | xargs $(RM) -r
