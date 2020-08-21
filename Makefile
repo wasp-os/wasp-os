@@ -12,6 +12,7 @@ ifdef BOARD
 BOARD_SAFE = $(BOARD)
 endif
 BOARD ?= $(error Please set BOARD=)
+VERSION ?= $(patsubst v%,%,$(shell git describe --tags))
 
 clean :
 	$(RM) -r \
@@ -85,10 +86,27 @@ docs:
 	$(MAKE) -C docs html
 	touch docs/build/html/.nojekyll
 
-
 sim:
 	PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=.:wasp/boards/simulator:wasp \
 	python3 -i wasp/boards/simulator/main.py
 
 .PHONY: bootloader reloader docs micropython
+
+dist: DIST=../wasp-os-$(VERSION)
+dist: k9
+k9: p8
+p8: pinetime
+k9 p8 pinetime:
+	$(MAKE) BOARD=$@ clean
+	$(MAKE) BOARD=$@ all
+dist: docs
+	$(RM) -rf $(DIST)
+	mkdir -p $(DIST)/docs
+	cp COPYING COPYING.LGPL README.rst $(DIST)
+	cp -r docs/build/html/* $(DIST)/docs
+	cp -r build-pinetime/ build-p8/ build-k9/ $(DIST)
+	cp -r tools/ $(DIST)
+	(cd $(DIST); ln -s docs/_images/ res)
+	find $(DIST) -name __pycache__ | xargs $(RM) -r
+	tar -C .. -zcf $(DIST).tar.gz $(notdir $(DIST))
 
