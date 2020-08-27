@@ -4,6 +4,77 @@ Installation Guide
 .. contents::
    :local:
 
+.. _Building wasp-os from source:
+
+Building wasp-os from source
+----------------------------
+
+Building wasp-os and launching the wasp-os simulator requires Python 3.6
+(or later) and the following python modules: click, numpy, pexpect, PIL
+(or Pillow), pyserial, pysdl2.
+
+On Debian Buster the required python modules can be obtained using the
+following commands:
+
+.. code-block:: sh
+
+    sudo apt install \
+      git build-essential libsdl2-2.0.0 python3-click python3-numpy \
+      python3-pexpect python3-pil python3-pip python3-serial
+    pip3 install --user pysdl2
+
+Additionally if you wish to regenerate the documentation you will require
+a complete sphinx toolchain:
+
+.. code-block:: sh
+
+    sudo apt install sphinx graphviz python3-recommonmark
+
+Alternatively, if your operating system does not package some or any of
+the aforementioned Python modules that were included in the previous
+command, you can install all of them with pip instead. Make sure to 
+adapt the following command appropriately:
+
+.. code-block:: sh
+
+    pip3 install --user click numpy pexpect Pillow pyserial pysdl2
+
+You will also need a toolchain for the Arm Cortex-M4. wasp-os is developed and
+tested using the `GNU-RM toolchain
+<https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-rm>`_
+(9-2019-q4) from Arm.
+
+.. note::
+
+    There are known problems with toolchains older than gcc-7.3 when
+    link time optimization is enabled during the MicroPython build
+    (and LTO is enabled by default).
+
+Fetch the code from
+`https://github.com/daniel-thompson/wasp-os <https://github.com/daniel-thompson/wasp-os>`_ :
+
+.. code-block:: sh
+
+   git clone https://github.com/daniel-thompson/wasp-os
+   cd wasp-os
+   make submodules
+   make softdevice
+
+To build the firmware select the command appropriate for your board from the
+list below:
+
+.. code-block:: sh
+
+   make -j `nproc` BOARD=pinetime all
+   make -j `nproc` BOARD=k9 all
+   make -j `nproc` BOARD=p8 all
+
+To rebuild the documentation try:
+
+.. code-block:: sh
+
+   make docs
+
 Device Support
 --------------
 
@@ -17,27 +88,31 @@ take everywhere and sits somewhere between clothing and jewellery. That means
 it is important to choose a device that feels good on the wrist and
 looks right when you glance at it. Aesthetics matter!
 
-The second criteria is more subtle. In most cases, there is really not really
-many important technical differences between the devices. They all use a Nordic
+The second criteria is more subtle. In most cases, there is not really many
+important technical differences between the devices. They all use a Nordic
 chipset and have the same display controller running a 240x240 panel. So the
 second criteria is not technical, it is about community. The Pine64 PineTime is
 unique among the devices supported by wasp-os because it is intended that the
 watch be used to run a variety of different open source or free software
-operating systems. By selling a watch with the intention that it be hacked
-every which way from Sunday then we get a bigger stronger community focused on
-the PineTime. There is a strong support forum, multiple different OS developers
-(who share ideas and knowledge even if hacking on very different code bases)
-combined with a `reasonable set of hardware documentation <https://wiki.pine64.org/index.php/PineTime>`_.
+operating systems. By manufacturing a watch with the intention that it be
+hacked every which way from Sunday then we get a bigger stronger community
+focused on the PineTime. There is a vibrant support forum, multiple different
+OS developers (who share ideas and knowledge even if hacking on very different
+code bases) combined with a `near complete set of hardware documentation
+<https://wiki.pine64.org/index.php/PineTime>`_.
 
 There's definitely a lot of fun to be had buying something off-the-shelf and
 hacking it to become something the manufacturer never intended. We know this
-because we've done it! However hackable devices are often only sold for short
-periods and may experience undocumented technical changes between manufacturing
-runs. This makes it hard for a community to form around any particular device.
+because we've done it! However there is also enormous benefit from
+participating in a community, especially if you enjoy working with or learning
+from other developers. Devices that can repurposed to run wasp-os are often
+only sold for short periods and may experience undocumented technical changes
+between manufacturing runs that can cause compatibility problems. This makes it
+hard for a large community to form around these devices.
 
-Thus the second criteria it to think about your own needs and abilities.
-If you want to enjoy the social and community aspects of open source
-watch development then you should look very closely at the PineTime.
+Thus the second criteria it to think about your own needs and abilities.  If
+you want to enjoy the social and community aspects of working together on open
+source watch development then you should look very closely at the PineTime.
 
 Pine64 PineTime (developer edition)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -48,12 +123,56 @@ screen, a step counter and a heart rate sensor.
 
 The `developer edition <https://store.pine64.org/?product=pinetime-dev-kit>`_
 comes pre-programmed with a test firmware that is used as part of the factory
-testing. Both the wasp-bootloader and the main OS image can be installed onto a
-developer edition PineTime using DaFlasher for Android. No tools are required
+testing.  DaFlasher for Android can be used to install both the 
+:ref:`wasp-bootloader<Bootloader DaFlasher>` and the
+:ref:`main OS image<Main OS DaFlasher>`. No tools or disassembly is required
 to install using DaFlasher.
 
 Since the developer edition comes without the case glued shut it is
 also possible to install the wasp-bootloader using an SWD programmer.
+
+The wasp-os simulator
+~~~~~~~~~~~~~~~~~~~~~
+
+The simulator allows you to run wasp-os programs using the Python
+interpreter included with your host operating system. The simulator
+provides a 240x240 colour display together with a touch screen and a
+physical button, all of which appears as a window on your host computer.
+
+The simulator has large quantities of memory and, whilst useful for
+exploring wasp-os and testing your programs are syntactically correct
+it is not a substitute for testing on real hardware. See
+:ref:`Testing on the simulator` for more details on how to use the simulator.
+
+To launch the simulator try:
+
+.. code-block:: sh
+
+    make sim
+
+Senbono K9
+~~~~~~~~~~
+
+The Senbono K9 is a circular smart watch based on an nRF52832 SoC and includes
+with a square 240x240 colour with a touch screen, a step counter and a heart
+rate sensor.
+
+The wasp-os port for Senbono K9 does not, at this point, include a driver for
+the touch screen because the protocol has not yet been reverse engineered. The
+touch screen enumerates via I2C at address 70d (or 0x46) and the interrupt can
+be used to detect touch screen activity but the touch coordinates cannot be
+read from the hardware. Currently the touch screen can only act as a
+multi-function button and can be used to cycle through the quick ring and
+display notifications. This makes the device usable but not fully featured.
+
+Note also that the to conceal the square display within the circular face this
+device has a heavily tinted filter over the display. This improves the look of
+the device but also significantly dims the backlight making it difficult to
+read the display in strong sunlight.
+
+DaFlasher for Android can be used to install both the 
+:ref:`wasp-bootloader<Bootloader DaFlasher>` and the
+:ref:`main OS image<Main OS DaFlasher>`. No tools or disassembly is required.
 
 Colmi P8
 ~~~~~~~~
@@ -62,78 +181,14 @@ The `Colmi P8 <https://www.colmi.com/products/p8-smartwatch>`_ is an almost
 square smart watch based on an nRF52832 SoC and includes a 240x240 colour
 display with touch screen, a step counter and a heart rate sensor.
 
-Both the wasp-bootloader and the main OS image can be installed onto a
-P8 using DaFlasher for Android. No tools are required.
-
-.. _Building wasp-os from source:
-
-Building wasp-os from source
-----------------------------
-
-
-Building wasp-os and launching the wasp-os simulator requires Python 3.6
-(or later) and the following python modules: click, numpy, pexpect, PIL
-(or Pillow), pyserial, pysdl2.
-
-On Debian Buster the required python modules can be obtained using the
-following commands:
-
-.. code-block:: sh
-
-    sudo apt install \
-      git build-essential libsdl2-2.0.0 \
-      python3-click python3-numpy python3-pexpect \
-      python3-pil python3-pip python3-serial
-    pip3 install --user pysdl2
-
-Alternatively, if your operating system does not package some or any of
-the aforementioned Python modules that were included in the previous
-command, you can install all of them with pip instead. Make sure to 
-adapt the following command appropriately:
-
-.. code-block:: sh
-
-    pip3 install --user click numpy pexpect \
-      Pillow pyserial pysdl2
-
-You will also need a toolchain for the Arm Cortex-M4. wasp-os is developed and
-tested using the `GNU-RM toolchain
-<https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-rm>`_
-(9-2019-q4) from Arm.
-
-.. note::
-
-    There are known problems with toolchains older than gcc-7.3 when
-    link time optimization is enabled during the MicroPython build
-    (and LTO is enabled by default).
-
-Get the code from
-`https://github.com/daniel-thompson/wasp-os <https://github.com/daniel-thompson/wasp-os>`_ :
-
-.. code-block:: sh
-
-   git clone https://github.com/daniel-thompson/wasp-os
-   cd wasp-os
-   make submodules
-   make softdevice
-
-Build the firmware:
-
-.. code-block:: sh
-
-   make -j `nproc` BOARD=pinetime all
-
-Finally to test out ideas and concepts on the simulator try:
-
-.. code-block:: sh
-
-    make sim
-
-See :ref:`Testing on the simulator` for more details on how
-to use the simulator.
+DaFlasher for Android can be used to install both the 
+:ref:`wasp-bootloader<Bootloader DaFlasher>` and the
+:ref:`main OS image<Main OS DaFlasher>`. No tools or disassembly is required.
 
 Installing wasp-bootloader
 --------------------------
+
+.. _Bootloader DaFlasher:
 
 DaFlasher for Android
 ~~~~~~~~~~~~~~~~~~~~~
@@ -222,6 +277,8 @@ logo and wait for a OTA update.
 
 Installing wasp-os
 ------------------
+
+.. _Main OS DaFlasher:
 
 DaFlasher for Android
 ~~~~~~~~~~~~~~~~~~~~~
