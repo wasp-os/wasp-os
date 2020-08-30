@@ -32,7 +32,7 @@ a complete sphinx toolchain:
 
 Alternatively, if your operating system does not package some or any of
 the aforementioned Python modules that were included in the previous
-command, you can install all of them with pip instead. Make sure to 
+command, you can install all of them with pip instead. Make sure to
 adapt the following command appropriately:
 
 .. code-block:: sh
@@ -123,7 +123,7 @@ screen, a step counter and a heart rate sensor.
 
 The `developer edition <https://store.pine64.org/?product=pinetime-dev-kit>`_
 comes pre-programmed with a test firmware that is used as part of the factory
-testing.  DaFlasher for Android can be used to install both the 
+testing.  DaFlasher for Android can be used to install both the
 :ref:`wasp-bootloader<Bootloader DaFlasher>` and the
 :ref:`main OS image<Main OS DaFlasher>`. No tools or disassembly is required
 to install using DaFlasher.
@@ -170,7 +170,7 @@ device has a heavily tinted filter over the display. This improves the look of
 the device but also significantly dims the backlight making it difficult to
 read the display in strong sunlight.
 
-DaFlasher for Android can be used to install both the 
+DaFlasher for Android can be used to install both the
 :ref:`wasp-bootloader<Bootloader DaFlasher>` and the
 :ref:`main OS image<Main OS DaFlasher>`. No tools or disassembly is required.
 
@@ -181,7 +181,7 @@ The `Colmi P8 <https://www.colmi.com/products/p8-smartwatch>`_ is an almost
 square smart watch based on an nRF52832 SoC and includes a 240x240 colour
 display with touch screen, a step counter and a heart rate sensor.
 
-DaFlasher for Android can be used to install both the 
+DaFlasher for Android can be used to install both the
 :ref:`wasp-bootloader<Bootloader DaFlasher>` and the
 :ref:`main OS image<Main OS DaFlasher>`. No tools or disassembly is required.
 
@@ -285,7 +285,7 @@ DaFlasher for Android
 
 To install the main firmware using DaFlasher for Android:
 
-* Copy ``micropython.zip`` (see :ref:`Building wasp-os from source`) to 
+* Copy ``micropython.zip`` (see :ref:`Building wasp-os from source`) to
   your Android device and download
   `DaFlasher <https://play.google.com/store/apps/details?id=com.atcnetz.paatc.patc>`_
   if you do not already have it.
@@ -301,7 +301,7 @@ nRF Connect for Android
 
 To install the main firmware using nRF Connect for Android:
 
-* Copy ``micropython.zip`` (see :ref:`Building wasp-os from source`) to 
+* Copy ``micropython.zip`` (see :ref:`Building wasp-os from source`) to
   your Android device and download
   `nRF Connect <https://play.google.com/store/apps/details?id=no.nordicsemi.android.mcp>`_
   for Android if you do not already have it.
@@ -319,3 +319,123 @@ To install the main firmware from a GNU/Linux workstation:
 * Use ota-dfu to upload ``micropython.zip`` (see
   :ref:`Building wasp-os from source`) to the device. For example:
   ``tools/ota-dfu/dfu.py -z micropython.zip -a A0:B1:C2:D3:E3:F5 --legacy``
+
+Troubleshooting
+---------------
+
+There are three boot modes of the device: OTA update mode, safe mode and normal
+operation. Understanding these modes is useful to help troubleshoot
+installation and boot problems.
+
+OTA update mode
+~~~~~~~~~~~~~~~
+
+Bootloader mode is entered automatically of the boot image is invalid or if the
+watchdog fires when running in another operating mode. OTA update mode can also
+be can also be entered manually by holding a physical button on the device for
+five seconds until the boot logo re-appears. When running in OTA update
+mode pressing the physical button will attempt to launch the application.
+
+.. note::
+
+    To remain in OTA update mode it is import to release the button as
+    soon as the boot logo appears otherwise you may acidentally request
+    the bootloader restart the application!
+
+When the bootloader starts it will display a boot logo for two seconds and will
+then either boot the application or enter OTA update mode. OTA update mode
+is easily recognised by the Bluetooth logo in the bottom right hand corner of
+the display.
+
+.. image:: res/Bootloader.png
+   :alt: Bootloader splash screen overlaid on the simulator watch art
+   :width: 179
+
+When the device is in OTA update mode then it will enumerate with a name
+ending in ``DFU`` (Device Firmware Update). This device can be used to
+update the application image.
+
+Safe mode
+~~~~~~~~~
+
+Safe mode is a special boot mode of the application that does not execute
+``main.py`` automatically (and hence that the watch will not fully boot).
+This ensures the Python REPL is accessible for debugging. Safe mode also
+causes the watch to show it's boot activity on the screen which can be
+useful for fixing hardware problems.
+
+Safe mode is entered if the physical button is held down when the boot
+logo disappears and the application first starts. The simplest way to
+enter safe mode is to hold down the physical button until ``Init button``
+appear on the screen, then release it.
+
+A device running in safe mode will display the message ``Safe mode``
+on the display. To exit safe mode return to OTA update mode by
+holding down the physical button for five seconds and from there
+a short press of the button will return the device to Normal operation.
+
+Normal operation
+~~~~~~~~~~~~~~~~
+
+Underneath the covers normal operation is near identical to safe mode. There
+are only two differences:
+
+ * the boot messages will not appear unless a fault is detected (in which
+   case ``FAILED`` will appear on the display)
+ * it will execute whatever it finds in ``/flash/main.py``
+
+A default version of ``main.py`` is installed automatically when wasp-os initially
+formats the external flash as a file system.
+
+Most problems with normal mode operation occur either because ``main.py`` is
+missing, out-of-date or corrupt. These issues most commonly result in an
+entirely black screen when running the watch is running in normal mode.
+
+.. note::
+
+   If the system reports FAILED at boot, in either safe mode or normal
+   operation, then the best troubleshooting approach is to review
+   the `issue tracker <https://github.com/daniel-thommpson/wasp-os/issues>`_.
+   Initially look through the open issues and see if your problem is similar,
+   if so there may be useful advice in the comments on the ticket. Otherwise
+   if you cannot find anything similar then please raise a new issue.
+
+main.py
+~~~~~~~
+
+By default main.py includes the following commands and, in normal operation,
+these will be executed to boot the watch:
+
+.. literalinclude:: main.py
+
+One of the most powerful troubleshooting techniques (and one that is usually
+effective in debugging "black screen" issues) is to switch to safe mode and
+run the contents of ``main.py`` by hand using a bluetooth console (typically
+either ``wasptool --console`` or an Android tool such as Serial Bluetooth
+Terminal). Either the watch will start running when started by hand or it will
+issue diagnostics via the console which can be captured and shared via the
+`issue tracker <https://github.com/daniel-thommpson/wasp-os/issues>`_.
+
+If the watch can be successfully started by hand then it is likely the copy
+of ``main.py`` on your watch is broken, missing or out of date. You can explore
+the watch's filesystem using the shell module:
+
+.. code-block:: python
+
+   from shell import *
+   cd('/flash')
+   ls
+   cat('main.py')
+
+If your copy of ``main.py`` needs to be updated you can use wasptool
+to upload a new version:
+
+.. code-block:: sh
+
+   tools/wasptool --upload wasp/main.py
+
+.. note::
+
+   If you are not able to run wasptool on your system but have another means
+   to access to the python REPL you can also use :py:meth:`shell.upload` to
+   manually upload a new version of main.py.
