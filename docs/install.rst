@@ -181,6 +181,11 @@ The `Colmi P8 <https://www.colmi.com/products/p8-smartwatch>`_ is an almost
 square smart watch based on an nRF52832 SoC and includes a 240x240 colour
 display with touch screen, a step counter and a heart rate sensor.
 
+The P8 has multiple hardware revisions and the newest version (the one that
+includes a magnetic charger) uses a different and, currently, unsupported step
+counter module. The new models will boot wasp-os successfully but the step
+counter application will not be included.
+
 DaFlasher for Android can be used to install both the
 :ref:`wasp-bootloader<Bootloader DaFlasher>` and the
 :ref:`main OS image<Main OS DaFlasher>`. No tools or disassembly is required.
