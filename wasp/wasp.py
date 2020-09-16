@@ -115,13 +115,19 @@ class Manager():
         self._scheduling = False
 
         # TODO: Eventually these should move to main.py
-        self.register(ClockApp(), True)
-        self.register(StepCounterApp(), True)
-        self.register(StopwatchApp(), True)
-        self.register(HeartApp(), True)
-        self.register(FlashlightApp(), False)
-        self.register(SettingsApp(), False)
-        self.register(TestApp(), False)
+        for app, qr in ( (ClockApp, True),
+			 (StepCounterApp, True),
+			 (StopwatchApp, True),
+			 (HeartApp, True),
+			 (FlashlightApp, False),
+			 (SettingsApp, False),
+			 (TestApp, False) ):
+		try:
+			self.register(app(), qr)
+		except:
+			# Let's not bring the whole device down just because there's
+			# an exception starting one of the apps...
+			pass
 
     def register(self, app, quick_ring=False):
         """Register an application with the system.
