@@ -44,6 +44,13 @@ tested using the `GNU-RM toolchain
 <https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-rm>`_
 (9-2019-q4) from Arm.
 
+
+On Debian Buster you can install it by using the following commands:
+
+.. code-block:: sh
+
+    sudo apt-get install gcc-arm-none-eabi binutils-arm-none-eabi gdb-arm-none-eabi openocd
+
 .. note::
 
     There are known problems with toolchains older than gcc-7.3 when
