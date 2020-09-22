@@ -116,18 +116,18 @@ class Manager():
 
         # TODO: Eventually these should move to main.py
         for app, qr in ( (ClockApp, True),
-			 (StepCounterApp, True),
-			 (StopwatchApp, True),
-			 (HeartApp, True),
-			 (FlashlightApp, False),
-			 (SettingsApp, False),
-			 (TestApp, False) ):
-		try:
-			self.register(app(), qr)
-		except:
-			# Let's not bring the whole device down just because there's
-			# an exception starting one of the apps...
-			pass
+                         (StepCounterApp, True),
+                         (StopwatchApp, True),
+                         (HeartApp, True),
+                         (FlashlightApp, False),
+                         (SettingsApp, False),
+                         (TestApp, False) ):
+            try:
+                self.register(app(), qr)
+            except:
+                # Let's not bring the whole device down just because there's
+                # an exception starting one of the apps...
+                pass
 
     def register(self, app, quick_ring=False):
         """Register an application with the system.
