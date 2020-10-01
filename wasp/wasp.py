@@ -21,7 +21,6 @@ import micropython
 import watch
 import widgets
 
-from apps.fibonacci_clock import FibonacciClockApp
 from apps.clock import ClockApp
 from apps.flashlight import FlashlightApp
 from apps.heart import HeartApp
@@ -120,7 +119,6 @@ class Manager():
                          (StepCounterApp, True),
                          (StopwatchApp, True),
                          (HeartApp, True),
-                         (FibonacciClockApp, True),
                          (FlashlightApp, False),
                          (SettingsApp, False),
                          (TestApp, False) ):

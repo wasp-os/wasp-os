@@ -13,20 +13,6 @@ import wasp
 import watch
 from micropython import const
 
-# 1-bit RLE, generated from res/vbattery_charging.png, 147 bytes
-vbattery_charging = (
-    48, 36,
-    b'\xff\x00\x89$\x0c$\x0c$\x0c$\n\x06\x1c\x04\t\x07'
-    b'\x1c\x04\t\x07\n\x04\x0e\x04\x08\x08\n\x05\r\x04\x08\x04'
-    b'\x06\x04\x04\x06\x0c\x04\x08\x04\x06\x05\x03\x07\x0b\x04\x08\x04'
-    b'\x06\x06\x02\x08\n\x04\x08\x04\x06\x07\x01\t\t\x04\x08\x04'
-    b'\x07\x11\x08\x04\x08\x04\x08\x11\x07\x04\x08\x04\t\x11\x06\x04'
-    b'\x08\x04\n\x11\x05\x04\x08\x04\x0b\t\x01\x07\x04\x04\x08\x04'
-    b'\x0c\x08\x02\x06\x04\x04\x08\x04\r\x07\x03\x05\x04\x04\x08\x04'
-    b'\x0e\x06\x04\x04\x04\x04\x08\x08\x0b\x05\x0c\x04\t\x07\x0c\x04'
-    b'\x0c\x04\t\x07\x1c\x04\n\x06\x1c\x04\x0c$\x0c$\x0c$'
-    b'\x0c$\x04')
-
 class BatteryMeter:
     """Battery meter widget.
 
@@ -83,43 +69,6 @@ class BatteryMeter:
                 draw.fill(rgb, x, 38 - h, w, h)
 
             self.level = level
-
-green, red = 0x07e0, 0xf800
-
-class VerticalBatteryMeter(object):
-    def __init__(self):
-        self.level = -2
-
-    def draw(self):
-        self.level = -2
-        self.update()
-
-    def update(self):
-        icon = vbattery_charging
-        draw = watch.drawable
-    
-        if watch.battery.charging():
-            if self.level != -1:
-                draw.rleblit(icon, pos=(239-icon[0], 0), fg=0xe73c)
-                self.level = -1
-        else:
-            level = watch.battery.level()
-            if ((level <= (self.level + 4)) and (level >= (self.level - 5))):
-                return
-
-            if level <= 8:
-                draw.rleblit(icon, pos=(239-icon[0], 0), fg= red)
-                draw.fill(0, 203, 14, 26, 17)
-                return
-
-            draw.rleblit(icon, pos=(239-icon[0], 0), fg=0xe73c)
-            draw.fill(0, 203, 14, 26, 17)
-            width = (level // 7 )*2
-            draw.fill(green, 205 + (25-width), 13, width, 17)
-
-
-            self.level = level
-
 
 class StatusBar:
     """Show BT status and if there are pending notifications."""

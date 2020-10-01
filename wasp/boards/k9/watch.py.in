@@ -108,7 +108,6 @@ try:
 
     # Mount the filesystem
     boot_msg("Init SPINOR")
-    flash = FLASH(spi, (Pin('NOR_CS', Pin.OUT, value=1),))
     try:
         boot_msg("Mount FS")
         os.mount(flash, '/flash')
