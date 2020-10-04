@@ -74,6 +74,8 @@ class LauncherApp():
 
     def _draw(self):
         """Redraw the display from scratch."""
+        border_color = wasp.system.launcher_border_color
+
         def draw_app(app, x, y):
             if not app:
                 return
@@ -85,12 +87,14 @@ class LauncherApp():
         draw = wasp.watch.drawable
         page_num = self._page
         page = self._get_page(page_num)
-        
+
         draw.fill()
         draw_app(page[0],   0,   0)
         draw_app(page[1], 120,   0)
         draw_app(page[2],   0, 120)
         draw_app(page[3], 120, 120)
+        draw.fill(border_color, 120, 0, 1, 240)  # Vertical Line
+        draw.fill(border_color, 0, 120, 240, 1)  # Horizontal Line
 
         scroll = self._scroll
         scroll.up = page_num > 0
