@@ -103,6 +103,7 @@ class Manager():
         self.quick_ring = []
         self.launcher = LauncherApp()
         self.launcher_ring = []
+        self.launcher_border_color = 0xFFFF
         self.notifier = NotificationApp()
         self.notifications = {}
 
