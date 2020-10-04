@@ -21,10 +21,11 @@ class SettingsApp():
         self.pages = ('Brightness', 'Launcher Colors')
         self.page = 0
         self._slider = wasp.widgets.Slider(3, 10, 90)
+        self._scroll = wasp.widgets.ScrollIndicator()
         self._color_sliders = (
-            wasp.widgets.Slider(32, 10, 90, 0xf800),
-            wasp.widgets.Slider(64, 10, 140, 0x27e4),
-            wasp.widgets.Slider(32, 10, 190, 0x211f),
+            wasp.widgets.Slider(32, 10, 50, 0xf800),
+            wasp.widgets.Slider(64, 10, 90, 0x27e4),
+            wasp.widgets.Slider(32, 10, 130, 0x211f),
         )
 
     def foreground(self):
@@ -37,8 +38,8 @@ class SettingsApp():
             self._slider.touch(event)
             wasp.system.brightness = self._slider.value + 1
         elif self.pages[self.page] == 'Launcher Colors':
-            if event[2] > 90:
-                self._color_sliders[(event[2]-90) // 50].touch(event)
+            if event[2] < 170:
+                self._color_sliders[(event[2]-50) // 40].touch(event)
         self._update()
 
     def swipe(self, event):
@@ -62,6 +63,8 @@ class SettingsApp():
             for slider in self._color_sliders:
                 slider.draw()
         self._update()
+        if len(self.pages) > 1:
+            self._scroll.draw()
 
     def _update(self):
         if self.pages[self.page] == 'Brightness':
@@ -82,4 +85,4 @@ class SettingsApp():
             b = self._color_sliders[2].value
             rgb = (r << 11) + (g << 5) + b
             wasp.system.launcher_border_color = rgb
-            wasp.watch.drawable.fill(rgb, 60, 35, 120, 50)
+            wasp.watch.drawable.fill(rgb, 60, 180, 120, 50)
