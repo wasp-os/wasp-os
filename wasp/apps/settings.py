@@ -82,3 +82,4 @@ class SettingsApp():
             b = self._color_sliders[2].value
             rgb = (r << 11) + (g << 5) + b
             wasp.system.launcher_border_color = rgb
+            wasp.watch.drawable.fill(rgb, 60, 35, 120, 50)
