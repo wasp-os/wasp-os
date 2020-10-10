@@ -112,18 +112,18 @@ class FibonacciClockApp():
                 mn -= self.fields[i]
                 field_colors[i] += 2
 
-        draw.fill(x=71,y=51,w=23,h=23,bg=self.color_codes[field_colors[4]]) # 1 field
-        draw.fill(x=71,y=76,w=23,h=23,bg=self.color_codes[field_colors[3]]) # 1 field
-        draw.fill(x=21,y=51,w=48,h=48,bg=self.color_codes[field_colors[2]]) # 2 field
-        draw.fill(x=21,y=101,w=73,h=73,bg=self.color_codes[field_colors[1]]) # 3 field
-        draw.fill(x=96,y=51,w=123,h=123,bg=self.color_codes[field_colors[0]]) # 5 field
+        draw.fill(x=71,y=60,w=23,h=23,bg=self.color_codes[field_colors[4]]) # 1 field
+        draw.fill(x=71,y=85,w=23,h=23,bg=self.color_codes[field_colors[3]]) # 1 field
+        draw.fill(x=21,y=60,w=48,h=48,bg=self.color_codes[field_colors[2]]) # 2 field
+        draw.fill(x=21,y=110,w=73,h=73,bg=self.color_codes[field_colors[1]]) # 3 field
+        draw.fill(x=96,y=60,w=123,h=123,bg=self.color_codes[field_colors[0]]) # 5 field
 
         self.on_screen = now
 
         month = now[1] - 1
         month = MONTH[month*3:(month+1)*3]
-        draw.string('{}. {} {}'.format(now[2], month, now[0]),
-                0, 185, width=240)
+        draw.string('{} {} {}'.format(now[2], month, now[0]),
+                0, 202, width=240)
 
         self.meter.update()
         self.notifier.update()
