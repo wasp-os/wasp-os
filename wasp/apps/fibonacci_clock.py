@@ -54,6 +54,7 @@ class FibonacciClockApp():
 
     def __init__(self):
         self.meter = wasp.widgets.BatteryMeter()
+        self.notifier = wasp.widgets.StatusBar()
         self.fields = b'\x05\x03\x02\x01\x01'
         self.color_codes = [0xffff,0xf800,0x07e0,0x001f] # White, red, green and blue
 
@@ -91,6 +92,7 @@ class FibonacciClockApp():
         if now[3] == self.on_screen[3] and now[4] == self.on_screen[4]:
             if now[5] != self.on_screen[5]:
                 self.meter.update()
+                self.notifier.update()
                 self.on_screen = now
             return False
         draw = wasp.watch.drawable
@@ -124,4 +126,5 @@ class FibonacciClockApp():
                 0, 185, width=240)
 
         self.meter.update()
+        self.notifier.update()
         return True
