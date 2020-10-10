@@ -279,8 +279,17 @@ if __name__ == '__main__':
     console = pexpect.spawn(pynus, encoding='UTF-8')
     if args.verbose:
         console.logfile = sys.stdout
+    else:
+        console.logfile = io.StringIO()
 
-    console.expect('Connect.*\(([0-9A-F:]*)\)')
+    try:
+        console.expect('Connect.*\(([0-9A-F:]*)\)')
+    except pexpect.exceptions.TIMEOUT:
+        print('ERROR: Cannot find suitable wasp-os device')
+        if not args.verbose:
+            print_log(console.logfile)
+        sys.exit(1)
+
     macaddr = console.match.group(1)
     console.expect('Exit console using Ctrl-X')
     time.sleep(0.5)
