@@ -104,8 +104,8 @@ class StatusBar:
 class ScrollIndicator:
     """Scrolling indicator.
 
-    A simple battery meter with a charging indicator, will draw at the
-    top-right of the display.
+    A pair of arrows that prompted the user to swipe up/down to access
+    additional pages of information.
     """
     def __init__(self, x=240-18, y=240-24):
         self._pos = (x, y)
