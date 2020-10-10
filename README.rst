@@ -143,5 +143,12 @@ simulator (the "blank" screen is the torch application):
    :width: 179
 
 .. image:: res/TorchApp.png
-   :alt: Torch application running on the wasp-o simulator
+   :alt: Torch application running on the wasp-os simulator
    :width: 179
+
+wasp-os also contains a library of additional applications for you to choose.
+These are disabled by default but can be easily enabled by adding them
+using one of the techniques is the Application Writer's guide.
+
+.. image:: res/LifeApp.png
+   :alt: Game of Life runnin in the wasp-os simulator
