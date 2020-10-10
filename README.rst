@@ -150,8 +150,14 @@ wasp-os also contains a library of additional applications for you to choose.
 These are disabled by default but can be easily enabled by adding them
 using one of the techniques is the Application Writer's guide.
 
+.. image:: res/FiboApp.png
+   :alt: Fibonacci clock application running in the wasp-os simulator
+   :width: 179
+
 .. image:: res/HaikuApp.png
    :alt: Haiku application running in the wasp-os simulator
+   :width: 179
 
 .. image:: res/LifeApp.png
    :alt: Game of Life runnin in the wasp-os simulator
+   :width: 179
