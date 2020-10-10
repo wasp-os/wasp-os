@@ -311,7 +311,7 @@ if __name__ == '__main__':
 
     if args.ota:
         handle_reset(console, ota=True)
-        time.sleep(0.5)
+        time.sleep(1.0)
         dfu = os.path.dirname(sys.argv[0]) + '/ota-dfu/dfu.py'
         os.execl(dfu, dfu, '-z', args.ota, '-a', macaddr, '--legacy')
 
