@@ -34,6 +34,7 @@ freeze('../..',
         'shell.py',
         'wasp.py',
         'widgets.py',
+        'waspbleprofile.py',
     ),
     opt=3
 )

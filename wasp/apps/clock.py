@@ -11,6 +11,7 @@ import wasp
 
 import icons
 import fonts.clock as digits
+from waspbleprofile import BleWaspOsProfile
 
 DIGITS = (
         digits.clock_0,
@@ -41,6 +42,7 @@ class ClockApp():
     def __init__(self):
         self.meter = wasp.widgets.BatteryMeter()
         self.notifier = wasp.widgets.StatusBar()
+        self.bleprofile = BleWaspOsProfile()
 
     def foreground(self):
         """Activate the application."""
@@ -95,4 +97,5 @@ class ClockApp():
 
         self.meter.update()
         self.notifier.update()
+        self.bleprofile.update()
         return True
