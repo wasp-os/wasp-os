@@ -27,9 +27,9 @@ from apps.heart import HeartApp
 from apps.launcher import LauncherApp
 from apps.pager import PagerApp, CrashApp, NotificationApp
 from apps.settings import SettingsApp
-from apps.steps import StepCounterApp
+# from apps.steps import StepCounterApp
 from apps.stopwatch import StopwatchApp
-from apps.testapp import TestApp
+# from apps.testapp import TestApp
 
 class EventType():
     """Enumerated interface actions.
@@ -116,12 +116,10 @@ class Manager():
 
         # TODO: Eventually these should move to main.py
         for app, qr in ( (ClockApp, True),
-			 (StepCounterApp, True),
 			 (StopwatchApp, True),
 			 (HeartApp, True),
 			 (FlashlightApp, False),
-			 (SettingsApp, False),
-			 (TestApp, False) ):
+			 (SettingsApp, False),):
 		try:
 			self.register(app(), qr)
 		except:
