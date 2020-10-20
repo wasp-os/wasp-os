@@ -40,7 +40,7 @@ class ClockApp():
 
     def __init__(self):
         self.meter = wasp.widgets.BatteryMeter()
-        self.notifier = wasp.widgets.StatusBar()
+        self.notifier = wasp.widgets.NotificationBar()
 
     def foreground(self):
         """Activate the application."""
