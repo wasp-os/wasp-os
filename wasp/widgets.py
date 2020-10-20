@@ -70,7 +70,7 @@ class BatteryMeter:
 
             self.level = level
 
-class StatusBar:
+class NotificationBar:
     """Show BT status and if there are pending notifications."""
     def __init__(self, x=8, y=8):
         self._pos = (x, y)

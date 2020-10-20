@@ -54,7 +54,7 @@ class FibonacciClockApp():
 
     def __init__(self):
         self.meter = wasp.widgets.BatteryMeter()
-        self.notifier = wasp.widgets.StatusBar()
+        self.notifier = wasp.widgets.NotificationBar()
         self.fields = b'\x05\x03\x02\x01\x01'
         self.color_codes = [0xffff,0xf800,0x07e0,0x001f] # White, red, green and blue
 
