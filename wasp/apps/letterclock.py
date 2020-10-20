@@ -2,6 +2,8 @@
 # Copyright (C) 2020 David Diem
 # based on clock.py by Daniel Thompson
 
+# This watchface (including the logic/order of composition) is highly customized for a language, in this case the Alemannic (a kind of German)
+
 import wasp
 
 import icons
@@ -73,8 +75,8 @@ class LetterclockApp(object):
         month = now[1] - 1
         month = MONTH[month*3:(month+1)*3]
 
-        stunda = ["zwölfe", "oas", "zwoa", "drü", "viere", "füfe", "sechse", "simne", "achte", "nüne", "zehne", "oalfe"]
-        minuta = ["", "uas", "zwoa", "drü", "vier", "füf", "sechs", "siba", "acht", "nü", "zeha", "oalf", "zwölf", "drize", "virze", "füfze", "seachze", "sibze", "achze", "nünze", "zwuanzg"]
+        stunda = ["zwölfe", "oas", "zwoa", "drü", "viere", "füfe", "sechse", "simne", "achte", "nüne", "zehne", "oalfe"] #hours
+        minuta = ["", "uas", "zwoa", "drü", "vier", "füf", "sechs", "siba", "acht", "nü", "zeha", "oalf", "zwölf", "drize", "virze", "füfze", "seachze", "sibze", "achze", "nünze", "zwuanzg"] # minutes
 
         if now[4] == 0:
             say = ("", "", "", stunda[now[3] % 12])
