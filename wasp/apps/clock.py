@@ -11,7 +11,6 @@ import wasp
 
 import icons
 import fonts.clock as digits
-from bleprofile import BleWaspOSProfile
 
 DIGITS = (
         digits.clock_0,
@@ -28,6 +27,7 @@ DIGITS = (
 
 MONTH = 'JanFebMarAprMayJunJulAugSepOctNovDec'
 
+
 class ClockApp():
     """Simple digital clock application.
 
@@ -42,7 +42,6 @@ class ClockApp():
     def __init__(self):
         self.meter = wasp.widgets.BatteryMeter()
         self.notifier = wasp.widgets.StatusBar()
-        self.bleprofile = BleWaspOSProfile()
 
     def foreground(self):
         """Activate the application."""
@@ -97,5 +96,4 @@ class ClockApp():
 
         self.meter.update()
         self.notifier.update()
-        self.bleprofile.update()
         return True
