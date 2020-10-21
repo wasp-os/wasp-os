@@ -106,16 +106,9 @@ try:
     boot_msg("Init motor")
     vibrator = Vibrator(Pin('MOTOR', Pin.OUT, value=0), active_low=True)
 
-    # Release flash from deep power-down
-    boot_msg("Wake SPINOR")
-    nor_cs = Pin('NOR_CS', Pin.OUT, value=1)
-    nor_cs(0)
-    spi.write('\xAB')
-    nor_cs(1)
-
     # Mount the filesystem
     boot_msg("Init SPINOR")
-    flash = FLASH(spi, (nor_cs,))
+    flash = FLASH(spi, (Pin('NOR_CS', Pin.OUT, value=1),))
     try:
         boot_msg("Mount FS")
         os.mount(flash, '/flash')

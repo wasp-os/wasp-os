@@ -83,6 +83,7 @@ class CST816S:
         Just reset the chip in order to wake it up
         """
         self._reset()
+        self.event[0] = 0
 
     def sleep(self):
         """Put touch controller chip on sleep mode to save power.
