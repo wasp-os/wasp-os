@@ -289,6 +289,9 @@ if __name__ == '__main__':
         if not args.verbose:
             print_log(console.logfile)
         sys.exit(1)
+    if not args.verbose:
+        console.logfile.close()
+        console.logfile = None
 
     macaddr = console.match.group(1)
     console.expect('Exit console using Ctrl-X')
