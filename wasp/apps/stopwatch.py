@@ -17,14 +17,12 @@ class StopwatchApp():
     ICON = icons.app
 
     def __init__(self):
-        self._meter = wasp.widgets.BatteryMeter()
+        self._bar = wasp.widgets.StatusBar()
         self._reset()
         self._count = 0
 
     def foreground(self):
         """Activate the application."""
-        self._last_clock = ( -1, -1, -1, -1, -1, -1 )
-
         self._draw()
         wasp.system.request_tick(97)
         wasp.system.request_event(wasp.EventMask.TOUCH |
@@ -113,7 +111,7 @@ class StopwatchApp():
 
         self._last_count = -1
         self._update()
-        self._meter.draw()
+        self._bar.draw()
         self._draw_splits()
 
     def _update(self):
@@ -126,17 +124,8 @@ class StopwatchApp():
             if self._count > 999*60*100:
                 self._reset()
 
-        draw = wasp.watch.drawable
-
-        # Lazy update of the clock and battery meter
-        now = wasp.watch.rtc.get_localtime()
-        if now[4] != self._last_clock[4]:
-            t1 = '{:02}:{:02}'.format(now[3], now[4])
-            draw.set_font(fonts.sans28)
-            draw.set_color(0xe73c)
-            draw.string(t1, 48, 12, 240-96)
-            self._last_clock = now
-            self._meter.update()
+        # Update the statusbar
+        self._bar.update()
 
         if self._last_count != self._count:
             centisecs = self._count
@@ -148,6 +137,7 @@ class StopwatchApp():
             t1 = '{}:{:02}'.format(minutes, secs)
             t2 = '{:02}'.format(centisecs)
 
+            draw = wasp.watch.drawable
             draw.set_font(fonts.sans36)
             draw.set_color(0xc67f)
             w = fonts.width(fonts.sans36, t1)
