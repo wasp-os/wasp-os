@@ -27,7 +27,6 @@ DIGITS = (
 
 MONTH = 'JanFebMarAprMayJunJulAugSepOctNovDec'
 
-
 class ClockApp():
     """Simple digital clock application.
 

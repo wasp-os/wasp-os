@@ -22,6 +22,7 @@ import io
 import json
 import sys
 import wasp
+
 # JSON compatibility
 null = None
 true = True
