@@ -30,7 +30,6 @@ from apps.settings import SettingsApp
 from apps.steps import StepCounterApp
 from apps.stopwatch import StopwatchApp
 from apps.testapp import TestApp
-from apps.qrztag import QrzTagApp
 from apps.musicplayer import MusicPlayerApp
 
 
@@ -130,7 +129,6 @@ class Manager():
 			 (FlashlightApp, False),
 			 (SettingsApp, False),
              (TestApp, False),
-             (QrzTagApp, False),
              (MusicPlayerApp, False)):
 		try:
 			self.register(app(), qr)
