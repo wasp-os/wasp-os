@@ -8,6 +8,7 @@ manifest = (
     'apps/gameoflife.py',
     'apps/haiku.py',
     'apps/heart.py',
+    'apps/musicplayer.py'
     'apps/launcher.py',
     'apps/pager.py',
     'apps/settings.py',
