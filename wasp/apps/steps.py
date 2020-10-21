@@ -42,16 +42,12 @@ class StepCounterApp():
 
     def __init__(self):
         watch.accel.reset()
-        self._meter = wasp.widgets.BatteryMeter()
+        self._bar = wasp.widgets.StatusBar()
         self._count = 0
-        self._last_clock = ( -1, -1, -1, -1, -1, -1 )
+        self._prev_day = -1
 
     def foreground(self):
         """Activate the application."""
-        # Force a redraw (without forgetting the current date)
-        lc = self._last_clock
-        self._last_clock = (lc[0], lc[1], lc[2], -1, -1, -1)
-
         self._draw()
         wasp.system.request_tick(1000)
 
@@ -65,28 +61,22 @@ class StepCounterApp():
         draw.fill()
         draw.blit(feet, 12, 132-24)
 
-        self._last_count = -1
         self._update()
-        self._meter.draw()
+        self._bar.draw()
 
     def _update(self):
         draw = wasp.watch.drawable
 
-        # Lazy update of the clock and battery meter
-        now = wasp.watch.rtc.get_localtime()
-        if now[4] != self._last_clock[4]:
-            t1 = '{:02}:{:02}'.format(now[3], now[4])
-            draw.set_font(fonts.sans28)
-            draw.set_color(0x7bef)
-            draw.string(t1, 48, 12, 240-96)
+        # Update the status bar
+        now = self._bar.update()
 
-            if now[2] != self._last_clock[2]:
-                watch.accel.steps = 0
-                draw.fill(0, 60, 132-18, 180, 36)
+        # Reset the step counter if we have move onto the next day
+        if now and now[2] != self._prev_day:
+            watch.accel.steps = 0
+            draw.fill(0, 60, 132-18, 180, 36)
+            self._prev_day = now[2]
 
-            self._last_clock = now
-            self._meter.update()
-
+        # Update the step count
         count = watch.accel.steps
         t = str(count)
         w = fonts.width(fonts.sans36, t)
