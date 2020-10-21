@@ -115,19 +115,22 @@ class Clock:
 
 class NotificationBar:
     """Show BT status and if there are pending notifications."""
-    def __init__(self, x=8, y=8):
+    def __init__(self, x=2, y=8):
         self._pos = (x, y)
 
     def draw(self):
-        """Update the notification widget.
+        """Redraw the notification widget.
 
         For this simple widget :py:meth:`~.draw` is simply a synonym for
-        :py:meth:`~.update`.
+        :py:meth:`~.update` because we unconditionally update from scratch.
         """
         self.update()
 
     def update(self):
         """Update the widget.
+
+        This widget does not implement lazy redraw internally since this
+        can often be implemented (with less state) by the container.
         """
         draw = watch.drawable
         (x, y) = self._pos
@@ -135,14 +138,50 @@ class NotificationBar:
         if wasp.watch.connected():
             draw.blit(icons.blestatus, x, y, fg=0x7bef)
             if wasp.system.notifications:
-                draw.blit(icons.notification, x+24, y, fg=0x7bef)
+                draw.blit(icons.notification, x+22, y, fg=0x7bef)
             else:
-                draw.fill(0, x+24, y, 32, 32)
+                draw.fill(0, x+22, y, 30, 32)
         elif wasp.system.notifications:
             draw.blit(icons.notification, x, y, fg=0x7bef)
-            draw.fill(0, x+32, y, 32, 32)
+            draw.fill(0, x+30, y, 22, 32)
         else:
-            draw.fill(0, x, y, 56, 32)
+            draw.fill(0, x, y, 52, 32)
+
+class StatusBar:
+    """Combo widget to handle notification, time and battery level."""
+    def __init__(self):
+        self._clock = Clock()
+        self._meter = BatteryMeter()
+        self._notif = NotificationBar()
+
+    @property
+    def clock(self):
+        """True if the clock should be included in the status bar, False
+        otherwise.
+        """
+        return self._clock.enabled
+
+    @clock.setter
+    def clock(self, enabled):
+        self._clock.enabled = enabled
+
+    def draw(self):
+        """Redraw the status bar from scratch."""
+        self._clock.draw()
+        self._meter.draw()
+        self._notif.draw()
+
+    def update(self):
+        """Lazily update the status bar.
+
+        :returns: An time tuple if the time has changed since the last call,
+                  None otherwise.
+        """
+        now = self._clock.update()
+        if now:
+            self._meter.update()
+            self._notif.update()
+        return now
 
 class ScrollIndicator:
     """Scrolling indicator.
