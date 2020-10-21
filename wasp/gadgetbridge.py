@@ -22,7 +22,6 @@ import io
 import json
 import sys
 import wasp
-
 # JSON compatibility
 null = None
 true = True
@@ -47,8 +46,13 @@ def GB(cmd):
             id = cmd['id']
             del cmd['id']
             wasp.system.notify(id, cmd)
+            wasp.watch.vibrator.pulse(ms=200)
         elif task == 'notify-':
             wasp.system.unnotify(cmd['id'])
+        elif task == 'musicstate':
+            wasp.system.togglemusic(cmd)
+        elif task == 'musicinfo':
+            wasp.system.setmusicinfo(cmd)
         else:
             pass
             #_info('Command "{}" is not implemented'.format(cmd))
@@ -57,5 +61,3 @@ def GB(cmd):
         sys.print_exception(e, msg)
         _error(msg.getvalue())
         msg.close()
-
-

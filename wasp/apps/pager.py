@@ -89,7 +89,7 @@ class NotificationApp(PagerApp):
         id = next(iter(notes))
         note = notes[id]
         del notes[id]
-        self._msg = '{}\n\n{}'.format(note['title'], note['body'])
+        self._msg = '{}\n\n{}'.format(note.get('title'), note.get('body'))
 
         super().foreground()
 
