@@ -29,13 +29,27 @@ def sync(c):
     Sending a random print ensure the final export (of the prompt)
     does not accidentally match a previously issued prompt.
     """
+    verbose = bool(c.logfile)
     tag = ''.join([random.choice(string.ascii_uppercase) for i in range(6)])
 
-    c.send('\x03')
-    c.expect('>>> ')
-    c.sendline(f'print("{tag[:3]}""{tag[3:]}")')
-    c.expect(tag)
-    c.expect('>>> ')
+
+    try:
+        if not verbose:
+            c.logfile = io.StringIO()
+
+        c.send('\x03')
+        c.expect('>>> ')
+        c.sendline(f'print("{tag[:3]}""{tag[3:]}")')
+        c.expect(tag)
+        c.expect('>>> ')
+
+        if not verbose:
+            c.logfile.close()
+            c.logfile = None
+    except pexpect.exceptions.EOF:
+        print("ERROR: Cannot sync with device")
+        print_log(c.logfile)
+        sys.exit(1)
 
 def unsync(c):
     """Set the watch running again.
