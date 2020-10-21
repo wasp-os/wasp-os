@@ -56,7 +56,7 @@ class BatteryMeter:
                 red = 31-green
                 rgb = (red << 11) + (green << 6)
 
-            if (level > 5) ^ (self.level > 5):
+            if self.level < 0 or ((level > 5) ^ (self.level > 5)):
                 if level  > 5:
                     draw.rleblit(icon, pos=(239-icon[0], 0), fg=0x7bef)
                 else:
