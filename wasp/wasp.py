@@ -107,6 +107,8 @@ class Manager():
         self.launcher_ring = []
         self.notifier = NotificationApp()
         self.notifications = {}
+        self.musicstate = {}
+        self.musicinfo = {}
 
         self.blank_after = 15
 
@@ -233,6 +235,12 @@ class Manager():
     def unnotify(self, id):
         if id in self.notifications:
             del self.notifications[id]
+
+    def toggle_music(self, state):
+        self.musicstate = state
+
+    def set_music_info(self, info):
+        self.musicinfo = info
 
     def request_event(self, event_mask):
         """Subscribe to events.
