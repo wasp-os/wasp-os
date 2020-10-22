@@ -28,13 +28,16 @@ null = None
 true = True
 false = False
 
+
 def _info(msg):
-    json.dump({'t':'info', 'msg':msg}, sys.stdout)
+    json.dump({'t': 'info', 'msg': msg}, sys.stdout)
     sys.stdout.write('\r\n')
 
+
 def _error(msg):
-    json.dump({'t':'error', 'msg':msg}, sys.stdout)
+    json.dump({'t': 'error', 'msg': msg}, sys.stdout)
     sys.stdout.write('\r\n')
+
 
 def GB(cmd):
     task = cmd['t']
@@ -49,6 +52,10 @@ def GB(cmd):
             wasp.system.notify(id, cmd)
         elif task == 'notify-':
             wasp.system.unnotify(cmd['id'])
+        elif task == 'musicstate':
+            wasp.system.togglemusic(cmd)
+        elif task == 'musicinfo':
+            wasp.system.setmusicinfo(cmd)
         else:
             pass
             #_info('Command "{}" is not implemented'.format(cmd))
@@ -57,5 +64,3 @@ def GB(cmd):
         sys.print_exception(e, msg)
         _error(msg.getvalue())
         msg.close()
-
-
