@@ -26,7 +26,7 @@ class Vibrator(object):
         self.period = 16000
         self.active_low = active_low
 
-    def pulse(self, duty=25, ms=40):
+    def pulse(self, duty=10, ms=225):
         """Briefly pulse the motor.
 
         :param int duty: Duty cycle, in percent.
