@@ -109,6 +109,8 @@ class Manager():
         self.blank_after = 15
 
         self._brightness = 2
+        self._notifylevel = 2
+        self._nfylev_ms = 40
         self._button = PinHandler(watch.button)
         self._charging = True
         self._scheduled = False
@@ -149,6 +151,26 @@ class Manager():
     def brightness(self, value):
         self._brightness = value
         watch.backlight.set(self._brightness)
+
+    @property
+    def notify_level(self):
+        """Cached copy of the current notify level"""
+        return self._notifylevel
+
+    @notify_level.setter
+    def notify_level(self, value):
+        self._notifylevel = value
+        if value == 2:
+            self._nfylev_ms = 40
+        elif value == 3:
+            self._nfylev_ms = 225
+        else:
+            self._nfylev_ms = 0
+
+    @property
+    def notify_duration(self):
+        """Cached copy of the current vibrator pulse duration in milliseconds"""
+        return self._nfylev_ms
 
     def switch(self, app):
         """Switch to the requested application.
