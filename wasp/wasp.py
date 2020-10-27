@@ -122,6 +122,12 @@ class Manager():
 
         self._alarms = []
         self._brightness = 2
+        self._notifylevel = 2
+        if 'P8' in watch.os.uname().machine:
+            self._nfylevels = [0, 225, 450]
+        else:
+            self._nfylevels = [0, 40, 80]
+        self._nfylev_ms = self._nfylevels[self._notifylevel - 1]
         self._button = PinHandler(watch.button)
         self._charging = True
         self._scheduled = False
@@ -162,6 +168,21 @@ class Manager():
     def brightness(self, value):
         self._brightness = value
         watch.backlight.set(self._brightness)
+
+    @property
+    def notify_level(self):
+        """Cached copy of the current notify level"""
+        return self._notifylevel
+
+    @notify_level.setter
+    def notify_level(self, value):
+        self._notifylevel = value
+        self._nfylev_ms = self._nfylevels[self._notifylevel - 1]
+
+    @property
+    def notify_duration(self):
+        """Cached copy of the current vibrator pulse duration in milliseconds"""
+        return self._nfylev_ms
 
     def switch(self, app):
         """Switch to the requested application.

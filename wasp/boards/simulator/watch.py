@@ -12,8 +12,9 @@ def print_exception(exc, file=sys.stdout):
     traceback.print_exception(exc_type, exc_value, exc_traceback, file=file)
 sys.print_exception = print_exception
 
-import draw565
 import array
+import draw565
+import os
 
 from machine import I2C
 from machine import Pin
