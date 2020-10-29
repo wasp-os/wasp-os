@@ -19,6 +19,7 @@ class SettingsApp():
 
     def __init__(self):
         self._slider = wasp.widgets.Slider(3, 10, 90)
+        self._nfy_slider = wasp.widgets.Slider(4, 10, 90)
         self._settings = ['Brightness', 'Notification Level']
         self._sett_index = 0
         self._current_setting = self._settings[0]
@@ -29,11 +30,12 @@ class SettingsApp():
         wasp.system.request_event(wasp.EventMask.SWIPE_UPDOWN)
 
     def touch(self, event):
-        self._slider.touch(event)
         if self._current_setting == 'Brightness':
+            self._slider.touch(event)
             wasp.system.brightness = self._slider.value + 1
         elif self._current_setting == 'Notification Level':
-            wasp.system.notify_level = self._slider.value + 1
+            self._nfy_slider.touch(event)
+            wasp.system.notify_level = self._nfy_slider.value + 1
         self._update()
 
     def swipe(self, event):
@@ -57,7 +59,7 @@ class SettingsApp():
         if self._current_setting == 'Brightness':
             self._slider.value = wasp.system.brightness - 1
         elif self._current_setting == 'Notification Level':
-            self._slider.value = wasp.system.notify_level - 1
+            self._nfy_slider.value = wasp.system.notify_level - 1
         self._update()
 
     def _update(self):
@@ -68,12 +70,15 @@ class SettingsApp():
                 say = "Mid"
             else:
                 say = "Low"
+            self._slider.update()
         elif self._current_setting == 'Notification Level':
-            if wasp.system.notify_level == 3:
+            if wasp.system.notify_level == 4:
+                say = "Very High"
+            elif wasp.system.notify_level == 3:
                 say = "High"
             elif wasp.system.notify_level == 2:
                 say = "Mid"
             else:
                 say = "Silent"
+            self._nfy_slider.update()
         wasp.watch.drawable.string(say, 0, 150, width=240)
-        self._slider.update()

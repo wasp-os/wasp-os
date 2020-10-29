@@ -164,6 +164,8 @@ class Manager():
             self._nfylev_ms = 40
         elif value == 3:
             self._nfylev_ms = 225
+        elif value == 4:
+            self._nfylev_ms = 450
         else:
             self._nfylev_ms = 0
 
