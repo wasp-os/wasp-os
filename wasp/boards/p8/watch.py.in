@@ -25,7 +25,7 @@ from machine import Pin
 from machine import SPI
 
 from drivers.battery import Battery
-from drivers.bma421 import BMA421
+from drivers.sc7a20 import SC7A20
 from drivers.cst816s import CST816S
 from drivers.hrs3300 import HRS3300
 from drivers.signal import Signal
@@ -88,7 +88,7 @@ try:
     usb_pwr = Signal(Pin('USB_PWR', Pin.IN), invert=True)
     battery = Battery(Pin('BATTERY', Pin.IN), usb_pwr, usb_pwr)
     i2c = I2C(1, scl='I2C_SCL', sda='I2C_SDA')
-    accel = BMA421(i2c)
+    accel = SC7A20(i2c=i2c)
     hrs = HRS3300(i2c)
     touch = CST816S(i2c,
                     Pin('TP_INT', Pin.IN), Pin('TP_RST', Pin.OUT, value=0),
