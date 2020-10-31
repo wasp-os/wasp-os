@@ -288,7 +288,7 @@ class Slider():
 
 
 _message_string_x_coord = const(0)
-_message_string_y_coord = const(0)
+_message_string_y_coord = const(60)
 _yes_button_x_coord = const(20)
 _yes_button_y_coord = const(100)
 _no_button_x_coord = const(120)
