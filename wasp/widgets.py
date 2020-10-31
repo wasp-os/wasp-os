@@ -285,3 +285,80 @@ class Slider():
         elif v >= self._steps:
             v = self._steps - 1
         self.value = v
+
+
+_message_string_x_coord = const(0)
+_message_string_y_coord = const(0)
+_yes_button_x_coord = const(20)
+_yes_button_y_coord = const(100)
+_no_button_x_coord = const(120)
+_no_button_y_coord = const(100)
+
+class ConfirmationView:
+    "Confirmation widget allowing user confirmation of a setting"
+
+    class TouchResult:
+        YES = 0
+        NO = 1
+        NO_ACTION = 2
+
+    def __init__(self):
+        self.drawable = wasp.watch.drawable
+
+        self.yes_button_bounds = (
+            (_yes_button_x_coord, _yes_button_y_coord),
+            (
+                icons.yes_button[0] + _yes_button_x_coord,
+                icons.yes_button[1] + _yes_button_y_coord,
+            ),
+        )
+        self.no_button_bounds = (
+            (_no_button_x_coord, _no_button_y_coord),
+            (
+                icons.no_button[0] + _no_button_x_coord,
+                icons.no_button[1] + _no_button_y_coord,
+            )
+        )
+
+    def draw(self, message):
+        self.drawable.fill(1)
+        self.drawable.string(
+            message,
+            _message_string_x_coord,
+            _message_string_y_coord
+        )
+        self.drawable.blit(
+            icons.yes_button,
+            _yes_button_x_coord,
+            _yes_button_y_coord,
+        )
+        self.drawable.blit(
+            icons.no_button,
+            _no_button_x_coord,
+            _no_button_y_coord,
+        )
+
+
+    def touch(self, event):
+        x_coord = event[1]
+        y_coord = event[2]
+        is_yes_button_press = (
+            x_coord > self.yes_button_bounds[0][0]
+            and y_coord > self.yes_button_bounds[0][1]
+            and x_coord < self.yes_button_bounds[1][0]
+            and y_coord < self.yes_button_bounds[1][1]
+        )
+
+        is_no_button_press = (
+            x_coord > self.no_button_bounds[0][0]
+            and y_coord > self.no_button_bounds[0][1]
+            and x_coord < self.no_button_bounds[1][0]
+            and y_coord < self.no_button_bounds[1][1]
+        )
+
+        if is_yes_button_press:
+            return self.TouchResult.YES
+        elif is_no_button_press:
+            return self.TouchResult.NO
+        else:
+            return self.TouchResult.NO_ACTION
