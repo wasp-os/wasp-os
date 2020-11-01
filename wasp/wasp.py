@@ -110,7 +110,11 @@ class Manager():
 
         self._brightness = 2
         self._notifylevel = 2
-        self._nfylev_ms = 40
+        if 'P8' in watch.os.uname().machine:
+            self._nfylevels = [0, 225, 450]
+        else:
+            self._nfylevels = [0, 40, 80]
+        self._nfylev_ms = self._nfylevels[self._notifylevel - 1]
         self._button = PinHandler(watch.button)
         self._charging = True
         self._scheduled = False
@@ -160,14 +164,7 @@ class Manager():
     @notify_level.setter
     def notify_level(self, value):
         self._notifylevel = value
-        if value == 2:
-            self._nfylev_ms = 40
-        elif value == 3:
-            self._nfylev_ms = 225
-        elif value == 4:
-            self._nfylev_ms = 450
-        else:
-            self._nfylev_ms = 0
+        self._nfylev_ms = self._nfylevels[self._notifylevel - 1]
 
     @property
     def notify_duration(self):

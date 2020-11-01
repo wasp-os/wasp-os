@@ -19,7 +19,7 @@ class SettingsApp():
 
     def __init__(self):
         self._slider = wasp.widgets.Slider(3, 10, 90)
-        self._nfy_slider = wasp.widgets.Slider(4, 10, 90)
+        self._nfy_slider = wasp.widgets.Slider(3, 10, 90)
         self._settings = ['Brightness', 'Notification Level']
         self._sett_index = 0
         self._current_setting = self._settings[0]
@@ -72,9 +72,7 @@ class SettingsApp():
                 say = "Low"
             self._slider.update()
         elif self._current_setting == 'Notification Level':
-            if wasp.system.notify_level == 4:
-                say = "Very High"
-            elif wasp.system.notify_level == 3:
+            if wasp.system.notify_level == 3:
                 say = "High"
             elif wasp.system.notify_level == 2:
                 say = "Mid"
