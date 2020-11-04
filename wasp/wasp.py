@@ -100,6 +100,8 @@ class Manager():
     def __init__(self):
         self.app = None
 
+        self.bar = widgets.StatusBar()
+
         self.quick_ring = []
         self.launcher = LauncherApp()
         self.launcher_ring = []

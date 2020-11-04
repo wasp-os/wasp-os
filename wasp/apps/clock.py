@@ -31,16 +31,13 @@ class ClockApp():
     NAME = 'Clock'
     ICON = icons.clock
 
-    def __init__(self):
-        self._bar = wasp.widgets.StatusBar()
-
     def foreground(self):
         """Activate the application.
 
         Configure the status bar, redraw the display and request a periodic
         tick callback every second.
         """
-        self._bar.clock = False
+        wasp.system.bar.clock = False
         self._draw(True)
         wasp.system.request_tick(1000)
 
@@ -82,13 +79,13 @@ class ClockApp():
             draw.rleblit(digits.clock_colon, pos=(2*48, 80), fg=0xb5b6)
 
             # Redraw the status bar
-            self._bar.draw()
+            wasp.system.bar.draw()
         else:
             # The update is doubly lazy... we update the status bar and if
             # the status bus update reports a change in the time of day 
             # then we compare the minute on display to make sure we 
             # only update the main clock once per minute.
-            now = self._bar.update()
+            now = wasp.system.bar.update()
             if not now or self._min == now[4]:
                 # Skip the update
                 return
