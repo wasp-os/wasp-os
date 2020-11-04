@@ -61,12 +61,9 @@ class FibonacciClockApp():
     NAME = 'Fibo'
     ICON = icon
 
-    def __init__(self):
-        self._bar = wasp.widgets.StatusBar()
-
     def foreground(self):
         """Activate the application."""
-        self._bar.clock = False
+        wasp.system.bar.clock = False
         self._draw(True)
         wasp.system.request_tick(1000)
 
@@ -86,9 +83,9 @@ class FibonacciClockApp():
         if redraw:
             now = wasp.watch.rtc.get_localtime()
             draw.fill()
-            self._bar.draw()
+            wasp.system.bar.draw()
         else:
-            now = self._bar.update()
+            now = wasp.system.bar.update()
             if not now or self._min == now[4]:
                 return
 
