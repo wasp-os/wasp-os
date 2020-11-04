@@ -42,12 +42,12 @@ class StepCounterApp():
 
     def __init__(self):
         watch.accel.reset()
-        self._bar = wasp.widgets.StatusBar()
         self._count = 0
         self._prev_day = -1
 
     def foreground(self):
         """Activate the application."""
+        wasp.system.bar.clock = True
         self._draw()
         wasp.system.request_tick(1000)
 
@@ -62,13 +62,13 @@ class StepCounterApp():
         draw.blit(feet, 12, 132-24)
 
         self._update()
-        self._bar.draw()
+        wasp.system.bar.draw()
 
     def _update(self):
         draw = wasp.watch.drawable
 
         # Update the status bar
-        now = self._bar.update()
+        now = wasp.system.bar.update()
 
         # Reset the step counter if we have move onto the next day
         if now and now[2] != self._prev_day:
