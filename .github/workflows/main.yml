@@ -1,4 +1,4 @@
-name: CI for wasp-os
+name: wasp-os binary distribution
 
 on:
   push:
@@ -8,25 +8,12 @@ on:
 
 jobs:
   build:
-    strategy:
-      matrix:
-        board: [pinetime, p8]
-
     runs-on: ubuntu-latest
 
     steps:
     - name: Checkout files
       id:   checkout-files
       uses: actions/checkout@v2
-
-    - name: Check cached Python modules
-      id:   cache-pip
-      uses: actions/cache@v2
-      with:
-          path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
-          restore-keys: |
-              ${{ runner.os }}-pip-
 
     - name: Check the cached arm-none-eabi-gcc compiler
       id:   cache-toolchain
@@ -47,40 +34,36 @@ jobs:
           release: 9-2019-q4
           directory: ${{ runner.temp }}/arm-none-eabi
 
-    - name: Make submodules
-      id:   make-submodules
+    - name: Install packages
+      id: install-packages
+      run:  |
+          sudo apt-get update
+          sudo apt-get install -y python3-sphinx python3-recommonmark
+
+    - name: Update submodules
+      id:   update-submodules
       run:  |
           export PATH=$PATH:${{ runner.temp }}/arm-none-eabi/bin
-          make -j BOARD=${{ matrix.board }} submodules
+          make -j `nproc` submodules
     
-    - name: Make softdevice
-      id:   make-softdevice
+    - name: Download softdevice
+      id:   download-softdevice
       run:  |  
           export PATH=$PATH:${{ runner.temp }}/arm-none-eabi/bin
-          make -j BOARD=${{ matrix.board }} softdevice
+          make -j `nproc` softdevice
 
-    - name: Build firmware
-      id:   make-firmware
+    - name: Build wasp-os binary distribution
+      id:   binary-distribution
       run:  |
           export PATH=$PATH:${{ runner.temp }}/arm-none-eabi/bin
-          make -j BOARD=${{ matrix.board }} all
+          make -j `nproc` VERSION=${{ github.sha }} dist
+          mv ../wasp-os-${{ github.sha }}.tar.gz .
 
-    - name: Create archive
-      id:   create-archive
-      run:  |
-          tar -cJf wasp-os-${{ github.sha }}-${{ matrix.board }}.tar.gz \
-          build-${{ matrix.board }} \
-          COPYING \
-          COPYING.LGPL \
-          README.rst \
-          TODO.rst \
-          tools \
-          docs
-
-    - name: Upload build
-      id:   upload-firmware
+    - name: Upload binaries
+      id:   upload-binaries
       uses: actions/upload-artifact@v2
       with:
-          name: wasp-os-${{ github.sha }}-${{ matrix.board }}.tar.gz
-          path: wasp-os-${{ github.sha }}-${{ matrix.board }}.tar.gz
-
+          name: wasp-os-${{ github.sha }}
+          path:  |
+              build-*
+              wasp-os-${{ github.sha }}.tar.gz
