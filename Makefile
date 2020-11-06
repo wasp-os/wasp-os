@@ -22,8 +22,13 @@ clean :
 		micropython/ports/nrf/build-$(BOARD)-s132 \
 		wasp/boards/$(BOARD)/watch.py
 
+# Avoid a recursive update... it grabs far too much
 submodules :
-	git submodule update --init --recursive
+	git submodule update --init
+	(cd bootloader; git submodule update --init)
+	(cd micropython/ports/nrf; $(MAKE) submodules)
+	(cd reloader; git submodule update --init)
+	(cd wasp/modules/bma42x-upy; git submodule update --init)
 
 bootloader: build-$(BOARD_SAFE)
 	$(RM) bootloader/_build-$(BOARD)_nrf52832//$(BOARD)_nrf52832_bootloader-*-nosd.hex
