@@ -104,7 +104,7 @@ class Manager():
         self.launcher = LauncherApp()
         self.launcher_ring = []
         self.notifier = NotificationApp()
-        self.notifications = {}
+        self.notifications = {1: {'title': 'test'}}
 
         self.blank_after = 15
 

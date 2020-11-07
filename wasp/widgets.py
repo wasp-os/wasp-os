@@ -297,13 +297,8 @@ _no_button_y_coord = const(100)
 class ConfirmationView:
     "Confirmation widget allowing user confirmation of a setting"
 
-    class TouchResult:
-        YES = 0
-        NO = 1
-        NO_ACTION = 2
-
     def __init__(self):
-        self.drawable = wasp.watch.drawable
+        self.active = False
 
         self.yes_button_bounds = (
             (_yes_button_x_coord, _yes_button_y_coord),
@@ -321,22 +316,23 @@ class ConfirmationView:
         )
 
     def draw(self, message):
-        self.drawable.fill(1)
-        self.drawable.string(
+        wasp.watch.drawable.fill(1)
+        wasp.watch.drawable.string(
             message,
             _message_string_x_coord,
             _message_string_y_coord
         )
-        self.drawable.blit(
+        wasp.watch.drawable.blit(
             icons.yes_button,
             _yes_button_x_coord,
             _yes_button_y_coord,
         )
-        self.drawable.blit(
+        wasp.watch.drawable.blit(
             icons.no_button,
             _no_button_x_coord,
             _no_button_y_coord,
         )
+        self.active = True
 
 
     def touch(self, event):
@@ -357,8 +353,8 @@ class ConfirmationView:
         )
 
         if is_yes_button_press:
-            return self.TouchResult.YES
+            return True
         elif is_no_button_press:
-            return self.TouchResult.NO
+            return False
         else:
-            return self.TouchResult.NO_ACTION
+            return None
