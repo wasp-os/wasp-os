@@ -41,7 +41,7 @@ bootloader: build-$(BOARD_SAFE)
 
 reloader: bootloader build-$(BOARD_SAFE)
 	$(MAKE) -C reloader/ BOARD=$(BOARD)
-	mv reloader/build-$(BOARD)/reloader.zip build-$(BOARD)/
+	cp reloader/build-$(BOARD)/reloader*.zip build-$(BOARD)
 
 softdevice:
 	micropython/ports/nrf/drivers/bluetooth/download_ble_stack.sh
