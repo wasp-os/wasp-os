@@ -8,7 +8,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
 
     steps:
     - name: Checkout files
@@ -38,7 +38,7 @@ jobs:
       id: install-packages
       run:  |
           sudo apt-get update
-          sudo apt-get install -y python3-sphinx python3-recommonmark
+          sudo apt-get install -y python3-sphinx python3-recommonmark python3-cryptography python3-cbor
 
     - name: Update submodules
       id:   update-submodules
@@ -59,11 +59,30 @@ jobs:
           make -j `nproc` VERSION=${{ github.sha }} dist
           mv ../wasp-os-${{ github.sha }}.tar.gz .
 
-    - name: Upload binaries
+    - name: Upload full binary distribution
       id:   upload-binaries
       uses: actions/upload-artifact@v2
       with:
           name: wasp-os-${{ github.sha }}
-          path:  |
-              build-*
-              wasp-os-${{ github.sha }}.tar.gz
+          path: wasp-os-${{ github.sha }}.tar.gz
+
+    - name: Upload pinetime binaries
+      id:   upload-pinetime
+      uses: actions/upload-artifact@v2
+      with:
+          name: pinetime-${{ github.sha }}
+          path: build-pinetime
+
+    - name: Upload Colmi P8 binaries
+      id:   upload-p8
+      uses: actions/upload-artifact@v2
+      with:
+          name: p8-${{ github.sha }}
+          path: build-p8
+
+    - name: Upload Senbono K9 binaries
+      id:   upload-k9
+      uses: actions/upload-artifact@v2
+      with:
+          name: k9-${{ github.sha }}
+          path: build-k9
