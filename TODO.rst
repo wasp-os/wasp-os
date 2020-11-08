@@ -21,23 +21,11 @@ Bootloader
 * [ ] Stay in bootloader after battery run down
 * [ ] Implement power off support (no splash screen)
 
-Reloader
-~~~~~~~~
-
-* [ ] Board identity check
-* [ ] UICR update support
-* [ ] Improve linker map (everything except linker table at +256K)
-* [ ] mcuboot
-
-  * [ ] Reconfigurable entry point (allow reloader to run from mcuboot)
-  * [ ] Allow reloader to install mcuboot and flash app (from wasp-bootloader)
-  * [ ] Allow reloader to install wasp-os (from mcuboot)
-
 Micropython
 ~~~~~~~~~~~
 
 * [ ] Use SoftDevice sleep logic
-* [ ] Automatically enter SPI flash power saving mode
+* [ ] Rebase on later version of MicroPython
 
 Wasp-os
 ~~~~~~~
@@ -47,6 +35,11 @@ Wasp-os
   * [ ] Music player support
   * [ ] Set date/time
   * [ ] Fully fledged wasp-os device class
+
+wasptool
+~~~~~~~~
+
+* [ ] Integrate a more powerful minifier into the wasptool paste() method
 
 0.3 (a.k.a. M3): Smartwatch
 ---------------------------
@@ -59,6 +52,14 @@ Reloader
 
 * [X] Pre-flash image verification
 * [X] Post-flash image verification
+* [X] Board identity check
+* [X] UICR update support
+* [X] Improve linker map (everything except linker table at +256K)
+* [X] mcuboot
+
+  * [X] Reconfigurable entry point (allow reloader to run from mcuboot)
+  * [X] Allow reloader to install mcuboot and flash app (from wasp-bootloader)
+  * [X] Allow reloader to install wasp-os (from mcuboot)
 
 Wasp-os
 ~~~~~~~
@@ -81,10 +82,12 @@ Wasp-os
   * [X] BMA421 driver
   * [X] Step counter app
 
-* [ ] Documentation
+* [X] Automatically enter SPI flash power saving mode
+
+* [X] Documentation
 
   * [X] Contributors guide (and code of conduct)
-  * [ ] Debugging and troubleshooting guide
+  * [X] Debugging and troubleshooting guide
   * [X] Screenshots for bootloader and all applications
   * [X] Improve the install guide
 
