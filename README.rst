@@ -34,6 +34,7 @@ devices:
 
  * Pine64 PineTime (developer edition)
  * Colmi P8
+ * Senbono K9
 
 The
 `Installation Guide <https://wasp-os.readthedocs.io/en/latest/install.html>`_
