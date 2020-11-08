@@ -63,6 +63,9 @@ Applications
    :members:
    :undoc-members:
 
+.. automodule:: apps.fibonacci_clock
+   :members:
+
 .. automodule:: apps.flashlight
    :members:
    :undoc-members:
