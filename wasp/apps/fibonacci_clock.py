@@ -9,6 +9,11 @@ mathematician Fibonacci in the 13th century. This is a sequence starting with
 1 and 1, where each subsequent number is the sum of the previous two. For the
 clock I used the first 5 terms: 1, 1, 2, 3 and 5.
 
+    .. figure:: res/FiboApp.png
+        :width: 179
+
+        Screenshot of the fibonacci clock application
+
 The screen of the clock is made up of five squares whose side lengths match
 the first five Fibonacci numbers: 1, 1, 2, 3 and 5. The hours are displayed
 using red and the minutes using green. When a square is used to display both
@@ -51,12 +56,7 @@ icon = (
 )
 
 class FibonacciClockApp():
-    """Displays the time as a Fibonacci Clock
-
-    .. figure:: res/FiboApp.png
-        :width: 179
-
-        Screenshot of the fibonacci clock application
+    """Displays the time as a Fibonacci Clock.
     """
     NAME = 'Fibo'
     ICON = icon
