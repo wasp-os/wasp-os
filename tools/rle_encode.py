@@ -268,20 +268,51 @@ def encode_8bit(im):
 
     return (im.width, im.height, bytes(rle))
 
-def render_c(image, fname):
-    print(f'// 1-bit RLE, generated from {fname}, {len(image[2])} bytes')
-    print(f'static const uint8_t {varname(fname)}[] = {{')
-    print(' ', end='')
+def render_c(image, fname, indent, depth):
+    extra_indent = ' ' * indent
+    if len(image) == 3:
+        print(f'{extra_indent}// {depth}-bit RLE, generated from {fname}, '
+              f'{len(image[2])} bytes')
+        (x, y, pixels) = image
+    else:
+        print(f'{extra_indent}// {depth}-bit RLE, generated from {fname}, '
+              f'{len(image)} bytes')
+        pixels = image
+
+    print(f'{extra_indent}static const uint8_t {varname(fname)}[] = {{')
+    print(f'{extra_indent} ', end='')
     i = 0
-    for rl in image[2]:
+    for rl in pixels:
         print(f' {hex(rl)},', end='')
 
         i += 1
         if i == 12:
-            print('\n ', end='')
+            print(f'\n{extra_indent} ', end='')
             i = 0
-
     print('\n};')
+
+def render_py(image, fname, indent, depth):
+    extra_indent = ' ' * indent
+    if len(image) == 3:
+        print(f'{extra_indent}# {depth}-bit RLE, generated from {fname}, '
+              f'{len(image[2])} bytes')
+        (x, y, pixels) = image
+        print(f'{extra_indent}{varname(fname)} = (')
+        print(f'{extra_indent}    {x}, {y},')
+    else:
+        print(f'{extra_indent}# {depth}-bit RLE, generated from {fname}, '
+              f'{len(image)} bytes')
+        pixels = image[3:]
+        print(f'{extra_indent}{varname(fname)} = (')
+        print(f'{extra_indent}    {image[0:1]}')
+        print(f'{extra_indent}    {image[1:3]}')
+
+    # Split the bytestring to ensure each line is short enough to
+    # be absorbed on the target if needed.
+    for i in range(0, len(pixels), 16):
+        print(f'{extra_indent}    {pixels[i:i+16]}')
+    print(f'{extra_indent})')
+
 
 def decode_to_ascii(image):
     (sx, sy, rle) = image
@@ -310,8 +341,6 @@ def decode_to_ascii(image):
     # Check the image is the correct length
     assert(dp == 0)
 
-
-
 parser = argparse.ArgumentParser(description='RLE encoder tool.')
 parser.add_argument('files', nargs='+',
                     help='files to be encoded')
@@ -327,7 +356,6 @@ parser.add_argument('--8bit', action='store_true', dest='eightbit',
                     help='Generate 8-bit image')
 
 args = parser.parse_args()
-extra_indent = ' ' * args.indent
 if args.eightbit:
     encoder = encode_8bit
     depth = 8
@@ -342,27 +370,9 @@ for fname in args.files:
     image = encoder(Image.open(fname))
 
     if args.c:
-        render_c(image, fname)
+        render_c(image, fname, args.indent, depth)
     else:
-        if len(image) == 3:
-            print(f'{extra_indent}# {depth}-bit RLE, generated from {fname}, '
-                  f'{len(image[2])} bytes')
-            (x, y, pixels) = image
-            print(f'{extra_indent}{varname(fname)} = (')
-            print(f'{extra_indent}    {x}, {y},')
-        else:
-            print(f'{extra_indent}# {depth}-bit RLE, generated from {fname}, '
-                  f'{len(image)} bytes')
-            pixels = image[3:]
-            print(f'{extra_indent}{varname(fname)} = (')
-            print(f'{extra_indent}    {image[0:1]}')
-            print(f'{extra_indent}    {image[1:3]}')
-
-        # Split the bytestring to ensure each line is short enough to
-        # be absorbed on the target if needed.
-        for i in range(0, len(pixels), 16):
-            print(f'{extra_indent}    {pixels[i:i+16]}')
-        print(f'{extra_indent})')
+        render_py(image, fname, args.indent, depth)
 
     if args.ascii:
         print()
