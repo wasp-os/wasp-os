@@ -1,0 +1,8 @@
+Pillow>=8.0.1
+click>=7.1.2
+numpy>=1.19.4
+pexpect>=4.8.0
+ptyprocess>=0.6.0
+pysdl2>=0.9.7
+pyserial>=3.4
+pyminifier>=2.1
