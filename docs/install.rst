@@ -37,7 +37,7 @@ adapt the following command appropriately:
 
 .. code-block:: sh
 
-    pip3 install --user click numpy pexpect Pillow pyserial pysdl2
+    pip3 install --user -r requirements.txt
 
 You will also need a toolchain for the Arm Cortex-M4. wasp-os is developed and
 tested using the `GNU-RM toolchain
