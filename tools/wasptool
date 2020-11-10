@@ -12,206 +12,269 @@ import time
 import string
 import sys
 
-def pbar(iterable, quiet=False):
-    step = 100 / len(iterable)
-    for i, v in enumerate(iterable):
-        if not quiet:
-            percent = round(step * i, 1)
-            bar = int(percent) // 2
-            print(f'[{"#"*bar}{"."*(50-bar)}] {percent}%', end='\r', flush=True)
-        yield v
-    if not quiet:
-        print(f'[{"#"*50}] 100% ')
+from pyminifier import minification
+from pyminifier import token_utils
 
-def sync(c):
+
+class PyminiferOptions:
+    """
+    Abstract class to define the options used for the pyminifier module.
+    """
+
+    def __init__(self):
+        """Simple constructor method to define the properties for .
+        """
+        # Use tabs instead of spaces
+        self.tabs = False
+        # Obfuscate all code
+        self.obfuscate = False
+        self.obf_classes = False
+        self.obf_functions = False
+
+        self.nominify = False
+        self.obf_variables = False
+        self.obf_builtins = False
+        self.obf_import_methods = False
+        self.replacement_length = 1
+        self.use_nonlatin = False
+
+
+def pbar(iterable, quiet=False):
+    """
+
+    :param iterable:
+    :param bool quiet:
+    :return:
+    """
+    step = 100 / len(iterable)
+    for index, value in enumerate(iterable):
+        if not quiet:
+            percent = round(step * index, 1)
+            bar = int(percent) // 2
+            print(
+                f'[{"#" * bar}{"." * (50 - bar)}] {percent}%',
+                end='\r',
+                flush=True
+            )
+        yield value
+
+    if not quiet:
+        print(f'[{"#" * 50}] 100% ')
+
+
+def sync(console):
     """Stop the watch and synchronize with the command prompt.
 
     Sending a random print ensure the final export (of the prompt)
     does not accidentally match a previously issued prompt.
     """
-    verbose = bool(c.logfile)
+    verbose = bool(console.logfile)
     tag = ''.join([random.choice(string.ascii_uppercase) for i in range(6)])
-
 
     try:
         if not verbose:
-            c.logfile = io.StringIO()
+            console.logfile = io.StringIO()
 
-        c.send('\x03')
-        c.expect('>>> ')
-        c.sendline(f'print("{tag[:3]}""{tag[3:]}")')
-        c.expect(tag)
-        c.expect('>>> ')
+        console.send('\x03')
+        console.expect('>>> ')
+        console.sendline(f'print("{tag[:3]}""{tag[3:]}")')
+        console.expect(tag)
+        console.expect('>>> ')
 
         if not verbose:
-            c.logfile.close()
-            c.logfile = None
+            console.logfile.close()
+            console.logfile = None
+
     except pexpect.exceptions.EOF:
         print("ERROR: Cannot sync with device")
-        print_log(c.logfile)
+        print_log(console.logfile)
         sys.exit(1)
 
-def unsync(c):
+
+def unsync(console):
     """Set the watch running again.
 
     There must be an expect (or a sleep) since if we kill the subordinate
     process too early then the sendline will not have completed.
     """
-    c.sendline('wasp.system.run()')
-    c.expect(['Watch is running, use Ctrl-C to stop',
-              'Watch already running in the background'])
-    c.send('\x18')
+    console.sendline('wasp.system.run()')
+    console.expect(
+        [
+            'Watch is running, use Ctrl-C to stop',
+            'Watch already running in the background'
+        ]
+    )
+    console.send('\x18')
 
-def paste(c, f, verbose=False, chunk=None):
-    docstring = False
 
-    tosend = []
+def paste(console, file_obj, verbose=False, chunk=None):
+    """
 
-    for ln in f.readlines():
-        ln = ln.rstrip()
+    :param console:
+    :param file_obj:
+    :param verbose:
+    :param chunk:
+    :return: None
+    """
 
-        # This is a bit loose (definitely not PEP-257 compliant) but
-        # is enough for most code.
-        if ln.lstrip().startswith('"""'):
-            docstring = True
-        if docstring:
-            if ln.rstrip().endswith('"""'):
-                docstring = False
-            continue
-
-        if ln.lstrip().startswith('#'):
-            continue
-
-        if ln.strip() == '':
-            continue
-
-        tosend.append(ln)
+    # Open the file and read it's content.
+    source = file_obj.read()
+    # Get tokens from file.
+    tokens = token_utils.listified_tokenizer(source)
+    # Minify the file content based on the tokens
+    minified = minification.minify(tokens, PyminiferOptions())
+    # Recompute tokens from minified version.
+    tokens = token_utils.listified_tokenizer(minified)
+    # Final result on file minified.
+    result = token_utils.untokenize(tokens)
+    # Covert it into array so it gets send line by line.
+    tosend = result.split("\n")
 
     for ln in pbar(tosend, verbose):
         if chunk and ln.startswith('class'):
             chunk()
 
-        c.sendline(ln)
+        console.sendline(ln)
 
-        choice = c.expect(['=== ', 'FATAL: uncaught exception [0-9a-f\r]*\n'])
+        choice = console.expect(
+            ['=== ', 'FATAL: uncaught exception [0-9a-f\r]*\n']
+        )
+
         if choice == 1:
             # Capture and display the error message, then exit
             if not verbose:
                 print('\n~~~')
+
             while choice == 1:
                 if not verbose:
-                    print(c.match.group(0).rstrip(), file=sys.stderr)
-                choice = c.expect([pexpect.TIMEOUT, '.*\n'], timeout=2)
+                    print(console.match.group(0).rstrip(), file=sys.stderr)
+                choice = console.expect([pexpect.TIMEOUT, '.*\n'], timeout=2)
+
             if not verbose:
                 print('~~~')
             print('\nPlease reboot your device', file=sys.stderr)
             sys.exit(16)
 
+
 def print_log(logfile):
     lines = logfile.getvalue().split('\n')
-    lines = [ l.strip('\x04\r') for l in lines ]
+    lines = [line.strip('\x04\r') for line in lines]
 
-    output = [ l for l in lines if l and l != '>>> ' ]
+    output = [line for line in lines if line and line != '>>> ']
     if output:
         print('~~~')
         print('\n'.join(output))
         print('~~~')
 
-def handle_eval(c, cmd):
-    verbose = bool(c.logfile)
 
-    c.send('\x05')
-    c.expect('=== ')
-    c.sendline(cmd)
-    c.expect('=== ')
+def handle_eval(console, cmd):
+    verbose = bool(console.logfile)
+
+    console.send('\x05')
+    console.expect('=== ')
+    console.sendline(cmd)
+    console.expect('=== ')
 
     if not verbose:
-        c.logfile = io.StringIO()
-    c.send('\x04')
-    c.expect('>>> ')
-    if not verbose:
-        print_log(c.logfile)
-        c.logfile.close()
-        c.logfile = None
+        console.logfile = io.StringIO()
 
-def handle_exec(c, fname):
-    verbose = bool(c.logfile)
+    console.send('\x04')
+    console.expect('>>> ')
+
+    if not verbose:
+        print_log(console.logfile)
+        console.logfile.close()
+        console.logfile = None
+
+
+def handle_exec(console, fname):
+    verbose = bool(console.logfile)
 
     log = io.StringIO()
 
     def chunk():
         if not verbose:
-            c.logfile = log
-        c.send('\x04')
-        c.expect('>>> ')
+            console.logfile = log
+        console.send('\x04')
+        console.expect('>>> ')
         if not verbose:
-            c.logfile = None
-        c.send('\x05')
-        c.expect('=== ')
+            console.logfile = None
+        console.send('\x05')
+        console.expect('=== ')
 
-    with open(fname) as f:
+    with open(fname) as file_obj:
         if not verbose:
             print(f'Preparing to run {fname}:')
 
-        c.send('\x05')
-        c.expect('=== ')
+        console.send('\x05')
+        console.expect('=== ')
 
-        paste(c, f, verbose, chunk)
+        paste(console, file_obj, verbose, chunk)
 
         if not verbose:
-            c.logfile = log
-        c.send('\x04')
-        c.expect('>>> ')
+            console.logfile = log
+        console.send('\x04')
+        console.expect('>>> ')
         if not verbose:
-            c.logfile = None
+            console.logfile = None
 
     print_log(log)
     log.close()
 
-def handle_reset(c, ota=False):
+
+def handle_reset(console, ota=False):
     cmd = 'reset'
     if ota:
         cmd = 'enter_ota_dfu'
 
-    c.send('\x05')
-    c.expect('=== ')
-    c.sendline('import machine')
-    c.expect('=== ')
-    c.sendline(f'machine.{cmd}()')
-    c.expect('=== ')
-    c.send('\x04')
+    console.send('\x05')
+    console.expect('=== ')
+    console.sendline('import machine')
+    console.expect('=== ')
+    console.sendline(f'machine.{cmd}()')
+    console.expect('=== ')
+    console.send('\x04')
 
-def handle_rtc(c):
+
+def handle_rtc(console):
     # Wait for the clock to tick over to the next second
     now = then = time.localtime()
     while now[5] == then[5]:
         now = time.localtime()
 
     # Set the time
-    c.sendline(f'watch.rtc.set_localtime(({now[0]}, {now[1]}, {now[2]}, {now[3]}, {now[4]}, {now[5]}, {now[6]}, {now[7]}))')
-    c.expect('>>> ')
+    console.sendline(
+        f'watch.rtc.set_localtime(({now[0]}, {now[1]}, {now[2]}, {now[3]}, {now[4]}, {now[5]}, {now[6]}, {now[7]}))')
+    console.expect('>>> ')
 
-def check_rtc(c):
-    c.sendline('print(watch.rtc.get_localtime())')
-    c.expect('\(([0-9]+), ([0-9]+), ([0-9]+), ([0-9]+), ([0-9]+), ([0-9]+), ([0-9]+), ([0-9]+)\)')
+
+def check_rtc(console):
+    console.sendline('print(watch.rtc.get_localtime())')
+    console.expect(
+        '\(([0-9]+), ([0-9]+), ([0-9]+), ([0-9]+), ([0-9]+), ([0-9]+), ([0-9]+), ([0-9]+)\)')
     t = time.localtime()
 
-    watch_hms = (int(c.match[4]), int(c.match[5]), int(c.match[6]))
+    watch_hms = (
+        int(console.match[4]),
+        int(console.match[5]),
+        int(console.match[6])
+    )
     watch_str = f'{watch_hms[0]:02d}:{watch_hms[1]:02d}:{watch_hms[2]:02d}'
     host_hms = (t.tm_hour, t.tm_min, t.tm_sec)
     host_str = f'{host_hms[0]:02d}:{host_hms[1]:02d}:{host_hms[2]:02d}'
     delta = 3600 * (host_hms[0] - watch_hms[0]) + \
-              60 * (host_hms[1] - watch_hms[1]) + \
-                   (host_hms[2] - watch_hms[2])
+            60 * (host_hms[1] - watch_hms[1]) + \
+            (host_hms[2] - watch_hms[2])
     print(f"PC <-> watch:  {watch_str} <-> {host_str} (delta {delta})")
 
-    c.expect('>>> ')
+    console.expect('>>> ')
 
-def handle_binary_upload(c, fname):
-    verbose = bool(c.logfile)
 
-    c.sendline(f'f = open("{os.path.basename(fname)}", "wb")')
-    c.expect('>>> ')
+def handle_binary_upload(console, fname):
+    verbose = bool(console.logfile)
+
+    console.sendline(f'f = open("{os.path.basename(fname)}", "wb")')
+    console.expect('>>> ')
 
     # Absorb the file to be uploaded
     with open(fname, 'rb') as f:
@@ -224,60 +287,95 @@ def handle_binary_upload(c, fname):
         print(f'Uploading {fname}:')
 
     # Send the data
-    for i in pbar(range(0, chunksz*nchunks, chunksz), verbose):
-        c.sendline(f'f.write({repr(data[i:i+chunksz])})')
-        c.expect('>>> ')
+    for i in pbar(range(0, chunksz * nchunks, chunksz), verbose):
+        console.sendline(f'f.write({repr(data[i:i + chunksz])})')
+        console.expect('>>> ')
+
     if lastchunk:
-        c.sendline(f'f.write({repr(data[-lastchunk:])})')
-        c.expect('>>> ')
+        console.sendline(f'f.write({repr(data[-lastchunk:])})')
+        console.expect('>>> ')
 
-    c.sendline('f.close()')
-    c.expect('>>> ')
+    console.sendline('f.close()')
+    console.expect('>>> ')
 
-def handle_upload(c, fname):
-    verbose = bool(c.logfile)
 
-    c.sendline('from shell import upload')
-    c.expect('>>> ')
+def handle_upload(console, fname):
+    verbose = bool(console.logfile)
+
+    console.sendline('from shell import upload')
+    console.expect('>>> ')
 
     with open(fname) as f:
         if not verbose:
             print(f'Uploading {fname}:')
 
-        c.sendline(f'upload("{os.path.basename(fname)}")')
-        c.expect('=== ')
-        paste(c, f, verbose)
-        c.send('\x04')
+        console.sendline(f'upload("{os.path.basename(fname)}")')
+        console.expect('=== ')
+        paste(console, f, verbose)
+        console.send('\x04')
 
-        c.expect('>>> ')
+        console.expect('>>> ')
+
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
-            description='Wasp-os command and control client')
-    parser.add_argument('--bootloader', action='store_true',
-            help="Reboot into the bootloader mode for OTA update")
-    parser.add_argument('--binary', action='store_true',
-            help="Enable non-ASCII mode for suitable commands (such as upload)")
-    parser.add_argument('--console', action='store_true',
-            help='Launch a REPL session')
-    parser.add_argument('--check-rtc', action='store_true',
-            help='Compare workstation and watch times')
-    parser.add_argument('--device',
-            help='Connect only to a specific named device (or MAC address)')
-    parser.add_argument('--exec',
-            help='Execute the contents of a file')
-    parser.add_argument('--eval',
-            help='Execute the provided python string')
-    parser.add_argument('--reset', action='store_true',
-            help="Reboot the device (and don't stay in bootloader mode)")
-    parser.add_argument('--ota',
-            help="Deliver an OTA update to the device")
-    parser.add_argument('--rtc', action='store_true',
-            help='Set the time on the wasp-os device')
-    parser.add_argument('--upload',
-            help='Copy the specified file to the wasp-os device')
-    parser.add_argument('--verbose', action='store_true',
-            help='Log interaction with the wasp-os device')
+        description='Wasp-os command and control client'
+    )
+    parser.add_argument(
+        '--bootloader',
+        action='store_true',
+        help="Reboot into the bootloader mode for OTA update"
+    )
+    parser.add_argument(
+        '--binary',
+        action='store_true',
+        help="Enable non-ASCII mode for suitable commands (such as upload)"
+    )
+    parser.add_argument(
+        '--console',
+        action='store_true',
+        help='Launch a REPL session'
+    )
+    parser.add_argument(
+        '--check-rtc',
+        action='store_true',
+        help='Compare workstation and watch times'
+    )
+    parser.add_argument(
+        '--device',
+        help='Connect only to a specific named device (or MAC address)'
+    )
+    parser.add_argument(
+        '--exec',
+        help='Execute the contents of a file'
+    )
+    parser.add_argument(
+        '--eval',
+        help='Execute the provided python string'
+    )
+    parser.add_argument(
+        '--reset',
+        action='store_true',
+        help="Reboot the device (and don't stay in bootloader mode)"
+    )
+    parser.add_argument(
+        '--ota',
+        help="Deliver an OTA update to the device"
+    )
+    parser.add_argument(
+        '--rtc',
+        action='store_true',
+        help='Set the time on the wasp-os device'
+    )
+    parser.add_argument(
+        '--upload',
+        help='Copy the specified file to the wasp-os device'
+    )
+    parser.add_argument(
+        '--verbose',
+        action='store_true',
+        help='Log interaction with the wasp-os device'
+    )
 
     args = parser.parse_args()
 
@@ -290,63 +388,66 @@ if __name__ == '__main__':
         device_args = ''
 
     pynus = os.path.dirname(sys.argv[0]) + '/pynus/pynus.py' + device_args
-    console = pexpect.spawn(pynus, encoding='UTF-8')
+    console_object = pexpect.spawn(pynus, encoding='UTF-8')
+
     if args.verbose:
-        console.logfile = sys.stdout
+        console_object.logfile = sys.stdout
     else:
-        console.logfile = io.StringIO()
+        console_object.logfile = io.StringIO()
 
     try:
-        console.expect('Connect.*\(([0-9A-F:]*)\)')
+        console_object.expect('Connect.*\(([0-9A-F:]*)\)')
+
     except pexpect.exceptions.TIMEOUT:
         print('ERROR: Cannot find suitable wasp-os device')
         if not args.verbose:
-            print_log(console.logfile)
+            print_log(console_object.logfile)
         sys.exit(1)
-    if not args.verbose:
-        console.logfile.close()
-        console.logfile = None
 
-    macaddr = console.match.group(1)
-    console.expect('Exit console using Ctrl-X')
+    if not args.verbose:
+        console_object.logfile.close()
+        console_object.logfile = None
+
+    macaddr = console_object.match.group(1)
+    console_object.expect('Exit console using Ctrl-X')
     time.sleep(0.5)
-    sync(console)
+    sync(console_object)
 
     if args.rtc:
-        handle_rtc(console)
+        handle_rtc(console_object)
 
     if args.check_rtc:
-        check_rtc(console)
+        check_rtc(console_object)
 
     if args.exec:
-        handle_exec(console, args.exec)
+        handle_exec(console_object, args.exec)
 
     if args.eval:
-        handle_eval(console, args.eval)
+        handle_eval(console_object, args.eval)
 
     if args.upload:
         if args.binary:
-            handle_binary_upload(console, args.upload)
+            handle_binary_upload(console_object, args.upload)
         else:
-            handle_upload(console, args.upload)
+            handle_upload(console_object, args.upload)
 
     if args.console:
-        console.close()
+        console_object.close()
         argv = pynus.split()
         os.execv(argv[0], argv)
 
     if args.ota:
-        handle_reset(console, ota=True)
+        handle_reset(console_object, ota=True)
         time.sleep(1.0)
         dfu = os.path.dirname(sys.argv[0]) + '/ota-dfu/dfu.py'
         os.execl(dfu, dfu, '-z', args.ota, '-a', macaddr, '--legacy')
 
     if args.reset:
-        handle_reset(console)
+        handle_reset(console_object)
         sys.exit(0)
 
     if args.bootloader:
-        handle_reset(console, ota=True)
+        handle_reset(console_object, ota=True)
         sys.exit(0)
 
-    unsync(console)
+    unsync(console_object)
