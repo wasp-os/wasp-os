@@ -30,7 +30,7 @@ Micropython
 Wasp-os
 ~~~~~~~
 
-* [ ] Watch/phone integration
+* [ ] Watch/phone integration with GadgetBridge
 
   * [ ] Music player support
   * [ ] Set date/time
