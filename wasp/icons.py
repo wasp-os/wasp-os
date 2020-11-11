@@ -138,8 +138,7 @@ torch = (
 up_arrow = (16, 9, b'\x07\x02\r\x04\x0b\x06\t\x08\x07\n\x05\x0c\x03\x0e\x01 ')
 
 # 1-bit RLE, generated from res/down_arrow.png, 17 bytes
-down_arrow = (
-    16, 9, b'\x00 \x01\x0e\x03\x0c\x05\n\x07\x08\t\x06\x0b\x04\r\x02\x07')
+down_arrow = (16, 9, b'\x00 \x01\x0e\x03\x0c\x05\n\x07\x08\t\x06\x0b\x04\r\x02\x07')
 
 # 2-bit RLE, generated from res/knob.png, 72 bytes
 knob = (

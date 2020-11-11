@@ -28,7 +28,6 @@ null = None
 true = True
 false = False
 
-
 def _info(msg):
     json.dump({'t': 'info', 'msg': msg}, sys.stdout)
     sys.stdout.write('\r\n')
@@ -53,9 +52,9 @@ def GB(cmd):
         elif task == 'notify-':
             wasp.system.unnotify(cmd['id'])
         elif task == 'musicstate':
-            wasp.system.togglemusic(cmd)
+            wasp.system.toggle_music(cmd)
         elif task == 'musicinfo':
-            wasp.system.setmusicinfo(cmd)
+            wasp.system.set_music_info(cmd)
         else:
             pass
             #_info('Command "{}" is not implemented'.format(cmd))

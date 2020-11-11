@@ -128,8 +128,7 @@ class Manager():
 			 (HeartApp, True),
 			 (FlashlightApp, False),
 			 (SettingsApp, False),
-             (TestApp, False),
-             (MusicPlayerApp, False)):
+             (TestApp, False)):
 		try:
 			self.register(app(), qr)
 		except:
@@ -241,10 +240,10 @@ class Manager():
         if id in self.notifications:
             del self.notifications[id]
 
-    def togglemusic(self, state):
+    def toggle_music(self, state):
         self.musicstate = state
 
-    def setmusicinfo(self, info):
+    def set_music_info(self, info):
         self.musicinfo = info
 
     def request_event(self, event_mask):

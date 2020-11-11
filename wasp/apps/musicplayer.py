@@ -25,7 +25,7 @@ class MusicPlayerApp(object):
 
         Screenshot of the Music Player application
     """
-    NAME = 'MPlayer'
+    NAME = 'Music'
     ICON = icons.headset
 
     def __init__(self):
@@ -34,12 +34,6 @@ class MusicPlayerApp(object):
         self._pause_icon = icons.pause
         self._play_state = False
         self._icon_state = self._play_icon
-        self._gb_play = '{"t":"music", "n":"play"} '
-        self._gb_pause = '{"t":"music", "n":"pause"} '
-        self._gb_next = '{"t":"music", "n":"next"} '
-        self._gb_prev = '{"t":"music", "n":"previous"} '
-        self._gb_vup = '{"t":"music", "n":"volumeup"} '
-        self._gb_vdo = '{"t":"music", "n":"volumedown"} '
         self._max_display = 240
         self._icon_size = 72
         self._center_at = int((self._max_display - self._icon_size)/2)
@@ -49,8 +43,6 @@ class MusicPlayerApp(object):
         self._state_changed = True
         self._track_changed = True
         self._artist_changed = True
-        self._track_pos = 24 + 144
-        self._artist_pos = 12
 
     def _send_cmd(self, cmd):
         print('\r')
@@ -135,13 +127,13 @@ class MusicPlayerApp(object):
         Notify the application of a touchscreen swipe event.
         """
         if event[0] == wasp.EventType.UP:
-            self._send_cmd(self._gb_vup)
+            self._send_cmd('{"t":"music", "n":"volumeup"} ')
         elif event[0] == wasp.EventType.DOWN:
-            self._send_cmd(self._gb_vdo)
+            self._send_cmd('{"t":"music", "n":"volumedown"} ')
         elif event[0] == wasp.EventType.LEFT:
-            self._send_cmd(self._gb_next)
+            self._send_cmd('{"t":"music", "n":"next"} ')
         elif event[0] == wasp.EventType.RIGHT:
-            self._send_cmd(self._gb_prev)
+            self._send_cmd('{"t":"music", "n":"previous"} ')
 
     def touch(self, event):
         self._play_state = not self._play_state
@@ -149,12 +141,12 @@ class MusicPlayerApp(object):
             self._musicstate = 'play'
             self._icon_state = self._pause_icon
             self._draw_button()
-            self._send_cmd(self._gb_play)
+            self._send_cmd('{"t":"music", "n":"play"} ')
         else:
             self._musicstate = 'pause'
             self._icon_state = self._play_icon
             self._draw_button()
-            self._send_cmd(self._gb_pause)
+            self._send_cmd('{"t":"music", "n":"pause"} ')
 
     def draw(self):
         """Redraw the display from scratch."""
@@ -165,9 +157,9 @@ class MusicPlayerApp(object):
         if self._state_changed:
             self._draw_button()
         if self._track_changed:
-            self._draw_track()
+            self._draw_label(self._track, 24 + 144)
         if self._artist_changed:
-            self._draw_artist()
+            self._draw_label(self._artist, 12)
 
     def _draw_button(self):
         """Redraw player button"""
@@ -175,25 +167,15 @@ class MusicPlayerApp(object):
         wasp.watch.drawable.blit(self._icon_state, self._center_at,
                                  self._center_at)
 
-    def _draw_artist(self):
-        """Redraw artist info"""
-        if self._artist:
+    def _draw_label(self, label, pos):
+        """Redraw label info"""
+        if label:
             draw = wasp.watch.drawable
-            chunks = draw.wrap(self._artist, 240)
-            self._fill_space('top')
-            for i in range(len(chunks)-1):
-                sub = self._artist[chunks[i]:chunks[i+1]].rstrip()
-                draw.string(sub, 0, self._artist_pos + 24 * i, 240)
-
-    def _draw_track(self):
-        """Redraw track info"""
-        if self._track:
-            draw = wasp.watch.drawable
-            chunks = draw.wrap(self._track, 240)
-            self._fill_space('down')
+            chunks = draw.wrap(label, 240)
+            self._fill_space(pos)
             for i in range(len(chunks)-1):
                 sub = self._track[chunks[i]:chunks[i+1]].rstrip()
-                draw.string(sub, 0, self._track_pos + 24 * i, 240)
+                draw.string(sub, 0, pos + 24 * i, 240)
 
     def _update(self):
         if self._musicstate == 'play':
