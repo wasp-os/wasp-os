@@ -16,6 +16,29 @@ from pyminifier import minification
 from pyminifier import token_utils
 
 
+class PyminiferOptions:
+    """
+    Abstract class to define the options used for the pyminifier module.
+    """
+
+    def __init__(self):
+        """Simple constructor method to define the properties for .
+        """
+        # Use tabs instead of spaces
+        self.tabs = False
+        # Obfuscate all code
+        self.obfuscate = False
+        self.obf_classes = False
+        self.obf_functions = False
+
+        self.nominify = False
+        self.obf_variables = False
+        self.obf_builtins = False
+        self.obf_import_methods = False
+        self.replacement_length = 1
+        self.use_nonlatin = False
+
+
 def pbar(iterable, quiet=False):
     step = 100 / len(iterable)
     for i, v in enumerate(iterable):
@@ -67,7 +90,6 @@ def unsync(c):
     c.send('\x18')
 
 def paste(c, f, verbose=False, chunk=None):
-
 
     # Open the file and read it's content.
     source = f.read()
