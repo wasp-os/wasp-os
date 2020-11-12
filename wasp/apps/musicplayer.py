@@ -174,7 +174,7 @@ class MusicPlayerApp(object):
             chunks = draw.wrap(label, 240)
             self._fill_space(pos)
             for i in range(len(chunks)-1):
-                sub = self._track[chunks[i]:chunks[i+1]].rstrip()
+                sub = label[chunks[i]:chunks[i+1]].rstrip()
                 draw.string(sub, 0, pos + 24 * i, 240)
 
     def _update(self):
