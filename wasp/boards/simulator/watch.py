@@ -117,6 +117,9 @@ class RTC(object):
         now = self.get_localtime()
         return (now[3], now[4], now[5])
 
+    def time(self):
+        return time.time()
+
     @property
     def uptime(self):
         return time.time() - self._epoch
