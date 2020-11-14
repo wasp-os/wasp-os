@@ -86,6 +86,14 @@ class PinHandler():
         self._value = new_value
         return new_value
 
+def _key_app(d):
+    """Get a sort key for apps."""
+    return d.NAME
+
+def _key_alarm(d):
+    """Get a sort key for alarms."""
+    return d[0]
+
 class Manager():
     """Wasp-os system manager
 
@@ -113,6 +121,7 @@ class Manager():
 
         self.blank_after = 15
 
+        self._alarms = []
         self._brightness = 2
         self._button = PinHandler(watch.button)
         self._charging = True
@@ -143,7 +152,7 @@ class Manager():
             self.quick_ring.append(app)
         else:
             self.launcher_ring.append(app)
-            self.launcher_ring.sort(key = lambda x: x.NAME)
+            self.launcher_ring.sort(key = _key_app)
 
     @property
     def brightness(self):
@@ -160,7 +169,16 @@ class Manager():
         """
         if self.app:
             if 'background' in dir(self.app):
-                self.app.background()
+                try:
+                    self.app.background()
+                except:
+                    # Clear out the old app to ensure we don't recurse when
+                    # we switch to to the CrashApp. It's a bit freaky but
+                    # True has an empty directory this is better than
+                    # None because it won't re-runt he system start up
+                    # code.
+                    self.app = True
+                    raise
         else:
             # System start up...
             watch.display.poweron()
@@ -242,6 +260,23 @@ class Manager():
 
     def set_music_info(self, info):
         self.musicinfo = info
+
+    def set_alarm(self, time, action):
+        """Queue an alarm.
+
+        :param int time: Time to trigger the alarm (use time.mktime)
+        :param function action: Action to perform when the alarm expires.
+        """
+        self._alarms.append((time, action))
+        self._alarms.sort(key = _key_alarm)
+
+    def cancel_alarm(self, time, action):
+        """Unqueue an alarm."""
+        try:
+            self._alarms.remove((time, action))
+        except:
+            return False
+        return True
 
     def request_event(self, event_mask):
         """Subscribe to events.
@@ -339,9 +374,19 @@ class Manager():
         expiry point.
         """
         rtc = watch.rtc
+        update = rtc.update()
+
+        alarms = self._alarms
+        if update and alarms:
+            now = rtc.time()
+            head = alarms[0]
+
+            if head[0] <= now:
+                alarms.remove(head)
+                head[1]()
 
         if self.sleep_at:
-            if rtc.update() and self.tick_expiry:
+            if update and self.tick_expiry:
                 now = rtc.get_uptime_ms()
 
                 if self.tick_expiry <= now:
@@ -364,8 +409,6 @@ class Manager():
 
             gc.collect()
         else:
-            watch.rtc.update()
-
             if 1 == self._button.get_event() or \
                     self._charging != watch.battery.charging():
                 self.wake()
