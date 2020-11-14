@@ -312,11 +312,12 @@ class Manager():
     def wake(self):
         """Return to a running state.
         """
-        watch.display.poweron()
-        if 'wake' in dir(self.app):
-            self.app.wake()
-        watch.backlight.set(self._brightness)
-        watch.touch.wake()
+        if not self.sleep_at:
+            watch.display.poweron()
+            if 'wake' in dir(self.app):
+                self.app.wake()
+            watch.backlight.set(self._brightness)
+            watch.touch.wake()
 
         self.keep_awake()
 
