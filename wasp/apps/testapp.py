@@ -9,6 +9,8 @@ import machine
 import wasp
 import icons
 
+from apps.pager import PagerApp
+
 class TestApp():
     """Simple test application.
 
@@ -21,7 +23,7 @@ class TestApp():
     ICON = icons.app
 
     def __init__(self):
-        self.tests = ('Button', 'Crash', 'Colours', 'Fill', 'Fill-H', 'Fill-V', 'Notifications', 'RLE', 'String', 'Touch', 'Wrap')
+        self.tests = ('Alarm', 'Button', 'Crash', 'Colours', 'Fill', 'Fill-H', 'Fill-V', 'Notifications', 'RLE', 'String', 'Touch', 'Wrap')
         self.test = self.tests[0]
         self.scroll = wasp.widgets.ScrollIndicator()
 
@@ -41,7 +43,9 @@ class TestApp():
 
     def press(self, button, state):
         draw = wasp.watch.drawable
-        if self.test == 'Button':
+        if self.test == 'Alarm':
+            self._test_alarm()
+        elif self.test == 'Button':
             draw.string('{}: {}'.format(button, state), 0, 108, width=240)
         elif self.test == 'Crash':
             self.crash()
@@ -97,6 +101,20 @@ class TestApp():
                     event[1], event[2]), 0, 108, width=240)
         elif self.test == 'Wrap':
             self._benchmark_wrap()
+
+    def _alarm(self):
+        wasp.system.wake()
+        wasp.system.switch(PagerApp('Alarm triggered'))
+
+    def _test_alarm(self):
+        def nop():
+            pass
+        now = wasp.watch.rtc.time()
+        wasp.system.set_alarm(now + 30, self._alarm)
+        wasp.system.set_alarm(now + 30, nop)
+        if not wasp.system.cancel_alarm(now + 30, nop):
+            bug()
+        wasp.watch.drawable.string("Done.", 12, 24+80)
 
     def _benchmark_rle(self):
         draw = wasp.watch.drawable
@@ -177,6 +195,9 @@ class TestApp():
         draw.string('{} test'.format(self.test),
                 0, 6, width=240)
 
+        if self.test == 'Alarm':
+            draw.string("Press button to", 12, 24+24)
+            draw.string("set alarm.", 12, 24+48)
         if self.test == 'Crash':
             draw.string("Press button to", 12, 24+24)
             draw.string("throw exception.", 12, 24+48)
