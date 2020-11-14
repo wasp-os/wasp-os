@@ -42,14 +42,41 @@ class StepCounterApp():
 
     def __init__(self):
         watch.accel.reset()
-        self._bar = wasp.widgets.StatusBar()
         self._count = 0
-        self._prev_day = -1
+        self._wake = 0
 
     def foreground(self):
-        """Activate the application."""
+        """Cancel the alarm and draw the application.
+
+        Cancelling the alarm has two effects. Firstly it ensures the
+        step count won't change whilst we are watching it and, secondly
+        it ensures that if the time of day has been set to a value in
+        the past the we reconfigure the alarm.
+
+        This does in the side effect that if the application of open at
+        midnight then the reset doesn't happen for that day.
+        """
+        wasp.system.cancel_alarm(self._wake, self._reset)
+        wasp.system.bar.clock = True
         self._draw()
         wasp.system.request_tick(1000)
+
+    def background(self):
+        """Set an alarm to trigger at midnight and reset the counter."""
+        now = watch.rtc.get_localtime()
+        yyyy = now[0]
+        mm = now[1]
+        dd = now[2]
+        then = (yyyy, mm, dd+1, 0, 0, 0, 0, 0, 0)
+
+        self._wake = time.mktime(then)
+        wasp.system.set_alarm(self._wake, self._reset)
+
+    def _reset(self):
+        """"Reset the step counter and re-arm the alarm."""
+        watch.accel.steps = 0
+        self._wake += 24 * 60 * 60
+        wasp.system.set_alarm(self._wake, self._reset)
 
     def tick(self, ticks):
         self._count += 686;
@@ -62,19 +89,13 @@ class StepCounterApp():
         draw.blit(feet, 12, 132-24)
 
         self._update()
-        self._bar.draw()
+        wasp.system.bar.draw()
 
     def _update(self):
         draw = wasp.watch.drawable
 
         # Update the status bar
-        now = self._bar.update()
-
-        # Reset the step counter if we have move onto the next day
-        if now and now[2] != self._prev_day:
-            watch.accel.steps = 0
-            draw.fill(0, 60, 132-18, 180, 36)
-            self._prev_day = now[2]
+        now = wasp.system.bar.update()
 
         # Update the step count
         count = watch.accel.steps

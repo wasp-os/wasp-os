@@ -12,6 +12,7 @@ Welcome to WASP-OS's documentation!
 
    README
    install
+   apps
    appguide
    wasp
    contributing

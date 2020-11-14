@@ -1,6 +1,28 @@
 # SPDX-License-Identifier: LGPL-3.0-or-later
 # Copyright (C) 2020 Daniel Thompson
-"""Conway's Game of Life.
+"""Conway's Game of Life
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+The Game of Life is a "no player game" played on a two dimensional grid
+where the rules interact to make interesting patterns.
+
+    .. figure:: res/LifeApp.png
+        :width: 179
+
+        Screenshot of the Game of Life application
+
+The game is based on four simple rules:
+
+    1. Death by isolation: a cell dies if has fewer than two live neighbours.
+
+    2. Death by overcrowding: a cell dies if it has more than three live
+       neighbours.
+
+    3. Survival: a living cell continues to survive if it has two or three
+       neighbours.
+
+    4. Reproduction: a dead cell comes alive if it has exactly three
+       neighbours.
 
 On 11 April 2020 John H. Conway who, among many, many other
 achievements, devised the rule set for his Game of Life, died of
@@ -71,20 +93,10 @@ def set_cell(board, stride: int, x: int, y: int, v: bool):
 def game_of_life(b, xmax: int, ymax: int, nb):
     """Run a single generation of Conway's Game of Life
 
-    1. Death by isolation: a cell dies if has fewer than two live neighbours.
-
-    2. Death by overcrowding: a cell dies if it has more than three live
-       neighbours.
-
-    3. Survival: a living cell continues to survive if it has two or three
-       neighbours.
-
-    4. Reproduction: a dead cell comes alive if it has exactly three
-       neighbours.
-
-    In the code below we have simplified the above rules to "a cell is
-    alive it has three live neighbours or if it was previously alive
-    and has two neighbours, otherwise it is dead.".
+    In the code below we have simplified the rules described at the top
+    of this file to "a cell is alive it has three live neighbours or if
+    it was previously alive and has two neighbours, otherwise it is
+    dead.".
     """
     board = ptr32(b)
     next_board = ptr32(nb)

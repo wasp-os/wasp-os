@@ -27,6 +27,7 @@ class HRS3300:
     def __init__(self, i2c):
         self._i2c = i2c
 
+    def init(self):
         w = self.write_reg
 
         # HRS disabled, 12.5 ms wait time between cycles, (partly) 20mA drive
@@ -50,6 +51,8 @@ class HRS3300:
         self._i2c.writeto_mem(_I2CADDR, addr, bytes((val,)))
 
     def enable(self):
+        self.init()
+
         enable = self.read_reg(_ENABLE)
         enable |= _ENABLE_HEN
         self.write_reg(_ENABLE, enable)

@@ -17,12 +17,12 @@ class StopwatchApp():
     ICON = icons.app
 
     def __init__(self):
-        self._bar = wasp.widgets.StatusBar()
         self._reset()
         self._count = 0
 
     def foreground(self):
         """Activate the application."""
+        wasp.system.bar.clock = True
         self._draw()
         wasp.system.request_tick(97)
         wasp.system.request_event(wasp.EventMask.TOUCH |
@@ -111,7 +111,7 @@ class StopwatchApp():
 
         self._last_count = -1
         self._update()
-        self._bar.draw()
+        wasp.system.bar.draw()
         self._draw_splits()
 
     def _update(self):
@@ -125,7 +125,7 @@ class StopwatchApp():
                 self._reset()
 
         # Update the statusbar
-        self._bar.update()
+        wasp.system.bar.update()
 
         if self._last_count != self._count:
             centisecs = self._count

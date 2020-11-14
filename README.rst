@@ -34,6 +34,7 @@ devices:
 
  * Pine64 PineTime (developer edition)
  * Colmi P8
+ * Senbono K9
 
 The
 `Installation Guide <https://wasp-os.readthedocs.io/en/latest/install.html>`_
@@ -159,5 +160,9 @@ using one of the techniques is the Application Writer's guide.
    :width: 179
 
 .. image:: res/LifeApp.png
-   :alt: Game of Life runnin in the wasp-os simulator
+   :alt: Game of Life running in the wasp-os simulator
+   :width: 179
+
+.. image:: res/MusicPlayerApp.png
+   :alt: Music Player running in the wasp-os simulator
    :width: 179
