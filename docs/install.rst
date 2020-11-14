@@ -114,22 +114,34 @@ Thus the second criteria it to think about your own needs and abilities.  If
 you want to enjoy the social and community aspects of working together on open
 source watch development then you should look very closely at the PineTime.
 
-Pine64 PineTime (developer edition)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Pine64 PineTime
+~~~~~~~~~~~~~~~
 
 `Pine64 PineTime <https://www.pine64.org/pinetime/>`_ is a square smart watch
 based on an nRF52832 SoC and includes a 240x240 colour display with touch
 screen, a step counter and a heart rate sensor.
 
-The `developer edition <https://store.pine64.org/?product=pinetime-dev-kit>`_
-comes pre-programmed with a test firmware that is used as part of the factory
-testing.  DaFlasher for Android can be used to install both the
-:ref:`wasp-bootloader<Bootloader DaFlasher>` and the
-:ref:`main OS image<Main OS DaFlasher>`. No tools or disassembly is required
-to install using DaFlasher.
+wasp-os can be installed directly from the factory default operating
+system using an over-the-air update with no tools or disassembly is
+required. nRF Connect for Android can be used to install both the
+:ref:`wasp-bootloader<Bootloader nRF Connect>` and the
+:ref:`main OS image<Main OS nRF Connect>`.
 
-Since the developer edition comes without the case glued shut it is
-also possible to install the wasp-bootloader using an SWD programmer.
+.. note::
+
+    The early adopter PineTime Developer Edition came pre-programmed
+    with a proprietary test firmware rather than the current factory
+    default OS. If you have an early adopter unit then it will appear
+    in the device list as *Y7S* and the tools needed for an OTA update
+    are differnt. DaFlasher for Android can be used to install both the
+    :ref:`wasp-bootloader<Bootloader DaFlasher>` and the
+    :ref:`main OS image<Main OS DaFlasher>`.
+
+The `developer edition <https://store.pine64.org/?product=pinetime-dev-kit>`_
+comes without the case glued shut. This allows access to the Serial Wire
+Debug (SWD) pins which can make debugging easier. On developer edition
+devices it is also possible to install the wasp-bootloader using an
+:ref:`SWD programmer<Bootloader SWD>`.
 
 The wasp-os simulator
 ~~~~~~~~~~~~~~~~~~~~~
@@ -192,6 +204,42 @@ DaFlasher for Android can be used to install both the
 
 Installing wasp-bootloader
 --------------------------
+
+.. _Bootloader nRF Connect:
+
+nRF Connect for Android
+~~~~~~~~~~~~~~~~~~~~~~~
+
+For Pine64 PineTime devices running Infinitime then nRF Connect for Android
+can be used to install wasp-bootloader:
+
+* Copy ``reloader-mcuboot.zip`` (see :ref:`Building wasp-os from source`) to
+  your Android device and download
+  `nRF Connect <https://play.google.com/store/apps/details?id=no.nordicsemi.android.mcp>`_
+  for Android if you do not already have it.
+* Wake the device so that Infinitime is showing a watch face.
+* Connect to the *Infinitime* device usnig nRF Connect, click the DFU button
+  and send ``reloader-mcuboot.zip`` to the device.
+* When the progress meter reaches 100% the nRF Connect will disconnect
+  and the watch will reboot.
+* The watch will boot the reloader application which draws a small blue
+  pine cone in the centre of the screen. The pine cone acts a progress
+  meter and will slowly become white. Once the update is complete the
+  watch will show the wasp-os logo and an additional on-screen prompt.
+
+.. image:: https://img.youtube.com/vi/lPasAt1LJmo/0.jpg
+   :target: https://www.youtube.com/watch?v=lPasAt1LJmo
+   :alt: Over-the-air update from Infinitime to wasp-os
+   :width: 320
+   :height: 240
+
+`Over-the-air update from Infinitime to wasp-os <https://www.youtube.com/watch?v=lPasAt1LJmo>`_
+
+.. note::
+
+    It you want to restore the PineTime factory firmware then you can
+    use nRF Connect to do this. Use nRF Connect to send
+    ``reloader-factory.zip`` to the wasp-bootloader (called *PineDFU*).
 
 .. _Bootloader DaFlasher:
 
@@ -256,6 +304,8 @@ os) is also available:
     followed by
     `ATCdfuFromSD2toSD5.zip <https://github.com/atc1441/DaFlasherFiles/blob/master/ATCdfuFromSD2toSD5.zip>`_
 
+.. _Bootloader SWD:
+
 Using an SWD programmer
 ~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -283,6 +333,22 @@ logo and wait for a OTA update.
 Installing wasp-os
 ------------------
 
+.. _Main OS nRF Connect:
+
+nRF Connect for Android
+~~~~~~~~~~~~~~~~~~~~~~~
+
+To install the main firmware using nRF Connect for Android:
+
+* Copy ``micropython.zip`` (see :ref:`Building wasp-os from source`) to
+  your Android device and download
+  `nRF Connect <https://play.google.com/store/apps/details?id=no.nordicsemi.android.mcp>`_
+  for Android if you do not already have it.
+* Connect to the device (e.g. *PineDFU* if you have a PineTime) using
+  nRFConnect, click the DFU button and send ``micropython.zip`` to the device.
+* When the upload is complete the watch will reboot and launch the digital
+  clock application.
+
 .. _Main OS DaFlasher:
 
 DaFlasher for Android
@@ -298,20 +364,6 @@ To install the main firmware using DaFlasher for Android:
   PineTime).
 * Click **Do DFU Update**.
 * Click **Select DFU file** and select ``micropython.zip``.
-* When the upload is complete the watch will reboot and launch the digital
-  clock application.
-
-nRF Connect for Android
-~~~~~~~~~~~~~~~~~~~~~~~
-
-To install the main firmware using nRF Connect for Android:
-
-* Copy ``micropython.zip`` (see :ref:`Building wasp-os from source`) to
-  your Android device and download
-  `nRF Connect <https://play.google.com/store/apps/details?id=no.nordicsemi.android.mcp>`_
-  for Android if you do not already have it.
-* Connect to the device (e.g. *PineDFU* if you have a PineTime) using
-  nRFConnect, click the DFU button and send ``micropython.zip`` to the device.
 * When the upload is complete the watch will reboot and launch the digital
   clock application.
 
