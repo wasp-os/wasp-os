@@ -1,16 +1,21 @@
 """Connect 4
-   ~~~~~~~~~~~~~
+~~~~~~~~~~~~
     
-    Connect 4 is a 2 player game played on a 6x7 (height x width) grid.
-    The players can choose in which column to drop a disc with their color,
-    and when one of the players gets 4 adjacent discs in a row, column or diagonal, they win.
-    
-    Connect 4 is a solved game, meaning that in every case,
-    by making the right move, the first player can win."""
+Connect 4 is a 2 player game played on a 6x7 (height x width) grid.
+The players can choose in which column to drop a disc with their color,
+and when one of the players gets 4 adjacent discs in a row, column or diagonal, they win.
+
+    .. figure:: res/Connect4App.png
+        :width: 179
+
+        Screenshot of the Connect 4 application
+
+Connect 4 is a solved game, meaning that in every case,
+by making the right move, the first player can win."""
 
 import wasp
 import array
-import draw565
+
 
 def all(arr, val):
     """Returns true if all of arr equals to val"""
@@ -18,6 +23,7 @@ def all(arr, val):
         if x != val:
             return False
     return True
+
 
 class Connect4App():
     """Application implementing the classic Connect 4 game."""
@@ -29,10 +35,10 @@ class Connect4App():
     def __init__(self):
         """Initialize the app"""
         self._initialize()
-    
+
     def _initialize(self):
         self._board = array.array('B', [0] * (6*7))
-        self._color = 1 # 1 = red(0xF800), 2 = yellow(0xFFC0)
+        self._color = 1  # 1 = red(0xF800), 2 = yellow(0xFFC0)
         self._mode = 'Playing'
 
     def foreground(self):
@@ -46,13 +52,14 @@ class Connect4App():
         draw.fill()
         if self._mode == 'Playing':
             for i in range(1, 7):
-                draw.fill(None, i * (240//self.COLUMNS), 0, 2, 240) # fill vertical lines
+                draw.fill(None, i * (240//self.COLUMNS),
+                          0, 2, 240)  # fill vertical lines
 
             for i in range(1, 6):
-                draw.fill(None, 0, i * (240//self.ROWS), 240, 2)    # fill horizontal lines
+                draw.fill(None, 0, i * (240//self.ROWS),
+                          240, 2)    # fill horizontal lines
 
         self._update()
-
 
     def _update(self):
         """Update dynamic parts of display (win message & discs)"""
@@ -64,40 +71,45 @@ class Connect4App():
                 dx = (x * 240) // 7
                 dy = (y * 240) // 6
                 color = 0xF800 if self._board[i] == 1 else 0xFFC0
-                wasp.watch.drawable.fill(color, dx+1, dy+1, 240//self.COLUMNS-1, 240//self.ROWS-1)
+                wasp.watch.drawable.fill(
+                    color, dx+1, dy+1, 240//self.COLUMNS-1, 240//self.ROWS-1)
         if self._mode == 'Win':
-            wasp.watch.drawable.string(f'{"Red" if self._color == 2 else "Yellow"} won!', 0, 0, 240)
+            wasp.watch.drawable.string(
+                f'{"Red" if self._color == 2 else "Yellow"} won!', 0, 0, 240)
         elif self._mode == 'Draw':
             wasp.watch.drawable.string('Draw!', 0, 0, 240)
         if self._mode == 'Win' or self._mode == 'Draw':
             wasp.watch.drawable.string('touch to restart', 0, 30, 240)
 
-
     def _is_win(self, row, col):
         """Returns 0 if nobody won, and 1 or 2 if a player has won."""
         def slice_column(arr, col):
             return arr[col:42:7]
+
         def slice_row(arr, row):
             return arr[row*7:(row+1)*7]
-        row_slices = ( slice(0, 4),
-                       slice(1, 5),
-                       slice(2, 6),
-                       slice(3, 7) )
-        col_slices = ( slice(0, 4),
-                       slice(1, 5),
-                       slice(2, 6) )
-        diagonals = ( slice(0, 41, 8),
-                      slice(1, 42, 8),
-                      slice(2, 35, 8),
-                      slice(3, 28, 8),
-                      slice(3, 21, 6),
-                      slice(4, 29, 6),
-                      slice(5, 36, 6),
-                      slice(6, 37, 6),
-                      slice(7, 40, 8),
-                      slice(13, 38, 6),
-                      slice(14, 39, 8),
-                      slice(20, 39, 6) )
+        # Slice of the slice (see: row or column) of the board which might be a win.
+        row_slices = (slice(0, 4),
+                      slice(1, 5),
+                      slice(2, 6),
+                      slice(3, 7))
+        col_slices = (slice(0, 4),
+                      slice(1, 5),
+                      slice(2, 6))
+        # Slice of the board that might be a win.
+        # Those are ALL possible diagonal wins.
+        diagonals = (slice(0, 41, 8),
+                     slice(1, 42, 8),
+                     slice(2, 35, 8),
+                     slice(3, 28, 8),
+                     slice(3, 21, 6),
+                     slice(4, 29, 6),
+                     slice(5, 36, 6),
+                     slice(6, 37, 6),
+                     slice(7, 40, 8),
+                     slice(13, 38, 6),
+                     slice(14, 39, 8),
+                     slice(20, 39, 6))
 
         crow = slice_row(self._board, row)
         ccol = slice_column(self._board, col)
@@ -114,7 +126,7 @@ class Connect4App():
         for s in diagonals:
             diagonal = self._board[s]
             l = len(diagonal)
-            slices = ( slice(0, 4), )
+            slices = (slice(0, 4), )
             if l > 4:
                 slices += (slice(1, 5),)
             if l > 5:
@@ -126,14 +138,14 @@ class Connect4App():
                     return 2
         return 0
 
-    def screen_to_world_matrix(self, x, y):
+    def _screen_to_world_matrix(self, x, y):
         """Converts pixels to game grid"""
         return ((x * self.COLUMNS) // 240, (y * self.ROWS) // 240)
 
     def touch(self, event):
         """Notify the app of a touchscreen touch"""
         if self._mode == 'Playing':
-            column, row = self.screen_to_world_matrix(event[1], event[2])
+            column, _ = self._screen_to_world_matrix(event[1], event[2])
             disks_in_column = 0
             first_free_place = None
             # Count the amount of disks in the column we want.
@@ -142,16 +154,17 @@ class Connect4App():
                 if self._board[i + column] != 0:
                     disks_in_column += 1
                 else:
-                    first_free_place = (i + column) if first_free_place is None else first_free_place
+                    first_free_place = (
+                        i + column) if first_free_place is None else first_free_place
 
             if disks_in_column >= 6:
-                return # column is full, can't place piece here!
-
-            row = first_free_place//7
+                return  # column is full, can't place piece here!
 
             self._board[first_free_place] = self._color
-            self._color = 3 - self._color # yellow(2) => red(1), red(1) => yellow(2)
+            # yellow(2) => red(1), red(1) => yellow(2)
+            self._color = 3 - self._color
             self._update()
+            row = first_free_place//7
             is_win = self._is_win(row, column) != 0
             if is_win:
                 self._mode = 'Win'
@@ -162,4 +175,3 @@ class Connect4App():
         elif self._mode == 'Win' or self._mode == 'Draw':
             self._initialize()
             self._draw()
-        
