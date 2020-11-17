@@ -27,10 +27,13 @@ class Connect4App():
 
     def __init__(self):
         """Initialize the app"""
+        self._initialize()
+    
+    def _initialize(self):
         self._board = array.array('B', [0] * (6*7))
         self._color = 1 # 1 = red(0xF800), 2 = yellow(0xFFC0)
         self._mode = 'Playing'
-    
+
     def foreground(self):
         """Activate the app"""
         self._draw()
@@ -42,12 +45,12 @@ class Connect4App():
         draw.fill()
         if self._mode == 'Playing':
             for i in range(1, 7):
-                draw.fill(None, i * (240//self.COLUMNS), 0, 1, 240) # fill vertical lines
+                draw.fill(None, i * (240//self.COLUMNS), 0, 2, 240) # fill vertical lines
 
             for i in range(1, 6):
-                draw.fill(None, 0, i * (240//self.ROWS), 240, 1)    # fill horizontal lines
+                draw.fill(None, 0, i * (240//self.ROWS), 240, 2)    # fill horizontal lines
 
-            self._update()
+        self._update()
 
 
     def _update(self):
@@ -62,11 +65,14 @@ class Connect4App():
                 color = 0xF800 if self._board[i] == 1 else 0xFFC0
                 wasp.watch.drawable.fill(color, dx+1, dy+1, 240//self.COLUMNS-1, 240//self.ROWS-1)
         if self._mode == 'Win':
-            wasp.watch.drawable.string('Win!', 10, 10)
+            wasp.watch.drawable.string(f'{"Red" if self._color == 2 else "Yellow"} won!', 0, 0, 240)
+        elif self._mode == 'Draw':
+            wasp.watch.drawable.string('Draw!', 0, 0, 240)
+        if self._mode == 'Win' or self._mode == 'Draw':
+            wasp.watch.drawable.string('touch to restart', 0, 30, 240)
 
 
-    def _is_win(self, row, col): #TODO: implement diagonals checking (indices rowsize+1, rowsize-1)
-        print(str(row) + 'x' + str(col))
+    def _is_win(self, row, col):
         def slice_column(arr, col):
             return arr[col:42:7]
         def slice_row(arr, row):
@@ -142,8 +148,15 @@ class Connect4App():
 
             self._board[first_free_place] = self._color
             self._color = 3 - self._color # yellow(2) => red(1), red(1) => yellow(2)
-            if self._is_win(row, column) != 0:
-                self._mode = 'Win'
             self._update()
-
+            is_win = self._is_win(row, column) != 0
+            if is_win:
+                self._mode = 'Win'
+                self._update()
+            elif 0 not in self._board:
+                self._mode = 'Draw'
+                self._update()
+        elif self._mode == 'Win' or self._mode == 'Draw':
+            self._initialize()
+            self._draw()
         
