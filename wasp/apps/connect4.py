@@ -13,6 +13,7 @@ import array
 import draw565
 
 def all(arr, val):
+    """Returns true if all of arr equals to val"""
     for x in arr:
         if x != val:
             return False
@@ -73,6 +74,7 @@ class Connect4App():
 
 
     def _is_win(self, row, col):
+        """Returns 0 if nobody won, and 1 or 2 if a player has won."""
         def slice_column(arr, col):
             return arr[col:42:7]
         def slice_row(arr, row):
@@ -125,6 +127,7 @@ class Connect4App():
         return 0
 
     def screen_to_world_matrix(self, x, y):
+        """Converts pixels to game grid"""
         return ((x * self.COLUMNS) // 240, (y * self.ROWS) // 240)
 
     def touch(self, event):
