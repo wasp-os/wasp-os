@@ -13,8 +13,6 @@ import array
 import draw565
 
 def all(arr, val):
-    if debug != "":
-        print(debug)
     for x in arr:
         if x != val:
             return False
@@ -62,12 +60,12 @@ class Connect4App():
                 dx = (x * 240) // 7
                 dy = (y * 240) // 6
                 color = 0xF800 if self._board[i] == 1 else 0xFFC0
-                wasp.watch.drawable.fill(color, dx, dy, 240//self.COLUMNS, 240//self.ROWS)
+                wasp.watch.drawable.fill(color, dx+1, dy+1, 240//self.COLUMNS-1, 240//self.ROWS-1)
         if self._mode == 'Win':
             wasp.watch.drawable.string('Win!', 10, 10)
 
 
-    def _is_win(self, row, col):
+    def _is_win(self, row, col): #TODO: implement diagonals checking (indices rowsize+1, rowsize-1)
         print(str(row) + 'x' + str(col))
         def slice_column(arr, col):
             return arr[col:42:7]
@@ -80,6 +78,18 @@ class Connect4App():
         col_slices = ( slice(0, 4),
                        slice(1, 5),
                        slice(2, 6) )
+        diagonals = ( slice(0, 41, 8),
+                      slice(1, 42, 8),
+                      slice(2, 35, 8),
+                      slice(3, 28, 8),
+                      slice(3, 21, 6),
+                      slice(4, 29, 6),
+                      slice(5, 36, 6),
+                      slice(6, 37, 6),
+                      slice(7, 40, 8),
+                      slice(13, 38, 6),
+                      slice(14, 39, 8),
+                      slice(20, 39, 6) )
 
         crow = slice_row(self._board, row)
         ccol = slice_column(self._board, col)
@@ -93,6 +103,19 @@ class Connect4App():
                 return 1
             elif all(ccol[s], 2):
                 return 2
+        for s in diagonals:
+            diagonal = self._board[s]
+            l = len(diagonal)
+            slices = ( slice(0, 4), )
+            if l > 4:
+                slices += (slice(1, 5),)
+            if l > 5:
+                slices += (slice(2, 6),)
+            for sl in slices:
+                if all(diagonal[sl], 1):
+                    return 1
+                elif all(diagonal[sl], 2):
+                    return 2
         return 0
 
     def screen_to_world_matrix(self, x, y):
