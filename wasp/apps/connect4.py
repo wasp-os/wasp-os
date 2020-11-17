@@ -1,5 +1,5 @@
 """Connect 4
-    ~~~~~~~~~~~~
+   ~~~~~~~~~~~~~
     
     Connect 4 is a 2 player game played on a 6x7 (height x width) grid.
     The players can choose in which column to drop a disc with their color,
@@ -12,6 +12,13 @@ import wasp
 import array
 import draw565
 
+def all(arr, val):
+    if debug != "":
+        print(debug)
+    for x in arr:
+        if x != val:
+            return False
+    return True
 
 class Connect4App():
     """Application implementing the classic Connect 4 game."""
@@ -56,11 +63,45 @@ class Connect4App():
                 dy = (y * 240) // 6
                 color = 0xF800 if self._board[i] == 1 else 0xFFC0
                 wasp.watch.drawable.fill(color, dx, dy, 240//self.COLUMNS, 240//self.ROWS)
+        if self._mode == 'Win':
+            wasp.watch.drawable.string('Win!', 10, 10)
+
+
+    def _is_win(self, row, col):
+        print(str(row) + 'x' + str(col))
+        def slice_column(arr, col):
+            return arr[col:42:7]
+        def slice_row(arr, row):
+            return arr[row*7:(row+1)*7]
+        row_slices = ( slice(0, 4),
+                       slice(1, 5),
+                       slice(2, 6),
+                       slice(3, 7) )
+        col_slices = ( slice(0, 4),
+                       slice(1, 5),
+                       slice(2, 6) )
+
+        crow = slice_row(self._board, row)
+        ccol = slice_column(self._board, col)
+        for s in row_slices:
+            if all(crow[s], 1):
+                return 1
+            elif all(crow[s], 2):
+                return 2
+        for s in col_slices:
+            if all(ccol[s], 1):
+                return 1
+            elif all(ccol[s], 2):
+                return 2
+        return 0
+
+    def screen_to_world_matrix(self, x, y):
+        return ((x * self.COLUMNS) // 240, (y * self.ROWS) // 240)
 
     def touch(self, event):
         """Notify the app of a touchscreen touch"""
         if self._mode == 'Playing':
-            column = (self.COLUMNS * event[1]) // 240
+            column, row = self.screen_to_world_matrix(event[1], event[2])
             disks_in_column = 0
             first_free_place = None
             # Count the amount of disks in the column we want.
@@ -74,8 +115,12 @@ class Connect4App():
             if disks_in_column >= 6:
                 return # column is full, can't place piece here!
 
+            row = first_free_place//7
+
             self._board[first_free_place] = self._color
             self._color = 3 - self._color # yellow(2) => red(1), red(1) => yellow(2)
+            if self._is_win(row, column) != 0:
+                self._mode = 'Win'
             self._update()
 
         
