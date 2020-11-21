@@ -1,51 +1,51 @@
 # SPDX-License-Identifier: LGPL-3.0-or-later
 # Copyright (C) 2020 Daniel Thompson
-"""The complete set of wasp-os application entry points are documented
-below as part of a template application. Note that the template does
-not rely on any specific parent class. This is because applications in
-wasp-os can rely on *duck typing* making a class hierarchy pointless.
+# Copyright (C) 2020 Joris Warmbier
+"""Alarm Application
+~~~~~~~~~~~~~~~~~~~~
+
+An application to set a vibration alarm. All settings can be accessed from the Watch UI
 """
 
 import wasp
 import icons
 import time
 
+icon = (
+    96, 64,
+    b'\xff\x00\xff\x00\xbf\x05\x1f\x055\x08\x0b\x07\x0b\t1\n'
+    b'\x06\x0f\x07\t0\n\x06\x11\x06\n.\n\x04\x17\x04\n'
+    b'-\t\x04\x19\x04\t,\t\x03\x1e\x02\t+\x08\x03 '
+    b'\x02\x08+\x07\x03\r\x07\x0e\x02\x07+\x06\x03\r\t\r'
+    b'\x03\x06+\x05\x03\x0b\x0f\x0b\x03\x05+\x04\x03\n\x13\n'
+    b'\x03\x04,\x02\x04\t\x15\t\x04\x022\t\x17\t6\t'
+    b'\x19\t4\n\x1a\t3\t\r\x01\x0e\x083\x07\x0e\x03'
+    b'\x0e\x072\x08\x0e\x03\x0e\x081\x07\x0f\x03\x0f\x071\x07'
+    b'\x0f\x03\x0f\x071\x07\x0f\x03\x0f\x071\x06\x10\x03\x10\x06'
+    b'0\x07\x10\x03\x10\x07/\x07\x10\x03\x10\x07/\x07\x10\x03'
+    b'\x10\x07/\x07\x0f\x04\x10\x07/\x07\x0e\x04\x11\x07/\x07'
+    b'\r\x04\x12\x070\x06\x0c\x04\x13\x061\x07\n\x04\x13\x07'
+    b'1\x07\n\x03\x14\x071\x07\n\x02\x15\x071\x08\x1f\x08'
+    b'2\x07\x1f\x073\x08\x1d\x083\t\x1b\t4\t\x19\t'
+    b'6\t\x17\t8\t\x15\t9\n\x13\n:\x0b\x0f\x0b'
+    b'<\x0e\x08\r>!@\x1fB\x1dC\x1e@!?\x05'
+    b'\x03\x11\x03\x05?\x04\t\x07\t\x04@\x02\x0b\x05\x0b\x02'
+    b'\xff\x00\xff\x00a'
+)
+
 class AlarmApp():
-    """Template application.
-
-    The template application includes every application entry point. It
-    is used as a reference guide and can also be used as a template for
-    creating new applications.
-
-    .. data:: NAME = 'Template'
-
-       Applications must provide a short ``NAME`` that is used by the
-       launcher to describe the application. Names that are longer than
-       8 characters are likely to be abridged by the launcher in order
-       to fit on the screen.
-
-    .. data:: ICON = RLE2DATA
-
-       Applications can optionally provide an icon for display by the
-       launcher. Applications that expect to be installed on the quick
-       ring will not be listed by the launcher and need not provide any
-       icon. When no icon is provided the system will use a default
-       icon.
-
-       The icon is an opportunity to differentiate your application from others
-       so supplying an icon is strongly recommended. The icon, when provided,
-       must not be larger than 96x64.
-
+    """Allows the user to set a vibration alarm.
     """
     NAME = 'Alarm'
-    ICON = icons.app
-    active = False
-    hours = 0
-    minutes = 0
-    ringing = False
+    ICON = icon
 
     def __init__(self):
         """Initialize the application."""
+
+        self.active = False
+        self.ringing = False
+        self.hours = 0
+        self.minutes = 0
 
         self._set_current_alarm()
 
@@ -53,7 +53,8 @@ class AlarmApp():
         """Activate the application."""
         self._draw()
         wasp.system.request_event(wasp.EventMask.TOUCH)
-        wasp.system.request_tick(1000)
+        if self.ringing:
+            wasp.system.request_tick(1000)
 
     def background(self):
         """De-activate the application."""
@@ -63,36 +64,36 @@ class AlarmApp():
             wasp.system.set_alarm(time.mktime(self.current_alarm), self._alert)
             if self.ringing:
                 self.ringing = False
+
     def tick(self, ticks):
         """Notify the application that its periodic tick is due."""
-        if self.ringing:
-            wasp.watch.vibrator.pulse(duty=25, ms=500)
-            wasp.system.keep_awake()
+        wasp.watch.vibrator.pulse(duty=50, ms=500)
+        wasp.system.keep_awake()
 
     def touch(self, event):
         """Notify the application of a touchscreen touch event."""
         draw = wasp.watch.drawable
-        if event[1] in range(100, 140) and event[2] in range(190,230):
+        if event[1] in range(90, 150) and event[2] in range(180,240):
             self.active = not self.active
 
-        elif event[1] in range(40,80):
-            if event[2] in range(50,90):
+        elif event[1] in range(30,90):
+            if event[2] in range(40,100):
                 self.hours += 1
                 if self.hours > 23:
                     self.hours = 0
 
-            elif event[2] in range(130,170):
+            elif event[2] in range(120,180):
                 self.hours -= 1
                 if self.hours < 0:
                     self.hours = 23
 
-        elif event[1] in range(160,200):
-            if event[2] in range(50,90):
+        elif event[1] in range(150,210):
+            if event[2] in range(40,100):
                 self.minutes += 1
                 if self.minutes > 59:
                     self.minutes = 0
 
-            elif event[2] in range(130,170):
+            elif event[2] in range(120,180):
                 self.minutes -= 1
                 if self.minutes < 0:
                     self.minutes = 59
@@ -118,9 +119,9 @@ class AlarmApp():
             self._update()
         else:
             draw.fill()
-            draw.string("Alarm", 0, 100, width=240)
+            draw.string("Alarm", 0, 150, width=240)
+            draw.blit(icon, 73, 50)
             
-
     def _update(self):
         """Update the dynamic parts of the application display."""
         draw = wasp.watch.drawable
