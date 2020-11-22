@@ -102,7 +102,8 @@ class Clock:
         if on_screen and on_screen == now:
             return None
 
-        if self.enabled and (not on_screen or now[4] != on_screen[4]):
+        if self.enabled and (not on_screen
+                or now[4] != on_screen[4] or now[3] != on_screen[3]):
             t1 = '{:02}:{:02}'.format(now[3], now[4])
 
             draw = wasp.watch.drawable
