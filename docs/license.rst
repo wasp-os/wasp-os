@@ -18,8 +18,8 @@ the MicroPython distribution, are licensed under under different open
 source licenses. The licensing for these components is clearly
 indicated and reinforced by the directory and sub-module structure.
 
-Additionally binary releases of wasp-os include the Nordic Softdevice
-which is licensed under the 5-clause Nordic license.
+Additionally binary releases of wasp-os include a binary copy of the
+Nordic Softdevice which is licensed under the 5-clause Nordic license.
 
 .. toctree::
    gnu-lgpl-v3.0.rst
