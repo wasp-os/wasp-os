@@ -34,12 +34,12 @@ Games
 
 .. automodule:: apps.gameoflife
 
-This app is enabled by default in the simulator.
-The app is also frozen into the firmware image but it is disabled by
-default in order to keep RAM available for user developed applications.
-It can be enabled by modifying ``main.py``.
+This is enabled by default in the simulator. The app is bundled in the
+firmware image but it is disabled by default to keep RAM available for
+user developed applications. It can be enabled by modifying ``main.py``.
 
 .. automodule:: apps.connect4
+   
 The app is also frozen into the firmware image but it is disabled by
 default in order to keep RAM available for user developed applications.
 It can be enabled by modifying ``main.py``.
