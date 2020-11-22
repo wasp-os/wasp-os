@@ -21,7 +21,7 @@ following commands:
     sudo apt install \
       git build-essential libsdl2-2.0.0 python3-click python3-numpy \
       python3-pexpect python3-pil python3-pip python3-serial unzip
-    pip3 install --user pysdl2
+    pip3 install --user cbor pysdl2
 
 Additionally if you wish to regenerate the documentation you will require
 a complete sphinx toolchain:
@@ -36,7 +36,7 @@ with pip instead:
 
 .. code-block:: sh
 
-    pip3 install --user click numpy pexpect Pillow pyserial pysdl2
+    pip3 install --user cbor click numpy pexpect Pillow pyserial pysdl2
 
 You will also need a toolchain for the Arm Cortex-M4. wasp-os is developed and
 tested using the `GNU-RM toolchain
