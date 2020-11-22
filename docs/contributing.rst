@@ -10,11 +10,12 @@ Introduction
 
 Anyone can contribute to the wasp-os project. Contributions are typically made
 via github using the typical fork-and-pull-request approach. Contributors who
-do not wish to use github are also welcome to share patches using
-``git format-patch --to wasp-os@redfelineninja.org.uk`` and ``git send-email``.
-In both cases, the code will be reviewed by a project maintainer, so please
-anticipate review comments. Typically pull requests will not be merged if there
-are open questions or requests for changes that have not been acted on.
+do not wish to use github are welcome to share patches using ``git
+format-patch --to wasp-os@redfelineninja.org.uk`` and ``git send-email``. In
+both cases, the code will be reviewed by a project maintainer, so please
+anticipate review comments and requests for changes. Typically pull
+requests will not be merged if there are open questions or requests for
+changes that have not been acted on.
 
 All contributions must include a ``Signed-off-by`` tag added by the contributor
 who submits the patch or patches. The ``Signed-off-by`` tag is added at the end
@@ -68,7 +69,7 @@ easily:
 Additionally, please be aware that github will not send out automatic
 notifications to let the maintainer know that you have pushed an update to the
 pull-request. Follow up the above with a comment on the pull request thread
-saying that your contribution should be ready to go.
+saying that your contribution has been updated and is ready for another look.
 
 Code of Conduct
 ---------------

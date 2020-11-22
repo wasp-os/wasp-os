@@ -14,7 +14,7 @@ roadmap: make writing applications easy (and fun).
 Applications that can be loaded, changed, adapted and remixed by the user
 are what **really** distinguishes a smart watch from a "feature watch"[#]_.
 In other words if we want a watch built around a tiny microcontroller to be
-sufficiently "smart" then it has to be all about the applications.
+"smart" then it has to be all about the applications.
 
 This guide will help you get started writing applications for wasp-os. Have fun!
 
@@ -22,7 +22,7 @@ This guide will help you get started writing applications for wasp-os. Have fun!
    took over the industry were retrospectively renamed "feature phones" to
    distinguish them from newer devices. Many of them were superficially similar
    to early Android devices but is was the application ecosystem that really
-   made smart phones smart.
+   made smart phones into what they are today.
 
 Hello World for wasp-os
 ~~~~~~~~~~~~~~~~~~~~~~~
@@ -32,16 +32,16 @@ Let's start by examining a simple "Hello, World!" application for wasp-os.
 .. literalinclude:: hello.py
    :linenos:
 
-There are a couple of points of interest:
+Some of the key points of interest in this example application are:
 
 1. Applications have a :py:attr:`~.TemplateApp.NAME`, which is shown in the
    launcher. Most applications also provide an :py:attr:`~.TemplateApp.ICON`
-   but a default is displayed if this is omitted.
-2. This example uses :py:meth:`~.TemplateApp.__init__` to initialize 
-   the state of the application, this ensure the state remains "sticky" 
-   when the application is activated and deactivated.
+   but a default will be displayed if this is omitted.
+2. This example uses :py:meth:`~.TemplateApp.__init__` to initialize
+   the state of the application, these variables are used to remember
+   the state of the application when when it is deactivated.
 3. :py:meth:`~.TemplateApp.foreground` is the only mandatory application entry
-   point and is responsible for redrawing the screen. This application does
+   point and it is responsible for redrawing the screen. This application does
    not implement :py:meth:`~.TemplateApp.background` because there is nothing
    for us to do!
 4. The use of :py:meth:`~.TemplateApp._draw` is optional. We could just do
@@ -55,10 +55,11 @@ Application life-cycle
 Applications in wasp-os are triggered by and do all their processing
 from calls their entry points. The entry points can be coarsely categorized
 event notifications, timer callbacks (the application tick) and
-system notifications.
+system actions.
 
-System notifications control the application life-cycle and the entry point
-calls, together with the implicit application states are shown below.
+System actions control the application life-cycle and that lifecyle is
+shown below. The system actions are used to tell the application about
+any change in its lifecycle.
 
 .. graphviz::
 
@@ -80,56 +81,66 @@ calls, together with the implicit application states are shown below.
     }
 
 When an application is initialized is enters the ``BACKGROUND`` state. A
-backgrounded application will not execute but it should nevertheless 
-maintain its user visible state whilst in the background. To conserve
+backgrounded application will not execute but it should nevertheless
+maintain its user visible state whilst deactivated. To conserve
 memory wasp-os does not permit two applications to run simultaneously but
-because each application preserves its state when in the background it will
-appear to the user as though all applications are running all the time.
+because each application remembers its state when it is not running then it
+will appear to the user as though all applications are running all the time.
 
 For example, a stopwatch application should record the time that it was started
-and remember that start time, regardless of it's state, until either the
-stopwatch is stopped of the application is destroyed.
+and remember that start time, regardless of whether it is running or not so
+that when it restarted is can continue to run as the user expects.
 
-A backgrounded application can enter the ``ACTIVE`` state via a call to
+A backgrounded application enters the ``ACTIVE`` state via a call to
 :py:meth:`~.TemplateApp.foreground`. When it is active the application owns the
-screen and should draw and maintain its UI.
+screen and must draw and maintain its user interface.
 
-If the system manager want to put an active application to sleep then it will
-call :py:meth:`~.TemplateApp.sleep`. If the application returns True then the
-application will stop running (e.g. receive no events and no application tick)
-but instead must wait to receive a notification via
-:py:meth:`~.TemplateApp.wake` telling the application that the device 
-is waking up and that it may update the screen if needed.
+If the system manager wants to put the watch to sleep then it will tell the
+active application to :py:meth:`~.TemplateApp.sleep`.
+If the application returns True then the application will remain active
+whilst the watch is asleep.
+It will receive no events nor the application tick whilst the system is
+asleep and, instead, must wait for a :py:meth:`~.TemplateApp.wake` notification
+telling the application that the device is waking up and that it may
+update the screen if needed.
 
 If an application does not support sleeping then it can simply not implement
-:py:meth:`~.TemplateApp.sleep` (or :py:meth:`~.TemplateApp.wake`) although it
-can also return False from :py:meth:`~.TemplateApp.sleep` if this is preferred.
+:py:meth:`~.TemplateApp.sleep` or :py:meth:`~.TemplateApp.wake`.
 In this case the system manager will automatically return to the default
 application, typically the main clock face.
 
+Some applications may support sleeping only under certain circumstances. For
+example a stopwatch may choose to remain active when the watch sleeps only if
+the stopwatch is running.
+This type of application must implement :py:meth:`~.TemplateApp.sleep` and
+return False when it does not want to remain active when the system
+resumes.
+
 .. note::
 
-    Most applications do not need to support :py:meth:`~.TemplateApp.sleep`
+    Most applications should not implement :py:meth:`~.TemplateApp.sleep`
     since it is often a better user experience for the watch to return to the
     default application when they complete an interaction.
-    
+
 API primer
 ----------
 
 This API primer introduces some of the most important and frequently used
-interfaces for wasp-os. For more comprehensive coverage see the
+interfaces in wasp-os. For more comprehensive coverage see the
 :ref:`Wasp-os Reference Manual` which contains extensive API documentation
 covering the entire of wasp-os, including its drivers.
 
 System management
 ~~~~~~~~~~~~~~~~~
 
-The system management API does provide a number of low-level calls that
+The system management API provides a number of low-level calls that
 can register new applications and navigate between them. However most
-applications need not use these. Instead most applications use a small
-set of methods. In particular almost all applictions need to call a couple of
-methods from :py:meth:`~.TemplateApp.foreground` in order to register 
-for notifications:
+applications do not need to make these low level calls and will use
+a much smaller set of methods.
+
+Applictions must call a couple of functions from their
+:py:meth:`~.TemplateApp.foreground` in order to register for
+event notifications and timer callbacks:
 
 * :py:meth:`~.Manager.request_event` - register for UI events such as button
   presses and touch screen activity.
@@ -137,8 +148,8 @@ for notifications:
   and specify the tick frequency.
 
 Additionally if your application is a game or a similar program that should
-not allow the watch to go to sleep then it should arrange to call
-:py:meth:`~.Manager.keep_awake` from the application's
+not allow the watch to go to sleep when it is running then it should
+arrange to call :py:meth:`~.Manager.keep_awake` from the application's
 :py:meth:`~.TemplateApp.tick` method.
 
 Drawing
@@ -148,8 +159,8 @@ Most applications using the drawing toolbox, :py:data:`wasp.watch.drawable`,
 in order to handle the display. Applications are permitted to directly access
 :py:data:`wasp.watch.display` if they require direct pixel access or want to
 exploit specific features of the display hardware (inverse video, partial
-display, etc) but for simple applications then the following simple drawing
-functions are sufficient.
+display, etc) but for most applications the drawing toolbox provides
+convenient and optimized drawing functions.
 
 * :py:meth:`~.Draw565.blit` - blit an image to the display at specified (x, y)
   coordinates, image type is detected automatically
@@ -186,7 +197,7 @@ MicroPython
 
 Many of the features of wasp-os are inherited directly from MicroPython_. It is
 useful to have a basic understanding of MicroPython and, in particular, put
-in a little time learning the best ways to copy with running
+a little time into learning the best practices when running
 `MicroPython on microcontrollers`__.
 
 .. _MicroPython: https://micropython.org/
@@ -201,10 +212,10 @@ How to run your application
 Testing on the simulator
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
-wasp-os provides a simulator that can be used to test applications before
+wasp-os includes a simulator that can be used to test applications before
 downloading them to the device. The simulator is useful for ensuring the
 code is syntactically correct and that there are not major runtime problems
-(e.g. missing symbols).
+such as misspelt symbol names.
 
 .. note::
 
@@ -212,7 +223,7 @@ code is syntactically correct and that there are not major runtime problems
     device. It may still be necessary to tune the application for minimal
     footprint after testing on the simulator.
 
-Firstly launch the simulator:
+To launch the simulator:
 
 .. code-block:: sh
 
@@ -224,7 +235,7 @@ Firstly launch the simulator:
     Watch is running, use Ctrl-C to stop
 
 From the simulator console we can register the application with the following
-code:
+commands:
 
 .. code-block:: python
    :linenos:
@@ -240,19 +251,25 @@ code:
 
 When an application is registered it does not start automatically but it will
 have been added to the launcher and you will be able to select in the simulator
-by using the Arrow keys to bring up the launcher and then clicking on your
-application.
+by swiping or using the Arrow keys to bring up the launcher and then clicking
+on your application.
 
 The application can also be registered automatically when you load the
 simulator if you add it to ``wasp/main.py``. Try adding lines 5 and 6 from
 the above example into this file (between ``import wasp`` and
 ``wasp.system.run()``).
 
+The simulator accepts gestures such as up/down and left/right swipes but the
+simulator also accepts keystrokes for convenience. The arrow keys simulate
+swipes and the Tab key simulates the physical button, whilst the 's' key
+can be used to capture screen shots to add to the documentation for your
+application.
+
 Testing on the device
 ~~~~~~~~~~~~~~~~~~~~~
 
-If we have an application under development when we can launch a quick test
-that does not result in the application being permanently stored on the device.
+When an application is under development it is best to temporarily load
+your application without permanently stored on the device.
 Providing there is enough available RAM then this can lead to a very quick
 edit-test cycles.
 
@@ -264,11 +281,10 @@ Try:
             --exec myapp.py \\
             --eval "wasp.system.register(MyApp())"
     Preparing to run myapp.py:
-    [##################################################] 100% 
+    [##################################################] 100%
 
-Like the simulator, when an application is registered it does not start 
-automatically but it will have been added to the launcher and can be launched
-using the normal gestures to control the device.
+Like the simulator, when an application is registered it is added to the
+launcher and it does not start automatically.
 
 .. note::
 
@@ -276,19 +292,24 @@ using the normal gestures to control the device.
     application is too large to be compiled on the target. You may have to
     adopt the frozen module approach from the next section.
 
+To remove the application simply reboot the watch by pressing and
+holding the physical button until the watch enters OTA mode (this
+takes around five seconds). Once the watch is in OTA mode then
+press the phyiscal button again to return to normal mode with the
+application cleared out.
+
 Making it permanent
 ~~~~~~~~~~~~~~~~~~~
 
-To ensure you application survives a system reset (press the hardware 
-button for around five seconds until the splash screen is seen, wait 
-five seconds and then press again) then we must copy it to the device
-and ensure it gets launched during system startup.
+To ensure you application survives a reboot then we must copy it to the
+device and ensure it gets launched during system startup.
 
 .. note::
 
     Applications stored in external FLASH have a greater RAM overhead than
-    applications that are frozen into the wasp-os binary. See next section for
-    additional details.
+    applications that are frozen into the wasp-os binary. If you app does
+    not fix then see next section for additional details on how to embed
+    your app in the wasp-os binary itself..
 
 To copy your application to the external FLASH try:
 
@@ -296,7 +317,7 @@ To copy your application to the external FLASH try:
 
     sh$ ./tools/wasptool --upload myapp.py
     Uploading myapp.py:
-    [##################################################] 100% 
+    [##################################################] 100%
 
 At this point your application is stored on the external FLASH but it will
 not automatically be loaded. This requires you to update the ``main.py`` file
@@ -321,7 +342,7 @@ to the watch:
 
     sh$ ./tools/wasptool --upload wasp/main.py
     Uploading wasp/main.py:
-    [##################################################] 100% 
+    [##################################################] 100%
 
 .. note::
 
@@ -334,16 +355,16 @@ Freezing your application into the wasp-os binary
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Freezing your application causes it to consume dramatically less RAM.  That is
-because the code is both pre-compiled (meaning we don't need any RAM budget to
-run the compiler) **and** it can execute directly from the internal FLASH
-memory.
+because they can execute directly from the internal FLASH rather than running
+from RAM. Additionally the code is pre-compiled, which also means we don't
+need any RAM budget to run the compiler.
 
-Freezing your application simply requires you to modify the ``manifest.py``
+Freezing your application requires you to modify the ``manifest.py``
 file for your board (e.g. ``wasp/boards/pinetime/manifest.py``) to include
 your application and then the whole binary must be re-compiled as normal.
 
-After that you an use the same technique described in the previous 
-section to add an import and register for you application to ``main.py``
+After that you an use the same technique described in the previous
+section to add an import and register for you application from ``main.py``
 
 .. note::
 
@@ -352,8 +373,10 @@ section to add an import and register for you application to ``main.py``
     external FLASH then the frozen version will be loaded.
 
     In many cases it is possible to avoid rebuilding the binary in order to
-    test new features by parsing the code in the global namespace and then
-    patching it into the existing code. For example the following can be used
+    test new features by directly parsing the code in the global
+    namespace (e.g. using ``wasptool --exec`` rather than ``wasptool --upload``
+    combined with ``import``). With the code in the global namespace it can
+    then be patched into the system. For example the following can be used
     to adopt a new version of the CST816S driver:
 
     .. code-block::
@@ -361,7 +384,7 @@ section to add an import and register for you application to ``main.py``
         ./tools/wasptool\
             --exec wasp/drivers/cst816s.py\
             --eval "watch.touch = CST816S(watch.i2c)"`
- 
+
 Application entry points
 ------------------------
 

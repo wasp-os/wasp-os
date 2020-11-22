@@ -4,19 +4,18 @@ Watch Application System in Python
 Introduction
 ------------
 
-Although still in its infancy wasp-os provides many example applications
-including a simple digital clock, a stopwatch, a step counter and a heart rate
-monitor. All of these, together with access to the MicroPython REPL for
-interactive tweaking and testing, are running on `PineTime
-<https://www.pine64.org/pinetime/>`_.  It keeps time well and has enough power
-saving functions implemented that it can survive for well over 72 hours between
-charges so even at this early stage it is functional as a wearable timepiece.
+Wasp-os is a firmware for smart watches that are based on the nRF52
+family of microcontrollers, including hacker friendly watches such
+as the Pine64 PineTime. Wasp-os includes a digital clock, a stopwatch,
+a step counter and a heart rate monitor. All of these, together with
+access to the MicroPython REPL for interactive tweaking, development
+and testing.
 
 Wasp-os includes a robust bootloader based on the Adafruit NRF52
 Bootloader. It has been extended to make it robust for development on
 form-factor devices without a reset button, power switch, SWD debugger
 or UART. This allows us to confidently develop on sealed devices relying
-only on BLE for updates.
+on Bluetooth Low Energy for over-the-air updates.
 
 Documentation
 -------------
@@ -29,19 +28,19 @@ get started coding for wasp-os as quickly as possible.
 Getting Started
 ---------------
 
-Wasp-os can be installed without using any tools onto the following
-devices:
+Wasp-os can be installed without using any tools or disassembly onto the
+following devices:
 
- * Pine64 PineTime (developer edition)
+ * Pine64 PineTime
  * Colmi P8
  * Senbono K9
 
-The
+Use the
 `Installation Guide <https://wasp-os.readthedocs.io/en/latest/install.html>`_
-contains detailed instructions on how to build and install wasp-os.
+to learn how to build and install wasp-os on these devices.
 
 At the end of the install process your watch will show the time (03:00)
-together with a date and battery meter. When the watch goes into power
+together with a date and a battery meter. When the watch goes into power
 saving mode you can use the button to wake it again.
 
 At this point you will also be able to use the Nordic UART Service to
@@ -56,7 +55,7 @@ To set the time and restart the main application:
    watch.rtc.set_localtime((yyyy, mm, dd, HH, MM, SS))
    wasp.system.run()
 
-Or just use:
+Or, if you have a suitable GNU/Linux workstation, just use:
 
 .. code-block:: sh
 
@@ -103,10 +102,12 @@ Videos
 Screenshots
 -----------
 
-(An older version of) the digital clock application running on a Pine64 PineTime:
+(An older version of) the digital clock application running on a Pine64
+PineTime:
 
 .. image:: res/clock_app.jpg
    :alt: wasp-os digital clock app running on PineTime
+   :width: 233
 
 Screenshots of the built in applications running on the wasp-os
 simulator (the "blank" screen is the torch application):
@@ -163,6 +164,6 @@ using one of the techniques is the Application Writer's guide.
    :alt: Game of Life running in the wasp-os simulator
    :width: 179
 
-.. image:: res/MusicPlayerApp.png
+.. image:: res/MusicApp.png
    :alt: Music Player running in the wasp-os simulator
    :width: 179
