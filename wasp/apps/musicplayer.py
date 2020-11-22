@@ -3,12 +3,18 @@
 # Copyright (C) 2020 Carlos Gil
 
 """Music Player for GadgetBridge
-~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    .. figure:: res/MusicApp.png
+        :width: 179
+
+        Screenshot of the Music Player application
 
 Music Player Controller:
-- Touch: play/pause
-- Swipe UPDOWN: Volume down/up
-- Swipe LEFTRIGHT: next/previous
+
+* Touch: play/pause
+* Swipe UPDOWN: Volume down/up
+* Swipe LEFTRIGHT: next/previous
 """
 
 import wasp
@@ -16,15 +22,8 @@ import wasp
 import icons
 import time
 
-
 class MusicPlayerApp(object):
-    """ Music Player Controller application.
-
-    .. figure:: res/MusicPlayerApp.png
-        :width: 179
-
-        Screenshot of the Music Player application
-    """
+    """ Music Player Controller application."""
     NAME = 'Music'
     ICON = icons.headset
 
