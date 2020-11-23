@@ -4,13 +4,19 @@
 """Alarm Application
 ~~~~~~~~~~~~~~~~~~~~
 
-An application to set a vibration alarm. All settings can be accessed from the Watch UI
+An application to set a vibration alarm. All settings can be accessed from the Watch UI.
+
+    .. figure:: res/AlarmApp.png
+        :width: 179
+
+        Screenshot of the Alarm Application
+
 """
 
 import wasp
-import icons
 import time
 
+# 1-bit RLE, generated from res/alarm_icon.png, 277 bytes
 icon = (
     96, 64,
     b'\xff\x00\xff\x00\xbf\x05\x1f\x055\x08\x0b\x07\x0b\t1\n'
@@ -55,13 +61,13 @@ class AlarmApp():
         wasp.system.request_event(wasp.EventMask.TOUCH)
         if self.ringing:
             wasp.system.request_tick(1000)
+        wasp.system.cancel_alarm(self.current_alarm, self._alert)
 
     def background(self):
         """De-activate the application."""
-        wasp.system.cancel_alarm(time.mktime(self.current_alarm), self._alert)
         if self.active:
             self._set_current_alarm()
-            wasp.system.set_alarm(time.mktime(self.current_alarm), self._alert)
+            wasp.system.set_alarm(self.current_alarm, self._alert)
             if self.ringing:
                 self.ringing = False
 
@@ -152,4 +158,4 @@ class AlarmApp():
         dd = now[2]
         if self.hours < now[3] or (self.hours == now[3] and self.minutes <= now[4]):
             dd += 1
-        self.current_alarm = (yyyy, mm, dd, self.hours, self.minutes, 0, 0, 0, 0)
+        self.current_alarm = (time.mktime((yyyy, mm, dd, self.hours, self.minutes, 0, 0, 0, 0)))
