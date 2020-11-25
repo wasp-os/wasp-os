@@ -11,9 +11,7 @@ Roadmap
 --------------------------------
 
 For 0.4 we focus on improving the watch/phone integration whilst also taking steps
-to improve the general fit and finish. In addition the reloader will be extended
-to ensure we retain the capability to install wasp-os over-the-air on newer
-PineTime models.
+to improve the general fit and finish.
 
 Bootloader
 ~~~~~~~~~~
@@ -30,7 +28,7 @@ Micropython
 Wasp-os
 ~~~~~~~
 
-* [ ] Watch/phone integration
+* [ ] Watch/phone integration with GadgetBridge
 
   * [ ] Music player support
   * [ ] Set date/time
