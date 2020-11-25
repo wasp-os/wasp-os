@@ -103,6 +103,10 @@ class RTC(object):
         localtime = self.get_localtime()
         return localtime[3:6]
 
+    def time(self):
+        """Get time in the same format as time.time"""
+        return self.offset + (self._uptime >> 3)
+
     @property
     def uptime(self):
         """Provide the current uptime in seconds."""

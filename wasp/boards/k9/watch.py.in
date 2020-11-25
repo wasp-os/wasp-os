@@ -129,9 +129,9 @@ try:
     if not safe_mode:
         boot_msg("Enter /flash")
         os.chdir('/flash')
-        boot_msg("Run main.py")
+        boot_msg("main.py")
     else:
         boot_msg("Safe mode")
 except:
     drawable.string("FAILED", 0, 136, width=240)
-    backlight.set(2)
+backlight.set(2)
