@@ -32,6 +32,12 @@ the wasp-os community, are expected to meet the community guidelines described
 in the project's code of conduct when interacting within all community spaces
 (including the wasp-os github presence).
 
+Coding Style
+------------
+
+wasp-os uses a similar coding style as micropython and, in particular, Python
+code is expected to follow :pep:`8`.
+
 Developer Certificate of Origin
 -------------------------------
 
