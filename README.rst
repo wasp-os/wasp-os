@@ -66,6 +66,19 @@ which can run these commands automatically.
 As mentioned above there are many drivers and features still to be
 developed, see the :ref:`Roadmap` for current status.
 
+Community
+---------
+
+The wasp-os community is centred around the
+`github project <https://github.com/daniel-thompson/wasp-os>`_ and is
+supplemented with instant messaging via the #wasp-os IRC channel at
+freenode.net.
+
+If you are unfamiliar with IRC we recommend the
+`offical freenode web client <https://webchat.freenode.net/#wasp-os>`_. Choose
+a nickname, leave *I have a password* unchecked, set the *Channel* to
+**#wasp-os** and click **Start**. That's it!
+
 Videos
 ------
 
