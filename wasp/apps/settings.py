@@ -19,9 +19,9 @@ class SettingsApp():
 
     def __init__(self):
         self._slider = wasp.widgets.Slider(3, 10, 90)
-        self._slider.value = wasp.system.brightness - 1
 
     def foreground(self):
+        self._slider.value = wasp.system.brightness - 1
         self._draw()
         wasp.system.request_event(wasp.EventMask.TOUCH)
 
