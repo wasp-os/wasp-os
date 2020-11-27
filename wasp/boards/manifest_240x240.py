@@ -4,6 +4,7 @@
 
 manifest = (
     'apps/clock.py',
+    'apps/connect4.py',
     'apps/flashlight.py',
     'apps/gameoflife.py',
     'apps/haiku.py',

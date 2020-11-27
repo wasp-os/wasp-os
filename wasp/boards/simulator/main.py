@@ -3,6 +3,9 @@
 
 import wasp
 
+from apps.connect4 import Connect4App
+wasp.system.register(Connect4App())
+
 from apps.fibonacci_clock import FibonacciClockApp
 wasp.system.register(FibonacciClockApp())
 
