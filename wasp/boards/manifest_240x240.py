@@ -15,6 +15,7 @@ manifest = (
     'apps/steps.py',
     'apps/stopwatch.py',
     'apps/fibonacci_clock.py',
+    'apps/snake.py',
     'apps/testapp.py',
     'fonts/__init__.py',
     'fonts/clock.py',
