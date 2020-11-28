@@ -137,7 +137,7 @@ class NotificationBar:
         (x, y) = self._pos
 
         if wasp.watch.connected():
-            draw.blit(icons.blestatus, x, y, fg=0x7bef)
+            draw.blit(icons.blestatus, x, y, fg=0x041F)
             if wasp.system.notifications:
                 draw.blit(icons.notification, x+22, y, fg=0x7bef)
             else:
