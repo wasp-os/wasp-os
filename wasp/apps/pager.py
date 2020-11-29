@@ -99,11 +99,18 @@ class NotificationApp(PagerApp):
         super().background()
 
     def swipe(self, event):
-        if event[0] == wasp.EventType.DOWN:
-            self.confirmation_view.active = True
-            self._draw()
-        super().swipe(event)
+        if self.confirmation_view.active:
+            if event[0] == wasp.EventType.UP:
+                self.confirmation_view.active = False
+                self._draw()
+                return
+        else:
+            if event[0] == wasp.EventType.DOWN and self._page == 0:
+                self.confirmation_view.active = True
+                self._draw()
+                return
 
+        super().swipe(event)
 
     def _draw(self):
         if self.confirmation_view.active:
