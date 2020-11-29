@@ -3,6 +3,7 @@
 """Shared manifest for applications that work well on a 240x240 display."""
 
 manifest = (
+    'apps/alarm.py',
     'apps/clock.py',
     'apps/flashlight.py',
     'apps/gameoflife.py',
