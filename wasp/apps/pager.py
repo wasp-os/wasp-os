@@ -94,6 +94,10 @@ class NotificationApp(PagerApp):
         wasp.system.request_event(wasp.EventMask.TOUCH)
         super().foreground()
 
+    def background(self):
+        self.confirmation_view.active = False
+        super().background()
+
     def swipe(self, event):
         if event[0] == wasp.EventType.DOWN:
             self.confirmation_view.active = True
