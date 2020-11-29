@@ -38,7 +38,8 @@ jobs:
       id: install-packages
       run:  |
           sudo apt-get update
-          sudo apt-get install -y python3-sphinx python3-recommonmark python3-cryptography python3-cbor
+          sudo apt-get install -y python3-sphinx python3-cryptography python3-cbor graphviz
+          sudo pip3 install recommonmark
 
     - name: Update submodules
       id:   update-submodules

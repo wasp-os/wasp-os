@@ -379,7 +379,7 @@ section to add an import and register for you application from ``main.py``
     then be patched into the system. For example the following can be used
     to adopt a new version of the CST816S driver:
 
-    .. code-block::
+    .. code-block:: sh
 
         ./tools/wasptool\
             --exec wasp/drivers/cst816s.py\
