@@ -60,8 +60,7 @@ class AlarmApp():
         """Activate the application."""
         self._draw()
         wasp.system.request_event(wasp.EventMask.TOUCH)
-        if self.ringing:
-            wasp.system.request_tick(1000)
+        wasp.system.request_tick(1000)
         wasp.system.cancel_alarm(self.current_alarm, self._alert)
 
     def background(self):
@@ -74,13 +73,21 @@ class AlarmApp():
 
     def tick(self, ticks):
         """Notify the application that its periodic tick is due."""
-        wasp.watch.vibrator.pulse(duty=50, ms=500)
-        wasp.system.keep_awake()
+        if self.ringing:
+            wasp.watch.vibrator.pulse(duty=50, ms=500)
+            wasp.system.keep_awake()
 
     def touch(self, event):
         """Notify the application of a touchscreen touch event."""
         draw = wasp.watch.drawable
-        if event[1] in range(90, 150) and event[2] in range(180,240):
+        if self.ringing:
+            mute = wasp.watch.display.mute
+            self.ringing = False
+            mute(True)
+            self._draw()
+            mute(False)
+
+        elif event[1] in range(90, 150) and event[2] in range(180,240):
             self.active = not self.active
 
         elif event[1] in range(30,90):
@@ -128,7 +135,7 @@ class AlarmApp():
             draw.fill()
             draw.string("Alarm", 0, 150, width=240)
             draw.blit(icon, 73, 50)
-            
+
     def _update(self):
         """Update the dynamic parts of the application display."""
         draw = wasp.watch.drawable
@@ -136,7 +143,7 @@ class AlarmApp():
             draw.fill(0x001f, 102, 192, 36, 36)
         else:
             draw.fill(0x0000, 102, 192, 36, 36)
-        
+
         if self.hours < 10:
             draw.string("0"+str(self.hours), 10, 100, width=100)
         else:
