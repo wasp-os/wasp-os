@@ -103,7 +103,7 @@ class NotificationApp(PagerApp):
 
     def _draw(self):
         if self.confirmation_view.active:
-            self.confirmation_view.draw('clear notifications?')
+            self.confirmation_view.draw('Clear notifications?')
         else:
             super()._draw()
 
