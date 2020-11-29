@@ -354,8 +354,10 @@ class ConfirmationView:
         )
 
         if is_yes_button_press:
+            self.active = False
             return True
         elif is_no_button_press:
+            self.active = False
             return False
         else:
             return None
