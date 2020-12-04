@@ -44,3 +44,24 @@ def test_app(system, name):
     for i in range(4):
         system.step()
     system.switch(system.quick_ring[0])
+
+def test_stopwatch(system):
+    system.switch(system.apps['Timer'])
+
+    system.step()
+
+    wasp.watch.button.value(0)
+    system.step()
+    assert(system.app._started_at > 0)
+    wasp.watch.button.value(1)
+
+    system.step()
+    system.step()
+    system.step()
+
+    wasp.watch.button.value(0)
+    system.step()
+    assert(system.app._started_at == 0)
+    wasp.watch.button.value(1)
+
+    system.step()
