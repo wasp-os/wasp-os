@@ -5,16 +5,8 @@ import wasp
 def step():
     wasp.system._tick()
     wasp.machine.deepsleep()
+    time.sleep(0.1)
 wasp.system.step = step
-
-def play(appname):
-    system = wasp.system
-    system.switch(system.apps[appname])
-    for i in range(4):
-        system.step()
-        time.sleep(0.125)
-    system.switch(system.quick_ring[0])
-wasp.system.play = play
 
 wasp.system.apps = {}
 for app in wasp.system.quick_ring + wasp.system.launcher_ring:
@@ -45,20 +37,10 @@ def test_launcher_ring(system):
     assert('Settings' in names)
     assert('Torch' in names)
 
-def test_steps(system):
-    system.play('Steps')
-
-def test_timer(system):
-    system.play('Timer')
-
-def test_heart(system):
-    system.play('Heart')
-
-def test_self_test(system):
-    system.play('Self Test')
-
-def test_settings(system):
-    system.play('Settings')
-
-def test_torch(system):
-    system.play('Torch')
+@pytest.mark.parametrize("name",
+        ('Steps', 'Timer', 'Heart', 'Self Test', 'Settings', 'Torch'))
+def test_app(system, name):
+    system.switch(system.apps[name])
+    for i in range(4):
+        system.step()
+    system.switch(system.quick_ring[0])
