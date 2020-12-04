@@ -98,9 +98,13 @@ sim:
 	PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=.:wasp/boards/simulator:wasp \
 	$(PYTHON) -i wasp/boards/simulator/main.py
 
+ifeq ("$(origin K)", "command line")
+  PYTEST_RESTRICT = -k '$(K)'
+endif
+
 check:
 	PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=.:wasp/boards/simulator:wasp \
-	$(PYTEST) -v -W ignore wasp/boards/simulator
+	$(PYTEST) -v -W ignore $(PYTEST_RESTRICT) wasp/boards/simulator
 
 
 .PHONY: bootloader reloader docs micropython
