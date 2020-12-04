@@ -1,0 +1,44 @@
+name: wasp-os simulator tests
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+    runs-on: ubuntu-20.04
+
+    steps:
+    - name: Checkout files
+      id:   checkout-files
+      uses: actions/checkout@v2
+
+    - name: Check the cached python downloads
+      id:   cache-modules
+      uses: actions/cache@v2
+      env:
+        cache-name: cache-toolchain
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ hashFiles('wasp/requirements.txt') }}
+        restore-keys: ${{ runner.os }}-pip-${{ hashFiles('wasp/requirements.txt') }}
+
+    - name: Install packages
+      id: install-packages
+      run: |
+        sudo apt-get update
+        sudo apt-get install libsdl2-2.0.0
+
+    - name: Install python modules
+      id:   install-modules
+      run: |
+          pip3 install -r wasp/requirements.txt
+
+    - name: Run the simulator tests
+      id:   run-tests
+      run:  |
+          PYTEST=$HOME/.local/bin/pytest \
+          SDL_VIDEODRIVER=dummy \
+          make check

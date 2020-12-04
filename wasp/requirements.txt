@@ -1,0 +1,8 @@
+cbor
+click
+numpy
+pexpect
+Pillow
+pyserial
+pysdl2
+pytest
