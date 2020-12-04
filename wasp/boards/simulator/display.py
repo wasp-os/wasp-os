@@ -3,6 +3,9 @@
 
 """ Simulated ST7789 display and CST816S touchscreen. """
 
+import warnings
+warnings.simplefilter("ignore", lineno=58)
+
 import sys
 import sdl2
 import sdl2.ext
