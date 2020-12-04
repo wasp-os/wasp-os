@@ -1,5 +1,8 @@
 export PYTHONPATH := $(PWD)/tools/nrfutil:$(PWD)/tools/intelhex:$(PYTHONPATH)
 
+PYTHON ?= python3
+PYTEST ?= pytest-3
+
 all : bootloader reloader micropython
 
 # If BOARD is undefined then set it up so that expanding it issues an
@@ -33,13 +36,13 @@ submodules :
 bootloader: build-$(BOARD_SAFE)
 	$(RM) bootloader/_build-$(BOARD)_nrf52832//$(BOARD)_nrf52832_bootloader-*-nosd.hex
 	$(MAKE) -C bootloader/ BOARD=$(BOARD)_nrf52832 all genhex
-	python3 tools/hexmerge.py \
+	$(PYTHON) tools/hexmerge.py \
 		bootloader/_build-$(BOARD)_nrf52832/$(BOARD)_nrf52832_bootloader-*-nosd.hex \
 		bootloader/lib/softdevice/s132_nrf52_6.1.1/s132_nrf52_6.1.1_softdevice.hex \
 		-o build-$(BOARD)/bootloader.hex
-	python3 tools/hex2c.py build-$(BOARD)/bootloader.hex > \
+	$(PYTHON) tools/hex2c.py build-$(BOARD)/bootloader.hex > \
 		reloader/src/boards/$(BOARD)/bootloader.h
-	python3 -m nordicsemi dfu genpkg \
+	$(PYTHON) -m nordicsemi dfu genpkg \
 		--bootloader bootloader/_build-$(BOARD)_nrf52832//$(BOARD)_nrf52832_bootloader-*-nosd.hex \
 		--softdevice bootloader/lib/softdevice/s132_nrf52_6.1.1/s132_nrf52_6.1.1_softdevice.hex \
 		build-$(BOARD)/bootloader-daflasher.zip
@@ -63,7 +66,7 @@ micropython: build-$(BOARD_SAFE) wasp/boards/$(BOARD_SAFE)/watch.py
 		MICROPY_VFS_LFS2=1 \
 		FROZEN_MANIFEST=$(PWD)/wasp/boards/$(BOARD)/manifest.py \
 		USER_C_MODULES=$(PWD)/wasp/modules
-	python3 -m nordicsemi dfu genpkg \
+	$(PYTHON) -m nordicsemi dfu genpkg \
 		--dev-type 0x0052 \
 		--application micropython/ports/nrf/build-$(BOARD)-s132/firmware.hex \
 		build-$(BOARD)/micropython.zip
@@ -72,7 +75,7 @@ build-$(BOARD_SAFE):
 	mkdir -p build-$(BOARD)
 
 dfu:
-	python3 -m nordicsemi dfu serial --package micropython.zip --port /dev/ttyACM0
+	$(PYTHON) -m nordicsemi dfu serial --package micropython.zip --port /dev/ttyACM0
 
 flash:
 	pyocd erase -t nrf52 --mass
@@ -93,7 +96,12 @@ docs:
 
 sim:
 	PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=.:wasp/boards/simulator:wasp \
-	python3 -i wasp/boards/simulator/main.py
+	$(PYTHON) -i wasp/boards/simulator/main.py
+
+check:
+	PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=.:wasp/boards/simulator:wasp \
+	$(PYTEST) -v -W ignore wasp/boards/simulator
+
 
 .PHONY: bootloader reloader docs micropython
 
