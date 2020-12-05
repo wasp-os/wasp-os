@@ -20,6 +20,7 @@ class SettingsApp():
     def __init__(self):
         self._slider = wasp.widgets.Slider(3, 10, 90)
         self._nfy_slider = wasp.widgets.Slider(3, 10, 90)
+        self._scroll_indicator = wasp.widgets.ScrollIndicator()
         self._settings = ['Brightness', 'Notification Level']
         self._sett_index = 0
         self._current_setting = self._settings[0]
@@ -81,3 +82,4 @@ class SettingsApp():
                 say = "Silent"
             self._nfy_slider.update()
         wasp.watch.drawable.string(say, 0, 150, width=240)
+        self._scroll_indicator.draw()
