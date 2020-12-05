@@ -76,7 +76,8 @@ class ClockApp():
 
             # Clear the display and draw that static parts of the watch face
             draw.fill()
-            draw.rleblit(digits.clock_colon, pos=(2*48, 80), fg=0xb5b6)
+            draw.rleblit(digits.clock_colon, pos=(2*48, 80),
+                         fg=wasp.system.theme('accent-mid'))
 
             # Redraw the status bar
             wasp.system.bar.draw()
@@ -95,10 +96,14 @@ class ClockApp():
         month = MONTH[month*3:(month+1)*3]
 
         # Draw the changeable parts of the watch face
-        draw.rleblit(DIGITS[now[4]  % 10], pos=(4*48, 80))
-        draw.rleblit(DIGITS[now[4] // 10], pos=(3*48, 80), fg=0xbdb6)
-        draw.rleblit(DIGITS[now[3]  % 10], pos=(1*48, 80))
-        draw.rleblit(DIGITS[now[3] // 10], pos=(0*48, 80), fg=0xbdb6)
+        draw.rleblit(DIGITS[now[4]  % 10], pos=(4*48, 80),
+                     fg=wasp.system.theme('accent-hi'))
+        draw.rleblit(DIGITS[now[4] // 10], pos=(3*48, 80),
+                     fg=wasp.system.theme('accent-lo'))
+        draw.rleblit(DIGITS[now[3]  % 10], pos=(1*48, 80),
+                     fg=wasp.system.theme('accent-hi'))
+        draw.rleblit(DIGITS[now[3] // 10], pos=(0*48, 80),
+                     fg=wasp.system.theme('accent-lo'))
         draw.string('{} {} {}'.format(now[2], month, now[0]),
                 0, 180, width=240)
 

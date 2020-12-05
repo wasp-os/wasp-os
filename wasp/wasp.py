@@ -14,7 +14,6 @@
     wasp.watch is an import of :py:mod:`watch` and is simply provided as a
     shortcut (and to reduce memory by keeping it out of other namespaces).
 """
-
 import gc
 import machine
 import micropython
@@ -117,6 +116,8 @@ class Manager():
         self.notifications = {}
         self.musicstate = {}
         self.musicinfo = {}
+
+        self._theme = b'\xef{\xef{\xef{<\xe7\xef{\xb6\xb5\xb6\xbd\xff\xff\xff9'
 
         self.blank_after = 15
 
@@ -503,5 +504,31 @@ class Manager():
             watch.schedule = watch.nop
 
         self._scheduling = enable
+
+    def set_theme(self, new_theme) -> bool:
+        """Sets the system theme.
+
+        Accepts anything that supports indexing,
+        and has a len() equivalent to the default theme."""
+        if len(self._theme) != len(new_theme):
+            return False
+        self._theme = new_theme
+        return True
+
+    def theme(self, theme_part: str) -> int:
+        """Returns the relevant part of theme. For more see ../tools/themer.py"""
+        theme_parts = ("ble",
+                       "scroll-indicator",
+                       "battery-charging",
+                       "status-clock",
+                       "notify-icon",
+                       "accent-mid",
+                       "accent-lo",
+                       "accent-hi",
+                       "slider-default")
+        if theme_part not in theme_parts:
+            raise IndexError('Theme part {} does not exist'.format(theme_part))
+        idx = theme_parts.index(theme_part) * 2
+        return self._theme[idx] | (self._theme[idx+1] << 8)
 
 system = Manager()

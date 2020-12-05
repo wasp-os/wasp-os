@@ -39,7 +39,8 @@ class BatteryMeter:
 
         if watch.battery.charging():
             if self.level != -1:
-                draw.rleblit(icon, pos=(239-icon[0], 0), fg=0x7bef)
+                draw.rleblit(icon, pos=(239-icon[0], 0),
+                             fg=wasp.system.theme('battery-charging'))
                 self.level = -1
         else:
             level = watch.battery.level()
@@ -108,7 +109,7 @@ class Clock:
 
             draw = wasp.watch.drawable
             draw.set_font(fonts.sans28)
-            draw.set_color(0xe73c)
+            draw.set_color(wasp.system.theme('status-clock'))
             draw.string(t1, 52, 12, 138)
 
         self.on_screen = now
@@ -137,13 +138,15 @@ class NotificationBar:
         (x, y) = self._pos
 
         if wasp.watch.connected():
-            draw.blit(icons.blestatus, x, y, fg=0x7bef)
+            draw.blit(icons.blestatus, x, y, fg=wasp.system.theme('ble'))
             if wasp.system.notifications:
-                draw.blit(icons.notification, x+22, y, fg=0x7bef)
+                draw.blit(icons.notification, x+22, y,
+                          fg=wasp.system.theme('notify-icon'))
             else:
                 draw.fill(0, x+22, y, 30, 32)
         elif wasp.system.notifications:
-            draw.blit(icons.notification, x, y, fg=0x7bef)
+            draw.blit(icons.notification, x, y,
+                      fg=wasp.system.theme('notify-icon'))
             draw.fill(0, x+30, y, 22, 32)
         else:
             draw.fill(0, x, y, 52, 32)
@@ -206,10 +209,13 @@ class ScrollIndicator:
     def update(self):
         """Update from scrolling indicator."""
         draw = watch.drawable
+        color = wasp.system.theme('scroll-indicator')
+
         if self.up:
-            draw.rleblit(icons.up_arrow, pos=self._pos, fg=0x7bef)
+            draw.rleblit(icons.up_arrow, pos=self._pos, fg=color)
         if self.down:
-            draw.rleblit(icons.down_arrow, pos=(self._pos[0], self._pos[1] + 13), fg=0x7bef)
+            draw.rleblit(icons.down_arrow, pos=(self._pos[0], self._pos[1] + 13),
+                         fg=color)
 
 _SLIDER_KNOB_DIAMETER = const(40)
 _SLIDER_KNOB_RADIUS = const(_SLIDER_KNOB_DIAMETER // 2)
@@ -221,22 +227,14 @@ _SLIDER_TRACK_Y2 = const(_SLIDER_TRACK_Y1 + _SLIDER_TRACK_HEIGHT)
 
 class Slider():
     """A slider to select values."""
-    def __init__(self, steps, x=10, y=90, color=0x39ff):
+    def __init__(self, steps, x=10, y=90, color=None):
         self.value = 0
         self._steps = steps
         self._stepsize = _SLIDER_TRACK / (steps-1)
         self._x = x
         self._y = y
         self._color = color
-
-        # Automatically generate a lowlight color
-        if color < 0b10110_000000_00000:
-            color = (color | 0b10110_000000_00000) & 0b10110_111111_11111
-        if (color & 0b111111_00000) < 0b101100_00000:
-            color = (color | 0b101100_00000) & 0b11111_101100_11111
-        if (color & 0b11111) < 0b10110:
-            color = (color | 0b11000) & 0b11111_111111_10110
-        self._lowlight = color
+        self._lowlight = None
 
     def draw(self):
         """Draw the slider."""
@@ -244,6 +242,19 @@ class Slider():
         x = self._x
         y = self._y
         color = self._color
+        if self._color is None:
+            self._color = wasp.system.theme('slider-default')
+            color = self._color
+        if self._lowlight is None:
+            # Automatically generate a lowlight color
+            if color < 0b10110_000000_00000:
+                color = (color | 0b10110_000000_00000) & 0b10110_111111_11111
+            if (color & 0b111111_00000) < 0b101100_00000:
+                color = (color | 0b101100_00000) & 0b11111_101100_11111
+            if (color & 0b11111) < 0b10110:
+                color = (color | 0b11000) & 0b11111_111111_10110
+            self._lowlight = color
+            color = self._color
         light = self._lowlight
 
         knob_x = x + ((_SLIDER_TRACK * self.value) // (self._steps-1))
