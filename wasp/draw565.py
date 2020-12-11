@@ -355,3 +355,52 @@ class Draw565(object):
             chunks.append(end)
 
         return chunks
+
+    def line(self, x0=0, y0=0, x1=0, y1=0, color=0xffff):
+        """Draw a line between points (x0;y0) and (x1;y1) with color.
+
+        Example:
+
+        .. code-block:: python
+
+            draw = wasp.watch.drawable
+            draw.line(0, 120, 240, 240, 0xf800)
+
+        :param x0: X coordinate of the start of the line, defaults to 0
+        :param x1: Y coordinate of the end of the line, defaults to 0
+        :param y0: Y coordinate of the start of the line, defaults to 0
+        :param y1: Y coordinate of the end of the line, defaults to 0
+        :param color: Color to draw line in, in RGB565 format, defaults to 0xffff
+        """
+
+        px = bytes(((color >> 8) & 0xFF, color & 0xFF))
+        write_data = self._display.write_data
+        set_window = self._display.set_window
+
+        dx =  abs(x1 - x0)
+        sx = 1 if x0 < x1 else -1
+        dy = -abs(y1 - y0)
+        sy = 1 if y0 < y1 else -1
+        err = dx + dy
+        if dx == 0 or dy == 0:
+            if x1 < x0 or y1 < y0:
+                x0, x1 = x1, x0
+                y0, y1 = y1, y0
+            w = 1 if dx == 0 else dx
+            h = 1 if dy == 0 else -dy
+            self.fill(color, x0, y0, w, h)
+            return
+        while True:
+            set_window(x0, y0, 1, 1)
+            write_data(px)
+            if x0 == x1 and y0 == y1:
+                break
+            e2 = 2 * err
+            if e2 >= dy:
+                err += dy
+                x0 += sx
+            if e2 <= dx:
+                err += dx;
+                y0 += sy;
+        
+
