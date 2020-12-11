@@ -23,7 +23,7 @@ class TestApp():
     ICON = icons.app
 
     def __init__(self):
-        self.tests = ('Alarm', 'Button', 'Crash', 'Colours', 'Fill', 'Fill-H', 'Fill-V', 'Notifications', 'RLE', 'String', 'Touch', 'Wrap')
+        self.tests = ('Alarm', 'Button', 'Crash', 'Colours', 'Fill', 'Fill-H', 'Fill-V', 'Line', 'Notifications', 'RLE', 'String', 'Touch', 'Wrap')
         self.test = self.tests[0]
         self.scroll = wasp.widgets.ScrollIndicator()
 
@@ -101,6 +101,8 @@ class TestApp():
                     event[1], event[2]), 0, 108, width=240)
         elif self.test == 'Wrap':
             self._benchmark_wrap()
+        elif self.test == 'Line':
+            self._benchmark_line()
 
     def _alarm(self):
         wasp.system.wake()
@@ -164,6 +166,23 @@ class TestApp():
         draw.string("the lazy dog.", 12, 24+72)
         draw.string("0123456789", 12, 24+120)
         draw.string('!"£$%^&*()', 12, 24+144)
+        elapsed = t.time()
+        t.stop()
+        del t
+        draw.string('{}s'.format(elapsed / 1000000), 12, 24+192)
+
+    def _benchmark_line(self):
+        draw = wasp.watch.drawable
+        # instead of calculating by trig functions, use LUT
+        points = ((120, 170), (139, 166), (155, 155), (166, 139), (170, 120), (166, 101), (155, 85), (139, 74), (120, 70))
+
+
+        draw.fill(0, 120, 120, 50, 50)
+        self.scroll.draw()
+        t = machine.Timer(id=1, period=8000000)
+        t.start()
+        for x, y in points:
+            draw.line(120, 120, x, y, 0x1f)
         elapsed = t.time()
         t.stop()
         del t
