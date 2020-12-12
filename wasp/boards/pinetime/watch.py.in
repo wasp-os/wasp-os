@@ -13,6 +13,7 @@ from drivers.nrf_rtc import RTC
 rtc = RTC(RTCounter(1, mode=RTCounter.PERIODIC, period=1, callback=_callback))
 rtc.counter.start()
 
+import gc
 import os
 import time
 
@@ -125,3 +126,6 @@ try:
 except:
     drawable.string("FAILED", 0, 136, width=240)
 backlight.set(1)
+
+gc.collect()
+free = gc.mem_free()

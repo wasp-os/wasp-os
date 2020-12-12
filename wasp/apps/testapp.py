@@ -5,9 +5,11 @@
 ~~~~~~~~~~~~~
 """
 
-import machine
 import wasp
+
+import gc
 import icons
+import machine
 
 from apps.pager import PagerApp
 
@@ -23,7 +25,7 @@ class TestApp():
     ICON = icons.app
 
     def __init__(self):
-        self.tests = ('Alarm', 'Button', 'Crash', 'Colours', 'Fill', 'Fill-H', 'Fill-V', 'Line', 'Notifications', 'RLE', 'String', 'Touch', 'Wrap')
+        self.tests = ('Alarm', 'Button', 'Crash', 'Colours', 'Fill', 'Fill-H', 'Fill-V', 'Free Mem', 'Line', 'Notifications', 'RLE', 'String', 'Touch', 'Wrap')
         self.test = self.tests[0]
         self.scroll = wasp.widgets.ScrollIndicator()
 
@@ -226,6 +228,15 @@ class TestApp():
             for s in self._sliders:
                 s.draw()
             self._update_colours()
+        elif self.test == 'Free Mem':
+            if wasp.watch.free:
+                draw.string("Boot: {}".format(wasp.watch.free), 12, 3*24)
+                draw.string("Init: {}".format(wasp.free), 12, 4*24)
+                draw.string("Now: {}".format(gc.mem_free()), 12, 5*24)
+                gc.collect()
+                draw.string("GC: {}".format(gc.mem_free()), 12, 6*24)
+            else:
+                draw.string("Not supported", 12, 4*24)
         elif self.test == 'Notifications':
             draw.string('+', 24, 100)
             draw.string('-', 210, 100)

@@ -188,3 +188,6 @@ vibrator = Vibrator(Pin('MOTOR', Pin.OUT, value=0), active_low=True)
 
 def connected():
     return not (int(rtc.uptime / 30) & 1)
+
+# Free memory cannot be measured on the simulator
+free = 0
