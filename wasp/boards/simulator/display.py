@@ -37,6 +37,11 @@ class ST7789Sim(object):
         self.cmd = 0
 
     def write(self, data):
+        # Converting data to a memoryview ensures we act more like spi.write()
+        # when running in a real device (e.g. data must be  bytes-like object
+        # that implements the buffer protocol)
+        data = memoryview(data)
+
         if len(data) == 1:
             # Assume if we get a byte at a time then it is command.
             # This is a simplification do we don't have to track

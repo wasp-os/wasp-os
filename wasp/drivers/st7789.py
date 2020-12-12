@@ -181,8 +181,8 @@ class ST7789_SPI(ST7789):
 
         Send data to the display as part of an optimized write sequence.
 
-        :param bytearray buf: Data, must be in a form that can be directly
-                              consumed by the SPI bus.
+        :param bytes-like buf: Data, must be in a form that can be directly
+                               consumed by the SPI bus.
     """
     def __init__(self, width, height, spi, cs, dc, res=None, rate=8000000):
         """Configure the display.
