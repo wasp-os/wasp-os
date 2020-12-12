@@ -173,6 +173,29 @@ class CST816SSim():
         self.regs[6] = up_y;
         self.raise_interrupt(pins)
 
+    def press(self, x, y):
+        pins = wasp.watch.Pin.pins
+        self.regs[1] = 5
+        self.regs[4] = x
+        self.regs[6] = y
+        self.raise_interrupt(pins)
+
+    def swipe(self, direction):
+        pins = wasp.watch.Pin.pins
+        if direction ==' up':
+            self.regs[1] = 1
+        elif direction == 'down':
+            self.regs[1] = 2
+        elif direction == 'left':
+            self.regs[1] = 4
+        elif direction == 'right':
+            self.regs[1] = 3
+        elif direction == 'next':
+            # Allow NEXT to be tested on the simulator
+            self.regs[1] = 253
+        self.regs[3] = 0x80
+        self.raise_interrupt(pins)
+
     def raise_interrupt(self, pins):
         pins['TP_INT'].raise_irq()
 

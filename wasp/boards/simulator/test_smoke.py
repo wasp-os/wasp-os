@@ -8,6 +8,9 @@ def step():
     time.sleep(0.1)
 wasp.system.step = step
 
+wasp.watch.touch.press = wasp.watch.touch.i2c.sim.press
+wasp.watch.touch.swipe = wasp.watch.touch.i2c.sim.swipe
+
 wasp.system.apps = {}
 for app in wasp.system.quick_ring + wasp.system.launcher_ring:
     wasp.system.apps[app.NAME] = app
@@ -64,4 +67,51 @@ def test_stopwatch(system):
     assert(system.app._started_at == 0)
     wasp.watch.button.value(1)
 
+    system.step()
+
+def test_selftests(system):
+    """Walk though each screen in the Self Test.
+
+    This is a simple "does it crash" test and the only thing we do to stimulate
+    the app is press in the centre of the screen. For most of the tests that
+    will do something useful! For example it will run the benchmark for every
+    one of the benchmark tests.
+    """
+    system.switch(system.apps['Self Test'])
+    system.step()
+
+    start_point = system.app.test
+
+    for i in range(len(system.app.tests)):
+        wasp.watch.touch.press(120, 120)
+        system.step()
+        wasp.watch.touch.swipe('down')
+        system.step()
+
+    assert(start_point == system.app.test)
+
+def test_selftest_crash(system):
+    system.switch(system.apps['Self Test'])
+    system.step()
+
+    def select(name):
+        for i in range(len(system.app.tests)):
+            if system.app.test == name:
+                break
+            wasp.watch.touch.swipe('down')
+            system.step()
+        assert system.app.test == name
+
+    select('Crash')
+
+    wasp.watch.button.value(0)
+    with pytest.raises(Exception):
+        system.step()
+
+    # Get back to a safe state for the next test!
+    try:
+        wasp.watch.button.value(1)
+        system.step()
+    except:
+        pass
     system.step()
