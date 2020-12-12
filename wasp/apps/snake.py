@@ -76,7 +76,6 @@ snake_game = (
 
 import wasp, time
 from random import randint
-from apps.launcher import LauncherApp
 
 class SnakeGameApp():
     NAME = 'Snake'
