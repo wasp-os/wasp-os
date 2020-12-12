@@ -174,15 +174,17 @@ class TestApp():
     def _benchmark_line(self):
         draw = wasp.watch.drawable
         # instead of calculating by trig functions, use LUT
-        points = ((120, 170), (139, 166), (155, 155), (166, 139), (170, 120), (166, 101), (155, 85), (139, 74), (120, 70))
+        points = (0, 50), (19, 46), (35, 35), (46, 19),
 
-
-        draw.fill(0, 120, 120, 50, 50)
+        draw.fill(0, 70, 70, 100, 100)
         self.scroll.draw()
         t = machine.Timer(id=1, period=8000000)
         t.start()
         for x, y in points:
-            draw.line(120, 120, x, y, 0x1f)
+            draw.line(120, 120, 120+x, 120+y, 0xfbc0)
+            draw.line(120, 120, 120+y, 120-x, 0x07c0)
+            draw.line(120, 120, 120-x, 120-y, 0x6b3f)
+            draw.line(120, 120, 120-y, 120+x, 0xffe0)
         elapsed = t.time()
         t.stop()
         del t
