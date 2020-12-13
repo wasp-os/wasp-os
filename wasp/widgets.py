@@ -40,7 +40,7 @@ class BatteryMeter:
         if watch.battery.charging():
             if self.level != -1:
                 draw.rleblit(icon, pos=(239-icon[0], 0),
-                             fg=wasp.system.theme('battery-charging'))
+                             fg=wasp.system.theme('battery'))
                 self.level = -1
         else:
             level = watch.battery.level()
@@ -59,7 +59,8 @@ class BatteryMeter:
 
             if self.level < 0 or ((level > 5) ^ (self.level > 5)):
                 if level  > 5:
-                    draw.rleblit(icon, pos=(239-icon[0], 0), fg=0x7bef)
+                    draw.rleblit(icon, pos=(239-icon[0], 0),
+                             fg=wasp.system.theme('battery'))
                 else:
                     rgb = 0xf800
                     draw.rleblit(icon, pos=(239-icon[0], 0), fg=0xf800)

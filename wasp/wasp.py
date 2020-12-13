@@ -529,7 +529,7 @@ class Manager():
         """Returns the relevant part of theme. For more see ../tools/themer.py"""
         theme_parts = ("ble",
                        "scroll-indicator",
-                       "battery-charging",
+                       "battery",
                        "status-clock",
                        "notify-icon",
                        "accent-mid",
