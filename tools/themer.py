@@ -43,32 +43,40 @@ class DefaultTheme():
 if __name__ == '__main__':
     parser = ArgumentParser(
         description='''Compiles themes into a format understood by wasp-os.
-                       The resulting string should be put in main.py like this:
 
-                           theme_string = THEME_STRING_GOES_HERE
+For the theme to take effect, the resulting string should be put in main.py
+like this:
 
-                       for the theme to take effect.
-                    ''',
-        epilog=''' To create a theme,
-               import this file and extend the DefaultTheme class, only changing the variables.
-               Export the resulting class as 'Theme'.
-               Example:
-               --------
-               theme.py:
-                   from themer import DefaultTheme
+   theme_string = THEME_STRING_GOES_HERE
+''',
+        epilog=''' To create a theme, import this file and extend the
+DefaultTheme class, only changing the variables.
 
-                   class Theme(DefaultTheme):
-                       BLE_ICON_COLOR = 0x041F
+Export the resulting class as 'Theme'.
 
-               shell:
-                   $ ./themer.py theme # NOTE: do not include .py at end of file!
-                   > b'\xef{\xef{\xef{<\xe7\xef{\xb6\xb5\xb6\xbd\xff\xff\xff9'
+Example:
+--------
 
-               main.py:
-                   ...
-                   wasp.system.set_theme(b'\xef{\xef{\xef{<\xe7\xef{\xb6\xb5\xb6\xbd\xff\xff\xff9')
-                   ...
-               ''',
+theme.py:
+
+    from themer import DefaultTheme
+
+    class Theme(DefaultTheme):
+        BLE_ICON_COLOR = 0x041F
+
+shell:
+
+    # NOTE: do not include .py at end of file!
+    $ ./themer.py theme
+    > b'\\xef{\\xef{\\xef{<\\xe7\\xef{\\xb6\\xb5\\xb6\\xbd\\xff\\xff\\xff9'
+
+main.py:
+
+    ...
+    wasp.system.set_theme(
+        b'\\xef{\\xef{\\xef{<\\xe7\\xef{\\xb6\\xb5\\xb6\\xbd\\xff\\xff\\xff9')
+    ...
+''',
         formatter_class=RawTextHelpFormatter
     )
 
