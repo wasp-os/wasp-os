@@ -15,6 +15,9 @@ wasp.system.register(GameOfLifeApp())
 from apps.snake import SnakeGameApp
 wasp.system.register(SnakeGameApp())
 
+from apps.calc import CalculatorApp
+wasp.system.register(CalculatorApp())
+
 from apps.musicplayer import MusicPlayerApp
 wasp.system.register(MusicPlayerApp())
 wasp.system.set_music_info({

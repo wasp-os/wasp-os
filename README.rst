@@ -184,3 +184,7 @@ using one of the techniques is the Application Writer's guide.
 .. image: res/SnakeApp.png
    :alt: Snake Game running in the wasp-os simulator
    :width: 179
+
+.. image: res/calc_all.png
+   :alt: Calculator App running in the wasp-os simulator
+   :width: 179
