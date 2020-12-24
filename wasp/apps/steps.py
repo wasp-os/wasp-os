@@ -78,6 +78,13 @@ class StepCounterApp():
         self._wake += 24 * 60 * 60
         wasp.system.set_alarm(self._wake, self._reset)
 
+    def touch(self, event):
+        draw = wasp.watch.drawable
+        draw.fill(0x0000,60,112,180,40)
+        watch.accel.steps = 0      
+        
+        self._update()  
+
     def tick(self, ticks):
         self._count += 686;
         self._update()
