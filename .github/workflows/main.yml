@@ -29,7 +29,9 @@ jobs:
       id:   install-toolchain
       # installs arm-none-eabi if the CI environment can't find it in the cache
       if:   steps.cache-toolchain.outputs.cache-hit != 'true'
-      uses: fiam/arm-none-eabi-gcc@v1.0.2
+      # Currently v1.0.2 is the latest version... but it is from July 2020
+      # and is currently broken. Use a newer version instead.
+      uses: fiam/arm-none-eabi-gcc@162d71c10065d706b8a07a2f27d7628cad82e4e3
       with:
           release: 9-2019-q4
           directory: ${{ runner.temp }}/arm-none-eabi
