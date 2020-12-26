@@ -48,6 +48,30 @@ def test_app(system, name):
         system.step()
     system.switch(system.quick_ring[0])
 
+def test_constructor(system, constructor):
+    # Special case for the notification app
+    if 'NotificationApp' in str(constructor):
+         wasp.system.notify(wasp.watch.rtc.get_uptime_ms(),
+             {
+                 "src":"testcase",
+                 "title":"A test",
+                 "body":"This is a long message containingaverylongwordthatdoesnotfit and lots of other contents as well."
+             })
+
+    try:
+        system.switch(constructor())
+        system.step()
+        system.step()
+        wasp.watch.touch.press(120, 120)
+        system.step()
+        system.step()
+        system.switch(system.quick_ring[0])
+    except FileNotFoundError:
+        # Some apps intend to generate exceptions during the constructor
+        # if they don't have required files available
+        if 'HaikuApp' not in str(constructor):
+            raise
+
 def test_stopwatch(system):
     system.switch(system.apps['Timer'])
 
