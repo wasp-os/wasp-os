@@ -23,16 +23,27 @@ Micropython
 ~~~~~~~~~~~
 
 * [ ] Use SoftDevice sleep logic
-* [ ] Rebase on later version of MicroPython
 
 Wasp-os
 ~~~~~~~
 
-* [ ] Watch/phone integration with GadgetBridge
+* [X] Watch/phone integration with GadgetBridge
 
-  * [ ] Music player support
-  * [ ] Set date/time
-  * [ ] Fully fledged wasp-os device class
+  * [X] Set date/time
+  * [X] Fully fledged wasp-os device class
+
+* [ ] Look and feel
+
+  * [X] Add a simple theming approach
+  * [ ] Update icon for Music player
+  * [ ] Introduce fwd/back/vol+/vol- buttons to the music player
+  * [ ] Update icon for Alarm app
+  * [ ] Update art work for buttons in Confirmation view
+
+* [ ] Applications
+
+  * [ ] Introduce an analog watch face
+  * [ ] Add a sports/activity app (combined stopwatch and trip counter)
 
 wasptool
 ~~~~~~~~
