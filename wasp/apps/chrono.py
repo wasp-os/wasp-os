@@ -74,7 +74,7 @@ class ChronoApp():
             # Draw the dividers
             draw.set_color(mid)
             for theta in range(12):
-                draw.polar(120, 120, theta * 360 // 12, 111, 119, 2)
+                draw.polar(120, 120, theta * 360 // 12, 110, 118, 3)
 
             self._hh = 0
             self._mm = 0
@@ -87,8 +87,8 @@ class ChronoApp():
         # Undraw old time
         hh = (30 * (self._hh % 12)) + (self._mm / 2)
         mm = 6 * self._mm
-        draw.polar(120, 120, hh, 5, 80, 5, 0)
-        draw.polar(120, 120, mm, 5, 110, 3, 0)
+        draw.polar(120, 120, hh, 5, 75, 7, 0)
+        draw.polar(120, 120, mm, 5, 106, 5, 0)
 
         # Record the minute that is currently being displayed
         self._hh = now[3]
@@ -97,6 +97,6 @@ class ChronoApp():
         # Draw the new time
         hh = (30 * (self._hh % 12)) + (self._mm / 2)
         mm = 6 * self._mm
-        draw.polar(120, 120, hh, 5, 80, 5, hi)
+        draw.polar(120, 120, hh, 5, 75, 7, hi)
         draw.polar(120, 120, hh, 5, 60, 3, lo)
-        draw.polar(120, 120, mm, 5, 110, 3, hi)
+        draw.polar(120, 120, mm, 5, 106, 5, hi)
