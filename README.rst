@@ -185,6 +185,6 @@ using one of the techniques is the Application Writer's guide.
    :alt: Music Player running in the wasp-os simulator
    :width: 179
 
-.. image: res/SnakeApp.png
+.. image:: res/SnakeApp.png
    :alt: Snake Game running in the wasp-os simulator
    :width: 179
