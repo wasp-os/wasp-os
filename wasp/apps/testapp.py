@@ -183,10 +183,10 @@ class TestApp():
         t = machine.Timer(id=1, period=8000000)
         t.start()
         for x, y in points:
-            draw.line(120, 120, 120+x, 120+y, 0xfbc0)
-            draw.line(120, 120, 120+y, 120-x, 0x07c0)
-            draw.line(120, 120, 120-x, 120-y, 0x6b3f)
-            draw.line(120, 120, 120-y, 120+x, 0xffe0)
+            draw.line(120, 120, 120+x, 120+y, 4, 0xfb00)  # red
+            draw.line(120, 120, 120+y, 120-x, 3, 0x07c0)  # green
+            draw.line(120, 120, 120-x, 120-y, 5, 0x6b3f)  # blue
+            draw.line(120, 120, 120-y, 120+x, 2, 0xffe0)  # yellow
         elapsed = t.time()
         t.stop()
         del t

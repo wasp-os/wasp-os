@@ -356,7 +356,7 @@ class Draw565(object):
 
         return chunks
 
-    def line(self, x0, y0, x1, y1, color=None):
+    def line(self, x0, y0, x1, y1, width=1, color=None):
         """Draw a line between points (x0, y0) and (x1, y1).
 
         Example:
@@ -370,13 +370,20 @@ class Draw565(object):
         :param y0: Y coordinate of the start of the line
         :param x1: X coordinate of the end of the line
         :param y1: Y coordinate of the end of the line
+        :param width: Width of the line in pixels
         :param color: Colour to draw line, defaults to the foreground colour
         """
         if color is None:
             color = self._bgfg & 0xffff
-        px = bytes(((color >> 8) & 0xFF, color & 0xFF))
+        px = bytes(((color >> 8) & 0xFF, color & 0xFF)) * (width * width)
         write_data = self._display.write_data
         set_window = self._display.set_window
+
+        dw = (width - 1) // 2
+        x0 -= dw
+        y0 -= dw
+        x1 -= dw
+        y1 -= dw
 
         dx =  abs(x1 - x0)
         sx = 1 if x0 < x1 else -1
@@ -387,12 +394,12 @@ class Draw565(object):
             if x1 < x0 or y1 < y0:
                 x0, x1 = x1, x0
                 y0, y1 = y1, y0
-            w = 1 if dx == 0 else dx
-            h = 1 if dy == 0 else -dy
+            w = width if dx == 0 else dx
+            h = width if dy == 0 else -dy
             self.fill(color, x0, y0, w, h)
             return
         while True:
-            set_window(x0, y0, 1, 1)
+            set_window(x0, y0, width, width)
             write_data(px)
             if x0 == x1 and y0 == y1:
                 break
