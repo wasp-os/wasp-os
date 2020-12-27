@@ -356,8 +356,8 @@ class Draw565(object):
 
         return chunks
 
-    def line(self, x0=0, y0=0, x1=0, y1=0, color=0xffff):
-        """Draw a line between points (x0;y0) and (x1;y1) with color.
+    def line(self, x0, y0, x1, y1, color=None):
+        """Draw a line between points (x0, y0) and (x1, y1).
 
         Example:
 
@@ -366,13 +366,14 @@ class Draw565(object):
             draw = wasp.watch.drawable
             draw.line(0, 120, 240, 240, 0xf800)
 
-        :param x0: X coordinate of the start of the line, defaults to 0
-        :param x1: Y coordinate of the end of the line, defaults to 0
-        :param y0: Y coordinate of the start of the line, defaults to 0
-        :param y1: Y coordinate of the end of the line, defaults to 0
-        :param color: Color to draw line in, in RGB565 format, defaults to 0xffff
+        :param x0: X coordinate of the start of the line
+        :param y0: Y coordinate of the start of the line
+        :param x1: X coordinate of the end of the line
+        :param y1: Y coordinate of the end of the line
+        :param color: Colour to draw line, defaults to the foreground colour
         """
-
+        if color is None:
+            color = self._bgfg & 0xffff
         px = bytes(((color >> 8) & 0xFF, color & 0xFF))
         write_data = self._display.write_data
         set_window = self._display.set_window
