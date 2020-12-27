@@ -7,6 +7,7 @@
 
 import array
 import fonts.sans24
+import math
 import micropython
 
 @micropython.viper
@@ -411,4 +412,36 @@ class Draw565(object):
                 err += dx;
                 y0 += sy;
         
+    def polar(self, x, y, theta, r0, r1, width=1, color=None):
+        """Draw a line using polar coordinates.
 
+        The coordinate system is tuned for clock applications so it
+        adopts navigational conventions rather than mathematical ones.
+        Specifically the reference direction is drawn vertically
+        upwards and the angle is measures clockwise in degrees.
+
+        Example:
+
+        .. code-block:: python
+
+            draw = wasp.watch.drawable
+            draw.line(360 / 12, 16, 64)
+
+        :param theta: Angle, in degrees
+        :param r0: Radius of the start of the line
+        :param y0: Radius of the end of the line
+        :param x: X coordinate of the origin
+        :param y: Y coordinate of the origin
+        :param width: Width of the line in pixels
+        :param color: Colour to draw line in, defaults to the foreground colour
+        """
+        to_radians = math.pi / 180
+        xdelta = math.sin(theta * to_radians)
+        ydelta = math.cos(theta * to_radians)
+
+        x0 = x + int(xdelta * r0)
+        x1 = x + int(xdelta * r1)
+        y0 = y - int(ydelta * r0)
+        y1 = y - int(ydelta * r1)
+
+        self.line(x0, y0, x1, y1, width, color)
