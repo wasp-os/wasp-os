@@ -23,6 +23,17 @@ treated as examples they are described in detail as part of the
 Watch faces
 -----------
 
+.. automodule:: apps.chrono
+
+This application is very simple and largely serves as an example of how to
+implement traditional watch faces.
+It is not included by default in any image.
+Instead it can be transferred to the device dynamically using wasptool:
+
+.. code-block:: sh
+
+    ./tools/wasptool --exec wasp/apps/chrono.py --eval 'wasp.system.register(ChronoApp())'
+
 .. automodule:: apps.fibonacci_clock
 
 This app is enabled by default in the simulator.
