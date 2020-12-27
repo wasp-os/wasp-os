@@ -395,8 +395,8 @@ class Draw565(object):
             if x1 < x0 or y1 < y0:
                 x0, x1 = x1, x0
                 y0, y1 = y1, y0
-            w = width if dx == 0 else dx
-            h = width if dy == 0 else -dy
+            w = width if dx == 0 else (dx + width - 1)
+            h = width if dy == 0 else (-dy + width - 1)
             self.fill(color, x0, y0, w, h)
             return
         while True:
