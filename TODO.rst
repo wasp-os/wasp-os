@@ -39,7 +39,7 @@ Wasp-os
   * [ ] Introduce fwd/back/vol+/vol- buttons to the music player
   * [ ] Update icon for Alarm app
   * [ ] Update art work for buttons in Confirmation view
-  * [ ] Reduce the size of the battery charge icon slightly (match bell)
+  * [X] Reduce the size of the battery charge icon slightly (match bell)
 
 * [ ] Applications
 

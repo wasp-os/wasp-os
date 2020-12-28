@@ -39,7 +39,7 @@ class BatteryMeter:
 
         if watch.battery.charging():
             if self.level != -1:
-                draw.rleblit(icon, pos=(239-icon[0], 0),
+                draw.blit(icon, 239-icon[1], 0,
                              fg=wasp.system.theme('battery'))
                 self.level = -1
         else:
@@ -47,30 +47,28 @@ class BatteryMeter:
             if level == self.level:
                 return
 
-            if level > 96:
-                h = 24
-                rgb = 0x07e0
-            else:
-                h = level // 4
 
-                green = level // 3
-                red = 31-green
-                rgb = (red << 11) + (green << 6)
+            green = level // 3
+            if green > 31:
+                green = 31
+            red = 31-green
+            rgb = (red << 11) + (green << 6)
 
             if self.level < 0 or ((level > 5) ^ (self.level > 5)):
                 if level  > 5:
-                    draw.rleblit(icon, pos=(239-icon[0], 0),
+                    draw.blit(icon, 239-icon[1], 0,
                              fg=wasp.system.theme('battery'))
                 else:
                     rgb = 0xf800
-                    draw.rleblit(icon, pos=(239-icon[0], 0), fg=0xf800)
+                    draw.blit(icon, 239-icon[1], 0, fg=0xf800)
 
-            x = 239 - 30
-            w = 16
-            if 24 - h:
-                draw.fill(0, x, 14, w, 24 - h)
+            w = icon[1] - 10
+            x = 239 - 5 - w
+            h = 2*level // 11
+            if 18 - h:
+                draw.fill(0, x, 9, w, 18 - h)
             if h:
-                draw.fill(rgb, x, 38 - h, w, h)
+                draw.fill(rgb, x, 27 - h, w, h)
 
             self.level = level
 
@@ -111,14 +109,14 @@ class Clock:
             draw = wasp.watch.drawable
             draw.set_font(fonts.sans28)
             draw.set_color(wasp.system.theme('status-clock'))
-            draw.string(t1, 52, 12, 138)
+            draw.string(t1, 52, 4, 138)
 
         self.on_screen = now
         return now
 
 class NotificationBar:
     """Show BT status and if there are pending notifications."""
-    def __init__(self, x=2, y=8):
+    def __init__(self, x=0, y=0):
         self._pos = (x, y)
 
     def draw(self):
@@ -213,10 +211,9 @@ class ScrollIndicator:
         color = wasp.system.theme('scroll-indicator')
 
         if self.up:
-            draw.rleblit(icons.up_arrow, pos=self._pos, fg=color)
+            draw.blit(icons.up_arrow, self._pos[0], self._pos[1], fg=color)
         if self.down:
-            draw.rleblit(icons.down_arrow, pos=(self._pos[0], self._pos[1] + 13),
-                         fg=color)
+            draw.blit(icons.down_arrow, self._pos[0], self._pos[1]+13, fg=color)
 
 _SLIDER_KNOB_DIAMETER = const(40)
 _SLIDER_KNOB_RADIUS = const(_SLIDER_KNOB_DIAMETER // 2)
