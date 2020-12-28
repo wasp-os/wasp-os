@@ -53,7 +53,7 @@ class CalculatorApp():
 
     def foreground(self):
         self._draw()
-        self.output = ""
+        self._update()
         wasp.system.request_event(wasp.EventMask.TOUCH)
 
     def touch(self, event):
