@@ -65,6 +65,9 @@ def _fill(mv, color: int, count: int, offset: int):
         p[x] = color
 
 def _bounding_box(s, font):
+    if not s:
+        return (0, font.height())
+
     w = 0
     for ch in s:
         (_, h, wc) = font.get_ch(ch)
