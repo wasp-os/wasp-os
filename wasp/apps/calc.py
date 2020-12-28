@@ -84,9 +84,9 @@ class CalculatorApp():
         draw.set_color(wasp.system.theme('accent-lo'))
         for i in range(4):
             # horizontal lines
-            draw.line(x0=0,y0=(i+1)*47,x1=240,y1=(i+1)*47)
+            draw.line(x0=0,y0=(i+1)*47,x1=239,y1=(i+1)*47)
             # vertical lines
-            draw.line(x0=(i+1)*47,y0=47,x1=(i+1)*47,y1=240)
+            draw.line(x0=(i+1)*47,y0=47,x1=(i+1)*47,y1=239)
         # Draw button label:
         draw.set_color(wasp.system.theme('accent-hi'))
         for x in range(5):
