@@ -279,7 +279,7 @@ class Draw565(object):
         """
         self._font = font
 
-    def string(self, s, x, y, width=None):
+    def string(self, s, x, y, width=None, right=False):
         """Draw a string at the supplied position.
 
         :param s:     String to render
@@ -291,6 +291,8 @@ class Draw565(object):
                       be filled with the background colour (to ensure that if
                       we update one string with a narrower one there is no
                       need to "undraw" it)
+        :param right: If True (and width is set) then right justify rather than
+                      centre the text
         """
         display = self._display
         bgfg = self._bgfg
@@ -299,8 +301,12 @@ class Draw565(object):
 
         if width:
             (w, h) = _bounding_box(s, font)
-            leftpad = (width - w) // 2
-            rightpad = width - w - leftpad
+            if right:
+                leftpad = width - w
+                rightpad = 0
+            else:
+                leftpad = (width - w) // 2
+                rightpad = width - w - leftpad
             self.fill(bg, x, y, leftpad, h)
             x += leftpad
 
