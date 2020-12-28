@@ -350,29 +350,31 @@ parser.add_argument('--c', action='store_true',
                     help='Render the output as C instead of python')
 parser.add_argument('--indent', default=0, type=int,
                     help='Add extra indentation in the generated code')
-parser.add_argument('--2bit', action='store_true', dest='twobit',
+parser.add_argument('--1bit', action='store_const', const=1, dest='depth',
+                    help='Generate 1-bit image')
+parser.add_argument('--2bit', action='store_const', const=2, dest='depth',
                     help='Generate 2-bit image')
-parser.add_argument('--8bit', action='store_true', dest='eightbit',
+parser.add_argument('--8bit', action='store_const', const=8, dest='depth',
                     help='Generate 8-bit image')
 
 args = parser.parse_args()
-if args.eightbit:
+if args.depth == 8:
     encoder = encode_8bit
-    depth = 8
-elif args.twobit:
+elif args.depth == 2:
     encoder = encode_2bit
-    depth = 2
-else:
+elif args.depth == 1:
     encoder = encode
-    depth =1
+else:
+    encoder = encode_2bit
+    args.depth = 2
 
 for fname in args.files:
     image = encoder(Image.open(fname))
 
     if args.c:
-        render_c(image, fname, args.indent, depth)
+        render_c(image, fname, args.indent, args.depth)
     else:
-        render_py(image, fname, args.indent, depth)
+        render_py(image, fname, args.indent, args.depth)
 
     if args.ascii:
         print()
