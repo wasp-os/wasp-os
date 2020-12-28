@@ -81,20 +81,25 @@ class CalculatorApp():
         draw = wasp.watch.drawable
         draw.fill()
         # Make grid:
+        draw.set_color(wasp.system.theme('accent-lo'))
         for i in range(4):
             # horizontal lines
             draw.line(x0=0,y0=(i+1)*47,x1=240,y1=(i+1)*47)
             # vertical lines
             draw.line(x0=(i+1)*47,y0=47,x1=(i+1)*47,y1=240)
         # Draw button label:
-        for y in range(4):
-            for x in range(5):
+        draw.set_color(wasp.system.theme('accent-hi'))
+        for x in range(5):
+            if x == 3:
+                draw.set_color(wasp.system.theme('accent-mid'))
+            for y in range(4):
                 label = self.fields[y][x]
                 if (x == 0):
                     draw.string(label, x*47+14, y*47+60)
                 else:
                     draw.string(label, x*47+16, y*47+60)
         draw.string("<", 215, 10)
+        draw.set_color(wasp.system.theme('accent-hi'))
     
 
 
