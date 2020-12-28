@@ -43,7 +43,7 @@ Wasp-os
 
 * [ ] Applications
 
-  * [ ] Introduce an analog watch face
+  * [X] Introduce an analog watch face
   * [ ] Add a sports/activity app (combined stopwatch and trip counter)
 
 wasptool
