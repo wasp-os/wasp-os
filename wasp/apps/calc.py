@@ -1,3 +1,13 @@
+# SPDX-License-Identifier: LGPL-3.0-or-later
+# Copyright (C) 2020 Johannes Wache
+"""Calculator application
+
+This is a simple calculator app that uses the build-in eval() function to
+compute the solution.
+"""
+
+import wasp, fonts
+
 # 2-bit RLE, generated from res/calc.png, 413 bytes
 calc = (
     b'\x02'
@@ -29,15 +39,6 @@ calc = (
     b'n3l5j7h9f<b?\x01^?\x05'
     b'XAA?\tV?\x0eP(')
 
-
-# SPDX-License-Identifier: LGPL-3.0-or-latesettingsr
-# Copyright (C) 2020 Johannes Wache
-"""Calculator application
-
-This is a simple calculator app that uses the build-in eval() function to compute the solution for an equation.
-"""
-
-import wasp, fonts
 
 class CalculatorApp():
     NAME = 'Calc'
