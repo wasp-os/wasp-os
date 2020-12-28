@@ -74,10 +74,13 @@ class CalculatorApp():
             if (button_pressed == "C"):
                 self.output = ""
             elif (button_pressed == "="):
-                self.output = self.calculate(self.output)
+                try:
+                    self.output = str(eval(self.output.replace('^', '**')))[:12]
+                except:
+                    wasp.watch.vibrator.pulse()
             else:
                 self.output +=  button_pressed
-        self.display_output()
+        self._update()
 
     def _draw(self):
         draw = wasp.watch.drawable
@@ -106,27 +109,6 @@ class CalculatorApp():
         draw.string("<", 215, 10)
         draw.set_color(wasp.system.theme('accent-hi'))
     
-
-
-    def display_output(self):
-        wasp.watch.drawable.fill(x=2,y=2,w=170,h=40) 
-        if (self.output != ""):
-            if len(self.output) >= 10:
-                wasp.watch.drawable.string(self.output[len(self.output)-9:], 6, 14, width=170)
-            else:
-                wasp.watch.drawable.string(self.output, 6, 14, width=170)
-
-    def calculate(self,s):
-        equation = s
-        
-        # Normal calculator stuff    
-        for i in range(len(s)):
-            if (s[i] =="^"):
-                equation = s[:i] + "**"+s[i+1:]
-            elif (s[i] == ":"):
-                equation = s[:i] + "/"+s[i+1:]
-        try:
-            result = eval(equation)
-        except: # Error
-            result = ""
-        return str(result)
+    def _update(self):
+        output = self.output if len(self.output) < 12 else self.output[len(self.output)-12:]
+        wasp.watch.drawable.string(output, 0, 14, width=200, right=True)
