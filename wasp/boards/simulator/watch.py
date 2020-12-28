@@ -64,7 +64,7 @@ class Backlight(object):
 
 class Battery(object):
     def __init__(self):
-        self.voltage = 3.9
+        self.voltage = 4.1
         self.step = -0.01
         self.powered = False
 
