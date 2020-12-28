@@ -39,6 +39,10 @@ calc = (
     b'n3l5j7h9f<b?\x01^?\x05'
     b'XAA?\tV?\x0eP(')
 
+fields = ( '789+('
+           '456-)'
+           '123*^'
+           'C0./=' )
 
 class CalculatorApp():
     NAME = 'Calc'
@@ -46,11 +50,7 @@ class CalculatorApp():
 
     def __init__(self):
         self.output = ""
-        self.fields = [["7","8","9","+","("],
-                        ["4","5","6","-",")"],
-                        ["1","2","3","*","^"],
-                        ["C","0",".",":","="]]
-    
+
     def foreground(self):
         self._draw()
         self.output = ""
@@ -62,13 +62,15 @@ class CalculatorApp():
                 if (self.output != ""):
                     self.output = self.output[:-1]
         else:
-            indices = [(event[2]// 48)-1,event[1]//47]
+            x = event[1] // 47
+            y = (event[2] // 48) - 1
+
             # Error handling for touching at the border
-            if (indices[0]>3):
-                indices[0] = 3
-            if (indices[1]>4):
-                indices[1] = 4
-            button_pressed = self.fields[indices[0]][indices[1]]
+            if x > 4:
+                x = 4
+            if y > 3:
+                y = 3
+            button_pressed = fields[x + 5*y]
             if (button_pressed == "C"):
                 self.output = ""
             elif (button_pressed == "="):
@@ -96,7 +98,7 @@ class CalculatorApp():
             if x == 3:
                 draw.set_color(wasp.system.theme('accent-mid'))
             for y in range(4):
-                label = self.fields[y][x]
+                label = fields[x + 5*y]
                 if (x == 0):
                     draw.string(label, x*47+14, y*47+60)
                 else:
