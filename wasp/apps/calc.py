@@ -87,6 +87,9 @@ class CalculatorApp():
             draw.line(x0=0,y0=(i+1)*47,x1=239,y1=(i+1)*47)
             # vertical lines
             draw.line(x0=(i+1)*47,y0=47,x1=(i+1)*47,y1=239)
+        draw.line(x0=0, y0=47, x1=0, y1=239)
+        draw.line(x0=239, y0=47, x1=239, y1=239)
+        draw.line(x0=0, y0=239, x1=239, y1=239)
         # Draw button label:
         draw.set_color(wasp.system.theme('accent-hi'))
         for x in range(5):
