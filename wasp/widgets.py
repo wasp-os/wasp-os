@@ -244,15 +244,7 @@ class Slider():
             self._color = wasp.system.theme('slider-default')
             color = self._color
         if self._lowlight is None:
-            # Automatically generate a lowlight color
-            if color < 0b10110_000000_00000:
-                color = (color | 0b10110_000000_00000) & 0b10110_111111_11111
-            if (color & 0b111111_00000) < 0b101100_00000:
-                color = (color | 0b101100_00000) & 0b11111_101100_11111
-            if (color & 0b11111) < 0b10110:
-                color = (color | 0b11000) & 0b11111_111111_10110
-            self._lowlight = color
-            color = self._color
+            self._lowlight = draw.lighten(color, 15)
         light = self._lowlight
 
         knob_x = x + ((_SLIDER_TRACK * self.value) // (self._steps-1))
