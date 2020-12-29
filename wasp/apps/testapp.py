@@ -25,9 +25,11 @@ class TestApp():
     ICON = icons.app
 
     def __init__(self):
-        self.tests = ('Alarm', 'Button', 'Crash', 'Colours', 'Fill', 'Fill-H', 'Fill-V', 'Free Mem', 'Line', 'Notifications', 'RLE', 'String', 'Touch', 'Wrap')
+        self.tests = ('Alarm', 'Button', 'Checkbox', 'Crash', 'Colours', 'Fill', 'Fill-H', 'Fill-V', 'Free Mem', 'Line', 'Notifications', 'RLE', 'String', 'Touch', 'Wrap')
         self.test = self.tests[0]
         self.scroll = wasp.widgets.ScrollIndicator()
+
+        self._checkbox = wasp.widgets.Checkbox(4, 104, 'Check me')
 
         self._sliders = (
                 wasp.widgets.Slider(32, 10, 90, 0xf800),
@@ -72,7 +74,9 @@ class TestApp():
         self._draw()
 
     def touch(self, event):
-        if self.test == 'Colours':
+        if self.test == 'Checkbox':
+            self._checkbox.touch(event)
+        elif self.test == 'Colours':
             if event[2] > 90:
                 s = self._sliders[(event[2] - 90) // 50]
                 s.touch(event)
@@ -221,7 +225,9 @@ class TestApp():
         if self.test == 'Alarm':
             draw.string("Press button to", 12, 24+24)
             draw.string("set alarm.", 12, 24+48)
-        if self.test == 'Crash':
+        elif self.test == 'Checkbox':
+            self._checkbox.draw()
+        elif self.test == 'Crash':
             draw.string("Press button to", 12, 24+24)
             draw.string("throw exception.", 12, 24+48)
         elif self.test == 'Colours':

@@ -215,6 +215,47 @@ class ScrollIndicator:
         if self.down:
             draw.blit(icons.down_arrow, self._pos[0], self._pos[1]+13, fg=color)
 
+class Checkbox():
+    """A simple (labelled) checkbox."""
+    def __init__(self, x, y, label=None):
+        self._im = (x, y, label)
+        self.state = False
+
+    def draw(self):
+        """Draw the checkbox and label."""
+        draw = wasp.watch.drawable
+        im = self._im
+        if im[2]:
+            draw.string(im[2], im[0], im[1]+6)
+        self.update()
+
+    def update(self):
+        """Draw the checkbox."""
+        draw = wasp.watch.drawable
+        im = self._im
+        if self.state:
+            c1 = wasp.system.theme('slider-default')
+            c2 = draw.lighten(c1, 15)
+            fg = c2
+        else:
+            c1 = 0
+            c2 = 0
+            fg = wasp.system.theme('accent-lo')
+        # Draw checkbox on the right margin if there is a label, otherwise
+        # draw at the natural location
+        x = 239 - 32 - 4 if im[2] else im[0]
+        draw.blit(icons.checkbox, x, im[1], fg, c1, c2)
+
+    def touch(self, event):
+        """Handle touch events."""
+        y = event[2] + 4
+        im = self._im
+        if y >= im[1] and y < im[1]+40:
+            self.state = not self.state
+            self.update()
+            return True
+        return False
+
 _SLIDER_KNOB_DIAMETER = const(40)
 _SLIDER_KNOB_RADIUS = const(_SLIDER_KNOB_DIAMETER // 2)
 _SLIDER_WIDTH = const(220)
