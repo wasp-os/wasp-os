@@ -55,14 +55,13 @@ class AlarmApp():
         self.hours = 0
         self.minutes = 0
 
-        self._set_current_alarm()
-
     def foreground(self):
         """Activate the application."""
         self._draw()
         wasp.system.request_event(wasp.EventMask.TOUCH)
         wasp.system.request_tick(1000)
-        wasp.system.cancel_alarm(self.current_alarm, self._alert)
+        if self.active.state:
+            wasp.system.cancel_alarm(self.current_alarm, self._alert)
 
     def background(self):
         """De-activate the application."""
