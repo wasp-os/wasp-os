@@ -15,6 +15,7 @@ sys.print_exception = print_exception
 import array
 import draw565
 import os
+import warnings
 
 from machine import I2C
 from machine import Pin
@@ -108,11 +109,15 @@ class RTC(object):
         self._lasttime = now
         return True
 
+    def set_localtime(self, t):
+        """Set the current wall time."""
+        warnings.warn('set_localtime() is not supported on simulator')
+
     def get_localtime(self):
         #if self.uptime < 60:
         #    # Jump back a little over a day
         #    return time.localtime(time.time() - 100000)
-        return time.localtime()
+        return time.localtime()[:8]
 
     def get_time(self):
         now = self.get_localtime()
