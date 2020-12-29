@@ -10,6 +10,12 @@ import fonts.sans24
 import math
 import micropython
 
+from micropython import const
+
+R = const(0b11111_000000_00000)
+G = const(0b00000_111111_00000)
+B = const(0b00000_000000_11111)
+
 @micropython.viper
 def _bitblit(bitbuf, pixels, bgfg: int, count: int):
     mv = ptr16(bitbuf)
@@ -454,3 +460,48 @@ class Draw565(object):
         y1 = y - int(ydelta * r1)
 
         self.line(x0, y0, x1, y1, width, color)
+
+    def lighten(self, color, step=1):
+        """Get a lighter shade from the same palette.
+
+        The approach is somewhat unsophisticated. It is essentially just a
+        saturating add for each of the RGB fields.
+
+        :param color: Shade to lighten
+        :returns:     New colour
+        """
+        r = (color & R) + (step << 11)
+        if r > R:
+            r = R
+
+        g = (color & G) + (step <<  6)
+        if g > G:
+            g = G
+
+        b = (color & B) + step
+        if b > B:
+            b = B
+
+        return (r | g | b)
+
+    def darken(self, color, step=1):
+        """Get a darker shade from the same palette.
+
+        The approach is somewhat unsophisticated. It is essentially just a
+        desaturating subtract for each of the RGB fields.
+
+        :param color: Shade to darken
+        :returns:     New colour
+        """
+        rm = color & R
+        rs = step << 11
+        r = rm - rs if rm > rs else 0
+
+        gm = color & G
+        gs = step << 6
+        g = gm - gs if gm > gs else 0
+
+        bm = color & B
+        b = bm - step if bm > step else 0
+
+        return (r | g | b)
