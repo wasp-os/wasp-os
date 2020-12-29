@@ -8,6 +8,7 @@
 import wasp
 
 import gc
+import fonts
 import icons
 import machine
 
@@ -30,12 +31,12 @@ class TestApp():
         self.scroll = wasp.widgets.ScrollIndicator()
 
         self._checkbox = wasp.widgets.Checkbox(4, 104, 'Check me')
-
         self._sliders = (
                 wasp.widgets.Slider(32, 10, 90, 0xf800),
                 wasp.widgets.Slider(64, 10, 140, 0x27e4),
                 wasp.widgets.Slider(32, 10, 190, 0x211f),
         )
+        self._spinner = wasp.widgets.Spinner(90, 60, 0, 99)
 
     def foreground(self):
         """Activate the application."""
@@ -86,18 +87,19 @@ class TestApp():
         elif self.test.startswith('Fill'):
             self._benchmark_fill()
         elif self.test == 'Notifications':
-            if event[1] < 120:
-                wasp.system.notify(wasp.watch.rtc.get_uptime_ms(),
-                    {
-                        "src":"Hangouts",
-                        "title":"A Name",
-                        "body":"message contents"
-                    })
-            else:
-                if wasp.system.notifications:
+            if self._spinner.touch(event):
+                notifications = wasp.system.notifications
+
+                if len(notifications) > self._spinner.value:
                     wasp.system.unnotify(
-                            next(iter(wasp.system.notifications.keys())))
-            self._update_notifications()
+                            next(iter(notifications.keys())))
+                else:
+                    wasp.system.notify(wasp.watch.rtc.get_uptime_ms(),
+                        {
+                            "src":"Hangouts",
+                            "title":"A Name",
+                            "body":"message contents"
+                        })
         elif self.test == 'RLE':
             self._benchmark_rle()
         elif self.test == 'String':
@@ -219,6 +221,7 @@ class TestApp():
         wasp.watch.display.mute(True)
         draw = wasp.watch.drawable
         draw.fill()
+        draw.set_font(fonts.sans24)
         draw.string('{} test'.format(self.test),
                 0, 6, width=240)
 
@@ -244,9 +247,8 @@ class TestApp():
             else:
                 draw.string("Not supported", 12, 4*24)
         elif self.test == 'Notifications':
-            draw.string('+', 24, 100)
-            draw.string('-', 210, 100)
-            self._update_notifications()
+            self._spinner.value = len(wasp.system.notifications)
+            self._spinner.draw()
         elif self.test == 'RLE':
             draw.blit(self.ICON, 120-48, 120-32)
 
@@ -262,6 +264,3 @@ class TestApp():
 
         draw.string('RGB565 #{:04x}'.format(rgb), 0, 6, width=240)
         draw.fill(rgb, 60, 35, 120, 50)
-
-    def _update_notifications(self):
-        wasp.watch.drawable.string(str(len(wasp.system.notifications)), 0, 140, 240)

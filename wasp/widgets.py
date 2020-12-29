@@ -226,6 +226,7 @@ class Checkbox():
         draw = wasp.watch.drawable
         im = self._im
         if im[2]:
+            draw.set_font(fonts.sans24)
             draw.string(im[2], im[0], im[1]+6)
         self.update()
 
@@ -248,7 +249,7 @@ class Checkbox():
 
     def touch(self, event):
         """Handle touch events."""
-        y = event[2] + 4
+        y = event[2]
         im = self._im
         if y >= im[1] and y < im[1]+40:
             self.state = not self.state
@@ -329,6 +330,53 @@ class Slider():
             v = self._steps - 1
         self.value = v
 
+class Spinner():
+    """A simple Spinner widget.
+
+    In order to have large enough hit boxes the spinner is a fairly large
+    widget and requires 60x120 px.
+    """
+    def __init__(self, x, y, mn, mx, field=1):
+        self._im = (x, y, mn, mx, field)
+        self.value = mn
+
+    def draw(self):
+        """Draw the slider."""
+        draw = watch.drawable
+        im = self._im
+        fg = draw.lighten(wasp.system.theme('slider-default'), 15)
+        draw.blit(icons.up_arrow, im[0]+30-8, im[1]+20, fg)
+        draw.blit(icons.down_arrow, im[0]+30-8, im[1]+120-20-9, fg)
+        self.update()
+
+    def update(self):
+        """Update the spinner value."""
+        draw = watch.drawable
+        im = self._im
+        draw.set_font(fonts.sans28)
+        s = str(self.value)
+        if len(s) < im[4]:
+            s = '0' * (im[4] - len(s)) + s
+        draw.string(s, im[0], im[1]+60-14, width=60)
+
+    def touch(self, event):
+        x = event[1]
+        y = event[2]
+        im = self._im
+        if x >= im[0] and x < im[0]+60 and y >= im[1] and y < im[1]+120:
+            if y < im[1] + 60:
+                self.value += 1
+                if self.value > im[3]:
+                    self.value = im[2]
+            else:
+                self.value -= 1
+                if self.value < im[2]:
+                    self.value = im[3] - 1
+
+            self.update()
+            return True
+
+        return False
 
 _message_string_x_coord = const(0)
 _message_string_y_coord = const(60)
