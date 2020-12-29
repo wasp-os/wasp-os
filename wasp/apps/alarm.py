@@ -15,6 +15,7 @@ An application to set a vibration alarm. All settings can be accessed from the W
 
 import wasp
 import time
+import widgets
 
 # 2-bit RLE, generated from res/alarm_icon.png, 285 bytes
 icon = (
@@ -49,7 +50,7 @@ class AlarmApp():
     def __init__(self):
         """Initialize the application."""
 
-        self.active = False
+        self.active = widgets.Checkbox(104, 194)
         self.ringing = False
         self.hours = 0
         self.minutes = 0
@@ -65,7 +66,7 @@ class AlarmApp():
 
     def background(self):
         """De-activate the application."""
-        if self.active:
+        if self.active.state:
             self._set_current_alarm()
             wasp.system.set_alarm(self.current_alarm, self._alert)
             if self.ringing:
@@ -87,8 +88,8 @@ class AlarmApp():
             self._draw()
             mute(False)
 
-        elif event[1] in range(90, 150) and event[2] in range(180,240):
-            self.active = not self.active
+        elif self.active.touch(event):
+            pass
 
         elif event[1] in range(30,90):
             if event[2] in range(40,100):
@@ -128,7 +129,7 @@ class AlarmApp():
                 draw.string("+", posx, 60, width=40)
                 draw.string("-", posx, 140, width=40)
 
-            draw.fill(0xffff, 100, 190, 40, 40)
+            self.active.draw()
 
             self._update()
         else:
@@ -139,10 +140,6 @@ class AlarmApp():
     def _update(self):
         """Update the dynamic parts of the application display."""
         draw = wasp.watch.drawable
-        if self.active:
-            draw.fill(0x001f, 102, 192, 36, 36)
-        else:
-            draw.fill(0x0000, 102, 192, 36, 36)
 
         if self.hours < 10:
             draw.string("0"+str(self.hours), 10, 100, width=100)
