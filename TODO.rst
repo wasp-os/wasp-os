@@ -42,10 +42,17 @@ Wasp-os
   * [ ] Update art work for buttons in Confirmation view
   * [X] Reduce the size of the battery charge icon slightly (match bell)
 
+* [ ] Widgets
+
+  * [ ] Add a button widget
+  * [X] Add a checkbox widget
+  * [ ] Add a spinner widget
+
 * [ ] Applications
 
   * [X] Introduce an analog watch face
   * [ ] Add a sports/activity app (combined stopwatch and trip counter)
+  * [ ] Add a boot configuration wizard to author new main.py as needed
 
 * [ ] Documentation
 
