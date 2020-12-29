@@ -297,7 +297,7 @@ _no_button_x_coord = const(120)
 _no_button_y_coord = const(100)
 
 class ConfirmationView:
-    "Confirmation widget allowing user confirmation of a setting"
+    """Confirmation widget allowing user confirmation of a setting."""
 
     def __init__(self):
         self.active = False
