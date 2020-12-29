@@ -342,12 +342,14 @@ def decode_to_ascii(image):
     assert(dp == 0)
 
 parser = argparse.ArgumentParser(description='RLE encoder tool.')
-parser.add_argument('files', nargs='+',
+parser.add_argument('files', nargs='*',
                     help='files to be encoded')
 parser.add_argument('--ascii', action='store_true',
                     help='Run the resulting image(s) through an ascii art decoder')
 parser.add_argument('--c', action='store_true',
                     help='Render the output as C instead of python')
+parser.add_argument('--clut', default=0, type=int,
+                    help='Lookup a colour value in the CLUT')
 parser.add_argument('--indent', default=0, type=int,
                     help='Add extra indentation in the generated code')
 parser.add_argument('--1bit', action='store_const', const=1, dest='depth',
@@ -358,6 +360,10 @@ parser.add_argument('--8bit', action='store_const', const=8, dest='depth',
                     help='Generate 8-bit image')
 
 args = parser.parse_args()
+
+if args.clut:
+    print(f'{args.clut} maps to {clut8_rgb888(args.clut):06x} (RGB888) or {clut8_rgb565(args.clut):04x} (RGB565)')
+
 if args.depth == 8:
     encoder = encode_8bit
 elif args.depth == 2:
