@@ -38,7 +38,7 @@ Wasp-os
   * [X] Add a simple theming approach
   * [ ] Update icon for Music player
   * [ ] Introduce fwd/back/vol+/vol- buttons to the music player
-  * [ ] Update icon for Alarm app
+  * [X] Update icon for Alarm app
   * [ ] Update art work for buttons in Confirmation view
   * [X] Reduce the size of the battery charge icon slightly (match bell)
 
@@ -46,7 +46,7 @@ Wasp-os
 
   * [ ] Add a button widget
   * [X] Add a checkbox widget
-  * [ ] Add a spinner widget
+  * [X] Add a spinner widget
 
 * [ ] Applications
 
