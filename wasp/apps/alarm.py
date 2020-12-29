@@ -14,6 +14,7 @@ An application to set a vibration alarm. All settings can be accessed from the W
 """
 
 import wasp
+import fonts
 import time
 import widgets
 
@@ -49,11 +50,12 @@ class AlarmApp():
 
     def __init__(self):
         """Initialize the application."""
+        self.active = widgets.Checkbox(104, 200)
+        self.hours = widgets.Spinner(50, 60, 0, 24, 2)
+        self.minutes = widgets.Spinner(130, 60, 0, 60, 2)
 
-        self.active = widgets.Checkbox(104, 194)
+        self.hours.value = 7
         self.ringing = False
-        self.hours = 0
-        self.minutes = 0
 
     def foreground(self):
         """Activate the application."""
@@ -76,79 +78,42 @@ class AlarmApp():
         if self.ringing:
             wasp.watch.vibrator.pulse(duty=50, ms=500)
             wasp.system.keep_awake()
+        else:
+            wasp.system.bar.update()
 
     def touch(self, event):
         """Notify the application of a touchscreen touch event."""
-        draw = wasp.watch.drawable
         if self.ringing:
             mute = wasp.watch.display.mute
             self.ringing = False
             mute(True)
             self._draw()
             mute(False)
-
-        elif self.active.touch(event):
+        elif self.hours.touch(event) or self.minutes.touch(event) or \
+             self.active.touch(event):
             pass
-
-        elif event[1] in range(30,90):
-            if event[2] in range(40,100):
-                self.hours += 1
-                if self.hours > 23:
-                    self.hours = 0
-
-            elif event[2] in range(120,180):
-                self.hours -= 1
-                if self.hours < 0:
-                    self.hours = 23
-
-        elif event[1] in range(150,210):
-            if event[2] in range(40,100):
-                self.minutes += 1
-                if self.minutes > 59:
-                    self.minutes = 0
-
-            elif event[2] in range(120,180):
-                self.minutes -= 1
-                if self.minutes < 0:
-                    self.minutes = 59
-
-        self._update()
 
     def _draw(self):
         """Draw the display from scratch."""
         draw = wasp.watch.drawable
         if not self.ringing:
             draw.fill()
-            draw.string(self.NAME, 0, 6, width=240)
 
-            draw.fill(0xffff, 120, 112, 2, 2)
-            draw.fill(0xffff, 120, 106, 2, 2)
+            sbar = wasp.system.bar
+            sbar.clock = True
+            sbar.draw()
 
-            for posx in [40,160]:
-                draw.string("+", posx, 60, width=40)
-                draw.string("-", posx, 140, width=40)
+            draw.set_font(fonts.sans28)
+            draw.string(':', 110, 120-14, width=20)
 
             self.active.draw()
-
-            self._update()
+            self.hours.draw()
+            self.minutes.draw()
         else:
             draw.fill()
+            draw.set_font(fonts.sans24)
             draw.string("Alarm", 0, 150, width=240)
             draw.blit(icon, 73, 50)
-
-    def _update(self):
-        """Update the dynamic parts of the application display."""
-        draw = wasp.watch.drawable
-
-        if self.hours < 10:
-            draw.string("0"+str(self.hours), 10, 100, width=100)
-        else:
-            draw.string(str(self.hours), 10, 100, width=100)
-
-        if self.minutes < 10:
-            draw.string("0"+str(self.minutes), 130, 100, width=100)
-        else:
-            draw.string(str(self.minutes), 130, 100, width=100)
 
     def _alert(self):
         self.ringing = True
@@ -160,6 +125,8 @@ class AlarmApp():
         yyyy = now[0]
         mm = now[1]
         dd = now[2]
-        if self.hours < now[3] or (self.hours == now[3] and self.minutes <= now[4]):
+        HH = self.hours.value
+        MM = self.minutes.value
+        if HH < now[3] or (HH == now[3] and MM <= now[4]):
             dd += 1
-        self.current_alarm = (time.mktime((yyyy, mm, dd, self.hours, self.minutes, 0, 0, 0, 0)))
+        self.current_alarm = (time.mktime((yyyy, mm, dd, HH, MM, 0, 0, 0, 0)))
