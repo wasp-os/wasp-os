@@ -18,6 +18,7 @@ Bootloader
 
 * [ ] Stay in bootloader after battery run down
 * [ ] Implement power off support (no splash screen)
+* [ ] Colour boot logo support
 
 Micropython
 ~~~~~~~~~~~
@@ -45,6 +46,10 @@ Wasp-os
 
   * [X] Introduce an analog watch face
   * [ ] Add a sports/activity app (combined stopwatch and trip counter)
+
+* [ ] Documentation
+
+  * [ ] Describe how to upload pre-compiled modules
 
 wasptool
 ~~~~~~~~
