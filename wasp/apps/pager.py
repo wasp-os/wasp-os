@@ -106,27 +106,18 @@ class NotificationApp(PagerApp):
                 return
         else:
             if event[0] == wasp.EventType.DOWN and self._page == 0:
-                self.confirmation_view.active = True
-                self._draw()
+                self.confirmation_view.draw('Clear notifications?')
                 return
 
         super().swipe(event)
 
-    def _draw(self):
-        if self.confirmation_view.active:
-            self.confirmation_view.draw('Clear notifications?')
-        else:
-            super()._draw()
-
     def touch(self, event):
-        if self.confirmation_view.active:
-            is_confirmed = self.confirmation_view.touch(event)
-            if is_confirmed:
+        if self.confirmation_view.touch(event):
+            if self.confirmation_view.value:
                 wasp.system.notifications = {}
                 wasp.system.navigate(wasp.EventType.BACK)
-            elif is_confirmed != None:
+            else:
                 self._draw()
-
 
 class CrashApp():
     """Crash handler application.
