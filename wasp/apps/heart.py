@@ -45,7 +45,7 @@ class HeartApp():
                         0, 6, width=240)
 
         # Graph is orange by default...
-        color = 0xffc0
+        color = wasp.system.theme('spot1')
 
         # If the maths goes wrong lets show it in the chart!
         if spl > 100 or spl < -100:

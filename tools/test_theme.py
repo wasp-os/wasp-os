@@ -9,7 +9,9 @@ class Theme(DefaultTheme):
     BATTERY_COLOR = 0x07ff
     SMALL_CLOCK_COLOR = 0x599f
     NOTIFICATION_COLOR = 0x8fe0
-    ACCENT_MID = 0xf800
-    ACCENT_LO = 0x001f
-    ACCENT_HI = 0x07e0
-    SLIDER_DEFAULT_COLOR = 0x7777
+    BRIGHT = 0xffff
+    MID = 0xff00
+    UI = 0x39ff
+    SPOT1 = 0x00ff
+    SPOT2 = 0x44d0
+    CONTRAST = 7

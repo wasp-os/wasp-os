@@ -102,5 +102,5 @@ class StepCounterApp():
         t = str(count)
         w = fonts.width(fonts.sans36, t)
         draw.set_font(fonts.sans36)
-        draw.set_color(0xfff0)
+        draw.set_color(draw.lighten(wasp.system.theme('spot1'), wasp.system.theme('contrast')))
         draw.string(t, 228-w, 132-18)

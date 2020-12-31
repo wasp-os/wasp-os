@@ -88,6 +88,9 @@ class StopwatchApp():
             return
         y = 240 - 6 - (len(splits) * 24)
         
+        draw.set_font(fonts.sans24)
+        draw.set_color(wasp.system.theme('mid'))
+
         n = self._nsplits
         for i, s in enumerate(splits):
             centisecs = s
@@ -99,8 +102,6 @@ class StopwatchApp():
             t = '# {}   {:02}:{:02}.{:02}'.format(n, minutes, secs, centisecs)
             n -= 1
 
-            draw.set_font(fonts.sans24)
-            draw.set_color(0xe73c)
             w = fonts.width(fonts.sans24, t)
             draw.string(t, 0, y + (i*24), 240)
 
@@ -139,7 +140,7 @@ class StopwatchApp():
 
             draw = wasp.watch.drawable
             draw.set_font(fonts.sans36)
-            draw.set_color(0xc67f)
+            draw.set_color(draw.lighten(wasp.system.theme('ui'), wasp.system.theme('contrast')))
             w = fonts.width(fonts.sans36, t1)
             draw.string(t1, 180-w, 120-36)
             draw.fill(0, 0, 120-36, 180-w, 36)

@@ -235,13 +235,13 @@ class Checkbox():
         draw = wasp.watch.drawable
         im = self._im
         if self.state:
-            c1 = wasp.system.theme('slider-default')
-            c2 = draw.lighten(c1, 15)
+            c1 = wasp.system.theme('ui')
+            c2 = draw.lighten(c1, wasp.system.theme('contrast'))
             fg = c2
         else:
             c1 = 0
             c2 = 0
-            fg = wasp.system.theme('accent-lo')
+            fg = wasp.system.theme('mid')
         # Draw checkbox on the right margin if there is a label, otherwise
         # draw at the natural location
         x = 239 - 32 - 4 if im[2] else im[0]
@@ -283,10 +283,10 @@ class Slider():
         y = self._y
         color = self._color
         if self._color is None:
-            self._color = wasp.system.theme('slider-default')
+            self._color = wasp.system.theme('ui')
             color = self._color
         if self._lowlight is None:
-            self._lowlight = draw.lighten(color, 15)
+            self._lowlight = draw.lighten(color, wasp.system.theme('contrast'))
         light = self._lowlight
 
         knob_x = x + ((_SLIDER_TRACK * self.value) // (self._steps-1))
@@ -344,7 +344,7 @@ class Spinner():
         """Draw the slider."""
         draw = watch.drawable
         im = self._im
-        fg = draw.lighten(wasp.system.theme('slider-default'), 15)
+        fg = draw.lighten(wasp.system.theme('ui'), wasp.system.theme('contrast'))
         draw.blit(icons.up_arrow, im[0]+30-8, im[1]+20, fg)
         draw.blit(icons.down_arrow, im[0]+30-8, im[1]+120-20-9, fg)
         self.update()

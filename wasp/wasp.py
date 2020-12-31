@@ -123,10 +123,12 @@ class Manager():
                 b'\x7b\xef'     # battery
                 b'\xe7\x3c'     # status-clock
                 b'\x7b\xef'     # notify-icon
-                b'\xb5\xb6'     # accent-mid
-                b'\xbd\xb6'     # accent-lo
-                b'\xff\xff'     # accent-hi
-                b'\x39\xff'     # slider-default
+                b'\xff\xff'     # bright
+                b'\xbd\xb6'     # mid
+                b'\x39\xff'     # ui
+                b'\xff\x00'     # spot1
+                b'\xdd\xd0'     # spot2
+                b'\x00\x0f'     # contrast
         )
 
         self.blank_after = 15
@@ -542,10 +544,12 @@ class Manager():
                        "battery",
                        "status-clock",
                        "notify-icon",
-                       "accent-mid",
-                       "accent-lo",
-                       "accent-hi",
-                       "slider-default")
+                       "bright",
+                       "mid",
+                       "ui",
+                       "spot1",
+                       "spot2",
+                       "contrast")
         if theme_part not in theme_parts:
             raise IndexError('Theme part {} does not exist'.format(theme_part))
         idx = theme_parts.index(theme_part) * 2

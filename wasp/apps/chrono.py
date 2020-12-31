@@ -58,9 +58,8 @@ class ChronoApp():
         True then a full redraw is be performed.
         """
         draw = wasp.watch.drawable
-        hi =  wasp.system.theme('accent-hi')
-        mid = wasp.system.theme('accent-mid')
-        lo =  wasp.system.theme('accent-lo')
+        hi = wasp.system.theme('bright')
+        c1 = draw.darken(wasp.system.theme('spot1'), wasp.system.theme('contrast'))
 
         if redraw:
             now = wasp.watch.rtc.get_localtime()
@@ -72,7 +71,7 @@ class ChronoApp():
             wasp.system.bar.draw()
 
             # Draw the dividers
-            draw.set_color(mid)
+            draw.set_color(wasp.system.theme('mid'))
             for theta in range(12):
                 draw.polar(120, 120, theta * 360 // 12, 110, 118, 3)
 
@@ -98,5 +97,5 @@ class ChronoApp():
         hh = (30 * (self._hh % 12)) + (self._mm / 2)
         mm = 6 * self._mm
         draw.polar(120, 120, hh, 5, 75, 7, hi)
-        draw.polar(120, 120, hh, 5, 60, 3, lo)
+        draw.polar(120, 120, hh, 5, 60, 3, draw.darken(c1, 2))
         draw.polar(120, 120, mm, 5, 106, 5, hi)
