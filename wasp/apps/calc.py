@@ -84,30 +84,43 @@ class CalculatorApp():
 
     def _draw(self):
         draw = wasp.watch.drawable
-        draw.fill()
+
+        hi = wasp.system.theme('bright')
+        lo = wasp.system.theme('mid')
+        mid = draw.lighten(lo, 2)
+        bg = draw.darken(wasp.system.theme('ui'), wasp.system.theme('contrast'))
+        bg2 = draw.darken(bg, 2)
+
+        # Draw the background
+        draw.fill(0, 0, 0, 239, 47)
+        draw.fill(0, 236, 239, 3)
+        draw.fill(bg, 141, 48, 239-141, 235-48)
+        draw.fill(bg2, 0, 48, 140, 235-48)
+
         # Make grid:
-        draw.set_color(wasp.system.theme('accent-lo'))
+        draw.set_color(lo)
         for i in range(4):
             # horizontal lines
             draw.line(x0=0,y0=(i+1)*47,x1=239,y1=(i+1)*47)
             # vertical lines
-            draw.line(x0=(i+1)*47,y0=47,x1=(i+1)*47,y1=239)
-        draw.line(x0=0, y0=47, x1=0, y1=239)
-        draw.line(x0=239, y0=47, x1=239, y1=239)
-        draw.line(x0=0, y0=239, x1=239, y1=239)
-        # Draw button label:
-        draw.set_color(wasp.system.theme('accent-hi'))
+            draw.line(x0=(i+1)*47,y0=47,x1=(i+1)*47,y1=235)
+        draw.line(x0=0, y0=47, x1=0, y1=236)
+        draw.line(x0=239, y0=47, x1=239, y1=236)
+        draw.line(x0=0, y0=236, x1=239, y1=236)
+
+        # Draw button labels
+        draw.set_color(hi, bg2)
         for x in range(5):
             if x == 3:
-                draw.set_color(wasp.system.theme('accent-mid'))
+                draw.set_color(mid, bg)
             for y in range(4):
                 label = fields[x + 5*y]
                 if (x == 0):
                     draw.string(label, x*47+14, y*47+60)
                 else:
                     draw.string(label, x*47+16, y*47+60)
+        draw.set_color(hi)
         draw.string("<", 215, 10)
-        draw.set_color(wasp.system.theme('accent-hi'))
     
     def _update(self):
         output = self.output if len(self.output) < 12 else self.output[len(self.output)-12:]
