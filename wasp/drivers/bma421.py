@@ -48,6 +48,4 @@ class BMA421:
     def steps(self, value):
         if value != 0:
             raise ValueError()
-        # TODO: There is a more efficient way to reset the step counter
-        #       but I haven't looked it up yet!
-        self.reset()
+        self._dev.reset_step_counter()
