@@ -3,6 +3,9 @@
 
 import wasp
 
+from apps.timer import TimerApp
+wasp.system.register(TimerApp())
+
 from apps.alarm import AlarmApp
 wasp.system.register(AlarmApp())
 
