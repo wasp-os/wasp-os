@@ -137,7 +137,7 @@ simulator (the "blank" screen is the torch application):
    :alt: Heart rate application running on the wasp-os simulator
    :width: 179
 
-.. image:: res/TimerApp.png
+.. image:: res/StopclockApp.png
    :alt: Stop watch application running on the wasp-os simulator
    :width: 179
 
@@ -191,4 +191,8 @@ using one of the techniques is the Application Writer's guide.
 
 .. image:: res/SnakeApp.png
    :alt: Snake Game running in the wasp-os simulator
+   :width: 179
+
+.. image:: res/TimerApp.png
+   :alt: Countdown timer application running in the wasp-os simulator
    :width: 179

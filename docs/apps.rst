@@ -40,3 +40,5 @@ Integration
 .. automodule:: apps.alarm
 
 .. automodule:: apps.musicplayer
+
+.. automodule:: apps.timer

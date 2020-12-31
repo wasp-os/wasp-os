@@ -8,12 +8,13 @@ import fonts
 class StopwatchApp():
     """Stopwatch application.
 
-    .. figure:: res/TimerApp.png
+    .. figure:: res/StopclockApp.png
         :width: 179
 
         Screenshot of the stopwatch application
     """
-    NAME = 'Timer'
+    # Stopwatch requires too many pixels to fit into the launcher
+    NAME = 'Stopclock'
     ICON = icons.app
 
     def __init__(self):

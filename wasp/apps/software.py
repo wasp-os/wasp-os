@@ -22,6 +22,7 @@ class SoftwareApp():
                 ('snake', wasp.widgets.Checkbox(0, 40, 'Snake Game')),
                 ('flashlight', wasp.widgets.Checkbox(0, 80, 'Torch')),
                 ('testapp', wasp.widgets.Checkbox(0, 120, 'Test')),
+                ('timer', wasp.widgets.Checkbox(0, 160, 'Timer')),
             )
         self.si = wasp.widgets.ScrollIndicator()
         self.page = 0
