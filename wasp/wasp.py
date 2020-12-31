@@ -117,7 +117,17 @@ class Manager():
         self.musicstate = {}
         self.musicinfo = {}
 
-        self._theme = b'\xef{\xef{\xef{<\xe7\xef{\xb6\xb5\xb6\xbd\xff\xff\xff9'
+        self._theme = (
+                b'\x7b\xef'     # ble
+                b'\x7b\xef'     # scroll-indicator
+                b'\x7b\xef'     # battery
+                b'\xe7\x3c'     # status-clock
+                b'\x7b\xef'     # notify-icon
+                b'\xb5\xb6'     # accent-mid
+                b'\xbd\xb6'     # accent-lo
+                b'\xff\xff'     # accent-hi
+                b'\x39\xff'     # slider-default
+        )
 
         self.blank_after = 15
 
@@ -539,6 +549,6 @@ class Manager():
         if theme_part not in theme_parts:
             raise IndexError('Theme part {} does not exist'.format(theme_part))
         idx = theme_parts.index(theme_part) * 2
-        return self._theme[idx] | (self._theme[idx+1] << 8)
+        return (self._theme[idx] << 8) | self._theme[idx+1]
 
 system = Manager()

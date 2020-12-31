@@ -25,7 +25,7 @@ class DefaultTheme():
     def serialize(self) -> bytes:
         """Serializes the theme for use in wasp-os"""
         def split_bytes(x: int) -> Tuple[int, int]:
-            return (x & 0xFF, (x >> 8) & 0xFF)
+            return ((x >> 8) & 0xFF, x & 0xFF)
         theme_bytes = bytes([
             *split_bytes(self.BLE_COLOR),
             *split_bytes(self.SCROLL_INDICATOR_COLOR),
