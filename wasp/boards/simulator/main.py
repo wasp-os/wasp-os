@@ -3,11 +3,11 @@
 
 import wasp
 
-from apps.timer import TimerApp
-wasp.system.register(TimerApp())
-
 from apps.alarm import AlarmApp
 wasp.system.register(AlarmApp())
+
+from apps.timer import TimerApp
+wasp.system.register(TimerApp())
 
 from apps.fibonacci_clock import FibonacciClockApp
 wasp.system.register(FibonacciClockApp())
