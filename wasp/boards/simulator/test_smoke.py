@@ -1,6 +1,7 @@
 import pytest
 import time
 import wasp
+import apps.testapp
 
 def step():
     wasp.system._tick()
@@ -36,12 +37,11 @@ def test_quick_ring(system):
 
 def test_launcher_ring(system):
     names = [ x.NAME for x in system.launcher_ring ]
-    assert('Self Test' in names)
     assert('Settings' in names)
-    assert('Torch' in names)
+    assert('Software' in names)
 
 @pytest.mark.parametrize("name",
-        ('Steps', 'Timer', 'Heart', 'Self Test', 'Settings', 'Torch'))
+        ('Steps', 'Timer', 'Heart', 'Settings', 'Software'))
 def test_app(system, name):
     system.switch(system.apps[name])
     for i in range(4):
@@ -101,7 +101,7 @@ def test_selftests(system):
     will do something useful! For example it will run the benchmark for every
     one of the benchmark tests.
     """
-    system.switch(system.apps['Self Test'])
+    system.switch(apps.testapp.TestApp())
     system.step()
 
     start_point = system.app.test
@@ -115,7 +115,7 @@ def test_selftests(system):
     assert(start_point == system.app.test)
 
 def test_selftest_crash(system):
-    system.switch(system.apps['Self Test'])
+    system.switch(apps.testapp.TestApp())
     system.step()
 
     def select(name):

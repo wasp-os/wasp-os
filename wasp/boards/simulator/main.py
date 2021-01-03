@@ -3,26 +3,33 @@
 
 import wasp
 
-from apps.alarm import AlarmApp
-wasp.system.register(AlarmApp())
-
-from apps.fibonacci_clock import FibonacciClockApp
-wasp.system.register(FibonacciClockApp())
-
-from apps.gameoflife import GameOfLifeApp
-wasp.system.register(GameOfLifeApp())
-
-from apps.snake import SnakeGameApp
-wasp.system.register(SnakeGameApp())
-
-from apps.calc import CalculatorApp
-wasp.system.register(CalculatorApp())
-
-from apps.musicplayer import MusicPlayerApp
-wasp.system.register(MusicPlayerApp())
+# Ensure there's something interesting to look at ;-)
 wasp.system.set_music_info({
         'track': 'Tasteless Brass Duck',
         'artist': 'Dreams of Bamboo',
     })
+
+# Instantiate the analogue clock application and replace the default
+# (digital) clock with this alternative.
+#from chrono import ChronoApp
+#clock = wasp.system.quick_ring[0]
+#wasp.system.quick_ring[0] = ChronoApp()
+#wasp.system.switch(wasp.system.quick_ring[0])
+#wasp.system.register(clock)
+
+# Adopt a basic all-orange theme
+#wasp.system.set_theme(
+#        b'\xff\x00'     # ble
+#        b'\xff\x00'     # scroll-indicator
+#        b'\xff\x00'     # battery
+#        b'\xff\x00'     # status-clock
+#        b'\xff\x00'     # notify-icon
+#        b'\xff\x00'     # bright
+#        b'\xbe\xe0'     # mid
+#        b'\xff\x00'     # ui
+#        b'\xff\x00'     # spot1
+#        b'\xff\x00'     # spot2
+#        b'\x00\x0f'     # contrast
+#    )
 
 wasp.system.run()

@@ -21,14 +21,13 @@ import watch
 import widgets
 
 from apps.clock import ClockApp
-from apps.flashlight import FlashlightApp
 from apps.heart import HeartApp
 from apps.launcher import LauncherApp
 from apps.pager import PagerApp, CrashApp, NotificationApp
 from apps.settings import SettingsApp
 from apps.steps import StepCounterApp
+from apps.software import SoftwareApp
 from apps.stopwatch import StopwatchApp
-from apps.testapp import TestApp
 
 class EventType():
     """Enumerated interface actions.
@@ -151,9 +150,8 @@ class Manager():
                          (StepCounterApp, True),
                          (StopwatchApp, True),
                          (HeartApp, True),
-                         (FlashlightApp, False),
-                         (SettingsApp, False),
-                         (TestApp, False) ):
+                         (SoftwareApp, False),
+                         (SettingsApp, False) ):
             try:
                 self.register(app(), qr)
             except:
@@ -171,6 +169,12 @@ class Manager():
         else:
             self.launcher_ring.append(app)
             self.launcher_ring.sort(key = _key_app)
+
+    def unregister(self, cls):
+        for app in self.launcher_ring:
+            if instanceof(app, cls):
+                self.launcher_ring.remove(app)
+                break
 
     @property
     def brightness(self):
