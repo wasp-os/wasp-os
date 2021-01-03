@@ -226,6 +226,7 @@ class Checkbox():
         draw = wasp.watch.drawable
         im = self._im
         if im[2]:
+            draw.set_color(wasp.system.theme('bright'))
             draw.set_font(fonts.sans24)
             draw.string(im[2], im[0], im[1]+6)
         self.update()
@@ -353,6 +354,7 @@ class Spinner():
         """Update the spinner value."""
         draw = watch.drawable
         im = self._im
+        draw.set_color(wasp.system.theme('bright'))
         draw.set_font(fonts.sans28)
         s = str(self.value)
         if len(s) < im[4]:
