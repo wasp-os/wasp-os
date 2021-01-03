@@ -221,6 +221,10 @@ class Checkbox():
         self._im = (x, y, label)
         self.state = False
 
+    @property
+    def label(self):
+        return self._im[2]
+
     def draw(self):
         """Draw the checkbox and label."""
         draw = wasp.watch.drawable
