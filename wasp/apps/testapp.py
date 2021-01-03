@@ -133,7 +133,7 @@ class TestApp():
         t = machine.Timer(id=1, period=8000000)
         t.start()
         for i in range(0, 128, 16):
-            draw.blit(self.ICON, i+16, i+32)
+            draw.blit(icons.software, i+16, i+32)
         elapsed = t.time()
         t.stop()
         del t

@@ -11,7 +11,7 @@ import wasp
 
 import icons
 
-class FlashlightApp(object):
+class TorchApp(object):
     """Trivial flashlight application.
 
     .. figure:: res/TorchApp.png
