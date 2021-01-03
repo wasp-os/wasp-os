@@ -55,9 +55,11 @@ class SettingsApp():
 
     def _draw(self):
         """Redraw the display from scratch."""
+        draw = wasp.watch.drawable
         self._current_setting = self._settings[self._sett_index % len(self._settings)]
-        wasp.watch.drawable.fill()
-        wasp.watch.drawable.string(self._current_setting, 0, 6, width=240)
+        draw.fill()
+        draw.set_color(wasp.system.theme('bright'))
+        draw.string(self._current_setting, 0, 6, width=240)
         if self._current_setting == 'Brightness':
             self._slider.value = wasp.system.brightness - 1
         elif self._current_setting == 'Notification Level':
@@ -65,6 +67,7 @@ class SettingsApp():
         self._update()
 
     def _update(self):
+        draw = wasp.watch.drawable
         if self._current_setting == 'Brightness':
             if wasp.system.brightness == 3:
                 say = "High"
@@ -81,5 +84,6 @@ class SettingsApp():
             else:
                 say = "Silent"
             self._nfy_slider.update()
-        wasp.watch.drawable.string(say, 0, 150, width=240)
+        draw.set_color(wasp.system.theme('bright'))
+        draw.string(say, 0, 150, width=240)
         self._scroll_indicator.draw()
