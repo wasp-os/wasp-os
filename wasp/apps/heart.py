@@ -23,6 +23,7 @@ class HeartApp():
         # take long enough it is not needed
         draw = wasp.watch.drawable
         draw.fill()
+        draw.set_color(wasp.system.theme('bright'))
         draw.string('PPG graph', 0, 6, width=240)
 
         wasp.system.request_tick(1000 // 8)
@@ -41,6 +42,7 @@ class HeartApp():
         spl = self._hrdata.preprocess(wasp.watch.hrs.read_hrs())
 
         if len(self._hrdata.data) >= 240:
+            draw.set_color(wasp.system.theme('bright'))
             draw.string('{} bpm'.format(self._hrdata.get_heart_rate()),
                         0, 6, width=240)
 
