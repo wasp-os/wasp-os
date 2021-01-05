@@ -394,6 +394,8 @@ class ConfirmationView:
     def draw(self, message):
         self.active = True
         wasp.watch.drawable.fill(1)
+        wasp.watch.drawable.set_color(wasp.system.theme('bright'))
+        wasp.watch.drawable.set_font(fonts.sans24)
         wasp.watch.drawable.string(message, 0, 60)
         wasp.watch.drawable.blit(icons.yes_button, 20, 100)
         wasp.watch.drawable.blit(icons.no_button, 120, 100)
