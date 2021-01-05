@@ -32,6 +32,8 @@ Games
 
 .. automodule:: apps.gameoflife
 
+.. automodule:: apps.play2048
+
 .. automodule:: apps.snake
 
 Integration

@@ -189,6 +189,10 @@ using one of the techniques is the Application Writer's guide.
    :alt: Calculator running in the wasp-os simulator
    :width: 179
 
+.. image:: res/2048App.png
+   :alt: Let's play the 2048 game (in the wasp-os simulator)
+   :width: 179
+
 .. image:: res/SnakeApp.png
    :alt: Snake Game running in the wasp-os simulator
    :width: 179

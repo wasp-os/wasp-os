@@ -15,6 +15,7 @@ manifest = (
     'apps/musicplayer.py',
     'apps/launcher.py',
     'apps/pager.py',
+    'apps/play2048.py',
     'apps/settings.py',
     'apps/software.py',
     'apps/steps.py',
