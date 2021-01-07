@@ -172,7 +172,7 @@ class Manager():
 
     def unregister(self, cls):
         for app in self.launcher_ring:
-            if instanceof(app, cls):
+            if isinstance(app, cls):
                 self.launcher_ring.remove(app)
                 break
 
