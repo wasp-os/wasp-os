@@ -44,7 +44,7 @@ Wasp-os
 
 * [ ] Widgets
 
-  * [ ] Add a button widget
+  * [X] Add a button widget
   * [X] Add a checkbox widget
   * [X] Add a spinner widget
 
