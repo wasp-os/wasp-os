@@ -47,10 +47,10 @@ class SoftwareApp():
     def swipe(self, event):
         """Notify the application of a touchscreen swipe event."""
         page = self.page
-        pages = 1
-        if event[0] == wasp.EventType.UP:
-            page = page - 1 if page > 0 else pages
+        pages = (len(self.db)-1) // 5
         if event[0] == wasp.EventType.DOWN:
+            page = page - 1 if page > 0 else pages
+        if event[0] == wasp.EventType.UP:
             page = page + 1 if page < pages else 0
         self.page = page
 
