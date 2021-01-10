@@ -36,8 +36,6 @@ class PagerApp():
 
     def swipe(self, event):
         """Swipe to page up/down."""
-        mute = wasp.watch.display.mute
-
         if event[0] == wasp.EventType.UP:
             if self._page >= self._numpages:
                 wasp.system.navigate(wasp.EventType.BACK)
@@ -48,9 +46,7 @@ class PagerApp():
                 wasp.watch.vibrator.pulse()
                 return
             self._page -= 1
-        mute(True)
         self._draw()
-        mute(False)
 
     def _redraw(self):
         """Redraw from scratch (jump to the first page)"""
@@ -61,7 +57,11 @@ class PagerApp():
 
     def _draw(self):
         """Draw a page from scratch."""
+        mute = wasp.watch.display.mute
         draw = wasp.watch.drawable
+
+        mute(True)
+        draw.set_color(0xffff)
         draw.fill()
 
         page = self._page
@@ -76,6 +76,8 @@ class PagerApp():
         scroll.up = page > 0
         scroll.down = page < self._numpages
         scroll.draw()
+
+        mute(False)
 
 class NotificationApp(PagerApp):
     NAME = 'Notifications'

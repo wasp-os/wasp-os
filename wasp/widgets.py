@@ -430,24 +430,34 @@ class ConfirmationView:
     def __init__(self):
         self.active = False
         self.value = False
+        self._yes = Button(20, 140, 90, 45, 'Yes')
+        self._no = Button(130, 140, 90, 45, 'No')
 
     def draw(self, message):
+        draw = wasp.watch.drawable
+        mute = wasp.watch.display.mute
+
+        mute(True)
+        draw.set_color(wasp.system.theme('bright'))
+        draw.fill()
+        draw.string(message, 0, 60)
+        self._yes.draw()
+        self._no.draw()
+        mute(False)
+
         self.active = True
-        wasp.watch.drawable.fill(1)
-        wasp.watch.drawable.string(message, 0, 60)
-        wasp.watch.drawable.blit(icons.yes_button, 20, 100)
-        wasp.watch.drawable.blit(icons.no_button, 120, 100)
 
     def touch(self, event):
         if not self.active:
             return False
 
-        x = event[1]
-        y = event[2]
-
-        if y >= 80 and y < 180:
+        if self._yes.touch(event):
             self.active = False
-            self.value = x < 120
+            self.value = True
+            return True
+        elif self._no.touch(event):
+            self.active = False
+            self.value = False
             return True
 
         return False
