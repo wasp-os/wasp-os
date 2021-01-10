@@ -13,6 +13,8 @@ import numpy as np
 from PIL import Image
 import wasp
 
+DISPOFF = 0x28
+DISPON = 0x29
 CASET = 0x2a
 RASET = 0x2b
 RAMWR = 0x2c
@@ -35,6 +37,7 @@ class ST7789Sim(object):
         self.colclip = [0, WIDTH-1]
         self.rowclip = [0, HEIGHT-1]
         self.cmd = 0
+        self.mute = False
 
     def write(self, data):
         # Converting data to a memoryview ensures we act more like spi.write()
@@ -46,7 +49,14 @@ class ST7789Sim(object):
             # Assume if we get a byte at a time then it is command.
             # This is a simplification do we don't have to track
             # the D/C pin from within the simulator.
-            self.cmd = data[0]
+            cmd = data[0]
+            if cmd == DISPOFF:
+                self.mute = True
+            elif cmd == DISPON:
+                self.mute = False
+                window.refresh()
+            else:
+                self.cmd = data[0]
 
         elif self.cmd == CASET:
             self.colclip[0] = (data[0] << 8) + data[1]
@@ -91,7 +101,8 @@ class ST7789Sim(object):
             
             # Forcibly release the surface to ensure it is unlocked
             del pixelview
-            window.refresh()
+            if not self.mute:
+                window.refresh()
 
 class CST816SSim():
     def __init__(self):
@@ -268,4 +279,3 @@ def tick(pins):
         else:
             #print(event)
             pass
-    window.refresh()
