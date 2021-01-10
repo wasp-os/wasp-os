@@ -207,10 +207,13 @@ def check_rtc(c):
 
     c.expect('>>> ')
 
-def handle_binary_upload(c, fname):
+def handle_binary_upload(c, fname, tname):
     verbose = bool(c.logfile)
 
-    c.sendline(f'f = open("{os.path.basename(fname)}", "wb")')
+    if not tname:
+        tname = os.path.basename(fname)
+
+    c.sendline(f'f = open("{tname}", "wb")')
     c.expect('>>> ')
 
     # Absorb the file to be uploaded
@@ -234,8 +237,11 @@ def handle_binary_upload(c, fname):
     c.sendline('f.close()')
     c.expect('>>> ')
 
-def handle_upload(c, fname):
+def handle_upload(c, fname, tname):
     verbose = bool(c.logfile)
+
+    if not tname:
+        tname = os.path.basename(fname)
 
     c.sendline('from shell import upload')
     c.expect('>>> ')
@@ -244,7 +250,7 @@ def handle_upload(c, fname):
         if not verbose:
             print(f'Uploading {fname}:')
 
-        c.sendline(f'upload("{os.path.basename(fname)}")')
+        c.sendline(f'upload("{tname}")')
         c.expect('=== ')
         paste(c, f, verbose)
         c.send('\x04')
@@ -254,6 +260,8 @@ def handle_upload(c, fname):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
             description='Wasp-os command and control client')
+    parser.add_argument('--as', dest='upload_as', default=None,
+            help="Filename to use on the target (e.g. wasptool --upload docs/main/chrono.py --as main.py")
     parser.add_argument('--bootloader', action='store_true',
             help="Reboot into the bootloader mode for OTA update")
     parser.add_argument('--binary', action='store_true',
@@ -326,9 +334,9 @@ if __name__ == '__main__':
 
     if args.upload:
         if args.binary:
-            handle_binary_upload(console, args.upload)
+            handle_binary_upload(console, args.upload, args.upload_as)
         else:
-            handle_upload(console, args.upload)
+            handle_upload(console, args.upload, args.upload_as)
 
     if args.console:
         console.close()
