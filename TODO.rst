@@ -59,7 +59,7 @@ Wasp-os
 * [ ] Look and feel
 
   * [X] Add a simple theming approach
-  * [ ] Update icon for Music player
+  * [X] Update icon for Music player
   * [ ] Introduce fwd/back/vol+/vol- buttons to the music player
   * [X] Update icon for Alarm app
   * [X] Update art work for buttons in Confirmation view
