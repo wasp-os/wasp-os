@@ -164,6 +164,10 @@ class Manager():
 
         :param object app: The application to regsister
         """
+        if isinstance(app, str):
+            exec('import ' + app[:app.rindex('.')])
+            app = eval(app + '()')
+
         if quick_ring == True:
             self.quick_ring.append(app)
         else:

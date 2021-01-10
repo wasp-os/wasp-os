@@ -63,8 +63,7 @@ class SoftwareApp():
             if checkbox.touch(event):
                 label = checkbox.label.replace(' ', '')
                 if checkbox.state:
-                    exec('import apps.{}'.format(module))
-                    exec('wasp.system.register(apps.{}.{}App())'.format(module, label))
+                    wasp.system.register('apps.{}.{}App'.format(module, label))
                 else:
                     for app in wasp.system.launcher_ring:
                         if type(app).__name__.startswith(label):
