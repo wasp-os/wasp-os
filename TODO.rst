@@ -7,11 +7,15 @@ Roadmap
    :local:
    :depth: 1
 
-0.4: Integration, Fit and finish
---------------------------------
+N+1: "The future"
+-----------------
 
-For 0.4 we focus on improving the watch/phone integration whilst also taking steps
-to improve the general fit and finish.
+For the N+1 release we describe features that are planned. Planned in this sense
+means there is a developer willing to work on the feature but, for whatever reason,
+the feature isn't yet at the top of anyone's list.
+
+For the features planned for the next release of wasp-os then please look at
+the versioned roadmap further through this document.
 
 Bootloader
 ~~~~~~~~~~
@@ -24,6 +28,25 @@ Micropython
 ~~~~~~~~~~~
 
 * [ ] Use SoftDevice sleep logic
+* [ ] Fix BLE hangs
+
+Wasp-os
+~~~~~~~
+
+* [ ] Applications
+
+  * [ ] Add a sports/activity app (combined stopwatch and trip counter)
+
+wasptool
+~~~~~~~~
+
+* [ ] Integrate a more powerful minifier into the wasptool paste() method
+
+0.4: Integration, Fit and finish
+--------------------------------
+
+For 0.4 we focus on improving the watch/phone integration whilst also taking steps
+to improve the general fit and finish.
 
 Wasp-os
 ~~~~~~~
@@ -42,26 +65,20 @@ Wasp-os
   * [X] Update art work for buttons in Confirmation view
   * [X] Reduce the size of the battery charge icon slightly (match bell)
 
-* [ ] Widgets
+* [X] Widgets
 
   * [X] Add a button widget
   * [X] Add a checkbox widget
   * [X] Add a spinner widget
 
-* [ ] Applications
+* [X] Applications
 
   * [X] Introduce an analog watch face
-  * [ ] Add a sports/activity app (combined stopwatch and trip counter)
-  * [ ] Add a boot configuration wizard to author new main.py as needed
+  * [X] Add a configuration tool to enable disable applications
 
 * [ ] Documentation
 
   * [ ] Describe how to upload pre-compiled modules
-
-wasptool
-~~~~~~~~
-
-* [ ] Integrate a more powerful minifier into the wasptool paste() method
 
 0.3 (a.k.a. M3): Smartwatch
 ---------------------------
