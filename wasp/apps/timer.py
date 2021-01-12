@@ -62,7 +62,7 @@ class TimerApp():
     def __init__(self):
         """Initialize the application."""
         self.minutes = widgets.Spinner(50, 60, 0, 99, 2)
-        self.seconds = widgets.Spinner(130, 60, 0, 60, 2)
+        self.seconds = widgets.Spinner(130, 60, 0, 59, 2)
         self.current_alarm = None
 
         self.minutes.value = 10

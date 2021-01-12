@@ -58,8 +58,8 @@ class AlarmApp():
     def __init__(self):
         """Initialize the application."""
         self.active = widgets.Checkbox(104, 200)
-        self.hours = widgets.Spinner(50, 60, 0, 24, 2)
-        self.minutes = widgets.Spinner(130, 60, 0, 60, 2)
+        self.hours = widgets.Spinner(50, 60, 0, 23, 2)
+        self.minutes = widgets.Spinner(130, 60, 0, 59, 2)
 
         self.hours.value = 7
         self.ringing = False

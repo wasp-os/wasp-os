@@ -386,7 +386,7 @@ class Spinner():
         self.value = mn
 
     def draw(self):
-        """Draw the slider."""
+        """Draw the spinner."""
         draw = watch.drawable
         im = self._im
         fg = draw.lighten(wasp.system.theme('ui'), wasp.system.theme('contrast'))
@@ -417,7 +417,7 @@ class Spinner():
             else:
                 self.value -= 1
                 if self.value < im[2]:
-                    self.value = im[3] - 1
+                    self.value = im[3]
 
             self.update()
             return True
