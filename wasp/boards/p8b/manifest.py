@@ -11,7 +11,7 @@ freeze('../..', manifest_240x240.manifest +
     (
         'boot.py',
         'draw565.py',
-        'drivers/bma421.py',
+        'drivers/sc7a20.py',
         'drivers/battery.py',
         'drivers/cst816s.py',
         'drivers/hrs3300.py',
