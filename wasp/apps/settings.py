@@ -1,7 +1,8 @@
 # SPDX-License-Identifier: LGPL-3.0-or-later
-# Copyright (C) 2020 Daniel Thompson
+# Copyright (C) 2020-21 Daniel Thompson
 
 import wasp
+import fonts
 import icons
 
 class SettingsApp():
@@ -21,7 +22,12 @@ class SettingsApp():
         self._slider = wasp.widgets.Slider(3, 10, 90)
         self._nfy_slider = wasp.widgets.Slider(3, 10, 90)
         self._scroll_indicator = wasp.widgets.ScrollIndicator()
-        self._settings = ['Brightness', 'Notification Level']
+        self._HH = wasp.widgets.Spinner(50, 60, 0, 23, 2)
+        self._MM = wasp.widgets.Spinner(130, 60, 0, 59, 2)
+        self._dd = wasp.widgets.Spinner(20, 60, 1, 31, 1)
+        self._mm = wasp.widgets.Spinner(90, 60, 1, 12, 1)
+        self._yy = wasp.widgets.Spinner(160, 60, 20, 99, 2)
+        self._settings = ['Brightness', 'Notification Level', 'Time', 'Date']
         self._sett_index = 0
         self._current_setting = self._settings[0]
 
@@ -38,6 +44,20 @@ class SettingsApp():
         elif self._current_setting == 'Notification Level':
             self._nfy_slider.touch(event)
             wasp.system.notify_level = self._nfy_slider.value + 1
+        elif self._current_setting == 'Time':
+            if self._HH.touch(event) or self._MM.touch(event):
+                now = list(wasp.watch.rtc.get_localtime())
+                now[3] = self._HH.value
+                now[4] = self._MM.value
+                wasp.watch.rtc.set_localtime(now)
+        elif self._current_setting == 'Date':
+            if self._yy.touch(event) or self._mm.touch(event) \
+                    or self._dd.touch(event):
+                now = list(wasp.watch.rtc.get_localtime())
+                now[0] = self._yy.value + 2000
+                now[1] = self._mm.value
+                now[2] = self._dd.value
+                wasp.watch.rtc.set_localtime(now)
         self._update()
 
     def swipe(self, event):
@@ -56,18 +76,40 @@ class SettingsApp():
     def _draw(self):
         """Redraw the display from scratch."""
         draw = wasp.watch.drawable
+        mute = wasp.watch.display.mute
         self._current_setting = self._settings[self._sett_index % len(self._settings)]
+        mute(True)
         draw.fill()
         draw.set_color(wasp.system.theme('bright'))
+        draw.set_font(fonts.sans24)
         draw.string(self._current_setting, 0, 6, width=240)
         if self._current_setting == 'Brightness':
             self._slider.value = wasp.system.brightness - 1
         elif self._current_setting == 'Notification Level':
             self._nfy_slider.value = wasp.system.notify_level - 1
+        elif self._current_setting == 'Time':
+            now = wasp.watch.rtc.get_localtime()
+            self._HH.value = now[3]
+            self._MM.value = now[4]
+            draw.set_font(fonts.sans28)
+            draw.string(':', 110, 120-14, width=20)
+            self._HH.draw()
+            self._MM.draw()
+        elif self._current_setting == 'Date':
+            now = wasp.watch.rtc.get_localtime()
+            self._yy.value = now[0] - 2000
+            self._mm.value = now[1]
+            self._dd.value = now[2]
+            self._yy.draw()
+            self._mm.draw()
+            self._dd.draw()
+        self._scroll_indicator.draw()
         self._update()
+        mute(False)
 
     def _update(self):
         draw = wasp.watch.drawable
+        draw.set_color(wasp.system.theme('bright'))
         if self._current_setting == 'Brightness':
             if wasp.system.brightness == 3:
                 say = "High"
@@ -76,6 +118,7 @@ class SettingsApp():
             else:
                 say = "Low"
             self._slider.update()
+            draw.string(say, 0, 150, width=240)
         elif self._current_setting == 'Notification Level':
             if wasp.system.notify_level == 3:
                 say = "High"
@@ -84,6 +127,4 @@ class SettingsApp():
             else:
                 say = "Silent"
             self._nfy_slider.update()
-        draw.set_color(wasp.system.theme('bright'))
-        draw.string(say, 0, 150, width=240)
-        self._scroll_indicator.draw()
+            draw.string(say, 0, 150, width=240)

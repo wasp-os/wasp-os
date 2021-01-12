@@ -2,6 +2,7 @@ import pytest
 import time
 import wasp
 import apps.testapp
+import apps.settings
 
 def step():
     wasp.system._tick()
@@ -139,3 +140,22 @@ def test_selftest_crash(system):
     except:
         pass
     system.step()
+
+def test_settings(system):
+    """Walk though each screen in the setting application.
+
+    This is a simple "does it crash" test and the only thing we do to stimulate
+    the app is press in the centre of the screen.
+    """
+    system.switch(apps.settings.SettingsApp())
+    system.step()
+
+    start_point = system.app._current_setting
+
+    for i in range(len(system.app._settings)):
+        wasp.watch.touch.press(120, 120)
+        system.step()
+        wasp.watch.touch.swipe('down')
+        system.step()
+
+    assert(start_point == system.app._current_setting)
