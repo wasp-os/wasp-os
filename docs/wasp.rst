@@ -63,7 +63,7 @@ Applications
    :members:
    :undoc-members:
 
-.. automodule:: apps.flashlight
+.. automodule:: apps.heart
    :members:
    :undoc-members:
 
@@ -75,7 +75,19 @@ Applications
    :members:
    :undoc-members:
 
-.. automodule:: apps.testapp
+.. automodule:: apps.settings
+   :members:
+   :undoc-members:
+
+.. automodule:: apps.software
+   :members:
+   :undoc-members:
+
+.. automodule:: apps.steps
+   :members:
+   :undoc-members:
+
+.. automodule:: apps.stopwatch
    :members:
    :undoc-members:
 

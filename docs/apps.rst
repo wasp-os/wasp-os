@@ -14,9 +14,13 @@ treated as examples they are described in detail as part of the
 :ref:`Wasp-os Reference Manual`: 
 
  * :py:class:`.ClockApp`
- * :py:class:`.FlashlightApp`
+ * :py:class:`.HeartApp`
  * :py:class:`.LauncherApp`
  * :py:class:`.PagerApp`
+ * :py:class:`.SettingsApp`
+ * :py:class:`.SoftwareApp`
+ * :py:class:`.StepCounterApp`
+ * :py:class:`.StopwatchApp`
  * :py:class:`.TestApp`
  * :py:class:`.TemplateApp``
 
@@ -27,6 +31,23 @@ Watch faces
 
 .. automodule:: apps.fibonacci_clock
 
+Applications
+------------
+
+.. automodule:: apps.alarm
+
+.. automodule:: apps.calc
+
+.. automodule:: apps.flashlight
+
+.. automodule:: apps.haiku
+
+.. automodule:: apps.musicplayer
+
+.. automodule:: apps.testapp
+
+.. automodule:: apps.timer
+
 Games
 -----
 
@@ -35,12 +56,3 @@ Games
 .. automodule:: apps.play2048
 
 .. automodule:: apps.snake
-
-Integration
------------
-
-.. automodule:: apps.alarm
-
-.. automodule:: apps.musicplayer
-
-.. automodule:: apps.timer
