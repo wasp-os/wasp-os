@@ -132,7 +132,7 @@ PineTime:
    :width: 233
 
 Screenshots of the built in applications running on the wasp-os
-simulator (the "blank" screen is the torch application):
+simulator:
 
 .. image:: res/Bootloader.png
    :alt: Bootloader splash screen overlaid on the simulator watch art
@@ -158,21 +158,26 @@ simulator (the "blank" screen is the torch application):
    :alt: Application launcher running on the wasp-os simulator
    :width: 179
 
-.. image:: res/SelfTestApp.png
-   :alt: Self test application running a rendering benchmark on the simulator
-   :width: 179
-
 .. image:: res/SettingsApp.png
    :alt: Settings application running on the wasp-os simulator
+   :width: 179
+
+.. image:: res/SoftwareApp.png
+   :alt: Software selection app running on the wasp-os simulator
+   :width: 179
+
+
+wasp-os also contains a library of additional applications for you to choose.
+These are disabled by default but can be easily enabled using the Software
+application (and the "blank" white screen is a torch application):
+
+.. image:: res/SelfTestApp.png
+   :alt: Self test application running a rendering benchmark on the simulator
    :width: 179
 
 .. image:: res/TorchApp.png
    :alt: Torch application running on the wasp-os simulator
    :width: 179
-
-wasp-os also contains a library of additional applications for you to choose.
-These are disabled by default but can be easily enabled by adding them
-using one of the techniques is the Application Writer's guide.
 
 .. image:: res/ChronoApp.png
    :alt: Analogue clock application running in the wasp-os simulator
@@ -188,6 +193,10 @@ using one of the techniques is the Application Writer's guide.
 
 .. image:: res/LifeApp.png
    :alt: Game of Life running in the wasp-os simulator
+   :width: 179
+
+.. image:: res/AlarmApp.png
+   :alt: Alarm clock application running in the wasp-os simulator
    :width: 179
 
 .. image:: res/MusicApp.png
