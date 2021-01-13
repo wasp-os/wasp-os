@@ -114,14 +114,15 @@ class Play2048App():
         """Notify the application of a touchscreen swipe event."""
         moved = False
 
-        if event[0] == wasp.EventType.UP:
-            moved = self._shift(1,False)
-        elif event[0] == wasp.EventType.DOWN:
-            moved = self._shift(-1,False)
-        elif event[0] == wasp.EventType.LEFT:
-            moved = self._shift(1,True)
-        elif event[0] == wasp.EventType.RIGHT:
-            moved = self._shift(-1,True)
+        if self._state == 0:
+            if event[0] == wasp.EventType.UP:
+                moved = self._shift(1,False)
+            elif event[0] == wasp.EventType.DOWN:
+                moved = self._shift(-1,False)
+            elif event[0] == wasp.EventType.LEFT:
+                moved = self._shift(1,True)
+            elif event[0] == wasp.EventType.RIGHT:
+                moved = self._shift(-1,True)
 
         if moved:
             self._add_tile()
