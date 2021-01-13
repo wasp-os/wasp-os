@@ -5,7 +5,7 @@ import os
 
 EXCLUDE = ('Notifications', 'Template', 'Demo')
 
-def test_screenshot_README(constructor):
+def test_README(constructor):
     if constructor.NAME in EXCLUDE:
         return
     fname = f'res/{constructor.NAME}App.png'.replace(' ', '')
@@ -28,16 +28,9 @@ def test_app_library(constructor):
     with open('docs/wasp.rst') as f:
         waspdoc = f.read()
 
-    # Every application must be listed in either the
-    # Application Library or the Reference manual
+    # Every application must be listed in the Application Library
     needle = f'.. automodule:: {constructor.__module__}'
-    assert needle in appdoc or needle in waspdoc
-
-    # If an application is listed in the Reference manual
-    # then we need to make sure there is long to it from the
-    # Application Library
-    if needle in waspdoc:
-        assert constructor.__name__ in appdoc
+    assert needle in appdoc
 
 def test_docstrings(constructor):
     if constructor.NAME in EXCLUDE:
