@@ -123,6 +123,7 @@ class SC7A20:
         self._z_buff = bytearray(2)  # AXIS 2
         self.address = address
         self.range = fs
+        self.steps = 0
 
         if WHOAMI != self.whoami:
             raise RuntimeError("SC7A20 not found in I2C bus.")

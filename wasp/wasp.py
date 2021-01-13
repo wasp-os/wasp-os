@@ -464,6 +464,7 @@ class Manager():
             if self._imu_int:
                 if self._imu_int.get_event():
                     if watch.accel.tapped:
+                        watch.accel.steps += 1
                         self.wake(at=5)
 
     def run(self, no_except=True):
