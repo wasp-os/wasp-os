@@ -1,6 +1,18 @@
 # SPDX-License-Identifier: LGPL-3.0-or-later
 # Copyright (C) 2020 Daniel Thompson
-"""Wizard to generate main.py."""
+"""Software
+~~~~~~~~~~~
+
+A tool to enable/disable applications.
+
+.. figure:: res/SoftwareApp.png
+    :width: 179
+
+Most applications are disabled by default at boot in order to conserve
+RAM (which is in short supply and very useful to anyone wanting to
+write an application). This tools allows us to boot and conserve RAM
+whilst still allowing users to activate so many awesome applications!
+"""
 
 import wasp
 import icons

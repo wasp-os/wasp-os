@@ -1,18 +1,21 @@
 # SPDX-License-Identifier: LGPL-3.0-or-later
 # Copyright (C) 2020 Daniel Thompson
 
+"""Heart rate monitor
+~~~~~~~~~~~~~~~~~~~~~
+
+A graphing heart rate monitor using a PPG sensor.
+
+.. figure:: res/HeartApp.png
+    :width: 179
+"""
+
 import wasp
 import machine
 import ppg
 
 class HeartApp():
-    """Heart Rate Sensing application.
-
-    .. figure:: res/HeartApp.png
-        :width: 179
-
-        Screenshot of the heart rate application
-    """
+    """Heart rate monitor application."""
     NAME = 'Heart'
 
     def foreground(self):

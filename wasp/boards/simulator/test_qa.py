@@ -1,25 +1,25 @@
 import pytest
 import wasp
+import importlib
 import os
 
 EXCLUDE = ('Notifications', 'Template', 'Demo')
-
-def test_screenshot(constructor):
-    if constructor.NAME in EXCLUDE:
-        return
-    fname = f'res/{constructor.NAME}App.png'.replace(' ', '')
-    assert os.path.exists(fname)
 
 def test_screenshot_README(constructor):
     if constructor.NAME in EXCLUDE:
         return
     fname = f'res/{constructor.NAME}App.png'.replace(' ', '')
-    
+
+    # A screenshot must exist for every application (press 's' in the
+    # simulator)
+    assert os.path.exists(fname)
+
+    # Every screenshot must be included in the README image gallery
     with open('README.rst') as f:
         readme = f.read()
     assert fname in readme
 
-def test_apps_documented(constructor):
+def test_app_library(constructor):
     if constructor.NAME in EXCLUDE:
         return
 
@@ -28,8 +28,32 @@ def test_apps_documented(constructor):
     with open('docs/wasp.rst') as f:
         waspdoc = f.read()
 
+    # Every application must be listed in either the
+    # Application Library or the Reference manual
     needle = f'.. automodule:: {constructor.__module__}'
     assert needle in appdoc or needle in waspdoc
 
+    # If an application is listed in the Reference manual
+    # then we need to make sure there is long to it from the
+    # Application Library
     if needle in waspdoc:
         assert constructor.__name__ in appdoc
+
+def test_docstrings(constructor):
+    if constructor.NAME in EXCLUDE:
+        return
+    fname = f'res/{constructor.NAME}App.png'.replace(' ', '')
+
+    class_doc = constructor.__doc__
+    module_doc = importlib.import_module(constructor.__module__).__doc__
+
+    # Screenshots should *not* appear in the constructor.
+    if constructor.__doc__:
+        assert fname not in constructor.__doc__
+
+    # Screenshots should appear in the full module documentation
+    assert f'.. figure:: {fname }' in module_doc
+
+    # The second line of the module documentation should be an
+    # underline (e.g. the first line must be a section header)
+    assert(module_doc.split('\n')[1].startswith('~~~~'))

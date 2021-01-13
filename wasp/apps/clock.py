@@ -5,6 +5,9 @@
 ~~~~~~~~~~~~~~~~
 
 Shows a time (as HH:MM) together with a battery meter and the date.
+
+.. figure:: res/ClockApp.png
+    :width: 179
 """
 
 import wasp
@@ -21,13 +24,7 @@ DIGITS = (
 MONTH = 'JanFebMarAprMayJunJulAugSepOctNovDec'
 
 class ClockApp():
-    """Simple digital clock application.
-
-    .. figure:: res/ClockApp.png
-        :width: 179
-
-        Screenshot of the clock application
-    """
+    """Simple digital clock application."""
     NAME = 'Clock'
     ICON = icons.clock
 

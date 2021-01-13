@@ -1,20 +1,30 @@
 # SPDX-License-Identifier: LGPL-3.0-or-later
 # Copyright (C) 2020-21 Daniel Thompson
 
+"""Settings application
+~~~~~~~~~~~~~~~~~~~~~~~
+
+Allows a very small set of user preferences (including the date and
+time) to be set on the device itself.
+
+.. figure:: res/SettingsApp.png
+    :width: 179
+
+.. note::
+
+    The settings tool is not expected to comprehensively present every
+    user configurable preference. Some are better presented via a
+    companion app and some particular exotic ones are perhaps best
+    managed with a user-provided ``main.py``.
+"""
+
+
 import wasp
 import fonts
 import icons
 
 class SettingsApp():
-    """Ultra-simple settings application.
-
-    Currently the settings application contains only one setting: brightness
-
-    .. figure:: res/SettingsApp.png
-        :width: 179
-
-        Screenshot of the settings application
-    """
+    """Settings application."""
     NAME = 'Settings'
     ICON = icons.settings
 

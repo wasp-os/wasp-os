@@ -1,9 +1,8 @@
 # SPDX-License-Identifier: LGPL-3.0-or-later
 # Copyright (C) 2020 Johannes Wache
 
-"""
-Snake Game
-~~~~~~~~~~
+"""Snake Game
+~~~~~~~~~~~~~
 
 This is a classic arcade game called snake.
 
@@ -174,4 +173,3 @@ class Snake():
         draw = wasp.watch.drawable
         draw.fill(x=self.oldtail[0],y=self.oldtail[1],w=15,h=15,bg=0x0000)
         draw.fill(x=self.body[-1][0]+1,y=self.body[-1][1]+1,w=13,h=13,bg=0xffff)
-

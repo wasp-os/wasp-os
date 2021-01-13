@@ -21,8 +21,7 @@ treated as examples they are described in detail as part of the
  * :py:class:`.SoftwareApp`
  * :py:class:`.StepCounterApp`
  * :py:class:`.StopwatchApp`
- * :py:class:`.TestApp`
- * :py:class:`.TemplateApp``
+ * :py:class:`.TemplateApp`
 
 Watch faces
 -----------

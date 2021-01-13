@@ -6,6 +6,9 @@
 
 These three lines poems are fun to write and fit nicely on a tiny screen.
 
+.. figure:: res/HaikuApp.png
+    :width: 179
+
 If there is a file called haiku.txt in the flash filesystem then this app
 allows it to be displayed three lines at a time using the pager.
 

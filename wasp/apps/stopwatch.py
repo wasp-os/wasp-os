@@ -1,19 +1,22 @@
 # SPDX-License-Identifier: LGPL-3.0-or-later
 # Copyright (C) 2020 Daniel Thompson
 
+"""Stopwatch
+~~~~~~~~~~~~
+
+Simple stop/start watch with support for split times.
+
+.. figure:: res/StopclockApp.png
+    :width: 179
+"""
 import wasp
 import icons
 import fonts
 
 class StopwatchApp():
-    """Stopwatch application.
-
-    .. figure:: res/StopclockApp.png
-        :width: 179
-
-        Screenshot of the stopwatch application
-    """
+    """Stopwatch application."""
     # Stopwatch requires too many pixels to fit into the launcher
+
     NAME = 'Stopclock'
     ICON = icons.app
 

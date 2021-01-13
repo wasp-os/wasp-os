@@ -1,9 +1,13 @@
 # SPDX-License-Identifier: LGPL-3.0-or-later
 # Copyright (C) 2020 Johannes Wache
-"""Calculator application
+"""Calculator
+~~~~~~~~~~~~~
 
 This is a simple calculator app that uses the build-in eval() function to
 compute the solution.
+
+.. figure:: res/CalcApp.png
+    :width: 179
 """
 
 import wasp, fonts

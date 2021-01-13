@@ -1,6 +1,17 @@
 # SPDX-License-Identifier: LGPL-3.0-or-later
 # Copyright (C) 2020 Daniel Thompson
 
+"""Step counter
+~~~~~~~~~~~~~~~
+
+Provide a daily step count.
+
+    .. figure:: res/StepsApp.png
+        :width: 179
+
+The step counts automatically reset at midnight.
+"""
+
 import wasp
 
 import fonts
@@ -30,13 +41,7 @@ feet = (
 )
 
 class StepCounterApp():
-    """Step counter application.
-
-    .. figure:: res/StepsApp.png
-        :width: 179
-
-        Screenshot of the step counter application
-    """
+    """Step counter application."""
     NAME = 'Steps'
     ICON = icons.app
 

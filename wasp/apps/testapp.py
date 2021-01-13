@@ -3,6 +3,12 @@
 
 """Self Tests
 ~~~~~~~~~~~~~
+
+A collection of tests used to develop features or provide useful metrics such
+as performance indicators or memory usage.
+
+.. figure:: res/SelfTestApp.png
+    :width: 179
 """
 
 import wasp
@@ -15,13 +21,7 @@ import machine
 from apps.pager import PagerApp
 
 class TestApp():
-    """Simple test application.
-
-    .. figure:: res/SelfTestApp.png
-        :width: 179
-
-        Screenshot of the self test application
-    """
+    """Self test application."""
     NAME = 'Self Test'
     ICON = icons.app
 

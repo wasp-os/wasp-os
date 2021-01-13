@@ -5,6 +5,9 @@
 ~~~~~~~~~~~~~
 
 Shows a pure white screen with the backlight set to maximum.
+
+.. figure:: res/TorchApp.png
+    :width: 179
 """
 
 import wasp
@@ -12,13 +15,7 @@ import wasp
 import icons
 
 class TorchApp(object):
-    """Trivial flashlight application.
-
-    .. figure:: res/TorchApp.png
-        :width: 179
-
-        Screenshot of the flashlight application
-    """
+    """Trivial flashlight application."""
     NAME = 'Torch'
     ICON = icons.torch
 
