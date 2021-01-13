@@ -28,6 +28,12 @@ System
 .. automodule:: fonts.sans24
    :members:
 
+.. automodule:: fonts.sans28
+   :members:
+
+.. automodule:: fonts.sans36
+   :members:
+
 .. automodule:: logo
    :members:
    :undoc-members:
@@ -55,41 +61,6 @@ Device drivers
 
 .. automodule:: drivers.vibrator
    :members:
-
-Applications
-------------
-
-.. automodule:: apps.clock
-   :members:
-   :undoc-members:
-
-.. automodule:: apps.heart
-   :members:
-   :undoc-members:
-
-.. automodule:: apps.launcher
-   :members:
-   :undoc-members:
-
-.. automodule:: apps.pager
-   :members:
-   :undoc-members:
-
-.. automodule:: apps.settings
-   :members:
-   :undoc-members:
-
-.. automodule:: apps.software
-   :members:
-   :undoc-members:
-
-.. automodule:: apps.steps
-   :members:
-   :undoc-members:
-
-.. automodule:: apps.stopwatch
-   :members:
-   :undoc-members:
 
 Bootloader
 ----------
