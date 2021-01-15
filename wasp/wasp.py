@@ -208,6 +208,8 @@ class Manager():
     def switch(self, app):
         """Switch to the requested application.
         """
+        global free
+
         if self.app:
             if 'background' in dir(self.app):
                 try:
@@ -226,6 +228,9 @@ class Manager():
             watch.display.mute(True)
             watch.backlight.set(self._brightness)
             self.sleep_at = watch.rtc.uptime + 90
+            if watch.free:
+                gc.collect()
+                free = gc.mem_free()
 
         # Clear out any configuration from the old application
         self.event_mask = 0
@@ -462,17 +467,12 @@ class Manager():
         normal execution context meaning any exceptions and other problems
         can be observed interactively via the console.
         """
-        global free
-
         if self._scheduling:
             print('Watch already running in the background')
             return
 
         if not self.app:
             self.switch(self.quick_ring[0])
-            if watch.free:
-                gc.collect()
-                free = gc.mem_free()
 
         # Reminder: wasptool uses this string to confirm the device has
         # been set running again.
@@ -520,13 +520,8 @@ class Manager():
 
     def schedule(self, enable=True):
         """Run the system manager synchronously."""
-        global free
-
         if not self.app:
             self.switch(self.quick_ring[0])
-            if watch.free:
-                gc.collect()
-                free = gc.mem_free()
 
         if enable:
             watch.schedule = self._schedule
