@@ -355,6 +355,7 @@ To install the main firmware using nRF Connect for Android:
   your Android device and download
   `nRF Connect <https://play.google.com/store/apps/details?id=no.nordicsemi.android.mcp>`_
   for Android if you do not already have it.
+* Ensure the watch is running in :ref:`OTA update mode<OTA update mode>`.
 * Connect to the device (e.g. *PineDFU* if you have a PineTime) using
   nRFConnect, click the DFU button and send ``micropython.zip`` to the device.
 * When the upload is complete the watch will reboot and launch the digital
@@ -371,6 +372,7 @@ To install the main firmware using DaFlasher for Android:
   your Android device and download
   `DaFlasher <https://play.google.com/store/apps/details?id=com.atcnetz.paatc.patc>`_
   if you do not already have it.
+* Ensure the watch is running in :ref:`OTA update mode<OTA update mode>`.
 * Open the app and connect to the device (e.g. *PineDFU* if you have a
   PineTime).
 * Click **Do DFU Update**.
@@ -383,6 +385,7 @@ wasptool for GNU/Linux
 
 To install the main firmware from a GNU/Linux workstation:
 
+* Ensure the watch is running in :ref:`OTA update mode<OTA update mode>`.
 * Look up the MAC address for your watch (try: ``sudo hcitool lescan``\ ).
 * Use ota-dfu to upload ``micropython.zip`` (see
   :ref:`Building wasp-os from source`) to the device. For example:
@@ -393,9 +396,11 @@ To install the main firmware from a GNU/Linux workstation:
 Troubleshooting
 ---------------
 
-There are three boot modes of the device: OTA update mode, safe mode and normal
-operation. Understanding these modes is useful to help troubleshoot
+there are three boot modes of the device: ota update mode, safe mode and normal
+operation. understanding these modes is useful to help troubleshoot
 installation and boot problems.
+
+.. _OTA update mode:
 
 OTA update mode
 ~~~~~~~~~~~~~~~
