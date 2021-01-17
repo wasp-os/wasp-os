@@ -105,6 +105,7 @@ class ST7789(object):
         else:
             self.write_cmd(_DISPON)
 
+    @micropython.native
     def set_window(self, x=0, y=0, width=None, height=None):
         """Set the clipping rectangle.
 
@@ -202,6 +203,7 @@ class ST7789_SPI(ST7789):
         self.dc = dc.value
         self.res = res
         self.rate = rate
+        self.cmd = bytearray(1)
 
         #spi.init(baudrate=self.rate, polarity=1, phase=1)
         cs.init(cs.OUT, value=1)
@@ -225,6 +227,7 @@ class ST7789_SPI(ST7789):
             self.write_cmd(_SWRESET)
         sleep_ms(125)
 
+    @micropython.native
     def write_cmd(self, cmd):
         """Send a command opcode to the display.
 
@@ -233,13 +236,16 @@ class ST7789_SPI(ST7789):
         """
         dc = self.dc
         cs = self.cs
+        c = self.cmd
 
         dc(0)
         cs(0)
-        self.quick_write(bytearray([cmd]))
+        c[0] = cmd
+        self.quick_write(c)
         cs(1)
         dc(1)
 
+    @micropython.native
     def write_data(self, buf):
         """Send data to the display.
 
