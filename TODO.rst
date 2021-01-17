@@ -29,6 +29,8 @@ Micropython
 
 * [ ] Use SoftDevice sleep logic
 * [ ] Fix BLE hangs
+* [ ] Allow asynchronous control of the SPI chip select signals (this will
+      allow for double buffered graphics updates)
 
 Wasp-os
 ~~~~~~~
@@ -76,9 +78,9 @@ Wasp-os
   * [X] Introduce an analog watch face
   * [X] Add a configuration tool to enable disable applications
 
-* [ ] Documentation
+* [X] Documentation
 
-  * [ ] Describe how to upload pre-compiled modules
+  * [X] Describe how to upload pre-compiled modules
 
 0.3 (a.k.a. M3): Smartwatch
 ---------------------------

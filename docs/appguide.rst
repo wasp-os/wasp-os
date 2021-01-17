@@ -298,8 +298,10 @@ takes around five seconds). Once the watch is in OTA mode then
 press the phyiscal button again to return to normal mode with the
 application cleared out.
 
-Making it permanent
-~~~~~~~~~~~~~~~~~~~
+.. _Uploading in source code form:
+
+Uploading in source code form
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 To ensure you application survives a reboot then we must copy it to the
 device and ensure it gets launched during system startup.
@@ -350,6 +352,36 @@ to the watch:
     out-of-memory exception) then your watch will display a black screen at
     startup. If that happens, and you don't know how to debug the problem, then
     you can use wasptool to restore the original version of main.py .
+
+Uploading in binary form
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+Some applications are too large to be compiled on the target. These applications
+need to be pre-compiled and can then either be uploaded in binary form to the
+wasp-os filesystem or
+:ref:`included in the firmware image<Freezing your application into the wasp-os binary>`
+to further reduce the RAM overhead.
+
+To pre-compile your application:
+
+.. code-block:: sh
+
+    sh$ ./micropython/mpy-cross/mpy-cross -mno-unicode -march=armv7m myapp.py
+
+To copy the binary to the wasp-os filesystem try:
+
+.. code-block:: sh
+
+    sh$ ./tools/wasptool --binary --upload myapp.mpy
+    Uploading myapp.mpy:
+    [##################################################] 100%
+
+At this point your application is stored on the external FLASH but it will
+not automatically be loaded but it can be imported using ``import myapp``.
+The application can be registered from ``main.py`` using exactly the same
+technique as :ref:`uploads in source code<Uploading in source code form>`.
+
+.. _Freezing your application into the wasp-os binary:
 
 Freezing your application into the wasp-os binary
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
