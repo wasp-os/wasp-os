@@ -15,11 +15,11 @@ The step counts automatically reset at midnight.
 import wasp
 
 import array
-import datetime
 import fonts
 import icons
 import time
 import watch
+from .clock import MONTH
 
 # 2-bit RLE, generated from res/feet.png, 240 bytes
 feet = (
@@ -77,8 +77,8 @@ class StepCounterApp():
 
     def swipe(self, event):
         """swipe between main view and previous step counts"""
-        today = datetime.date.today()
-        weekday = today.weekday()
+        now = wasp.watch.rtc.get_localtime()
+        weekday = now[6]
 
         # find the earliest record and last page
         start_idx = weekday
@@ -86,7 +86,6 @@ class StepCounterApp():
         last_page = 0
         found = False
         while not found:
-            print(idx)
             next_idx = idx - 1 if idx > 0 else 6
             if self.prev_steps[next_idx] == -1 or next_idx == start_idx:
                 found = True
@@ -95,18 +94,15 @@ class StepCounterApp():
                 idx = next_idx
 
         if event[0] == wasp.EventType.UP and self.page != 0 and self.page != 8: 
-            # Cycle forward to next page
             self.page -= 1
         elif event[0] == wasp.EventType.UP and self.page == 8:
-            # Cycle back to last page
             self.page = last_page
         elif event[0] == wasp.EventType.DOWN:
-            # Cycle back to prev day's stepcount
-            if self.page != last_page:
+            if self.page != 8 and self.page != last_page:
                 self.page += 1
             else:
                 self.page = 8
-
+        print(last_page, self.page)
         self._draw()
 
     def background(self):
@@ -122,11 +118,11 @@ class StepCounterApp():
 
     def _reset(self):
         """"Reset the step counter and re-arm the alarm."""
-        today = datetime.date.today()
-        weekday = today.weekday()
+        now = wasp.watch.rtc.get_localtime()
+        weekday = now[6]
         self.prev_steps[weekday] = watch.accel.steps
         # Pack the date into an int
-        self.prev_days[weekday] = today.year << 8*2 | today.month << 8 | today.day
+        self.prev_days[weekday] = now[0] << 8*2 | now[1] << 8 | now[2]
         watch.accel.steps = 0
         self._wake += 24 * 60 * 60
         wasp.system.set_alarm(self._wake, self._reset)
@@ -168,19 +164,20 @@ class StepCounterApp():
             w1 = fonts.width(fonts.sans24, t1)
             w2 = fonts.width(fonts.sans24, t2)
             draw.set_font(fonts.sans24)
-            draw.string(t1, 0, 132-24, draw._display.width)
-            draw.string(t2, 0, 132, draw._display.width)
+            draw.string(t1, 0, 112-24, draw._display.width)
+            draw.string(t2, 0, 112, draw._display.width)
         elif self.page != 0:
-            today = datetime.date.today()
-            weekday = today.weekday()
+            now = wasp.watch.rtc.get_localtime()
+            weekday = now[6]
             idx = weekday - self.page
             if idx < 0:
                 idx += 7
-            day = datetime.date(
-                    year = (self.prev_days[idx] & 0xFFFF0000) >> 8*2,
-                    month = (self.prev_days[idx] & 0xFF00) >> 8,
-                    day = (self.prev_days[idx] & 0xFF))
-            t1 = day.strftime("%b %-d, %Y")
+
+            year = (self.prev_days[idx] & 0xFFFF0000) >> 8*2
+            month = (self.prev_days[idx] & 0xFF00) >> 8
+            day = (self.prev_days[idx] & 0xFF)
+
+            t1 = "%s %d, %d" % (MONTH[(month-1)*3:(month)*3], day, year)
             t2 = str(self.prev_steps[idx])
             w1 = fonts.width(fonts.sans24, t1)
             w2 = fonts.width(fonts.sans36, t2)
