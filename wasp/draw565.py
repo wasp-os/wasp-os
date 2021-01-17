@@ -91,9 +91,13 @@ def _draw_glyph(display, glyph, x, y, bgfg):
     bytes_per_row = (w + 7) // 8
 
     display.set_window(x, y, w+1, h)
+    quick_write = display.quick_write
+
+    display.quick_start()
     for row in range(h):
         _bitblit(buf, px[row*bytes_per_row:], bgfg, w)
-        display.write_data(buf)
+        quick_write(buf)
+    display.quick_end()
 
 class Draw565(object):
     """Drawing library for RGB565 displays.
