@@ -45,6 +45,7 @@ class ST7789(object):
         self.width = width
         self.height = height
         self.linebuffer = memoryview(bytearray(2 * width))
+        self.window = bytearray(4)
         self.init_display()
 
     def init_display(self):
@@ -106,7 +107,7 @@ class ST7789(object):
             self.write_cmd(_DISPON)
 
     @micropython.native
-    def set_window(self, x=0, y=0, width=None, height=None):
+    def set_window(self, x, y, width, height):
         """Set the clipping rectangle.
 
         All writes to the display will be wrapped at the edges of the rectangle.
@@ -118,19 +119,28 @@ class ST7789(object):
         :param h:  Height of the rectangle, defaults to None (which means select
                    the bottom-most pixel of the display)
         """
-        if not width:
-            width = self.width
-        if not height:
-            height = self.height
+        write_cmd = self.write_cmd
+        window = self.window
+        write_data = self.write_data
 
         xp = x + width - 1
         yp = y + height - 1
 
-        self.write_cmd(_CASET)
-        self.write_data(bytearray([x >> 8, x & 0xff, xp >> 8, xp & 0xff]))
-        self.write_cmd(_RASET)
-        self.write_data(bytearray([y >> 8, y & 0xff, yp >> 8, yp & 0xff]))
-        self.write_cmd(_RAMWR)
+        write_cmd(_CASET)
+        window[0] = x >> 8
+        window[1] = x & 0xff
+        window[2] = xp >> 8
+        window[3] = xp & 0xff
+        write_data(window)
+
+        write_cmd(_RASET)
+        window[0] = y >> 8
+        window[1] = y & 0xff
+        window[2] = yp >> 8
+        window[3] = yp & 0xff
+        write_data(window)
+
+        write_cmd(_RAMWR)
 
     def rawblit(self, buf, x, y, width, height):
         """Blit raw pixels to the display.
