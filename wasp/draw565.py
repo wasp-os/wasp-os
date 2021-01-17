@@ -85,7 +85,7 @@ def _bounding_box(s, font):
 def _draw_glyph(display, glyph, x, y, bgfg):
     (px, h, w) = glyph
 
-    buf = memoryview(display.linebuffer)[0:2*(w+1)]
+    buf = display.linebuffer[0:2*(w+1)]
     buf[2*w] = 0
     buf[2*w + 1] = 0
     bytes_per_row = (w + 7) // 8
@@ -155,7 +155,7 @@ class Draw565(object):
 
         # Populate the line buffer
         buf = display.linebuffer
-        sz = len(display.linebuffer) // 2
+        sz = len(buf) // 2
         _fill(buf, bg, min(sz, remaining), 0)
 
         display.quick_start()
@@ -163,7 +163,7 @@ class Draw565(object):
             quick_write(buf)
             remaining -= sz
         if remaining:
-            quick_write(memoryview(display.linebuffer)[0:2*remaining])
+            quick_write(buf[0:2*remaining])
         display.quick_end()
 
     @micropython.native
@@ -195,7 +195,7 @@ class Draw565(object):
 
         display.set_window(pos[0], pos[1], sx, sy)
 
-        buf = memoryview(display.linebuffer)[0:2*sx]
+        buf = display.linebuffer[0:2*sx]
         bp = 0
         color = bg
 
@@ -233,7 +233,7 @@ class Draw565(object):
         palette = array.array('H', (0, c1, c2, fg))
         next_color = 1
         rl = 0
-        buf = memoryview(display.linebuffer)[0:2*sx]
+        buf = display.linebuffer[0:2*sx]
         bp = 0
 
         display.quick_start()

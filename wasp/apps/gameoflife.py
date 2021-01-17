@@ -223,7 +223,7 @@ class GameOfLifeApp():
 
         display = wasp.watch.display
         lb = display.linebuffer
-        alive = memoryview(lb)[0:2*16]
+        alive = lb[0:2*16]
         self._color = xorshift12(self._color)
         rgbhi = get_color(self._color)
         rgblo = rgbhi & 0xff
@@ -234,7 +234,7 @@ class GameOfLifeApp():
         for i in (0, 3,  12, 15):
             alive[i*2] = 0
             alive[i*2+1] = 0
-        dead = memoryview(lb)[2*16:4*16]
+        dead = lb[2*16:4*16]
         for i in range(len(dead)):
             dead[i] = 0
 

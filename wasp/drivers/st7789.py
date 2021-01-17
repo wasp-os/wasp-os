@@ -44,7 +44,7 @@ class ST7789(object):
         """
         self.width = width
         self.height = height
-        self.linebuffer = bytearray(2 * width)
+        self.linebuffer = memoryview(bytearray(2 * width))
         self.init_display()
 
     def init_display(self):
@@ -167,7 +167,7 @@ class ST7789(object):
         self.set_window(x, y, w, h)
 
         # Populate the line buffer
-        buf = memoryview(self.linebuffer)[0:2*w]
+        buf = self.linebuffer[0:2*w]
         for xi in range(0, 2*w, 2):
             buf[xi] = bg >> 8
             buf[xi+1] = bg & 0xff
