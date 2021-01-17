@@ -14,6 +14,8 @@ The step counts automatically reset at midnight.
 
 import wasp
 
+import array
+import datetime
 import fonts
 import icons
 import time
@@ -49,6 +51,12 @@ class StepCounterApp():
         watch.accel.reset()
         self._count = 0
         self._wake = 0
+        self.prev_days  = array.array("i", (-1,)*7)
+        self.prev_steps = array.array("i", (-1,)*7)
+        # page 0 is the 'main' page that only shows todays step count
+        # page 7 is a special page informing no previous times exist
+        self.page = 0
+        
 
     def foreground(self):
         """Cancel the alarm and draw the application.
@@ -61,10 +69,45 @@ class StepCounterApp():
         This does in the side effect that if the application of open at
         midnight then the reset doesn't happen for that day.
         """
+        wasp.system.request_event(wasp.EventMask.SWIPE_UPDOWN)
         wasp.system.cancel_alarm(self._wake, self._reset)
         wasp.system.bar.clock = True
         self._draw()
         wasp.system.request_tick(1000)
+
+    def swipe(self, event):
+        """swipe between main view and previous step counts"""
+        today = datetime.date.today()
+        weekday = today.weekday()
+
+        # find the earliest record and last page
+        start_idx = weekday
+        idx = start_idx
+        last_page = 0
+        found = False
+        while not found:
+            print(idx)
+            next_idx = idx - 1 if idx > 0 else 6
+            if self.prev_steps[next_idx] == -1 or next_idx == start_idx:
+                found = True
+            else:
+                last_page += 1
+                idx = next_idx
+
+        if event[0] == wasp.EventType.UP and self.page != 0 and self.page != 8: 
+            # Cycle forward to next page
+            self.page -= 1
+        elif event[0] == wasp.EventType.UP and self.page == 8:
+            # Cycle back to last page
+            self.page = last_page
+        elif event[0] == wasp.EventType.DOWN:
+            # Cycle back to prev day's stepcount
+            if self.page != last_page:
+                self.page += 1
+            else:
+                self.page = 8
+
+        self._draw()
 
     def background(self):
         """Set an alarm to trigger at midnight and reset the counter."""
@@ -79,6 +122,11 @@ class StepCounterApp():
 
     def _reset(self):
         """"Reset the step counter and re-arm the alarm."""
+        today = datetime.date.today()
+        weekday = today.weekday()
+        self.prev_steps[weekday] = watch.accel.steps
+        # Pack the date into an int
+        self.prev_days[weekday] = today.year << 8*2 | today.month << 8 | today.day
         watch.accel.steps = 0
         self._wake += 24 * 60 * 60
         wasp.system.set_alarm(self._wake, self._reset)
@@ -91,21 +139,63 @@ class StepCounterApp():
         """Draw the display from scratch."""
         draw = wasp.watch.drawable
         draw.fill()
-        draw.blit(feet, 12, 132-24)
+
+        if self.page == 0:
+            draw.blit(feet, 12, 132-24)
+        else:
+            draw.blit(feet, 12, 180)
 
         self._update()
         wasp.system.bar.draw()
 
-    def _update(self):
-        draw = wasp.watch.drawable
-
-        # Update the status bar
-        now = wasp.system.bar.update()
-
+    def _draw_current_steps(self, draw):
         # Update the step count
         count = watch.accel.steps
         t = str(count)
         w = fonts.width(fonts.sans36, t)
         draw.set_font(fonts.sans36)
         draw.set_color(draw.lighten(wasp.system.theme('spot1'), wasp.system.theme('contrast')))
-        draw.string(t, 228-w, 132-18)
+        if self.page == 0:
+            draw.string(t, 228-w, 132-18)
+        else:
+            draw.string(t, 228-w, 180)
+
+    def _draw_page(self, draw):
+        draw.set_color(wasp.system.theme("bright"))
+        if self.page == 8:
+            t1 = "No earlier step"
+            t2 = "counts available"
+            w1 = fonts.width(fonts.sans24, t1)
+            w2 = fonts.width(fonts.sans24, t2)
+            draw.set_font(fonts.sans24)
+            draw.string(t1, 0, 132-24, draw._display.width)
+            draw.string(t2, 0, 132, draw._display.width)
+        elif self.page != 0:
+            today = datetime.date.today()
+            weekday = today.weekday()
+            idx = weekday - self.page
+            if idx < 0:
+                idx += 7
+            day = datetime.date(
+                    year = (self.prev_days[idx] & 0xFFFF0000) >> 8*2,
+                    month = (self.prev_days[idx] & 0xFF00) >> 8,
+                    day = (self.prev_days[idx] & 0xFF))
+            t1 = day.strftime("%b %-d, %Y")
+            t2 = str(self.prev_steps[idx])
+            w1 = fonts.width(fonts.sans24, t1)
+            w2 = fonts.width(fonts.sans36, t2)
+            draw.set_font(fonts.sans24)
+            draw.string(t1, 0, 112-38, draw._display.width)
+            draw.set_font(fonts.sans36)
+            draw.string(t2, 0, 112, draw._display.width)
+
+
+    def _update(self):
+        draw = wasp.watch.drawable
+
+        # Update the status bar
+        now = wasp.system.bar.update()
+        self._draw_page(draw)
+        self._draw_current_steps(draw)
+
+        
