@@ -22,6 +22,8 @@ import wasp
 import icons
 import time
 
+from micropython import const
+
 # 2-bit RLE, generated from res/music_icon.png, 358 bytes
 icon = (
     b'\x02'
@@ -51,20 +53,20 @@ icon = (
     b'<\xa4\x1e'
 )
 
+DISPLAY_WIDTH = const(240)
+ICON_SIZE = const(72)
+CENTER_AT = const((DISPLAY_WIDTH - ICON_SIZE) // 2)
+
 class MusicPlayerApp(object):
     """ Music Player Controller application."""
     NAME = 'Music'
     ICON = icon
 
     def __init__(self):
-
-        self._play_icon = icons.play
-        self._pause_icon = icons.pause
+        self._pauseplay = wasp.widgets.GfxButton(CENTER_AT, CENTER_AT, icons.play)
+        self._back = wasp.widgets.GfxButton(0, 120-12, icons.back)
+        self._fwd = wasp.widgets.GfxButton(240-48, 120-12, icons.fwd)
         self._play_state = False
-        self._icon_state = self._play_icon
-        self._max_display = 240
-        self._icon_size = 72
-        self._center_at = int((self._max_display - self._icon_size)/2)
         self._musicstate = 'pause'
         self._artist = ''
         self._track = ''
@@ -84,14 +86,11 @@ class MusicPlayerApp(object):
     def _fill_space(self, key):
         if key == 'top':
             wasp.watch.drawable.fill(
-                x=0, y=0, w=self._max_display, h=self._center_at)
-        elif key == 'mid':
-            wasp.watch.drawable.fill(x=self._center_at, y=self._center_at,
-                                     w=self._icon_size, h=self._icon_size)
+                x=0, y=0, w=DISPLAY_WIDTH, h=CENTER_AT)
         elif key == 'down':
-            wasp.watch.drawable.fill(x=0, y=self._center_at + self._icon_size,
-                                     w=self._max_display,
-                            h=self._max_display - (self._center_at + self._icon_size))
+            wasp.watch.drawable.fill(x=0, y=CENTER_AT + ICON_SIZE,
+                                     w=DISPLAY_WIDTH,
+                            h=DISPLAY_WIDTH - (CENTER_AT + ICON_SIZE))
 
     def foreground(self):
         """Activate the application."""
@@ -102,10 +101,8 @@ class MusicPlayerApp(object):
             self._musicstate = state
             if self._musicstate == 'play':
                 self._play_state = True
-                self._icon_state = self._pause_icon
             elif self._musicstate == 'pause':
                 self._play_state = False
-                self._icon_state = self._play_icon
         if artist:
             self._artist = artist
         if track:
@@ -113,8 +110,7 @@ class MusicPlayerApp(object):
         wasp.watch.drawable.fill()
         self.draw()
         wasp.system.request_tick(1000)
-        wasp.system.request_event(wasp.EventMask.SWIPE_UPDOWN |
-                                  wasp.EventMask.SWIPE_LEFTRIGHT |
+        wasp.system.request_event(wasp.EventMask.SWIPE_LEFTRIGHT |
                                   wasp.EventMask.TOUCH)
 
     def background(self):
@@ -158,23 +154,24 @@ class MusicPlayerApp(object):
             self._send_cmd('{"t":"music", "n":"volumeup"} ')
         elif event[0] == wasp.EventType.DOWN:
             self._send_cmd('{"t":"music", "n":"volumedown"} ')
-        elif event[0] == wasp.EventType.LEFT:
-            self._send_cmd('{"t":"music", "n":"next"} ')
-        elif event[0] == wasp.EventType.RIGHT:
-            self._send_cmd('{"t":"music", "n":"previous"} ')
 
     def touch(self, event):
-        self._play_state = not self._play_state
-        if self._play_state:
-            self._musicstate = 'play'
-            self._icon_state = self._pause_icon
-            self._draw_button()
-            self._send_cmd('{"t":"music", "n":"play"} ')
-        else:
-            self._musicstate = 'pause'
-            self._icon_state = self._play_icon
-            self._draw_button()
-            self._send_cmd('{"t":"music", "n":"pause"} ')
+        if self._pauseplay.touch(event):
+            self._play_state = not self._play_state
+            if self._play_state:
+                self._musicstate = 'play'
+                self._pauseplay.gfx = icons.pause
+                self._pauseplay.draw()
+                self._send_cmd('{"t":"music", "n":"play"} ')
+            else:
+                self._musicstate = 'pause'
+                self._pauseplay.gfx = icons.play
+                self._pauseplay.draw()
+                self._send_cmd('{"t":"music", "n":"pause"} ')
+        elif self._back.touch(event):
+            self._send_cmd('{"t":"music", "n":"previous"} ')
+        elif self._fwd.touch(event):
+            self._send_cmd('{"t":"music", "n":"next"} ')
 
     def draw(self):
         """Redraw the display from scratch."""
@@ -183,17 +180,13 @@ class MusicPlayerApp(object):
     def _draw(self):
         """Redraw the updated zones."""
         if self._state_changed:
-            self._draw_button()
+            self._pauseplay.draw()
         if self._track_changed:
             self._draw_label(self._track, 24 + 144)
         if self._artist_changed:
             self._draw_label(self._artist, 12)
-
-    def _draw_button(self):
-        """Redraw player button"""
-        self._fill_space('mid')
-        wasp.watch.drawable.blit(self._icon_state, self._center_at,
-                                 self._center_at)
+        self._back.draw()
+        self._fwd.draw()
 
     def _draw_label(self, label, pos):
         """Redraw label info"""
@@ -208,10 +201,10 @@ class MusicPlayerApp(object):
     def _update(self):
         if self._musicstate == 'play':
             self._play_state = True
-            self._icon_state = self._pause_icon
+            self._pauseplay.gfx = icons.pause
         elif self._musicstate == 'pause':
             self._play_state = False
-            self._icon_state = self._play_icon
+            self._pauseplay.gfx = icons.play
         self._draw()
 
     def update(self):
