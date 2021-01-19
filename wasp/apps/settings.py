@@ -113,6 +113,8 @@ class SettingsApp():
             self._yy.draw()
             self._mm.draw()
             self._dd.draw()
+            draw.set_font(fonts.sans24)
+            draw.string('DD    MM    YY',0,180, width=240)
         self._scroll_indicator.draw()
         self._update()
         mute(False)
