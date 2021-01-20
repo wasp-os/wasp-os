@@ -202,7 +202,7 @@ class ST7789_SPI(ST7789):
         :param int height: Height of the display
         :param machine.SPI spi: SPI controller
         :param machine.Pin cs: Pin (or signal) to use as the chip select
-        :param machine.Pin cs: Pin (or signal) to use to switch between data
+        :param machine.Pin dc: Pin (or signal) to use to switch between data
                                and command mode.
         :param machine.Pin res: Pin (or signal) to, optionally, use to reset
                                 the display.
