@@ -140,6 +140,7 @@ class Manager():
         else:
             self._nfylevels = [0, 40, 80]
         self._nfylev_ms = self._nfylevels[self._notifylevel - 1]
+        self._lift_to_wake_enabled = 'lift_to_wake' in dir(watch)
         self._button = PinHandler(watch.button)
         self._charging = True
         self._scheduled = False
@@ -204,6 +205,19 @@ class Manager():
     def notify_duration(self):
         """Cached copy of the current vibrator pulse duration in milliseconds"""
         return self._nfylev_ms
+
+    @property
+    def lift_to_wake_supported(self):
+        return 'lift_to_wake' in dir(watch)
+
+    @property
+    def lift_to_wake_enabled(self):
+        return self._lift_to_wake_enabled
+    
+    @lift_to_wake_enabled.setter
+    def lift_to_wake_enabled(self, value):
+        self._lift_to_wake_enabled = value and self.lift_to_wake_supported
+    
 
     def switch(self, app):
         """Switch to the requested application.
@@ -458,6 +472,8 @@ class Manager():
         else:
             if 1 == self._button.get_event() or \
                     self._charging != watch.battery.charging():
+                self.wake()
+            if self._lift_to_wake_enabled and watch.lift_to_wake.update():
                 self.wake()
 
     def run(self, no_except=True):
