@@ -11,7 +11,7 @@ Building wasp-os from source
 
 Building wasp-os and launching the wasp-os simulator requires Python 3.6
 (or later) and the following python modules: click, numpy, pexpect, PIL
-(or Pillow), pyserial, pysdl2.
+(or Pillow), pydbus, pygobject, pyserial, pysdl2.
 
 On Debian Buster the required python modules can be obtained using the
 following commands:
@@ -20,7 +20,8 @@ following commands:
 
     sudo apt install \
       wget git build-essential libsdl2-2.0.0 python3-click python3-numpy \
-      python3-pexpect python3-pil python3-pip python3-serial unzip
+      python3-pexpect python3-pil python3-pip python3-pydbus \
+      python-pygobject python3-serial unzip
     pip3 install --user cbor pysdl2
 
 Additionally if you wish to regenerate the documentation you will require
