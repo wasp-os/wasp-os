@@ -330,6 +330,14 @@ class Draw565(object):
         if width:
             self.fill(bg, x, y, rightpad, h)
 
+    def bounding_box(self, s):
+        """Return the bounding box of a string.
+
+        :param s: A string
+        :returns: Tuple of (width, height)
+        """
+        return _bounding_box(s, self._font)
+
     def wrap(self, s, width):
         """Chunk a string so it can rendered within a specified width.
 
