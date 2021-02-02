@@ -1,0 +1,15 @@
+#!/bin/bash
+
+docker build --build-arg uid=$UID --build-arg gid=$(id -g) -t wasp-os-dev ./tools/docker
+
+docker run \
+  -v /tmp/.X11-unix:/tmp/.X11-unix:rw \
+  -v $(pwd):/home/user/wasp-os \
+  -u user \
+  -e DISPLAY \
+  --init \
+  --device /dev/dri \
+  -it \
+  --rm \
+  wasp-os-dev \
+  bash -l
