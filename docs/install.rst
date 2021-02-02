@@ -9,6 +9,9 @@ Installation Guide
 Building wasp-os from source
 ----------------------------
 
+Install prerequisites
+~~~~~~~~~~~~~~~~~~~~~
+
 Building wasp-os and launching the wasp-os simulator requires Python 3.6
 (or later) and the following python modules: click, numpy, pexpect, PIL
 (or Pillow), pydbus, pygobject, pyserial, pysdl2.
@@ -50,6 +53,22 @@ tested using the `GNU-RM toolchain
     link time optimization is enabled during the MicroPython build
     (LTO is enabled by default).
 
+Install prerequisites via docker
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+To build via docker, simply invoke `tool/docker/shell` from the root directory
+after having docker installed. This will build the docker image and also drop
+you into a shell with wasp os's source code shared into the container at
+``/home/user/wasp-os``. All ``make`` commands should be usable from this shell,
+including ``make sim`` and ``make check``. Some commands that interact with
+bluetooth such as ``wasptool`` may not work, for now.
+
+.. note::
+
+    If you want to use the Docker-based setup, it is assumed that you're using
+    and x86 machine on Linux, running Xorg. Other setup may require some
+    patching for now.
+
 Fetch the code from
 `https://github.com/daniel-thompson/wasp-os <https://github.com/daniel-thompson/wasp-os>`_  and download the prerequisites:
 
@@ -69,11 +88,15 @@ list below:
     make -j `nproc` BOARD=k9 all
     make -j `nproc` BOARD=p8 all
 
+The output of these will be stored in ``build-${BOARD}/``.
+
 To rebuild the documentation:
 
 .. code-block:: sh
 
     make docs
+
+The docs will be browsable in ``docs/build/html`` as per Sphinx standards.
 
 Device Support
 --------------
