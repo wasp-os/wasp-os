@@ -74,10 +74,11 @@ def _bounding_box(s, font):
     if not s:
         return (0, font.height())
 
-    w = 0
+    get_ch = font.get_ch
+    w = len(s) - 1
     for ch in s:
-        (_, h, wc) = font.get_ch(ch)
-        w += wc + 1
+        (_, h, wc) = get_ch(ch)
+        w += wc
 
     return (w, h)
 
