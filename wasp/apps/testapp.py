@@ -172,8 +172,8 @@ class TestApp():
         draw.string("The quick brown", 12, 24+24)
         draw.string("fox jumped over", 12, 24+48)
         draw.string("the lazy dog.", 12, 24+72)
-        draw.string("0123456789", 12, 24+120)
-        draw.string('!"£$%^&*()', 12, 24+144)
+        draw.string("0123456789", 12, 24+120, width=228)
+        draw.string('!"£$%^&*()', 12, 24+144, width=228)
         elapsed = t.time()
         t.stop()
         del t
