@@ -1,4 +1,5 @@
 import draw565
+import fonts
 import pytest
 
 @pytest.fixture
@@ -39,3 +40,20 @@ def test_darken(draw):
     assert draw.darken(0b10000_100010_10010, 0b10001) == 0b00000_000000_00001
     assert draw.darken(0b10000_100100_10010, 0b10001) == 0b00000_000010_00001
 
+def test_font_height(draw):
+    assert 24 == draw.bounding_box('A')[1]
+
+    draw.set_font(fonts.sans28)
+    assert 27 == draw.bounding_box(None)[1]
+
+    draw.set_font(fonts.sans36)
+    assert 36 == draw.bounding_box('0')[1]
+
+def test_font_width(draw):
+    for f in (fonts.sans24, fonts.sans28, fonts.sans36):
+        draw.set_font(f)
+
+        assert 3 == draw.bounding_box('0000')[0] % 4
+
+        if f.max_ch() >= 90:
+            assert draw.bounding_box('IIII')[0] < draw.bounding_box('WWWW')[0]
