@@ -19,7 +19,7 @@ following commands:
 .. code-block:: sh
 
     sudo apt install \
-      wget git build-essential libsdl2-2.0.0 python3-click python3-gi \
+      wget git build-essential libsdl2-2.0-0 python3-click python3-gi \
       python3-numpy python3-pexpect python3-pil python3-pip python3-pydbus \
       python3-serial unzip
     pip3 install --user cbor pysdl2
