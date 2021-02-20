@@ -32,23 +32,27 @@ Micropython
 * [ ] Allow asynchronous control of the SPI chip select signals (this will
       allow for double buffered graphics updates)
 
+0.5: Logging and sports mode
+----------------------------
+
+0.5 is planned to be a short sprint to develop sports and logging features
+that provide deeper integration with the step counter.
+
 Wasp-os
 ~~~~~~~
 
 * [ ] Applications
 
-  * [ ] Add a sports/activity app (combined stopwatch and trip counter)
-
-wasptool
-~~~~~~~~
-
-* [ ] Integrate a more powerful minifier into the wasptool paste() method
+  * [ ] Add a sports/activity app (a combined stopwatch and trip counter)
+  * [ ] Extend the step counter app so vertical swipes can provide graphs
+        of recent activity.
+  * [ ] Add some basic distance estimation to the step counter application.
 
 0.4: Integration, Fit and finish
 --------------------------------
 
-For 0.4 we focus on improving the watch/phone integration whilst also taking steps
-to improve the general fit and finish.
+For 0.4 we focus on improving the watch/phone integration whilst also taking
+steps to improve the general fit and finish.
 
 Wasp-os
 ~~~~~~~
