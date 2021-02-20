@@ -56,7 +56,7 @@ tested using the `GNU-RM toolchain
 Install prerequisites via docker
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-To build via docker, simply invoke `tool/docker/shell` from the root directory
+To build via docker, simply invoke `tools/docker/shell` from the root directory
 after having docker installed. This will build the docker image and also drop
 you into a shell with wasp os's source code shared into the container at
 ``/home/user/wasp-os``. All ``make`` commands should be usable from this shell,
@@ -97,6 +97,47 @@ To rebuild the documentation:
     make docs
 
 The docs will be browsable in ``docs/build/html`` as per Sphinx standards.
+
+Binary downloads
+----------------
+
+The wasp-os project provides two different forms of binary downloads:
+
+1. Official releases
+2. Continuous Integration (CI) builds
+
+Official releases are the recommended binary releases for wasp-os. They contain
+this documentation together a set of binaries for each of the supported devices
+in appropriately names directories (``build-<board>/``). The official release
+can be downloaded from:
+`https://github.com/daniel-thompson/wasp-os/releases
+<https://github.com/daniel-thompson/wasp-os/releases>`_ .
+
+The CI builds are built automatically whenever the wasp-os source code is
+changed. That means the builds are less well tested than the official
+releases but they contain all the recently added features and fixes so if
+you want to run the latest and greatest wasp-os on your watch then the CI
+builds are fo you. To download the latest CI build you need to be logged
+into a github account and you can navigate to the latest CI build using
+the link below (follow the link to the most recent "workflow run results"
+and then scroll down to find the artifacts):
+`https://github.com/daniel-thompson/wasp-os/actions?query=is%3Asuccess+branch%3Amaster+workflow%3Abinary
+<https://github.com/daniel-thompson/wasp-os/actions?query=is%3Asuccess+branch%3Amaster+workflow%3Abinary>`_ .
+
+.. warning::
+
+    If you have a sealed device (e.g. no means to debrick your watch using
+    an SWD debug probe) then be aware that, because CI builds are cutting
+    edge, there is a smal risk of bricking. In particular it is
+    strongly recommended not to install the booloader from the CI builds
+    on sealed devices. Instead use the bootloader from the previous official
+    release. If in doubt... wait!
+
+If you fork the wasp-os repo on github then CI builds will automatically be
+enabled for your fork too! This can be very useful as any changes you commit to
+the repo will be automatically tested and github will share the results with
+you. You can also download *your* CI builds for testing using a similar
+approach to the one above.
 
 Device Support
 --------------
