@@ -36,7 +36,7 @@ class SettingsApp():
         self._MM = wasp.widgets.Spinner(130, 60, 0, 59, 2)
         self._dd = wasp.widgets.Spinner(20, 60, 1, 31, 1)
         self._mm = wasp.widgets.Spinner(90, 60, 1, 12, 1)
-        self._yy = wasp.widgets.Spinner(160, 60, 20, 99, 2)
+        self._yy = wasp.widgets.Spinner(160, 60, 20, 60, 2)
         self._settings = ['Brightness', 'Notification Level', 'Time', 'Date']
         self._sett_index = 0
         self._current_setting = self._settings[0]
