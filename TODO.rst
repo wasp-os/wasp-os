@@ -62,7 +62,7 @@ Wasp-os
   * [X] Set date/time
   * [X] Fully fledged wasp-os device class
 
-* [ ] Look and feel
+* [X] Look and feel
 
   * [X] Add a simple theming approach
   * [X] Update icon for Music player
@@ -85,6 +85,7 @@ Wasp-os
 * [X] Documentation
 
   * [X] Describe how to upload pre-compiled modules
+  * [X] Document the binary releases
 
 0.3 (a.k.a. M3): Smartwatch
 ---------------------------
