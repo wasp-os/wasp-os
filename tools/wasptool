@@ -9,6 +9,7 @@ import random
 import os.path
 import pexpect
 import time
+import types
 import string
 import sys
 
@@ -27,6 +28,18 @@ def pbar(iterable, quiet=False):
         yield v
     if not quiet:
         draw_pbar(100, quiet, None)
+
+def run_command(c, cmd):
+    """Cheap and cheerful command wrapper.
+
+    This differs from REPLWrapper because it assumes the remote end will
+    echo the characters... and that we must eat them before handing over
+    the results to the caller.
+    """
+    c.sendline(cmd)
+    c.expect_exact(cmd)
+    c.expect('>>> ')
+    return c.before.replace('\r\r\n', '\n').strip('\n')
 
 def sync(c):
     """Stop the watch and synchronize with the command prompt.
@@ -348,6 +361,9 @@ if __name__ == '__main__':
 
     pynus = os.path.dirname(sys.argv[0]) + '/pynus/pynus.py' + device_args
     console = pexpect.spawn(pynus, encoding='UTF-8')
+    console.run_command = types.MethodType(run_command, console)
+    console.sync = types.MethodType(sync, console)
+    console.unsync = types.MethodType(unsync, console)
     if args.verbose:
         console.logfile = sys.stdout
     else:
@@ -367,7 +383,7 @@ if __name__ == '__main__':
     macaddr = console.match.group(1)
     console.expect('Exit console using Ctrl-X')
     time.sleep(0.5)
-    sync(console)
+    console.sync()
 
     if args.rtc:
         handle_rtc(console)
@@ -412,4 +428,4 @@ if __name__ == '__main__':
         handle_reset(console, ota=True)
         sys.exit(0)
 
-    unsync(console)
+    console.unsync()
