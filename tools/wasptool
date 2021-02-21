@@ -12,16 +12,21 @@ import time
 import string
 import sys
 
+def draw_pbar(percent, quiet=False, end='\r'):
+    if not quiet:
+        if percent > 100:
+            percent = 100
+        bar = int(percent) // 2
+        print(f'[{"#"*bar}{"."*(50-bar)}] {percent}%     ', end=end, flush=True)
+
 def pbar(iterable, quiet=False):
     step = 100 / len(iterable)
+
     for i, v in enumerate(iterable):
-        if not quiet:
-            percent = round(step * i, 1)
-            bar = int(percent) // 2
-            print(f'[{"#"*bar}{"."*(50-bar)}] {percent}%', end='\r', flush=True)
+        draw_pbar(round(step * i, 1), quiet)
         yield v
     if not quiet:
-        print(f'[{"#"*50}] 100% ')
+        draw_pbar(100, quiet, None)
 
 def sync(c):
     """Stop the watch and synchronize with the command prompt.
@@ -207,6 +212,46 @@ def check_rtc(c):
 
     c.expect('>>> ')
 
+def handle_binary_download(c, tname, fname):
+    verbose = bool(c.logfile)
+
+    c.sendline('import os')
+    c.expect('>>>')
+    c.sendline(f'os.stat("{tname}")[6]')
+    err = c.expect(['>>> ', 'Error'])
+    if err:
+        print('Target error, cannot open file')
+        c.expect('>>>')
+        return
+
+    lines = c.before.split('\n')
+    sz = eval(lines[1].rstrip())
+    bytes_read = 0
+
+    c.sendline(f'f = open("{tname}", "rb")')
+    c.expect('>>>')
+
+    print(f'Downloading {fname}:')
+
+    with open(fname, 'wb') as f:
+        while True:
+            draw_pbar(100 * bytes_read / sz, verbose)
+            c.sendline('repr(f.read(24))')
+            c.expect('>>>')
+            lines = c.before.split('\n')
+            r = lines[1].rstrip().strip('"').replace('\\\\', '\\')
+            eval(f'f.write({r})')
+            bytes_read += 24
+            if len(r) <= 3:
+                break
+
+    draw_pbar(100, verbose, end=None)
+
+    c.sendline('f.close()')
+    c.expect('>>> ')
+    c.sendline('f = None')
+    c.expect('>>> ')
+
 def handle_binary_upload(c, fname, tname):
     verbose = bool(c.logfile)
 
@@ -276,6 +321,10 @@ if __name__ == '__main__':
             help='Execute the contents of a file')
     parser.add_argument('--eval',
             help='Execute the provided python string')
+    parser.add_argument('--pull',
+            help='Fetch a file from the target')
+    parser.add_argument('--push',
+            help='Push a file to the target')
     parser.add_argument('--reset', action='store_true',
             help="Reboot the device (and don't stay in bootloader mode)")
     parser.add_argument('--ota',
@@ -331,6 +380,12 @@ if __name__ == '__main__':
 
     if args.eval:
         handle_eval(console, args.eval)
+
+    if args.pull:
+        handle_binary_download(console, args.pull, args.pull)
+
+    if args.push:
+        handle_binary_upload(console, args.push, args.push)
 
     if args.upload:
         if args.binary:
