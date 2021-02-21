@@ -29,5 +29,6 @@ manifest = (
     'fonts/sans28.py',
     'fonts/sans36.py',
     'icons.py',
+    'steplogger.py',
     'widgets.py',
 )

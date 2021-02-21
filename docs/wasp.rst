@@ -38,6 +38,10 @@ System
    :members:
    :undoc-members:
 
+.. automodule:: steplogger
+   :members:
+   :undoc-members:
+
 .. automodule:: widgets
    :members:
 
