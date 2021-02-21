@@ -186,6 +186,12 @@ def handle_exec(c, fname):
     print_log(log)
     log.close()
 
+def handle_memory_free(c):
+    # wasp namespace to avoid having to import into the global space
+    print(f'Before GC: {c.run_command("wasp.gc.mem_free()"):7}')
+    c.run_command('wasp.gc.collect()')
+    print(f'After GC:  {c.run_command("wasp.gc.mem_free()"):7}')
+
 def handle_reset(c, ota=False):
     cmd = 'reset'
     if ota:
@@ -334,6 +340,8 @@ if __name__ == '__main__':
             help='Execute the contents of a file')
     parser.add_argument('--eval',
             help='Execute the provided python string')
+    parser.add_argument('--memfree', action='store_true',
+            help='Report on the current memory usage.')
     parser.add_argument('--pull',
             help='Fetch a file from the target')
     parser.add_argument('--push',
@@ -408,6 +416,9 @@ if __name__ == '__main__':
             handle_binary_upload(console, args.upload, args.upload_as)
         else:
             handle_upload(console, args.upload, args.upload_as)
+
+    if args.memfree:
+        handle_memory_free(console)
 
     if args.console:
         console.close()
