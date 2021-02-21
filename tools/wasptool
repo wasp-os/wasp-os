@@ -126,7 +126,10 @@ def paste(c, f, verbose=False, chunk=None):
             sys.exit(16)
 
 def print_log(logfile):
-    lines = logfile.getvalue().split('\n')
+    try:
+        lines = logfile.getvalue().split('\n')
+    except:
+        lines = logfile.split('\n')
     lines = [ l.strip('\x04\r') for l in lines ]
 
     output = [ l for l in lines if l and l != '>>> ' ]
@@ -234,42 +237,35 @@ def check_rtc(c):
 def handle_binary_download(c, tname, fname):
     verbose = bool(c.logfile)
 
-    c.sendline('import os')
-    c.expect('>>>')
-    c.sendline(f'os.stat("{tname}")[6]')
-    err = c.expect(['>>> ', 'Error'])
-    if err:
-        print('Target error, cannot open file')
-        c.expect('>>>')
+    c.run_command('import os')
+    stat = c.run_command(f'os.stat("{tname}")[6]')
+    if 'Error' in stat:
+        print('Watch reported error:')
+        print(stat)
         return
 
-    lines = c.before.split('\n')
-    sz = eval(lines[1].rstrip())
-    bytes_read = 0
-
-    c.sendline(f'f = open("{tname}", "rb")')
-    c.expect('>>>')
-
     print(f'Downloading {fname}:')
+
+    c.run_command(f'f = open("{tname}", "rb")')
+    sz = eval(stat)
+    bytes_read = 0
 
     with open(fname, 'wb') as f:
         while True:
             draw_pbar(100 * bytes_read / sz, verbose)
-            c.sendline('repr(f.read(24))')
-            c.expect('>>>')
-            lines = c.before.split('\n')
-            r = lines[1].rstrip().strip('"').replace('\\\\', '\\')
-            eval(f'f.write({r})')
-            bytes_read += 24
-            if len(r) <= 3:
+            reply = c.run_command('repr(f.read(24))')
+            data = eval(reply.replace('\\\\', '\\').strip('"'))
+            if len(data) == 0:
                 break
+            bytes_read += len(data)
+            f.write(data)
 
     draw_pbar(100, verbose, end=None)
+    c.run_command('f.close()')
 
-    c.sendline('f.close()')
-    c.expect('>>> ')
-    c.sendline('f = None')
-    c.expect('>>> ')
+    # Release as much memory as possible
+    c.run_command('del f')
+    c.run_command('del os')
 
 def handle_binary_upload(c, fname, tname):
     verbose = bool(c.logfile)
@@ -307,8 +303,7 @@ def handle_upload(c, fname, tname):
     if not tname:
         tname = os.path.basename(fname)
 
-    c.sendline('from shell import upload')
-    c.expect('>>> ')
+    c.run_command('from shell import upload')
 
     with open(fname) as f:
         if not verbose:
