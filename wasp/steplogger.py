@@ -18,6 +18,45 @@ TICK_PERIOD = const(6 * 60)
 DUMP_LENGTH = const(5)
 DUMP_PERIOD = const(DUMP_LENGTH * TICK_PERIOD)
 
+class StepIterator:
+    def __init__(self, fname, data=None):
+        self._fname = fname
+        self._f = None
+        self._d = data
+
+    def __del__(self):
+        self.close()
+
+    def __iter__(self):
+        self.close()
+        self._f = open(self._fname, 'rb')
+        self._c = 0
+        return self
+
+    def __next__(self):
+        self._c += 1
+        if self._c > (24*60*60) // TICK_PERIOD:
+            raise StopIteration
+
+        if self._f:
+            spl = self._f.read(2)
+            if spl:
+                return spl[0] + (spl[1] << 8)
+            self.close()
+            self._i = 0
+
+        if self._d and self._i < len(self._d):
+            i = self._i
+            self._i += 1
+            return self._d[i]
+
+        return 0
+
+    def close(self):
+        if self._f:
+            self._f.close()
+            self._f = None
+
 class StepLogger:
     def __init__(self):
         self._data = array.array('H', (0,) * DUMP_LENGTH)
@@ -47,7 +86,7 @@ class StepLogger:
 
         # Get the current step count and record it
         steps = wasp.watch.accel.steps
-        self._data[i] = steps - self._steps 
+        self._data[i] = steps - self._steps
         self._steps = steps
 
         # Queue the next tick
@@ -94,3 +133,27 @@ class StepLogger:
         data = self._data
         for i in range(DUMP_LENGTH):
             data[i] = 0
+
+    def data(self, t):
+        try:
+            yyyy = t[0]
+        except:
+            t = time.localtime(t)
+            yyyy = t[0]
+        mm = t[1]
+        dd = t[2]
+
+        fname = 'logs/{}/{:02d}-{:02d}.steps'.format(yyyy, mm, dd)
+        try:
+            os.stat(fname)
+        except:
+            return None
+
+        # Record the data in the flash
+        now = time.localtime(self._t)
+        if now[:3] == t[:3]:
+            latest = self._data
+        else:
+            latest = None
+
+        return StepIterator(fname, latest)
