@@ -60,12 +60,16 @@ class ST7789Sim(object):
 
         elif self.cmd == CASET:
             self.colclip[0] = (data[0] << 8) + data[1]
+            assert(self.colclip[0] >= 0 and self.colclip[0] <= 240)
             self.colclip[1] = (data[2] << 8) + data[3]
+            assert(self.colclip[1] >= 0 and self.colclip[1] <= 240)
             self.x = self.colclip[0]
 
         elif self.cmd == RASET:
             self.rowclip[0] = (data[0] << 8) + data[1]
+            assert(self.rowclip[0] >= 0 and self.rowclip[0] <= 240)
             self.rowclip[1] = (data[2] << 8) + data[3]
+            assert(self.rowclip[1] >= 0 and self.rowclip[1] <= 240)
             self.y = self.rowclip[0]
 
         elif self.cmd == RAMWR:
