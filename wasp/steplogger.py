@@ -153,6 +153,11 @@ class StepLogger:
         now = time.localtime(self._t)
         if now[:3] == t[:3]:
             latest = self._data
+
+            # Work out where we are in the dump period and update
+            # with the latest counts
+            i = self._t % DUMP_PERIOD // TICK_PERIOD
+            latest[i] = wasp.watch.accel.steps - self._steps
         else:
             latest = None
 
