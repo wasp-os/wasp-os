@@ -254,7 +254,15 @@ def handle_binary_download(c, tname, fname):
         while True:
             draw_pbar(100 * bytes_read / sz, verbose)
             reply = c.run_command('repr(f.read(24))')
-            data = eval(reply.replace('\\\\', '\\').strip('"'))
+            reply = reply.replace('\\\\', '\\')
+            if reply.startswith('"'):
+                # "b'..CONTENT..'"
+                reply = reply[1:-1]
+            elif reply.startswith("'"):
+                # 'b\'..CONTENT..\''
+                reply = reply[1:-1].replace("\\'", "'")
+            data = print(reply)
+            data = eval(reply)
             if len(data) == 0:
                 break
             bytes_read += len(data)
