@@ -13,6 +13,11 @@ wasp.system.set_music_info({
         'artist': 'Dreams of Bamboo',
     })
 
+
+# Increase the display blanking time to avoid spamming the console
+# with backlight activations.
+wasp.system.blank_after = 300
+
 # Instantiate the analogue clock application and replace the default
 # (digital) clock with this alternative.
 #from chrono import ChronoApp
