@@ -144,6 +144,8 @@ class Manager():
         self._charging = True
         self._scheduled = False
         self._scheduling = False
+        self._vibe_on_notif = True
+        self._wake_on_notif = False
 
         # TODO: Eventually these should move to main.py
         for app, qr in ( (ClockApp, True),
@@ -204,6 +206,24 @@ class Manager():
     def notify_duration(self):
         """Cached copy of the current vibrator pulse duration in milliseconds"""
         return self._nfylev_ms
+
+    @property
+    def vibe_on_notif(self):
+        """Vibrate when a notification is received bool"""
+        return self._vibe_on_notif
+
+    @vibe_on_notif.setter
+    def vibe_on_notif(self, value):
+        self._vibe_on_notif = value
+
+    @property
+    def wake_on_notif(self):
+        """Wake the screen when a notification is received bool"""
+        return self._wake_on_notif
+
+    @wake_on_notif.setter
+    def wake_on_notif(self, value):
+        self._wake_on_notif = value
 
     def switch(self, app):
         """Switch to the requested application.
