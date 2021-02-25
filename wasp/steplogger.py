@@ -58,7 +58,7 @@ class StepIterator:
             self._f = None
 
 class StepLogger:
-    def __init__(self):
+    def __init__(self, manager):
         self._data = array.array('H', (0,) * DUMP_LENGTH)
         self._steps = wasp.watch.accel.steps
 
@@ -69,7 +69,7 @@ class StepLogger:
 
         # Queue a tick
         self._t = int(wasp.watch.rtc.time()) // TICK_PERIOD * TICK_PERIOD
-        wasp.system.set_alarm(self._t + TICK_PERIOD, self._tick)
+        manager.set_alarm(self._t + TICK_PERIOD, self._tick)
 
     def _tick(self):
         """Capture the current step count in N minute intervals.

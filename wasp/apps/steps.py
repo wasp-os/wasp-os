@@ -47,7 +47,7 @@ class StepCounterApp():
 
     def __init__(self):
         watch.accel.reset()
-        self._count = 0
+        self._scroll = wasp.widgets.ScrollIndicator()
         self._wake = 0
 
     def foreground(self):
@@ -63,7 +63,9 @@ class StepCounterApp():
         """
         wasp.system.cancel_alarm(self._wake, self._reset)
         wasp.system.bar.clock = True
+        self._page = -1
         self._draw()
+        wasp.system.request_event(wasp.EventMask.SWIPE_UPDOWN)
         wasp.system.request_tick(1000)
 
     def background(self):
@@ -83,24 +85,47 @@ class StepCounterApp():
         self._wake += 24 * 60 * 60
         wasp.system.set_alarm(self._wake, self._reset)
 
+    def swipe(self, event):
+        if event[0] == wasp.EventType.DOWN:
+            if self._page == -1:
+                return
+            self._page -= 1
+        else:
+            self._page += 1
+
+        mute = wasp.watch.display.mute
+        mute(True)
+        self._draw()
+        mute(False)
+
     def tick(self, ticks):
-        self._count += 686;
-        self._update()
+        if self._page == -1:
+            self._update()
 
     def _draw(self):
         """Draw the display from scratch."""
         draw = wasp.watch.drawable
         draw.fill()
-        draw.blit(feet, 12, 132-24)
 
-        self._update()
-        wasp.system.bar.draw()
+        if self._page == -1:
+            self._update()
+            wasp.system.bar.draw()
+        else:
+            self._update_graph()
 
     def _update(self):
         draw = wasp.watch.drawable
 
+        # Draw the icon
+        draw.blit(feet, 12, 132-24)
+
         # Update the status bar
         now = wasp.system.bar.update()
+
+        # Update the scroll indicator
+        scroll = self._scroll
+        scroll.up = False
+        scroll.draw()
 
         # Update the step count
         count = watch.accel.steps
@@ -109,3 +134,44 @@ class StepCounterApp():
         draw.set_font(fonts.sans36)
         draw.set_color(draw.lighten(wasp.system.theme('spot1'), wasp.system.theme('contrast')))
         draw.string(t, 228-w, 132-18)
+
+    def _update_graph(self):
+        draw = watch.drawable
+        draw.set_font(fonts.sans24)
+        draw.set_color(0xffff)
+
+        # Draw the date
+        now = int(watch.rtc.time())
+        then = now - ((24*60*60) * self._page)
+        walltime = time.localtime(then)
+        draw.string('{:02d}-{:02d}'.format(walltime[2], walltime[1]), 0, 0)
+
+        # Get the iterable step date for the currently selected date
+        data = wasp.system.steps.data(then)
+
+        # Bail if there is no data
+        if not data:
+            draw.string('No data', 239-160, 0, 160, right=True)
+            return
+
+        color = wasp.system.theme('spot2')
+
+        # Draw the frame
+        draw.fill(0x3969, 0, 39, 240, 1)
+        draw.fill(0x3969, 0, 239, 240, 1)
+        for i in (0, 60, 90, 120, 150, 180, 239):
+            draw.fill(0x3969, i, 39, 1, 201)
+
+        total = 0
+        for x, d in enumerate(data):
+            if d == 0 or x < 2:
+                # TODO: the x < 2 conceals BUGZ
+                continue
+            total += d
+            d = d // 3
+            if d > 200:
+                draw.fill(0xffff, x, 239-200, 1, 200)
+            else:
+                draw.fill(color, x, 239-d, 1, d)
+
+        draw.string(str(total), 239-160, 0, 160, right=True)

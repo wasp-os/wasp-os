@@ -17,6 +17,7 @@
 import gc
 import machine
 import micropython
+import steplogger
 import watch
 import widgets
 
@@ -153,7 +154,13 @@ class Manager():
                          (SoftwareApp, False),
                          (SettingsApp, False) ):
             try:
-                self.register(app(), qr)
+                a = app()
+
+                # Special case for watches with working step counters!
+                if isinstance(a, StepCounterApp):
+                    self.steps = steplogger.StepLogger(self)
+
+                self.register(a, qr)
             except:
                 # Let's not bring the whole device down just because there's
                 # an exception starting one of the apps...
