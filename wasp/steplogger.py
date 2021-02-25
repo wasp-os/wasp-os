@@ -15,7 +15,7 @@ import wasp
 from micropython import const
 
 TICK_PERIOD = const(6 * 60)
-DUMP_LENGTH = const(5)
+DUMP_LENGTH = const(30)
 DUMP_PERIOD = const(DUMP_LENGTH * TICK_PERIOD)
 
 class StepIterator:
