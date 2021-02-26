@@ -25,17 +25,18 @@ class SoftwareApp():
     def foreground(self):
         """Activate the application."""
         self.db = (
-                ('alarm', wasp.widgets.Checkbox(0, 0, 'Alarm')),
-                ('calc', wasp.widgets.Checkbox(0, 40, 'Calculator')),
-                ('chrono', wasp.widgets.Checkbox(0, 80, 'Chrono')),
-                ('fibonacci_clock', wasp.widgets.Checkbox(0, 120, 'Fibonacci Clock')),
-                ('gameoflife', wasp.widgets.Checkbox(0, 160, 'Game Of Life')),
-                ('musicplayer', wasp.widgets.Checkbox(0, 0, 'Music Player')),
-                ('play2048', wasp.widgets.Checkbox(0, 40, 'Play 2048')),
-                ('snake', wasp.widgets.Checkbox(0, 80, 'Snake Game')),
-                ('flashlight', wasp.widgets.Checkbox(0, 120, 'Torch')),
-                ('testapp', wasp.widgets.Checkbox(0, 160, 'Test')),
-                ('timer', wasp.widgets.Checkbox(0, 0, 'Timer')),
+                ('accel', wasp.widgets.Checkbox(0, 0, 'Acceleration')),
+                ('alarm', wasp.widgets.Checkbox(0, 40, 'Alarm')),
+                ('calc', wasp.widgets.Checkbox(0, 80, 'Calculator')),
+                ('chrono', wasp.widgets.Checkbox(0, 120, 'Chrono')),
+                ('fibonacci_clock', wasp.widgets.Checkbox(0, 160, 'Fibonacci Clock')),
+                ('gameoflife', wasp.widgets.Checkbox(0, 0, 'Game Of Life')),
+                ('musicplayer', wasp.widgets.Checkbox(0, 40, 'Music Player')),
+                ('play2048', wasp.widgets.Checkbox(0, 80, 'Play 2048')),
+                ('snake', wasp.widgets.Checkbox(0, 120, 'Snake Game')),
+                ('flashlight', wasp.widgets.Checkbox(0, 160, 'Torch')),
+                ('testapp', wasp.widgets.Checkbox(0, 0, 'Test')),
+                ('timer', wasp.widgets.Checkbox(0, 40, 'Timer')),
             )
         self.si = wasp.widgets.ScrollIndicator()
         self.page = 0
