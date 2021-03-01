@@ -168,7 +168,7 @@ class StepCounterApp():
                 # TODO: the x < 2 conceals BUGZ
                 continue
             total += d
-            d = d // 3
+            d = d // 4
             if d > 200:
                 draw.fill(0xffff, x, 239-200, 1, 200)
             else:
