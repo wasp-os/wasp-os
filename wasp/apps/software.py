@@ -17,6 +17,7 @@ whilst still allowing users to activate so many awesome applications!
 import wasp
 import icons
 
+
 class SoftwareApp():
     """Enable and disable applications."""
     NAME = 'Software'
@@ -34,12 +35,12 @@ class SoftwareApp():
                 y = 0
             return cb
 
-
         y = 0
         db = []
         db.append(('alarm', factory('Alarm')))
         db.append(('calc', factory('Calculator')))
         db.append(('chrono', factory('Chrono')))
+        db.append(('dual_clock', factory('Dual Clock')))
         db.append(('fibonacci_clock', factory('Fibonacci Clock')))
         db.append(('gameoflife', factory('Game Of Life')))
         db.append(('musicplayer', factory('Music Player')))

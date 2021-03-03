@@ -13,6 +13,8 @@ Watch faces
 
 .. automodule:: apps.chrono
 
+.. automodule:: apps.dual_clock
+
 .. automodule:: apps.fibonacci_clock
 
 .. automodule:: apps.word_clock
