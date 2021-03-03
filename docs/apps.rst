@@ -15,6 +15,8 @@ Watch faces
 
 .. automodule:: apps.fibonacci_clock
 
+.. automodule:: apps.dual_clock
+
 Built-in
 --------
 

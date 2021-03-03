@@ -184,6 +184,10 @@ application (and the "blank" white screen is a torch application):
    :alt: Analogue clock application running in the wasp-os simulator
    :width: 179
 
+.. image:: res/DualApp.png
+   :alt: An other clock application running in the wasp-os simulator
+   :width: 179
+
 .. image:: res/FiboApp.png
    :alt: Fibonacci clock application running in the wasp-os simulator
    :width: 179
