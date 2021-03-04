@@ -8,15 +8,16 @@
 import machine
 import time
 
-#class Stim(object):
+# class Stim(object):
 #    def __init__(self):
 #        self(0)
 #
 #    def __call__(self, v):
 #        self.c = v
-#    
+#
 #    def counter(self):
 #        return self.c
+
 
 class RTC(object):
     """Real Time Clock based on the nRF-family low power counter.
@@ -34,14 +35,16 @@ class RTC(object):
         """
         self.counter = counter
 
-        if machine.mem32[0x200039c0] == 0x1abe11ed and \
-           machine.mem32[0x200039dc] == 0x10adab1e:
+        if (
+            machine.mem32[0x200039C0] == 0x1ABE11ED
+            and machine.mem32[0x200039DC] == 0x10ADAB1E
+        ):
             self.lastcount = self.counter.counter()
-            self.offset = machine.mem32[0x200039c4]
-            self._uptime = machine.mem32[0x200039c8] // 125
+            self.offset = machine.mem32[0x200039C4]
+            self._uptime = machine.mem32[0x200039C8] // 125
         else:
-            machine.mem32[0x200039c0] = 0x1abe11ed
-            machine.mem32[0x200039dc] = 0x10adab1e
+            machine.mem32[0x200039C0] = 0x1ABE11ED
+            machine.mem32[0x200039DC] = 0x10ADAB1E
             self._uptime = 0
             self.set_localtime((2020, 3, 1, 3, 0, 0, 0, 0))
 
@@ -55,12 +58,12 @@ class RTC(object):
         if split == 0:
             return False
         if split < 0:
-            split += (1 << 24)
+            split += 1 << 24
 
         self.lastcount += split
-        self.lastcount &= (1 << 24) - 1   
+        self.lastcount &= (1 << 24) - 1
         self._uptime += split
-        machine.mem32[0x200039c8] = self._uptime * 125
+        machine.mem32[0x200039C8] = self._uptime * 125
 
         return True
 
@@ -85,7 +88,7 @@ class RTC(object):
 
         lt = time.mktime(t)
         self.offset = lt - (self._uptime >> 3)
-        machine.mem32[0x200039c4] = self.offset
+        machine.mem32[0x200039C4] = self.offset
 
     def get_localtime(self):
         """Get the current time and date.

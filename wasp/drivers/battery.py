@@ -6,6 +6,7 @@
 """
 from machine import Pin, ADC
 
+
 class Battery(object):
     """Generic lithium ion battery driver.
 
@@ -31,7 +32,7 @@ class Battery(object):
 
         :returns: True if the battery is charging, False otherwise.
         """
-        return self._charging.value() 
+        return self._charging.value()
 
     def power(self):
         """Check whether the device has external power.

@@ -30,12 +30,14 @@ from apps.steps import StepCounterApp
 from apps.software import SoftwareApp
 from apps.stopwatch import StopwatchApp
 
-class EventType():
+
+class EventType:
     """Enumerated interface actions.
 
     MicroPython does not implement the enum module so EventType
     is simply a regular object which acts as a namespace.
     """
+
     DOWN = 1
     UP = 2
     LEFT = 3
@@ -46,16 +48,19 @@ class EventType():
     BACK = 254
     NEXT = 253
 
-class EventMask():
+
+class EventMask:
     """Enumerated event masks.
     """
+
     TOUCH = 0x0001
     SWIPE_LEFTRIGHT = 0x0002
     SWIPE_UPDOWN = 0x0004
     BUTTON = 0x0008
     NEXT = 0x0010
 
-class PinHandler():
+
+class PinHandler:
     """Pin (and Signal) event generator.
 
     TODO: Currently this driver doesn't actually implement any
@@ -85,15 +90,18 @@ class PinHandler():
         self._value = new_value
         return new_value
 
+
 def _key_app(d):
     """Get a sort key for apps."""
     return d.NAME
+
 
 def _key_alarm(d):
     """Get a sort key for alarms."""
     return d[0]
 
-class Manager():
+
+class Manager:
     """Wasp-os system manager
 
     The manager is responsible for handling top-level UI events and
@@ -118,17 +126,17 @@ class Manager():
         self.musicinfo = {}
 
         self._theme = (
-                b'\x7b\xef'     # ble
-                b'\x7b\xef'     # scroll-indicator
-                b'\x7b\xef'     # battery
-                b'\xe7\x3c'     # status-clock
-                b'\x7b\xef'     # notify-icon
-                b'\xff\xff'     # bright
-                b'\xbd\xb6'     # mid
-                b'\x39\xff'     # ui
-                b'\xff\x00'     # spot1
-                b'\xdd\xd0'     # spot2
-                b'\x00\x0f'     # contrast
+            b"\x7b\xef"  # ble
+            b"\x7b\xef"  # scroll-indicator
+            b"\x7b\xef"  # battery
+            b"\xe7\x3c"  # status-clock
+            b"\x7b\xef"  # notify-icon
+            b"\xff\xff"  # bright
+            b"\xbd\xb6"  # mid
+            b"\x39\xff"  # ui
+            b"\xff\x00"  # spot1
+            b"\xdd\xd0"  # spot2
+            b"\x00\x0f"  # contrast
         )
 
         self.blank_after = 15
@@ -136,7 +144,7 @@ class Manager():
         self._alarms = []
         self._brightness = 2
         self._notifylevel = 2
-        if 'P8' in watch.os.uname().machine:
+        if "P8" in watch.os.uname().machine:
             self._nfylevels = [0, 225, 450]
         else:
             self._nfylevels = [0, 40, 80]
@@ -147,12 +155,14 @@ class Manager():
         self._scheduling = False
 
         # TODO: Eventually these should move to main.py
-        for app, qr in ( (ClockApp, True),
-                         (StepCounterApp, True),
-                         (StopwatchApp, True),
-                         (HeartApp, True),
-                         (SoftwareApp, False),
-                         (SettingsApp, False) ):
+        for app, qr in (
+            (ClockApp, True),
+            (StepCounterApp, True),
+            (StopwatchApp, True),
+            (HeartApp, True),
+            (SoftwareApp, False),
+            (SettingsApp, False),
+        ):
             try:
                 a = app()
 
@@ -172,14 +182,14 @@ class Manager():
         :param object app: The application to regsister
         """
         if isinstance(app, str):
-            exec('import ' + app[:app.rindex('.')])
-            app = eval(app + '()')
+            exec("import " + app[: app.rindex(".")])
+            app = eval(app + "()")
 
         if quick_ring == True:
             self.quick_ring.append(app)
         else:
             self.launcher_ring.append(app)
-            self.launcher_ring.sort(key = _key_app)
+            self.launcher_ring.sort(key=_key_app)
 
     def unregister(self, cls):
         for app in self.launcher_ring:
@@ -218,7 +228,7 @@ class Manager():
         global free
 
         if self.app:
-            if 'background' in dir(self.app):
+            if "background" in dir(self.app):
                 try:
                     self.app.background()
                 except:
@@ -278,7 +288,7 @@ class Manager():
             if self.app in app_list:
                 i = app_list.index(self.app) - 1
                 if i < 0:
-                    i = len(app_list)-1
+                    i = len(app_list) - 1
             else:
                 i = 0
             self.switch(app_list[i])
@@ -321,7 +331,7 @@ class Manager():
         :param function action: Action to perform when the alarm expires.
         """
         self._alarms.append((time, action))
-        self._alarms.sort(key = _key_alarm)
+        self._alarms.sort(key=_key_alarm)
 
     def cancel_alarm(self, time, action):
         """Unqueue an alarm."""
@@ -355,7 +365,7 @@ class Manager():
         """Enter the deepest sleep state possible.
         """
         watch.backlight.set(0)
-        if 'sleep' not in dir(self.app) or not self.app.sleep():
+        if "sleep" not in dir(self.app) or not self.app.sleep():
             self.switch(self.quick_ring[0])
             self.app.sleep()
         watch.display.poweroff()
@@ -368,7 +378,7 @@ class Manager():
         """
         if not self.sleep_at:
             watch.display.poweron()
-            if 'wake' in dir(self.app):
+            if "wake" in dir(self.app):
                 self.app.wake()
             watch.backlight.set(self._brightness)
             watch.touch.wake()
@@ -409,8 +419,9 @@ class Manager():
 
         if event[0] < 5:
             updown = event[0] == 1 or event[0] == 2
-            if (bool(event_mask & EventMask.SWIPE_UPDOWN) and updown) or \
-               (bool(event_mask & EventMask.SWIPE_LEFTRIGHT) and not updown):
+            if (bool(event_mask & EventMask.SWIPE_UPDOWN) and updown) or (
+                bool(event_mask & EventMask.SWIPE_LEFTRIGHT) and not updown
+            ):
                 if self.app.swipe(event):
                     self.navigate(event[0])
             else:
@@ -463,8 +474,10 @@ class Manager():
 
             gc.collect()
         else:
-            if 1 == self._button.get_event() or \
-                    self._charging != watch.battery.charging():
+            if (
+                1 == self._button.get_event()
+                or self._charging != watch.battery.charging()
+            ):
                 self.wake()
 
     def run(self, no_except=True):
@@ -475,7 +488,7 @@ class Manager():
         can be observed interactively via the console.
         """
         if self._scheduling:
-            print('Watch already running in the background')
+            print("Watch already running in the background")
             return
 
         if not self.app:
@@ -483,7 +496,7 @@ class Manager():
 
         # Reminder: wasptool uses this string to confirm the device has
         # been set running again.
-        print('Watch is running, use Ctrl-C to stop')
+        print("Watch is running, use Ctrl-C to stop")
 
         if not no_except:
             # This is a simplified (uncommented) version of the loop
@@ -499,7 +512,7 @@ class Manager():
                 raise
             except Exception as e:
                 # Only print the exception if the watch provides a way to do so!
-                if 'print_exception' in dir(watch):
+                if "print_exception" in dir(watch):
                     watch.print_exception(e)
                 self.switch(CrashApp(e))
 
@@ -515,7 +528,7 @@ class Manager():
             self._tick()
         except Exception as e:
             # Only print the exception if the watch provides a way to do so!
-            if 'print_exception' in dir(watch):
+            if "print_exception" in dir(watch):
                 watch.print_exception(e)
             self.switch(CrashApp(e))
 
@@ -549,20 +562,23 @@ class Manager():
 
     def theme(self, theme_part: str) -> int:
         """Returns the relevant part of theme. For more see ../tools/themer.py"""
-        theme_parts = ("ble",
-                       "scroll-indicator",
-                       "battery",
-                       "status-clock",
-                       "notify-icon",
-                       "bright",
-                       "mid",
-                       "ui",
-                       "spot1",
-                       "spot2",
-                       "contrast")
+        theme_parts = (
+            "ble",
+            "scroll-indicator",
+            "battery",
+            "status-clock",
+            "notify-icon",
+            "bright",
+            "mid",
+            "ui",
+            "spot1",
+            "spot2",
+            "contrast",
+        )
         if theme_part not in theme_parts:
-            raise IndexError('Theme part {} does not exist'.format(theme_part))
+            raise IndexError("Theme part {} does not exist".format(theme_part))
         idx = theme_parts.index(theme_part) * 2
-        return (self._theme[idx] << 8) | self._theme[idx+1]
+        return (self._theme[idx] << 8) | self._theme[idx + 1]
+
 
 system = Manager()

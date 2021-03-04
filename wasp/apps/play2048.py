@@ -26,55 +26,96 @@ GRID_SIZE = const(4)
 CELL_SIZE = const(50)
 
 GRID_BACKGROUND = const(0x942F)
-CELL_BACKGROUND = [0x9CB1, 0xEF3B, 0xEF19, 0xF58F, 0xF4AC, 0xF3EB, 0xF2E7, 0xEE6E, 0xEE6C, 0xEE4A, 0xEE27, 0xEE05]
-CELL_FOREGROUND = [0x9CB1, 0x736C, 0x736C, 0xFFBE, 0xFFBE, 0xFFBE, 0xFFBE, 0xFFBE, 0xFFBE, 0xFFBE, 0xFFBE, 0xFFBE]
-CELL_LABEL = ['','2','4','8','16','32','64','128','256','512','1K','2K'] # TODO: Display 1024 and 2048 (text-wrapping)
+CELL_BACKGROUND = [
+    0x9CB1,
+    0xEF3B,
+    0xEF19,
+    0xF58F,
+    0xF4AC,
+    0xF3EB,
+    0xF2E7,
+    0xEE6E,
+    0xEE6C,
+    0xEE4A,
+    0xEE27,
+    0xEE05,
+]
+CELL_FOREGROUND = [
+    0x9CB1,
+    0x736C,
+    0x736C,
+    0xFFBE,
+    0xFFBE,
+    0xFFBE,
+    0xFFBE,
+    0xFFBE,
+    0xFFBE,
+    0xFFBE,
+    0xFFBE,
+    0xFFBE,
+]
+CELL_LABEL = [
+    "",
+    "2",
+    "4",
+    "8",
+    "16",
+    "32",
+    "64",
+    "128",
+    "256",
+    "512",
+    "1K",
+    "2K",
+]  # TODO: Display 1024 and 2048 (text-wrapping)
 
 # 2-bit RLE, generated from res/2048_icon.png, 578 bytes
 icon = (
-    b'\x02'
-    b'`@'
-    b'\x10\xbf\x01 \xbf\x01 \xbf\x01 \x83@\x81M\x82M'
-    b'\x82M\x82\x80\xc8\x8d\xc0\xdb\xc3 \xc3M\xc2M\xc2M'
-    b'\xc2\x8d\xc3 \xc3M\xc2M\xc2M\xc2\x8d\xc3 \xc3M'
-    b'\xc2M\xc2M\xc2\x8d\xc3 \xc3M\xc2M\xc2M\xc2\x8d'
-    b'\xc3 \xc3M\xc2M\xc2M\xc2\x8d\xc3 \xc3M\xc2M'
-    b'\xc2M\xc2\x8d\xc3 \xc3M\xc2M\xc2M\xc2\x8d\xc3 '
-    b'\xc3M\xc2M\xc2M\xc2\x8d\xc3 \xc3M\xc2M\xc2M'
-    b'\xc2\x8d\xc3 \xc3M\xc2M\xc2M\xc2\x8d\xc3 \xc3M'
-    b'\xc2M\xc2M\xc2\x8d\xc3 \xc3M\xc2M\xc2M\xc2\x8d'
-    b'\xc3 \xff\x01 \xff\x01 \xc3M\xc2M\xc2M\xc2@'
-    b'\xfaM\xc3 \xc3\x80\x81\x8d\xc2\x8d\xc2\x8d\xc2M\xc3 '
-    b'\xc3\x8d\xc2\x8d\xc2\x8d\xc2M\xc3 \xc3\x8d\xc2\x8d\xc2\x8d'
-    b'\xc2M\xc3 \xc3\x8d\xc2\x8d\xc2\x8d\xc2M\xc3 \xc3\x8d'
-    b'\xc2\x8d\xc2\x8d\xc2M\xc3 \xc3\x8d\xc2\x8d\xc2\x8d\xc2M'
-    b'\xc3 \xc3\x8d\xc2\x8d\xc2\x8d\xc2M\xc3 \xc3\x8d\xc2\x8d'
-    b'\xc2\x8d\xc2M\xc3 \xc3\x8d\xc2\x8d\xc2\x8d\xc2M\xc3 '
-    b'\xc3\x8d\xc2\x8d\xc2\x8d\xc2M\xc3 \xc3\x8d\xc2\x8d\xc2\x8d'
-    b'\xc2M\xc3 \xc3\x8d\xc2\x8d\xc2\x8d\xc2M\xc3 \xff\x01'
-    b' \xff\x01 \xc3\xc0\xfb\xcd@\xdbB\x8dB\x8dB\xcd'
-    b'C C\xcdB\x8dB\x8dB\xcdC C\xcdB\x8d'
-    b'B\x8dB\xcdC C\xcdB\x8dB\x8dB\xcdC '
-    b'C\xcdB\x8dB\x8dB\xcdC C\xcdB\x8dB\x8d'
-    b'B\xcdC C\xcdB\x8dB\x8dB\xcdC C\xcd'
-    b'B\x8dB\x8dB\xcdC C\xcdB\x8dB\x8dB\xcd'
-    b'C C\xcdB\x8dB\x8dB\xcdC C\xcdB\x8d'
-    b'B\x8dB\xcdC C\xcdB\x8dB\x8dB\xcdC '
-    b'C\xcdB\x8dB\x8dB\xcdC \x7f\x01 \x7f\x01 '
-    b'C\x8dB\x8dB\x80\xf6\x8dB\x8dC C\xc0\x81\xcd'
-    b'B\xcdB\x8dB\x8dC C\xcdB\xcdB\x8dB\x8d'
-    b'C C\xcdB\xcdB\x8dB\x8dC C\xcdB\xcd'
-    b'B\x8dB\x8dC C\xcdB\xcdB\x8dB\x8dC '
-    b'C\xcdB\xcdB\x8dB\x8dC C\xcdB\xcdB\x8d'
-    b'B\x8dC C\xcdB\xcdB\x8dB\x8dC C\xcd'
-    b'B\xcdB\x8dB\x8dC C\xcdB\xcdB\x8dB\x8d'
-    b'C C\xcdB\xcdB\x8dB\x8dC C\xcdB\xcd'
-    b'B\x8dB\x8dC \x7f\x01 \x7f\x01 \x7f\x01\x10'
+    b"\x02"
+    b"`@"
+    b"\x10\xbf\x01 \xbf\x01 \xbf\x01 \x83@\x81M\x82M"
+    b"\x82M\x82\x80\xc8\x8d\xc0\xdb\xc3 \xc3M\xc2M\xc2M"
+    b"\xc2\x8d\xc3 \xc3M\xc2M\xc2M\xc2\x8d\xc3 \xc3M"
+    b"\xc2M\xc2M\xc2\x8d\xc3 \xc3M\xc2M\xc2M\xc2\x8d"
+    b"\xc3 \xc3M\xc2M\xc2M\xc2\x8d\xc3 \xc3M\xc2M"
+    b"\xc2M\xc2\x8d\xc3 \xc3M\xc2M\xc2M\xc2\x8d\xc3 "
+    b"\xc3M\xc2M\xc2M\xc2\x8d\xc3 \xc3M\xc2M\xc2M"
+    b"\xc2\x8d\xc3 \xc3M\xc2M\xc2M\xc2\x8d\xc3 \xc3M"
+    b"\xc2M\xc2M\xc2\x8d\xc3 \xc3M\xc2M\xc2M\xc2\x8d"
+    b"\xc3 \xff\x01 \xff\x01 \xc3M\xc2M\xc2M\xc2@"
+    b"\xfaM\xc3 \xc3\x80\x81\x8d\xc2\x8d\xc2\x8d\xc2M\xc3 "
+    b"\xc3\x8d\xc2\x8d\xc2\x8d\xc2M\xc3 \xc3\x8d\xc2\x8d\xc2\x8d"
+    b"\xc2M\xc3 \xc3\x8d\xc2\x8d\xc2\x8d\xc2M\xc3 \xc3\x8d"
+    b"\xc2\x8d\xc2\x8d\xc2M\xc3 \xc3\x8d\xc2\x8d\xc2\x8d\xc2M"
+    b"\xc3 \xc3\x8d\xc2\x8d\xc2\x8d\xc2M\xc3 \xc3\x8d\xc2\x8d"
+    b"\xc2\x8d\xc2M\xc3 \xc3\x8d\xc2\x8d\xc2\x8d\xc2M\xc3 "
+    b"\xc3\x8d\xc2\x8d\xc2\x8d\xc2M\xc3 \xc3\x8d\xc2\x8d\xc2\x8d"
+    b"\xc2M\xc3 \xc3\x8d\xc2\x8d\xc2\x8d\xc2M\xc3 \xff\x01"
+    b" \xff\x01 \xc3\xc0\xfb\xcd@\xdbB\x8dB\x8dB\xcd"
+    b"C C\xcdB\x8dB\x8dB\xcdC C\xcdB\x8d"
+    b"B\x8dB\xcdC C\xcdB\x8dB\x8dB\xcdC "
+    b"C\xcdB\x8dB\x8dB\xcdC C\xcdB\x8dB\x8d"
+    b"B\xcdC C\xcdB\x8dB\x8dB\xcdC C\xcd"
+    b"B\x8dB\x8dB\xcdC C\xcdB\x8dB\x8dB\xcd"
+    b"C C\xcdB\x8dB\x8dB\xcdC C\xcdB\x8d"
+    b"B\x8dB\xcdC C\xcdB\x8dB\x8dB\xcdC "
+    b"C\xcdB\x8dB\x8dB\xcdC \x7f\x01 \x7f\x01 "
+    b"C\x8dB\x8dB\x80\xf6\x8dB\x8dC C\xc0\x81\xcd"
+    b"B\xcdB\x8dB\x8dC C\xcdB\xcdB\x8dB\x8d"
+    b"C C\xcdB\xcdB\x8dB\x8dC C\xcdB\xcd"
+    b"B\x8dB\x8dC C\xcdB\xcdB\x8dB\x8dC "
+    b"C\xcdB\xcdB\x8dB\x8dC C\xcdB\xcdB\x8d"
+    b"B\x8dC C\xcdB\xcdB\x8dB\x8dC C\xcd"
+    b"B\xcdB\x8dB\x8dC C\xcdB\xcdB\x8dB\x8d"
+    b"C C\xcdB\xcdB\x8dB\x8dC C\xcdB\xcd"
+    b"B\x8dB\x8dC \x7f\x01 \x7f\x01 \x7f\x01\x10"
 )
 
-class Play2048App():
+
+class Play2048App:
     """Let's play the 2048 game."""
-    NAME = '2048'
+
+    NAME = "2048"
     ICON = icon
 
     def __init__(self):
@@ -85,9 +126,11 @@ class Play2048App():
 
     def foreground(self):
         """Activate the application."""
-        wasp.system.request_event(wasp.EventMask.TOUCH |
-                                  wasp.EventMask.SWIPE_UPDOWN |
-                                  wasp.EventMask.SWIPE_LEFTRIGHT)
+        wasp.system.request_event(
+            wasp.EventMask.TOUCH
+            | wasp.EventMask.SWIPE_UPDOWN
+            | wasp.EventMask.SWIPE_LEFTRIGHT
+        )
 
         self._state = 0
 
@@ -96,12 +139,12 @@ class Play2048App():
 
         self._draw()
 
-    def touch(self,event):
+    def touch(self, event):
         """Notify the application of a touchscreen touch event."""
         if self._state == 0:
             if not self._confirmation_view:
                 self._confirmation_view = widgets.ConfirmationView()
-            self._confirmation_view.draw('Restart game?')
+            self._confirmation_view.draw("Restart game?")
             self._state = 1
         elif self._state == 1:
             if self._confirmation_view.touch(event):
@@ -116,13 +159,13 @@ class Play2048App():
 
         if self._state == 0:
             if event[0] == wasp.EventType.UP:
-                moved = self._shift(1,False)
+                moved = self._shift(1, False)
             elif event[0] == wasp.EventType.DOWN:
-                moved = self._shift(-1,False)
+                moved = self._shift(-1, False)
             elif event[0] == wasp.EventType.LEFT:
-                moved = self._shift(1,True)
+                moved = self._shift(1, True)
             elif event[0] == wasp.EventType.RIGHT:
-                moved = self._shift(-1,True)
+                moved = self._shift(-1, True)
 
         if moved:
             self._add_tile()
@@ -162,13 +205,13 @@ class Play2048App():
         """Add a new tile to a random empty location on the board."""
         board = self._board
         randint = random.randint
-        y = randint(0, GRID_SIZE-1)
-        x = randint(0, GRID_SIZE-1)
+        y = randint(0, GRID_SIZE - 1)
+        x = randint(0, GRID_SIZE - 1)
         while board[y][x] != 0:
-            y = randint(0, GRID_SIZE-1)
-            x = randint(0, GRID_SIZE-1)
+            y = randint(0, GRID_SIZE - 1)
+            x = randint(0, GRID_SIZE - 1)
         board[y][x] = 1
-        self._update(wasp.watch.drawable,1,y,x)
+        self._update(wasp.watch.drawable, 1, y, x)
 
     def _shift(self, direction, orientation):
         """Shift and merge the tiles vertically."""
@@ -179,12 +222,12 @@ class Play2048App():
 
         def read(y, x):
             if not orientation:
-                y,x = x,y
+                y, x = x, y
             return board[y][x]
 
         def write(y, x, v):
             if not orientation:
-                y,x = x,y
+                y, x = x, y
 
             board[y][x] = v
             update(draw, v, y, x)
@@ -198,9 +241,9 @@ class Play2048App():
 
         for y in range(GRID_SIZE):
             p = s - direction
-            for x in range(s,e,direction):
-                a = read(y,x)
-                b = read(y,p)
+            for x in range(s, e, direction):
+                a = read(y, x)
+                b = read(y, p)
                 if a != 0:
                     if a == b:
                         write(y, p, a + 1)

@@ -8,11 +8,13 @@
 import bma42x
 import time
 
+
 class BMA421:
     """BMA421 driver
 
     .. automethod:: __init__
     """
+
     def __init__(self, i2c):
         """Configure the driver.
 
@@ -26,17 +28,19 @@ class BMA421:
 
         # Init, reset, wait for reset, enable I2C watchdog
         dev.init()
-        dev.set_command_register(0xb6)
+        dev.set_command_register(0xB6)
         time.sleep(0.05)
-        dev.set_reg(bma42x.NV_CONFIG_ADDR, 6);
+        dev.set_reg(bma42x.NV_CONFIG_ADDR, 6)
 
         # Configure the sensor for basic step counting
         dev.write_config_file()
         dev.set_accel_enable(True)
-        dev.set_accel_config(odr=bma42x.OUTPUT_DATA_RATE_100HZ,
-                               range=bma42x.ACCEL_RANGE_2G,
-                               bandwidth=bma42x.ACCEL_NORMAL_AVG4,
-                               perf_mode=bma42x.CIC_AVG_MODE)
+        dev.set_accel_config(
+            odr=bma42x.OUTPUT_DATA_RATE_100HZ,
+            range=bma42x.ACCEL_RANGE_2G,
+            bandwidth=bma42x.ACCEL_NORMAL_AVG4,
+            perf_mode=bma42x.CIC_AVG_MODE,
+        )
         dev.feature_enable(bma42x.STEP_CNTR, True)
 
     @property

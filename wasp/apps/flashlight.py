@@ -14,9 +14,11 @@ import wasp
 
 import icons
 
+
 class TorchApp(object):
     """Trivial flashlight application."""
-    NAME = 'Torch'
+
+    NAME = "Torch"
     ICON = icons.torch
 
     def foreground(self):
@@ -36,4 +38,4 @@ class TorchApp(object):
 
     def draw(self):
         """Redraw the display from scratch."""
-        wasp.watch.drawable.fill(0xffff)
+        wasp.watch.drawable.fill(0xFFFF)

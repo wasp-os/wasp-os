@@ -18,6 +18,7 @@ TICK_PERIOD = const(6 * 60)
 DUMP_LENGTH = const(30)
 DUMP_PERIOD = const(DUMP_LENGTH * TICK_PERIOD)
 
+
 class StepIterator:
     def __init__(self, fname, data=None):
         self._fname = fname
@@ -29,13 +30,13 @@ class StepIterator:
 
     def __iter__(self):
         self.close()
-        self._f = open(self._fname, 'rb')
+        self._f = open(self._fname, "rb")
         self._c = 0
         return self
 
     def __next__(self):
         self._c += 1
-        if self._c > (24*60*60) // TICK_PERIOD:
+        if self._c > (24 * 60 * 60) // TICK_PERIOD:
             raise StopIteration
 
         if self._f:
@@ -57,13 +58,14 @@ class StepIterator:
             self._f.close()
             self._f = None
 
+
 class StepLogger:
     def __init__(self, manager):
-        self._data = array.array('H', (0,) * DUMP_LENGTH)
+        self._data = array.array("H", (0,) * DUMP_LENGTH)
         self._steps = wasp.watch.accel.steps
 
         try:
-            os.mkdir('logs')
+            os.mkdir("logs")
         except:
             pass
 
@@ -93,7 +95,7 @@ class StepLogger:
         wasp.system.set_alarm(t + TICK_PERIOD, self._tick)
         self._t += TICK_PERIOD
 
-        if i < (DUMP_LENGTH-1):
+        if i < (DUMP_LENGTH - 1):
             return
 
         # Record the data in the flash
@@ -111,21 +113,21 @@ class StepLogger:
 
         # Update the log data
         try:
-            os.mkdir('logs/' + str(yyyy))
+            os.mkdir("logs/" + str(yyyy))
         except:
             pass
-        fname = 'logs/{}/{:02d}-{:02d}.steps'.format(yyyy, mm, dd)
+        fname = "logs/{}/{:02d}-{:02d}.steps".format(yyyy, mm, dd)
         offset = dump_num * DUMP_LENGTH * 2
         try:
             sz = os.stat(fname)[6]
         except:
             sz = 0
-        f = open(fname, 'ab')
+        f = open(fname, "ab")
         # This is a portable (between real Python and MicroPython) way to
         # grow the file to the right size.
         f.seek(min(sz, offset))
         for _ in range(sz, offset, 2):
-            f.write(b'\x00\x00')
+            f.write(b"\x00\x00")
         f.write(self._data)
         f.close()
 
@@ -143,7 +145,7 @@ class StepLogger:
         mm = t[1]
         dd = t[2]
 
-        fname = 'logs/{}/{:02d}-{:02d}.steps'.format(yyyy, mm, dd)
+        fname = "logs/{}/{:02d}-{:02d}.steps".format(yyyy, mm, dd)
         try:
             os.stat(fname)
         except:

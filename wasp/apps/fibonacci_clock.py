@@ -29,36 +29,38 @@ result by 5 to get the actual number.
 import wasp
 import icons
 
-COLORS = [0xffff,0xf800,0x07e0,0x001f] # White, red, green and blue
-FIELDS = b'\x05\x03\x02\x01\x01'
-MONTH = 'JanFebMarAprMayJunJulAugSepOctNovDec'
+COLORS = [0xFFFF, 0xF800, 0x07E0, 0x001F]  # White, red, green and blue
+FIELDS = b"\x05\x03\x02\x01\x01"
+MONTH = "JanFebMarAprMayJunJulAugSepOctNovDec"
 
 # 2-bit RLE, generated from res/fibo_icon.png, 246 bytes
 icon = (
-    b'\x02'
-    b'`@'
-    b'?\xff\xffk\xd3\x01\xc9\x01@\x1er\x10\xd3\x01\xc9\x01'
-    b'r\x10\xd3\x01\xc9\x01r\x10\xd3\x01\xc9\x01r\x10\xd3\x01'
-    b'\xc9\x01r\x10\xd3\x01\xc9\x01r\x10\xd3\x01\xc9\x01r\x10'
-    b'\xd3\x01\xc9\x01r\x10\xd3\x01\xc9\x01r\x10\xd3\x0br\x10'
-    b'\xd3\x01I\x01r\x10\xd3\x01I\x01r\x10\xd3\x01I\x01'
-    b'r\x10\xd3\x01I\x01r\x10\xd3\x01I\x01r\x10\xd3\x01'
-    b'I\x01r\x10\xd3\x01I\x01r\x10\xd3\x01I\x01r\x10'
-    b'\xd3\x01I\x01r.r\x10\xdd\x01r\x10\xdd\x01r\x10'
-    b'\xdd\x01r\x10\xdd\x01r\x10\xdd\x01r\x10\xdd\x01r\x10'
-    b'\xdd\x01r\x10\xdd\x01r\x10\xdd\x01r\x10\xdd\x01r\x10'
-    b'\xdd\x01r\x10\xdd\x01r\x10\xdd\x01r\x10\xdd\x01r\x10'
-    b'\xdd\x01r\x10\xdd\x01r\x10\xdd\x01r\x10\xdd\x01r\x10'
-    b'\xdd\x01r\x10\xdd\x01r\x10\xdd\x01r\x10\xdd\x01r\x10'
-    b'\xdd\x01r\x10\xdd\x01r\x10\xdd\x01r\x10\xdd\x01r\x10'
-    b'\xdd\x01r\x10\xdd\x01r\x10\xdd\x01r\x10\xdd\x01r?'
-    b'\xff\xffk'
+    b"\x02"
+    b"`@"
+    b"?\xff\xffk\xd3\x01\xc9\x01@\x1er\x10\xd3\x01\xc9\x01"
+    b"r\x10\xd3\x01\xc9\x01r\x10\xd3\x01\xc9\x01r\x10\xd3\x01"
+    b"\xc9\x01r\x10\xd3\x01\xc9\x01r\x10\xd3\x01\xc9\x01r\x10"
+    b"\xd3\x01\xc9\x01r\x10\xd3\x01\xc9\x01r\x10\xd3\x0br\x10"
+    b"\xd3\x01I\x01r\x10\xd3\x01I\x01r\x10\xd3\x01I\x01"
+    b"r\x10\xd3\x01I\x01r\x10\xd3\x01I\x01r\x10\xd3\x01"
+    b"I\x01r\x10\xd3\x01I\x01r\x10\xd3\x01I\x01r\x10"
+    b"\xd3\x01I\x01r.r\x10\xdd\x01r\x10\xdd\x01r\x10"
+    b"\xdd\x01r\x10\xdd\x01r\x10\xdd\x01r\x10\xdd\x01r\x10"
+    b"\xdd\x01r\x10\xdd\x01r\x10\xdd\x01r\x10\xdd\x01r\x10"
+    b"\xdd\x01r\x10\xdd\x01r\x10\xdd\x01r\x10\xdd\x01r\x10"
+    b"\xdd\x01r\x10\xdd\x01r\x10\xdd\x01r\x10\xdd\x01r\x10"
+    b"\xdd\x01r\x10\xdd\x01r\x10\xdd\x01r\x10\xdd\x01r\x10"
+    b"\xdd\x01r\x10\xdd\x01r\x10\xdd\x01r\x10\xdd\x01r\x10"
+    b"\xdd\x01r\x10\xdd\x01r\x10\xdd\x01r\x10\xdd\x01r?"
+    b"\xff\xffk"
 )
 
-class FibonacciClockApp():
+
+class FibonacciClockApp:
     """Displays the time as a Fibonacci Clock.
     """
-    NAME = 'Fibo'
+
+    NAME = "Fibo"
     ICON = icon
 
     def foreground(self):
@@ -89,31 +91,30 @@ class FibonacciClockApp():
             if not now or self._min == now[4]:
                 return
 
-        #calculate colors of fields:
+        # calculate colors of fields:
         field_colors = bytearray(5)
         hr = now[3]
-        mn = now[4] // 5 # Clock can only display every 5 minutes
-        if (hr >= 12):
+        mn = now[4] // 5  # Clock can only display every 5 minutes
+        if hr >= 12:
             hr -= 12
         for i in range(5):
-            if ((hr - FIELDS[i]) >= 0):
+            if (hr - FIELDS[i]) >= 0:
                 hr -= FIELDS[i]
                 field_colors[i] += 1
 
-            if ((mn - FIELDS[i]) >= 0):
+            if (mn - FIELDS[i]) >= 0:
                 mn -= FIELDS[i]
                 field_colors[i] += 2
 
-        draw.fill(x=71,y=60,w=23,h=23,bg=COLORS[field_colors[4]]) # 1 field
-        draw.fill(x=71,y=85,w=23,h=23,bg=COLORS[field_colors[3]]) # 1 field
-        draw.fill(x=21,y=60,w=48,h=48,bg=COLORS[field_colors[2]]) # 2 field
-        draw.fill(x=21,y=110,w=73,h=73,bg=COLORS[field_colors[1]]) # 3 field
-        draw.fill(x=96,y=60,w=123,h=123,bg=COLORS[field_colors[0]]) # 5 field
+        draw.fill(x=71, y=60, w=23, h=23, bg=COLORS[field_colors[4]])  # 1 field
+        draw.fill(x=71, y=85, w=23, h=23, bg=COLORS[field_colors[3]])  # 1 field
+        draw.fill(x=21, y=60, w=48, h=48, bg=COLORS[field_colors[2]])  # 2 field
+        draw.fill(x=21, y=110, w=73, h=73, bg=COLORS[field_colors[1]])  # 3 field
+        draw.fill(x=96, y=60, w=123, h=123, bg=COLORS[field_colors[0]])  # 5 field
 
         month = now[1] - 1
-        month = MONTH[month*3:(month+1)*3]
-        draw.string('{} {} {}'.format(now[2], month, now[0]),
-                0, 202, width=240)
+        month = MONTH[month * 3 : (month + 1) * 3]
+        draw.string("{} {} {}".format(now[2], month, now[0]), 0, 202, width=240)
 
         # Record the minute that is currently being displayed
         self._min = now[4]

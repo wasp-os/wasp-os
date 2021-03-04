@@ -17,25 +17,27 @@ from micropython import const
 from time import sleep_ms
 
 # register definitions
-_SWRESET            = const(0x01)
-_SLPIN              = const(0x10)
-_SLPOUT             = const(0x11)
-_NORON              = const(0x13)
-_INVOFF             = const(0x20)
-_INVON              = const(0x21)
-_DISPOFF            = const(0x28)
-_DISPON             = const(0x29)
-_CASET              = const(0x2a)
-_RASET              = const(0x2b)
-_RAMWR              = const(0x2c)
-_COLMOD             = const(0x3a)
-_MADCTL             = const(0x36)
+_SWRESET = const(0x01)
+_SLPIN = const(0x10)
+_SLPOUT = const(0x11)
+_NORON = const(0x13)
+_INVOFF = const(0x20)
+_INVON = const(0x21)
+_DISPOFF = const(0x28)
+_DISPON = const(0x29)
+_CASET = const(0x2A)
+_RASET = const(0x2B)
+_RAMWR = const(0x2C)
+_COLMOD = const(0x3A)
+_MADCTL = const(0x36)
+
 
 class ST7789(object):
     """Sitronix ST7789 display driver
 
     .. automethod:: __init__
     """
+
     def __init__(self, width, height):
         """Configure the size of the display.
 
@@ -56,11 +58,11 @@ class ST7789(object):
         sleep_ms(10)
 
         for cmd in (
-            (_COLMOD,   b'\x05'), # MCU will send 16-bit RGB565
-            (_MADCTL,   b'\x00'), # Left to right, top to bottom
-            #(_INVOFF,   None), # Results in odd palette
-            (_INVON,   None),
-            (_NORON,   None),
+            (_COLMOD, b"\x05"),  # MCU will send 16-bit RGB565
+            (_MADCTL, b"\x00"),  # Left to right, top to bottom
+            # (_INVOFF,   None), # Results in odd palette
+            (_INVON, None),
+            (_NORON, None),
         ):
             self.write_cmd(cmd[0])
             if cmd[1]:
@@ -72,7 +74,7 @@ class ST7789(object):
         # 120ms gap before any subsequent SLPIN. In most cases
         # (i.e. when the SPI baud rate is slower than 8M then
         # that time already elapsed as we zeroed the RAM).
-        #sleep_ms(125)
+        # sleep_ms(125)
 
     def poweroff(self):
         """Put the display into sleep mode."""
@@ -128,16 +130,16 @@ class ST7789(object):
 
         write_cmd(_CASET)
         window[0] = x >> 8
-        window[1] = x & 0xff
+        window[1] = x & 0xFF
         window[2] = xp >> 8
-        window[3] = xp & 0xff
+        window[3] = xp & 0xFF
         write_data(window)
 
         write_cmd(_RASET)
         window[0] = y >> 8
-        window[1] = y & 0xff
+        window[1] = y & 0xFF
         window[2] = yp >> 8
-        window[3] = yp & 0xff
+        window[3] = yp & 0xFF
         write_data(window)
 
         write_cmd(_RAMWR)
@@ -177,14 +179,15 @@ class ST7789(object):
         self.set_window(x, y, w, h)
 
         # Populate the line buffer
-        buf = self.linebuffer[0:2*w]
-        for xi in range(0, 2*w, 2):
+        buf = self.linebuffer[0 : 2 * w]
+        for xi in range(0, 2 * w, 2):
             buf[xi] = bg >> 8
-            buf[xi+1] = bg & 0xff
+            buf[xi + 1] = bg & 0xFF
 
         # Do the fill
         for yi in range(h):
             self.write_data(buf)
+
 
 class ST7789_SPI(ST7789):
     """
@@ -195,6 +198,7 @@ class ST7789_SPI(ST7789):
         :param bytes-like buf: Data, must be in a form that can be directly
                                consumed by the SPI bus.
     """
+
     def __init__(self, width, height, spi, cs, dc, res=None, rate=8000000):
         """Configure the display.
 
@@ -215,7 +219,7 @@ class ST7789_SPI(ST7789):
         self.rate = rate
         self.cmd = bytearray(1)
 
-        #spi.init(baudrate=self.rate, polarity=1, phase=1)
+        # spi.init(baudrate=self.rate, polarity=1, phase=1)
         cs.init(cs.OUT, value=1)
         dc.init(dc.OUT, value=0)
         if res:

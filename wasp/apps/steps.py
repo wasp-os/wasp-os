@@ -21,28 +21,30 @@ import watch
 
 # 2-bit RLE, generated from res/feet.png, 240 bytes
 feet = (
-    b'\x02'
-    b'00'
-    b'\x13\xc1-\xc4+\xc6*\xc6*\xc6&\xc3\x01\xc6\t\xc2'
-    b'\x1b\xc3\x02\xc5\x08\xc4\x1a\xc4\x01\xc5\x08\xc5\x19\xc4\x02\xc3'
-    b'\x08\xc6\x17\xc1\x02\xc3\x02\xc3\x08\xc6\x16\xc3\x02\xc1\x0e\xc6'
-    b'\x01\xc3\x12\xc3\x11\xc6\x01\xc3\x13\xc2\x05\xc2\n\xc5\x02\xc3'
-    b'\x10\xc2\x01\xc2\x02\xc6\n\xc4\x01\xc4\x10\xc2\x04\xc7\x0b\xc1'
-    b'\x03\xc3\x11\xc3\x02\xc8\x10\xc2\x01\xc3\r\xc2\x02\xc9\x13\xc3'
-    b'\x0b\xc1\x05\xc9\x0c\xc2\x05\xc3\x0b\xc2\x03\xc9\x0c\xc5\x03\xc2'
-    b'\x0c\xc2\x02\xca\x0c\xc6\x05\xc2\t\xc2\x02\xca\x0c\xc7\x03\xc3'
-    b'\r\xca\x0c\xc8\x02\xc3\x0c\xca\r\xc9\x02\xc1\r\xca\r\xc9'
-    b'\x04\xc2\n\xca\x0e\xc9\x02\xc3\n\xca\x0e\xc9\x02\xc2\x0b\xca'
-    b'\x0e\xca\x0e\xca\x0e\xca\x0f\xc9\x0e\xca\x0f\xca\r\xca\x0f\xca'
-    b'\r\xca\x10\xcb\x0b\xca\x10\xcc\n\xca\x10\xcd\t\xca\x11\xcc'
-    b'\x08\xca\x12\xcc\x07\xcb\x13\xcb\x06\xcb\x14\xcb\x05\xcc\x15\xca'
-    b'\x04\xcc\x16\xc9\x05\xcc\x17\xc7\x05\xcd\x17\xc7\x05\xcc\x1a\xc4'
+    b"\x02"
+    b"00"
+    b"\x13\xc1-\xc4+\xc6*\xc6*\xc6&\xc3\x01\xc6\t\xc2"
+    b"\x1b\xc3\x02\xc5\x08\xc4\x1a\xc4\x01\xc5\x08\xc5\x19\xc4\x02\xc3"
+    b"\x08\xc6\x17\xc1\x02\xc3\x02\xc3\x08\xc6\x16\xc3\x02\xc1\x0e\xc6"
+    b"\x01\xc3\x12\xc3\x11\xc6\x01\xc3\x13\xc2\x05\xc2\n\xc5\x02\xc3"
+    b"\x10\xc2\x01\xc2\x02\xc6\n\xc4\x01\xc4\x10\xc2\x04\xc7\x0b\xc1"
+    b"\x03\xc3\x11\xc3\x02\xc8\x10\xc2\x01\xc3\r\xc2\x02\xc9\x13\xc3"
+    b"\x0b\xc1\x05\xc9\x0c\xc2\x05\xc3\x0b\xc2\x03\xc9\x0c\xc5\x03\xc2"
+    b"\x0c\xc2\x02\xca\x0c\xc6\x05\xc2\t\xc2\x02\xca\x0c\xc7\x03\xc3"
+    b"\r\xca\x0c\xc8\x02\xc3\x0c\xca\r\xc9\x02\xc1\r\xca\r\xc9"
+    b"\x04\xc2\n\xca\x0e\xc9\x02\xc3\n\xca\x0e\xc9\x02\xc2\x0b\xca"
+    b"\x0e\xca\x0e\xca\x0e\xca\x0f\xc9\x0e\xca\x0f\xca\r\xca\x0f\xca"
+    b"\r\xca\x10\xcb\x0b\xca\x10\xcc\n\xca\x10\xcd\t\xca\x11\xcc"
+    b"\x08\xca\x12\xcc\x07\xcb\x13\xcb\x06\xcb\x14\xcb\x05\xcc\x15\xca"
+    b"\x04\xcc\x16\xc9\x05\xcc\x17\xc7\x05\xcd\x17\xc7\x05\xcc\x1a\xc4"
     b"\x07\xcb%\xca&\xca'\xc8)\xc6+\xc4\x0e"
 )
 
-class StepCounterApp():
+
+class StepCounterApp:
     """Step counter application."""
-    NAME = 'Steps'
+
+    NAME = "Steps"
     ICON = icons.app
 
     def __init__(self):
@@ -74,7 +76,7 @@ class StepCounterApp():
         yyyy = now[0]
         mm = now[1]
         dd = now[2]
-        then = (yyyy, mm, dd+1, 0, 0, 0, 0, 0, 0)
+        then = (yyyy, mm, dd + 1, 0, 0, 0, 0, 0, 0)
 
         self._wake = time.mktime(then)
         wasp.system.set_alarm(self._wake, self._reset)
@@ -117,7 +119,7 @@ class StepCounterApp():
         draw = wasp.watch.drawable
 
         # Draw the icon
-        draw.blit(feet, 12, 132-24)
+        draw.blit(feet, 12, 132 - 24)
 
         # Update the status bar
         now = wasp.system.bar.update()
@@ -132,29 +134,31 @@ class StepCounterApp():
         t = str(count)
         w = fonts.width(fonts.sans36, t)
         draw.set_font(fonts.sans36)
-        draw.set_color(draw.lighten(wasp.system.theme('spot1'), wasp.system.theme('contrast')))
-        draw.string(t, 228-w, 132-18)
+        draw.set_color(
+            draw.lighten(wasp.system.theme("spot1"), wasp.system.theme("contrast"))
+        )
+        draw.string(t, 228 - w, 132 - 18)
 
     def _update_graph(self):
         draw = watch.drawable
         draw.set_font(fonts.sans24)
-        draw.set_color(0xffff)
+        draw.set_color(0xFFFF)
 
         # Draw the date
         now = int(watch.rtc.time())
-        then = now - ((24*60*60) * self._page)
+        then = now - ((24 * 60 * 60) * self._page)
         walltime = time.localtime(then)
-        draw.string('{:02d}-{:02d}'.format(walltime[2], walltime[1]), 0, 0)
+        draw.string("{:02d}-{:02d}".format(walltime[2], walltime[1]), 0, 0)
 
         # Get the iterable step date for the currently selected date
         data = wasp.system.steps.data(then)
 
         # Bail if there is no data
         if not data:
-            draw.string('No data', 239-160, 0, 160, right=True)
+            draw.string("No data", 239 - 160, 0, 160, right=True)
             return
 
-        color = wasp.system.theme('spot2')
+        color = wasp.system.theme("spot2")
 
         # Draw the frame
         draw.fill(0x3969, 0, 39, 240, 1)
@@ -170,8 +174,8 @@ class StepCounterApp():
             total += d
             d = d // 3
             if d > 200:
-                draw.fill(0xffff, x, 239-200, 1, 200)
+                draw.fill(0xFFFF, x, 239 - 200, 1, 200)
             else:
-                draw.fill(color, x, 239-d, 1, d)
+                draw.fill(color, x, 239 - d, 1, d)
 
-        draw.string(str(total), 239-160, 0, 160, right=True)
+        draw.string(str(total), 239 - 160, 0, 160, right=True)

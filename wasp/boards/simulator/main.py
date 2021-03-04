@@ -5,13 +5,12 @@ import wasp
 
 # Test app is used a lot on the simulator. Let's make sure it is
 # registered by default.
-wasp.system.register('apps.testapp.TestApp')
+wasp.system.register("apps.testapp.TestApp")
 
 # Ensure there's something interesting to look at ;-)
-wasp.system.set_music_info({
-        'track': 'Tasteless Brass Duck',
-        'artist': 'Dreams of Bamboo',
-    })
+wasp.system.set_music_info(
+    {"track": "Tasteless Brass Duck", "artist": "Dreams of Bamboo",}
+)
 
 
 # Increase the display blanking time to avoid spamming the console
@@ -20,14 +19,14 @@ wasp.system.blank_after = 300
 
 # Instantiate the analogue clock application and replace the default
 # (digital) clock with this alternative.
-#from chrono import ChronoApp
-#clock = wasp.system.quick_ring[0]
-#wasp.system.quick_ring[0] = ChronoApp()
-#wasp.system.switch(wasp.system.quick_ring[0])
-#wasp.system.register(clock)
+# from chrono import ChronoApp
+# clock = wasp.system.quick_ring[0]
+# wasp.system.quick_ring[0] = ChronoApp()
+# wasp.system.switch(wasp.system.quick_ring[0])
+# wasp.system.register(clock)
 
 # Adopt a basic all-orange theme
-#wasp.system.set_theme(
+# wasp.system.set_theme(
 #        b'\xff\x00'     # ble
 #        b'\xff\x00'     # scroll-indicator
 #        b'\xff\x00'     # battery

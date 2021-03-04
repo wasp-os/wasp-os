@@ -15,9 +15,11 @@ import icons
 import io
 import sys
 
-class PagerApp():
+
+class PagerApp:
     """Show a long text message in a pager."""
-    NAME = 'Pager'
+
+    NAME = "Pager"
     ICON = icons.app
 
     def __init__(self, msg):
@@ -61,16 +63,16 @@ class PagerApp():
         draw = wasp.watch.drawable
 
         mute(True)
-        draw.set_color(0xffff)
+        draw.set_color(0xFFFF)
         draw.fill()
 
         page = self._page
         i = page * 9
         j = i + 11
         chunks = self._chunks[i:j]
-        for i in range(len(chunks)-1):
-            sub = self._msg[chunks[i]:chunks[i+1]].rstrip()
-            draw.string(sub, 0, 24*i)
+        for i in range(len(chunks) - 1):
+            sub = self._msg[chunks[i] : chunks[i + 1]].rstrip()
+            draw.string(sub, 0, 24 * i)
 
         scroll = self._scroll
         scroll.up = page > 0
@@ -79,19 +81,20 @@ class PagerApp():
 
         mute(False)
 
+
 class NotificationApp(PagerApp):
-    NAME = 'Notifications'
+    NAME = "Notifications"
 
     def __init__(self):
-        super().__init__('')
+        super().__init__("")
         self.confirmation_view = wasp.widgets.ConfirmationView()
 
     def foreground(self):
         notes = wasp.system.notifications
         note = notes.pop(next(iter(notes)))
-        title = note['title'] if 'title' in note else 'Untitled'
-        body = note['body'] if 'body' in note else ''
-        self._msg = '{}\n\n{}'.format(title, body)
+        title = note["title"] if "title" in note else "Untitled"
+        body = note["body"] if "body" in note else ""
+        self._msg = "{}\n\n{}".format(title, body)
 
         wasp.system.request_event(wasp.EventMask.TOUCH)
         super().foreground()
@@ -108,7 +111,7 @@ class NotificationApp(PagerApp):
                 return
         else:
             if event[0] == wasp.EventType.DOWN and self._page == 0:
-                self.confirmation_view.draw('Clear notifications?')
+                self.confirmation_view.draw("Clear notifications?")
                 return
 
         super().swipe(event)
@@ -121,7 +124,8 @@ class NotificationApp(PagerApp):
             else:
                 self._draw()
 
-class CrashApp():
+
+class CrashApp:
     """Crash handler application.
 
     This application is launched automatically whenever another
@@ -130,6 +134,7 @@ class CrashApp():
     app deliberately enables inverted video mode in order to deliver
     that message as strongly as possible.
     """
+
     def __init__(self, exc):
         """Capture the exception information.
 
@@ -153,8 +158,9 @@ class CrashApp():
         draw.blit(icons.bomb, 0, 104)
         draw.blit(icons.bomb, 32, 104)
 
-        wasp.system.request_event(wasp.EventMask.SWIPE_UPDOWN |
-                                  wasp.EventMask.SWIPE_LEFTRIGHT)
+        wasp.system.request_event(
+            wasp.EventMask.SWIPE_UPDOWN | wasp.EventMask.SWIPE_LEFTRIGHT
+        )
 
     def background(self):
         """Restore a normal display mode.

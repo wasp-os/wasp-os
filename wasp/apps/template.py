@@ -9,7 +9,8 @@ wasp-os can rely on *duck typing* making a class hierarchy pointless.
 import wasp
 import icons
 
-class TemplateApp():
+
+class TemplateApp:
     """Template application.
 
     The template application includes every application entry point. It
@@ -36,7 +37,8 @@ class TemplateApp():
        must not be larger than 96x64.
 
     """
-    NAME = 'Template'
+
+    NAME = "Template"
     ICON = icons.app
 
     def __init__(self):
@@ -46,9 +48,9 @@ class TemplateApp():
     def foreground(self):
         """Activate the application."""
         self._draw()
-        wasp.system.request_event(wasp.EventMask.TOUCH |
-                                  wasp.EventMask.SWIPE_UPDOWN |
-                                  wasp.EventMask.BUTTON)
+        wasp.system.request_event(
+            wasp.EventMask.TOUCH | wasp.EventMask.SWIPE_UPDOWN | wasp.EventMask.BUTTON
+        )
         wasp.system.request_tick(1000)
 
     def background(self):
@@ -66,15 +68,15 @@ class TemplateApp():
     def press(self, button, state):
         """Notify the application of a button-press event."""
         draw = wasp.watch.drawable
-        draw.string('Button', 0, 108, width=240)
+        draw.string("Button", 0, 108, width=240)
 
     def swipe(self, event):
         """Notify the application of a touchscreen swipe event."""
         draw = wasp.watch.drawable
         if event[0] == wasp.EventType.UP:
-            draw.string('Swipe up', 0, 108, width=240)
+            draw.string("Swipe up", 0, 108, width=240)
         else:
-            draw.string('Swipe down', 0, 108, width=240)
+            draw.string("Swipe down", 0, 108, width=240)
 
     def tick(self, ticks):
         """Notify the application that its periodic tick is due."""
@@ -83,8 +85,9 @@ class TemplateApp():
     def touch(self, event):
         """Notify the application of a touchscreen touch event."""
         draw = wasp.watch.drawable
-        wasp.watch.drawable.string('({}, {})'.format(
-                event[1], event[2]), 0, 108, width=240)
+        wasp.watch.drawable.string(
+            "({}, {})".format(event[1], event[2]), 0, 108, width=240
+        )
 
     def _draw(self):
         """Draw the display from scratch."""

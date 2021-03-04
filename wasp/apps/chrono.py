@@ -14,10 +14,12 @@ Shows the time as a traditional watch face together with a battery meter.
 
 import wasp
 
-class ChronoApp():
+
+class ChronoApp:
     """Simple analogue clock application.
     """
-    NAME = 'Chrono'
+
+    NAME = "Chrono"
 
     def foreground(self):
         """Activate the application.
@@ -58,8 +60,8 @@ class ChronoApp():
         True then a full redraw is be performed.
         """
         draw = wasp.watch.drawable
-        hi = wasp.system.theme('bright')
-        c1 = draw.darken(wasp.system.theme('spot1'), wasp.system.theme('contrast'))
+        hi = wasp.system.theme("bright")
+        c1 = draw.darken(wasp.system.theme("spot1"), wasp.system.theme("contrast"))
 
         if redraw:
             now = wasp.watch.rtc.get_localtime()
@@ -71,7 +73,7 @@ class ChronoApp():
             wasp.system.bar.draw()
 
             # Draw the dividers
-            draw.set_color(wasp.system.theme('mid'))
+            draw.set_color(wasp.system.theme("mid"))
             for theta in range(12):
                 draw.polar(120, 120, theta * 360 // 12, 110, 118, 3)
 

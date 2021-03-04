@@ -8,11 +8,13 @@
 import time
 from machine import PWM
 
+
 class Vibrator(object):
     """Vibration motor driver.
 
     .. automethod:: __init__
     """
+
     def __init__(self, pin, active_low=False):
         """Specify the pin and configuration used to operate the motor.
 

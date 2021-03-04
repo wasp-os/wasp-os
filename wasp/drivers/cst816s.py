@@ -9,6 +9,7 @@ import array
 import time
 from machine import Pin
 
+
 class CST816S:
     """Hynitron CST816S I2C touch controller driver.
 
@@ -25,7 +26,7 @@ class CST816S:
         self.tp_rst = rst
         self.schedule = schedule
         self.dbuf = bytearray(6)
-        self.event = array.array('H', (0, 0, 0))
+        self.event = array.array("H", (0, 0, 0))
 
         self._reset()
         self.tp_int.irq(trigger=Pin.IRQ_FALLING, handler=self.get_touch_data)
@@ -50,9 +51,9 @@ class CST816S:
         except OSError:
             return None
 
-        event[0] = dbuf[0] # event
-        event[1] = ((dbuf[2] & 0xf) << 8) + dbuf[3] # x coord
-        event[2] = ((dbuf[4] & 0xf) << 8) + dbuf[5] # y coord
+        event[0] = dbuf[0]  # event
+        event[1] = ((dbuf[2] & 0xF) << 8) + dbuf[3]  # x coord
+        event[2] = ((dbuf[4] & 0xF) << 8) + dbuf[5]  # y coord
 
         if self.schedule:
             self.schedule(self)
@@ -92,7 +93,7 @@ class CST816S:
         # panel to get the I2C hardware running again...
         self._reset()
         try:
-            self.i2c.writeto_mem(21, 0xa5, b'\x03')
+            self.i2c.writeto_mem(21, 0xA5, b"\x03")
         except:
             # If we can't power down then let's just put it in reset instead
             self.tp_rst.off()

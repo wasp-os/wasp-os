@@ -13,11 +13,13 @@ import wasp
 import icons
 import fonts
 
-class StopwatchApp():
+
+class StopwatchApp:
     """Stopwatch application."""
+
     # Stopwatch requires too many pixels to fit into the launcher
 
-    NAME = 'Stopclock'
+    NAME = "Stopclock"
     ICON = icons.app
 
     def __init__(self):
@@ -29,9 +31,9 @@ class StopwatchApp():
         wasp.system.bar.clock = True
         self._draw()
         wasp.system.request_tick(97)
-        wasp.system.request_event(wasp.EventMask.TOUCH |
-                                  wasp.EventMask.BUTTON |
-                                  wasp.EventMask.NEXT)
+        wasp.system.request_event(
+            wasp.EventMask.TOUCH | wasp.EventMask.BUTTON | wasp.EventMask.NEXT
+        )
 
     def sleep(self):
         return True
@@ -47,7 +49,7 @@ class StopwatchApp():
         """
         if not self._started_at:
             self._reset()
-        return True     # Request system default handling
+        return True  # Request system default handling
 
     def press(self, button, state):
         if not state:
@@ -91,9 +93,9 @@ class StopwatchApp():
             draw.fill(0, 0, 120, 240, 120)
             return
         y = 240 - 6 - (len(splits) * 24)
-        
+
         draw.set_font(fonts.sans24)
-        draw.set_color(wasp.system.theme('mid'))
+        draw.set_color(wasp.system.theme("mid"))
 
         n = self._nsplits
         for i, s in enumerate(splits):
@@ -103,11 +105,11 @@ class StopwatchApp():
             minutes = secs // 60
             secs %= 60
 
-            t = '# {}   {:02}:{:02}.{:02}'.format(n, minutes, secs, centisecs)
+            t = "# {}   {:02}:{:02}.{:02}".format(n, minutes, secs, centisecs)
             n -= 1
 
             w = fonts.width(fonts.sans24, t)
-            draw.string(t, 0, y + (i*24), 240)
+            draw.string(t, 0, y + (i * 24), 240)
 
     def _draw(self):
         """Draw the display from scratch."""
@@ -126,7 +128,7 @@ class StopwatchApp():
             uptime = wasp.watch.rtc.get_uptime_ms()
             uptime //= 10
             self._count = uptime - self._started_at
-            if self._count > 999*60*100:
+            if self._count > 999 * 60 * 100:
                 self._reset()
 
         # Update the statusbar
@@ -139,16 +141,18 @@ class StopwatchApp():
             minutes = secs // 60
             secs %= 60
 
-            t1 = '{}:{:02}'.format(minutes, secs)
-            t2 = '{:02}'.format(centisecs)
+            t1 = "{}:{:02}".format(minutes, secs)
+            t2 = "{:02}".format(centisecs)
 
             draw = wasp.watch.drawable
             draw.set_font(fonts.sans36)
-            draw.set_color(draw.lighten(wasp.system.theme('ui'), wasp.system.theme('contrast')))
+            draw.set_color(
+                draw.lighten(wasp.system.theme("ui"), wasp.system.theme("contrast"))
+            )
             w = fonts.width(fonts.sans36, t1)
-            draw.string(t1, 180-w, 120-36)
-            draw.fill(0, 0, 120-36, 180-w, 36)
+            draw.string(t1, 180 - w, 120 - 36)
+            draw.fill(0, 0, 120 - 36, 180 - w, 36)
 
             draw.set_font(fonts.sans24)
-            draw.string(t2, 180, 120-36+18, width=46)
+            draw.string(t2, 180, 120 - 36 + 18, width=46)
             self._last_count = self._count
