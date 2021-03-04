@@ -29,13 +29,14 @@ class SoftwareApp():
                 ('calc', wasp.widgets.Checkbox(0, 40, 'Calculator')),
                 ('chrono', wasp.widgets.Checkbox(0, 80, 'Chrono')),
                 ('fibonacci_clock', wasp.widgets.Checkbox(0, 120, 'Fibonacci Clock')),
-                ('gameoflife', wasp.widgets.Checkbox(0, 160, 'Game Of Life')),
-                ('musicplayer', wasp.widgets.Checkbox(0, 0, 'Music Player')),
-                ('play2048', wasp.widgets.Checkbox(0, 40, 'Play 2048')),
-                ('snake', wasp.widgets.Checkbox(0, 80, 'Snake Game')),
-                ('flashlight', wasp.widgets.Checkbox(0, 120, 'Torch')),
-                ('testapp', wasp.widgets.Checkbox(0, 160, 'Test')),
-                ('timer', wasp.widgets.Checkbox(0, 0, 'Timer')),
+                ('fliproll', wasp.widgets.Checkbox(0, 160, 'Flip Roll')),
+                ('gameoflife', wasp.widgets.Checkbox(0, 0, 'Game Of Life')),
+                ('musicplayer', wasp.widgets.Checkbox(0, 40, 'Music Player')),
+                ('play2048', wasp.widgets.Checkbox(0, 80, 'Play 2048')),
+                ('snake', wasp.widgets.Checkbox(0, 120, 'Snake Game')),
+                ('flashlight', wasp.widgets.Checkbox(0, 160, 'Torch')),
+                ('testapp', wasp.widgets.Checkbox(0, 0, 'Test')),
+                ('timer', wasp.widgets.Checkbox(0, 40, 'Timer')),
             )
         self.si = wasp.widgets.ScrollIndicator()
         self.page = 0

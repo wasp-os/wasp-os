@@ -22,6 +22,7 @@ import watch
 import widgets
 
 from apps.clock import ClockApp
+from apps.fliproll import FlipRollApp
 from apps.heart import HeartApp
 from apps.launcher import LauncherApp
 from apps.pager import PagerApp, CrashApp, NotificationApp
