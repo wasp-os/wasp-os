@@ -75,7 +75,6 @@ micropython: build-$(BOARD_SAFE) wasp/boards/$(BOARD_SAFE)/watch.py
 		build-$(BOARD)/micropython.zip
 
 build-$(BOARD_SAFE):
-	cp intl/$(LANG).py build-$(BOARD)/intl.py
 	mkdir -p build-$(BOARD)
 
 dfu:

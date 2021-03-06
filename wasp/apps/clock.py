@@ -21,7 +21,7 @@ DIGITS = (
         digits.clock_8, digits.clock_9
 )
 
-MONTH = "JanFebMarAprMayJunJulAugSepOctNovDec"
+MONTH = 'JanFebMarAprMayJunJulAugSepOctNovDec'
 
 class ClockApp():
     """Simple digital clock application."""
@@ -101,8 +101,6 @@ class ClockApp():
         draw.blit(DIGITS[now[3] // 10], 0*48, 80, fg=lo)
         draw.set_color(hi)
         draw.string('{} {} {}'.format(now[2], month, now[0]),
-                0, 180, width=240)
-        draw.string('_TestIntl9',
                 0, 180, width=240)
 
 
