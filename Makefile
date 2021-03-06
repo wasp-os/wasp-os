@@ -16,8 +16,7 @@ BOARD_SAFE = $(BOARD)
 endif
 BOARD ?= $(error Please set BOARD=)
 VERSION ?= $(patsubst v%,%,$(shell git describe --tags))
-export MICROPYTHON_LOCALES = $(PWD)/wasp/locales
-export LC_ALL = en
+export MPY_LOCALES = $(PWD)/wasp/locales
 
 clean :
 	$(RM) -r \
