@@ -216,6 +216,10 @@ application (and the "blank" white screen is a torch application):
    :alt: Snake Game running in the wasp-os simulator
    :width: 179
 
+.. image:: res/FlipRollApp.png
+   :alt: Flip a coin and Roll dice in the wasp-os simulator
+   :width: 179
+
 .. image:: res/TimerApp.png
    :alt: Countdown timer application running in the wasp-os simulator
    :width: 179
