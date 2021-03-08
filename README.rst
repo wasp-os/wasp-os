@@ -8,7 +8,7 @@ Wasp-os is a firmware for smart watches that are based on the nRF52 family of
 microcontrollers, and especially for hacker friendly watches such as the Pine64
 PineTime. Wasp-os features full heart rate monitoring and step counting support
 together with multiple clock faces, a stopwatch, an alarm clock, a countdown
-timer, a caclulator and lots of other games and utilities. All of this, and
+timer, a calculator and lots of other games and utilities. All of this, and
 still with access to the MicroPython REPL for interactive tweaking, development
 and testing.
 
