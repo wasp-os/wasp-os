@@ -11,6 +11,7 @@ raw PPG signals into something useful.
 import array
 import micropython
 
+
 @micropython.viper
 def _compare(d1, d2, count: int, shift: int) -> int:
     """Compare two sequences of (signed) bytes and quantify how dissimilar
@@ -30,10 +31,11 @@ def _compare(d1, d2, count: int, shift: int) -> int:
             s2 -= 256
 
         d = s1 - s2
-        e += d*d
+        e += d * d
     return e
 
-class Biquad():
+
+class Biquad:
     """Direct Form II Biquad Filter"""
 
     def __init__(self, b0, b1, b2, a1, a2):
@@ -53,7 +55,8 @@ class Biquad():
         self._v1 = v
         return y
 
-class PTAGC():
+
+class PTAGC:
     """Peak Tracking Automatic Gain Control
 
     In order for the correlation checks to work correctly we must
@@ -62,6 +65,7 @@ class PTAGC():
     spikes but needs an extra 1k for sample storage which isn't
     really plausible for a microcontroller.
     """
+
     def __init__(self, start, decay, threshold):
         self._peak = start
         self._decay = decay
@@ -87,19 +91,18 @@ class PTAGC():
 
         return spl
 
-class PPG():
+
+class PPG:
     """
     """
 
     def __init__(self, spl):
         self._offset = spl
-        self.data = array.array('b')
+        self.data = array.array("b")
 
-        self._hpf = Biquad(0.87033078, -1.74066156, 0.87033078,
-                                       -1.72377617, 0.75754694)
+        self._hpf = Biquad(0.87033078, -1.74066156, 0.87033078, -1.72377617, 0.75754694)
         self._agc = PTAGC(20, 0.971, 2)
-        self._lpf = Biquad(0.11595249, 0.23190498, 0.11595249,
-                                      -0.72168143, 0.18549138)
+        self._lpf = Biquad(0.11595249, 0.23190498, 0.11595249, -0.72168143, 0.18549138)
 
     def preprocess(self, spl):
         """Preprocess a PPG sample.
@@ -117,12 +120,12 @@ class PPG():
 
     def _get_heart_rate(self):
         def compare(d, shift):
-            return _compare(d[shift:], d[:-shift], len(d)-shift, shift)
+            return _compare(d[shift:], d[:-shift], len(d) - shift, shift)
 
         def trough(d, mn, mx):
-            z2 = compare(d, mn-2)
-            z1 = compare(d, mn-1)
-            for i in range(mn, mx+1):
+            z2 = compare(d, mn - 2)
+            z1 = compare(d, mn - 1)
+            for i in range(mn, mx + 1):
                 z = compare(d, i)
                 if z2 > z1 and z1 < z:
                     return i
@@ -165,6 +168,6 @@ class PPG():
         hr = self._get_heart_rate()
 
         # Clear out the accumulated data
-        self.data = array.array('b')
+        self.data = array.array("b")
 
         return hr

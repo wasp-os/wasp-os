@@ -15,13 +15,14 @@ _ENABLE = const(0x01)
 _ENABLE_HEN = const(0x80)
 _C1DATAM = const(0x08)
 _C0DATAM = const(0x09)
-_C0DATAH = const(0x0a)
-_PDRIVER = const(0x0c)
-_C1DATAH = const(0x0d)
-_C1DATAL = const(0x0e)
-_C0DATAL = const(0x0f)
+_C0DATAH = const(0x0A)
+_PDRIVER = const(0x0C)
+_C1DATAH = const(0x0D)
+_C1DATAL = const(0x0E)
+_C0DATAL = const(0x0F)
 _RES = const(0x16)
 _HGAIN = const(0x17)
+
 
 class HRS3300:
     def __init__(self, i2c):
@@ -36,7 +37,7 @@ class HRS3300:
         # (partly) 20mA drive, power on, "magic" (datasheet says both
         # "reserved" and "set low nibble to 8" but 0xe gives better results
         # and is used by at least two other HRS3300 drivers
-        w(_PDRIVER, 0x6e)
+        w(_PDRIVER, 0x6E)
 
         # HRS and ALS both in 16-bit mode
         w(_RES, 0x88)
@@ -68,7 +69,7 @@ class HRS3300:
         h = self.read_reg(_C0DATAH)
         l = self.read_reg(_C0DATAL)
 
-        return (m << 8) | ((h & 0x0f) << 4) | (l & 0x0f) | ((l & 0x30) << 12)
+        return (m << 8) | ((h & 0x0F) << 4) | (l & 0x0F) | ((l & 0x30) << 12)
 
     def read_als(self):
         # TODO: Try fusing the read of H & L
@@ -76,7 +77,7 @@ class HRS3300:
         h = self.read_reg(_C1DATAH)
         l = self.read_reg(_C1DATAL)
 
-        return (m << 3) | ((h & 0x3f) << 11) | (l & 0x07)
+        return (m << 3) | ((h & 0x3F) << 11) | (l & 0x07)
 
     def set_gain(self, gain):
         if gain > 64:
@@ -89,9 +90,9 @@ class HRS3300:
     def set_drive(self, drive):
         en = self.read_reg(_ENABLE)
         pd = self.read_reg(_PDRIVER)
-       
-        en = (en & 0xf7) | ((drive & 2) << 2)
-        pd = (pd & 0xbf) | ((drive & 1) << 6)
+
+        en = (en & 0xF7) | ((drive & 2) << 2)
+        pd = (pd & 0xBF) | ((drive & 1) << 6)
 
         self.write_reg(_ENABLE, en)
         self.write_reg(_PDRIVER, pd)

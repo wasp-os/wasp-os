@@ -5,6 +5,7 @@
 ~~~~~~~~~~~~~~~~~~~~~~~~
 """
 
+
 class Signal(object):
     """Simplified Signal class
 

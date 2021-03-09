@@ -8,6 +8,7 @@
 import sys
 import os
 
+
 class LS:
     def __repr__(self):
         self.__call__()
@@ -23,12 +24,14 @@ class LS:
             else:
                 print("% 8d %s" % (st[6], f))
 
+
 class PWD:
     def __repr__(self):
         return os.getcwd()
 
     def __call__(self):
         return self.__repr__()
+
 
 class CLEAR:
     def __repr__(self):
@@ -48,24 +51,29 @@ mv = os.rename
 rm = os.remove
 rmdir = os.rmdir
 
+
 def head(f, n=10):
     with open(f) as f:
         for i in range(n):
             l = f.readline()
-            if not l: break
-            print(l, end='')
+            if not l:
+                break
+            print(l, end="")
+
 
 def cat(f):
     head(f, 1 << 30)
 
+
 def download(path):
     head(f, 1 << 30)
+
 
 def upload(path):
     print("upload mode; Ctrl-C to cancel, Ctrl-D to finish")
     with open(path, "w") as f:
         while 1:
-            print('=== ', end='')
+            print("=== ", end="")
             try:
                 l = input()
             except EOFError:

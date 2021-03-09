@@ -5,8 +5,10 @@ import fonts.sans24 as sans24
 import fonts.sans28 as sans28
 import fonts.sans36 as sans36
 
+
 def height(font):
     return font.height()
+
 
 def width(font, s):
     w = 0
@@ -15,5 +17,3 @@ def width(font, s):
         w += wc + 1
 
     return w
-
-

@@ -4,22 +4,27 @@
 import display
 import time
 
+
 class Tracer(object):
     def __init__(self, *args, **kwargs):
-        print(f'{self.__class__.__name__}.__init__{args} {kwargs}')
+        print(f"{self.__class__.__name__}.__init__{args} {kwargs}")
 
     def __getattr__(self, name):
         if name.upper() == name:
             return name
-        return lambda *args, **kwargs: print(f'{self.__class__.__name__}.{name}{args} {kwargs}')
+        return lambda *args, **kwargs: print(
+            f"{self.__class__.__name__}.{name}{args} {kwargs}"
+        )
+
 
 class ADC(Tracer):
     pass
 
+
 class Pin(object):
-    IN = 'IN'
-    OUT = 'OUT'
-    IRQ_FALLING = 'IRQ_FALLING'
+    IN = "IN"
+    OUT = "OUT"
+    IRQ_FALLING = "IRQ_FALLING"
 
     pins = {}
 
@@ -49,7 +54,7 @@ class Pin(object):
     def value(self, v=None):
         if v is None:
             if not self._quiet:
-                print(f'{self._id}: read {self._value}')
+                print(f"{self._id}: read {self._value}")
             return self._value
         if v:
             if not self._quiet:
@@ -63,8 +68,10 @@ class Pin(object):
     def __call__(self, v=None):
         self.value(v)
 
+
 class PWM(Tracer):
-    FREQ_16MHZ = 'FREQ_16MHZ'
+    FREQ_16MHZ = "FREQ_16MHZ"
+
 
 class SPI(object):
     def __init__(self, id):
@@ -74,7 +81,16 @@ class SPI(object):
         else:
             self.sim = None
 
-    def init(self, baudrate=1000000,  polarity=0, phase=0, bits=8, sck=None, mosi=None, miso=None):
+    def init(
+        self,
+        baudrate=1000000,
+        polarity=0,
+        phase=0,
+        bits=8,
+        sck=None,
+        mosi=None,
+        miso=None,
+    ):
         pass
 
     def write(self, buf):
@@ -83,7 +99,8 @@ class SPI(object):
         else:
             print("Sending data: " + str(buf))
 
-class I2C():
+
+class I2C:
     def __init__(self, id):
         self.id = id
         if id == 0:
@@ -103,7 +120,8 @@ class I2C():
         else:
             raise OSError
 
-class Timer():
+
+class Timer:
     def __init__(self, id, period=1000000):
         self.then = None
         self.period = period
@@ -124,9 +142,11 @@ class Timer():
     def period(self):
         self.time()
 
+
 def lightsleep(ms=10):
     display.tick(Pin.pins)
     time.sleep(ms / 1000)
+
 
 def deepsleep(ms=10):
     lightsleep(ms)

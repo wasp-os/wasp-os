@@ -14,9 +14,11 @@ import wasp
 import machine
 import ppg
 
-class HeartApp():
+
+class HeartApp:
     """Heart rate monitor application."""
-    NAME = 'Heart'
+
+    NAME = "Heart"
 
     def foreground(self):
         """Activate the application."""
@@ -26,8 +28,8 @@ class HeartApp():
         # take long enough it is not needed
         draw = wasp.watch.drawable
         draw.fill()
-        draw.set_color(wasp.system.theme('bright'))
-        draw.string('PPG graph', 0, 6, width=240)
+        draw.set_color(wasp.system.theme("bright"))
+        draw.string("PPG graph", 0, 6, width=240)
 
         wasp.system.request_tick(1000 // 8)
 
@@ -45,23 +47,22 @@ class HeartApp():
         spl = self._hrdata.preprocess(wasp.watch.hrs.read_hrs())
 
         if len(self._hrdata.data) >= 240:
-            draw.set_color(wasp.system.theme('bright'))
-            draw.string('{} bpm'.format(self._hrdata.get_heart_rate()),
-                        0, 6, width=240)
+            draw.set_color(wasp.system.theme("bright"))
+            draw.string("{} bpm".format(self._hrdata.get_heart_rate()), 0, 6, width=240)
 
         # Graph is orange by default...
-        color = wasp.system.theme('spot1')
+        color = wasp.system.theme("spot1")
 
         # If the maths goes wrong lets show it in the chart!
         if spl > 100 or spl < -100:
-            color = 0xffff
+            color = 0xFFFF
         if spl > 104 or spl < -104:
             spl = 0
         spl += 104
 
         x = self._x
-        draw.fill(0, x, 32, 1, 208-spl)
-        draw.fill(color, x, 239-spl, 1, spl)
+        draw.fill(0, x, 32, 1, 208 - spl)
+        draw.fill(color, x, 239 - spl, 1, spl)
         x += 2
         if x >= 240:
             x = 0

@@ -24,42 +24,47 @@ import sys
 
 from apps.pager import PagerApp
 
+
 class HaikuApp(PagerApp):
-    NAME = 'Haiku'
+    NAME = "Haiku"
 
     def __init__(self):
         # Throw an exception if there is no poetry for us to read...
-        open('haiku.txt').close()
+        open("haiku.txt").close()
 
         try:
-            with open('haiku.rle', 'rb') as f:
+            with open("haiku.rle", "rb") as f:
                 self.ICON = f.read()
         except:
             # Leave the default app icon if none is present
             pass
 
-        super().__init__('')
+        super().__init__("")
         self._counter = -4
 
     def foreground(self):
         lines = []
         self._counter += 4
 
-        with open('haiku.txt') as f:
+        with open("haiku.txt") as f:
             for i in range(self._counter):
                 _ = f.readline()
 
-            lines = [ '', ]
+            lines = [
+                "",
+            ]
             for i in range(3):
                 lines.append(f.readline())
 
             if len(lines[2]) == 0:
                 self._counter = 0
                 f.seek(0)
-                lines = [ '', ]
+                lines = [
+                    "",
+                ]
                 for i in range(3):
                     lines.append(f.readline())
 
-        self._msg = '\n'.join(lines)
+        self._msg = "\n".join(lines)
 
         super().foreground()

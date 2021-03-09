@@ -10,6 +10,7 @@ import time
 from machine import Pin
 from watch import rtc
 
+
 class TouchButton:
     """Simple touch controller driver.
 
@@ -24,7 +25,7 @@ class TouchButton:
         self.tp_int = intr
         self.tp_rst = rst
         self.schedule = schedule
-        self.event = array.array('H', (0, 0, 0))
+        self.event = array.array("H", (0, 0, 0))
 
         self._reset()
         self.tp_int.irq(trigger=Pin.IRQ_FALLING, handler=self.get_touch_data)
@@ -40,7 +41,7 @@ class TouchButton:
     def get_touch_data(self, pin_obj):
         """Synthesize a right swipe during interrupt.
         """
-        self.event[0] = 253 # NEXT
+        self.event[0] = 253  # NEXT
 
         if self.schedule:
             self.schedule(self)

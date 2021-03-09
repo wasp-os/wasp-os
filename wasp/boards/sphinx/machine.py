@@ -1,11 +1,14 @@
 # SPDX-License-Identifier: LGPL-3.0-or-later
 # Copyright (C) 2020 Daniel Thompson
 
-class ADC():
+
+class ADC:
     pass
 
-class Pin():
+
+class Pin:
     pass
 
-class PWM():
+
+class PWM:
     pass

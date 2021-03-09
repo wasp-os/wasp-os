@@ -16,14 +16,15 @@ R = const(0b11111_000000_00000)
 G = const(0b00000_111111_00000)
 B = const(0b00000_000000_11111)
 
+
 @micropython.viper
 def _bitblit(bitbuf, pixels, bgfg: int, count: int):
     mv = ptr16(bitbuf)
     px = ptr8(pixels)
 
     # Extract and byte-swap
-    bg = ((bgfg >> 24) & 0xff) + ((bgfg >> 8) & 0xff00)
-    fg = ((bgfg >>  8) & 0xff) + ((bgfg & 0xff) << 8)
+    bg = ((bgfg >> 24) & 0xFF) + ((bgfg >> 8) & 0xFF00)
+    fg = ((bgfg >> 8) & 0xFF) + ((bgfg & 0xFF) << 8)
 
     bitselect = 0x80
     pxp = 0
@@ -41,34 +42,37 @@ def _bitblit(bitbuf, pixels, bgfg: int, count: int):
             bitselect = 0x80
             pxp += 1
 
+
 @micropython.viper
 def _clut8_rgb565(i: int) -> int:
     if i < 216:
-        rgb565  = (( i  % 6) * 0x33) >> 3
+        rgb565 = ((i % 6) * 0x33) >> 3
         rg = i // 6
-        rgb565 += ((rg  % 6) * (0x33 << 3)) & 0x07e0
-        rgb565 += ((rg // 6) * (0x33 << 8)) & 0xf800
+        rgb565 += ((rg % 6) * (0x33 << 3)) & 0x07E0
+        rgb565 += ((rg // 6) * (0x33 << 8)) & 0xF800
     elif i < 252:
         i -= 216
-        rgb565  = (0x7f + (( i  % 3) * 0x33)) >> 3
+        rgb565 = (0x7F + ((i % 3) * 0x33)) >> 3
         rg = i // 3
-        rgb565 += ((0x4c << 3) + ((rg  % 4) * (0x33 << 3))) & 0x07e0
-        rgb565 += ((0x7f << 8) + ((rg // 4) * (0x33 << 8))) & 0xf800
+        rgb565 += ((0x4C << 3) + ((rg % 4) * (0x33 << 3))) & 0x07E0
+        rgb565 += ((0x7F << 8) + ((rg // 4) * (0x33 << 8))) & 0xF800
     else:
         i -= 252
-        gr6 = (0x2c + (0x10 * i)) >> 2
+        gr6 = (0x2C + (0x10 * i)) >> 2
         gr5 = gr6 >> 1
         rgb565 = (gr5 << 11) + (gr6 << 5) + gr5
 
     return rgb565
 
+
 @micropython.viper
 def _fill(mv, color: int, count: int, offset: int):
     p = ptr16(mv)
-    color = (color >> 8) + ((color & 0xff) << 8)
+    color = (color >> 8) + ((color & 0xFF) << 8)
 
-    for x in range(offset, offset+count):
+    for x in range(offset, offset + count):
         p[x] = color
+
 
 def _bounding_box(s, font):
     if not s:
@@ -82,23 +86,25 @@ def _bounding_box(s, font):
 
     return (w, h)
 
+
 @micropython.native
 def _draw_glyph(display, glyph, x, y, bgfg):
     (px, h, w) = glyph
 
-    buf = display.linebuffer[0:2*(w+1)]
-    buf[2*w] = 0
-    buf[2*w + 1] = 0
+    buf = display.linebuffer[0 : 2 * (w + 1)]
+    buf[2 * w] = 0
+    buf[2 * w + 1] = 0
     bytes_per_row = (w + 7) // 8
 
-    display.set_window(x, y, w+1, h)
+    display.set_window(x, y, w + 1, h)
     quick_write = display.quick_write
 
     display.quick_start()
     for row in range(h):
-        _bitblit(buf, px[row*bytes_per_row:], bgfg, w)
+        _bitblit(buf, px[row * bytes_per_row :], bgfg, w)
         quick_write(buf)
     display.quick_end()
+
 
 class Draw565(object):
     """Drawing library for RGB565 displays.
@@ -123,7 +129,7 @@ class Draw565(object):
 
         Default colours are white-on-block (white foreground, black
         background) and the default font is 24pt Sans Serif."""
-        self.set_color(0xffff)
+        self.set_color(0xFFFF)
         self.set_font(fonts.sans24)
 
     def fill(self, bg=None, x=0, y=0, w=None, h=None):
@@ -164,11 +170,11 @@ class Draw565(object):
             quick_write(buf)
             remaining -= sz
         if remaining:
-            quick_write(buf[0:2*remaining])
+            quick_write(buf[0 : 2 * remaining])
         display.quick_end()
 
     @micropython.native
-    def blit(self, image, x, y, fg=0xffff, c1=0x4a69, c2=0x7bef):
+    def blit(self, image, x, y, fg=0xFFFF, c1=0x4A69, c2=0x7BEF):
         """Decode and draw an encoded image.
 
         :param image: Image data in either 1-bit RLE or 2-bit RLE formats. The
@@ -179,12 +185,12 @@ class Draw565(object):
         if len(image) == 3:
             # Legacy 1-bit image
             self.rleblit(image, (x, y), fg)
-        else: #elif image[0] == 2:
+        else:  # elif image[0] == 2:
             # 2-bit RLE image, (255x255, v1)
             self._rle2bit(image, x, y, fg, c1, c2)
 
     @micropython.native
-    def rleblit(self, image, pos=(0, 0), fg=0xffff, bg=0):
+    def rleblit(self, image, pos=(0, 0), fg=0xFFFF, bg=0):
         """Decode and draw a 1-bit RLE image.
 
         .. deprecated:: M2
@@ -196,7 +202,7 @@ class Draw565(object):
 
         display.set_window(pos[0], pos[1], sx, sy)
 
-        buf = display.linebuffer[0:2*sx]
+        buf = display.linebuffer[0 : 2 * sx]
         bp = 0
         color = bg
 
@@ -231,17 +237,17 @@ class Draw565(object):
             sx *= 2
             sy //= 2
 
-        palette = array.array('H', (0, c1, c2, fg))
+        palette = array.array("H", (0, c1, c2, fg))
         next_color = 1
         rl = 0
-        buf = display.linebuffer[0:2*sx]
+        buf = display.linebuffer[0 : 2 * sx]
         bp = 0
 
         display.quick_start()
         for op in rle:
             if rl == 0:
                 px = op >> 6
-                rl = op & 0x3f
+                rl = op & 0x3F
                 if 0 == rl:
                     rl = -1
                     continue
@@ -324,7 +330,7 @@ class Draw565(object):
         for ch in s:
             glyph = font.get_ch(ch)
             _draw_glyph(display, glyph, x, y, bgfg)
-            self.fill(bg, x+glyph[2], y, 1, glyph[1])
+            self.fill(bg, x + glyph[2], y, 1, glyph[1])
             x += glyph[2] + 1
 
         if width:
@@ -359,22 +365,24 @@ class Draw565(object):
         """
         font = self._font
         max = len(s)
-        chunks = [ 0, ]
+        chunks = [
+            0,
+        ]
         end = 0
 
         while end < max:
             start = end
             l = 0
 
-            for i in range(start, max+1):
+            for i in range(start, max + 1):
                 if i >= len(s):
                     break
                 ch = s[i]
-                if ch == '\n':
-                    end = i+1
+                if ch == "\n":
+                    end = i + 1
                     break
-                if ch == ' ':
-                    end = i+1
+                if ch == " ":
+                    end = i + 1
                 (_, h, w) = font.get_ch(ch)
                 l += w + 1
                 if l > width:
@@ -403,7 +411,7 @@ class Draw565(object):
         :param color: Colour to draw line, defaults to the foreground colour
         """
         if color is None:
-            color = self._bgfg & 0xffff
+            color = self._bgfg & 0xFFFF
         px = bytes(((color >> 8) & 0xFF, color & 0xFF)) * (width * width)
         write_data = self._display.write_data
         set_window = self._display.set_window
@@ -414,7 +422,7 @@ class Draw565(object):
         x1 -= dw
         y1 -= dw
 
-        dx =  abs(x1 - x0)
+        dx = abs(x1 - x0)
         sx = 1 if x0 < x1 else -1
         dy = -abs(y1 - y0)
         sy = 1 if y0 < y1 else -1
@@ -437,9 +445,9 @@ class Draw565(object):
                 err += dy
                 x0 += sx
             if e2 <= dx:
-                err += dx;
-                y0 += sy;
-        
+                err += dx
+                y0 += sy
+
     def polar(self, x, y, theta, r0, r1, width=1, color=None):
         """Draw a line using polar coordinates.
 
@@ -487,7 +495,7 @@ class Draw565(object):
         if r > R:
             r = R
 
-        g = (color & G) + (step <<  6)
+        g = (color & G) + (step << 6)
         if g > G:
             g = G
 
@@ -495,7 +503,7 @@ class Draw565(object):
         if b > B:
             b = B
 
-        return (r | g | b)
+        return r | g | b
 
     def darken(self, color, step=1):
         """Get a darker shade from the same palette.
@@ -517,4 +525,4 @@ class Draw565(object):
         bm = color & B
         b = bm - step if bm > step else 0
 
-        return (r | g | b)
+        return r | g | b
