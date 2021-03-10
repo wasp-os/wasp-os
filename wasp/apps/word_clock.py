@@ -185,11 +185,11 @@ class WordClockApp():
 
         chunks = draw.wrap(self._words, 240)
         lines_of_text = len(chunks)-1
-        offset_y=int(((5-lines_of_text/2)*24))
+        offset_y=int(((5-lines_of_text/2)*26))
 
         for i in range(len(chunks)-1):
             sub = self._words[chunks[i]:chunks[i+1]].rstrip()
-            draw.string(sub, 0, offset_y+24*i, 240)        
+            draw.string(sub, 0, offset_y+26*i, 240)        
 
         draw.string('{} {} {}'.format(now[2], month, now[0]),
                 0, 214, width=240)
