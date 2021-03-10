@@ -3,7 +3,7 @@
 # Copyright (C) 2021 Brendan Sleight
 
 
-"""Digital clock
+"""Word clock
 ~~~~~~~~~~~~~~~~
 
 Shows a time as words together with a battery meter and the date.
@@ -64,8 +64,6 @@ class WordClockApp():
         """
         draw = wasp.watch.drawable
         hi =  wasp.system.theme('bright')
-        lo =  wasp.system.theme('mid')
-        mid = draw.lighten(lo, 1)
 
         if redraw:
             now = wasp.watch.rtc.get_localtime()
