@@ -24,33 +24,51 @@ class SoftwareApp():
 
     def foreground(self):
         """Activate the application."""
-        self.db = (
-                ('alarm', wasp.widgets.Checkbox(0, 0, 'Alarm')),
-                ('calc', wasp.widgets.Checkbox(0, 40, 'Calculator')),
-                ('chrono', wasp.widgets.Checkbox(0, 80, 'Chrono')),
-                ('fibonacci_clock', wasp.widgets.Checkbox(0, 120, 'Fibonacci Clock')),
-                ('gameoflife', wasp.widgets.Checkbox(0, 160, 'Game Of Life')),
-                ('musicplayer', wasp.widgets.Checkbox(0, 0, 'Music Player')),
-                ('play2048', wasp.widgets.Checkbox(0, 40, 'Play 2048')),
-                ('snake', wasp.widgets.Checkbox(0, 80, 'Snake Game')),
-                ('flashlight', wasp.widgets.Checkbox(0, 120, 'Torch')),
-                ('testapp', wasp.widgets.Checkbox(0, 160, 'Test')),
-                ('timer', wasp.widgets.Checkbox(0, 0, 'Timer')),
-            )
-        self.si = wasp.widgets.ScrollIndicator()
-        self.page = 0
+
+        def factory(label):
+            nonlocal y
+
+            cb = wasp.widgets.Checkbox(0, y, label)
+            y += 40
+            if y > 160:
+                y = 0
+            return cb
+
+
+        y = 0
+        db = []
+        db.append(('alarm', factory('Alarm')))
+        db.append(('calc', factory('Calculator')))
+        db.append(('chrono', factory('Chrono')))
+        db.append(('fibonacci_clock', factory('Fibonacci Clock')))
+        db.append(('gameoflife', factory('Game Of Life')))
+        db.append(('musicplayer', factory('Music Player')))
+        db.append(('play2048', factory('Play 2048')))
+        db.append(('snake', factory('Snake Game')))
+        db.append(('flashlight', factory('Torch')))
+        db.append(('testapp', factory('Test')))
+        db.append(('timer', factory('Timer')))
 
         # Get the initial state for the checkboxes
-        for _, checkbox in self.db:
+        for _, checkbox in db:
             label = checkbox.label.replace(' ', '')
             for app in wasp.system.launcher_ring:
                 if type(app).__name__.startswith(label):
                     checkbox.state = True
                     break
 
+        self.si = wasp.widgets.ScrollIndicator()
+        self.page = 0
+        self.db = db
+
         self._draw()
         wasp.system.request_event(wasp.EventMask.TOUCH |
                                   wasp.EventMask.SWIPE_UPDOWN)
+
+    def background(self):
+        del self.si
+        del self.page
+        del self.db
 
     def get_page(self):
         i = self.page * 5
