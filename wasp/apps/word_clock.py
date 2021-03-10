@@ -105,15 +105,15 @@ class WordClockApp():
 
         part_day = ""
 
-        hours_a = ["Midnight", "One", "Two", 
-                "Three", "Four", "Five", 
-                "Six", "Seven", "Eight", 
-                "Nine", "Ten", "Eleven", 
-                "Twelve",
-                "One", "Two", 
-                "Three", "Four", "Five", 
-                "Six", "Seven", "Eight", 
-                "Nine", "Ten", "Eleven"]
+        hours_a = ["midnight", "one", "two", 
+                "three", "four", "five", 
+                "six", "seven", "eight", 
+                "nine", "ten", "eleven", 
+                "twelve",
+                "one", "two", 
+                "three", "four", "five", 
+                "six", "seven", "sight", 
+                "nine", "een", "eleven"]
         if (self._min > 32):
             hour = hours_a[(self._hour + 1) % 24]
         else:
@@ -177,6 +177,10 @@ class WordClockApp():
         self._words = self._words + hour + "\n" 
         if (part_day !=""):
             self._words = self._words + part_day 
+        
+        # No capitilise in Micropython 
+        # ASCII convert 
+        self._words = chr(ord(self._words[0])-32) + self._words[1:]
         
         # Some phases may be 5 lines long, some may be 1 
         draw.fill(0, 0, 48)
