@@ -118,7 +118,7 @@ class WordClockApp():
             hour = hours_a[(self._hour + 1) % 24]
         else:
             hour = hours_a[self._hour % 24]
-        if (hour != "Midnight" and hour != "Twelve"):
+        if (hour != "midnight" and hour != "twelve"):
             if (self._hour >= 22):
                 part_day = " at night"
             elif (self._hour >= 18):
