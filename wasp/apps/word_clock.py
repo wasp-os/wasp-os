@@ -111,7 +111,7 @@ class WordClockApp():
                 "one", "two", 
                 "three", "four", "five", 
                 "six", "seven", "eight", 
-                "nine", "een", "eleven"]
+                "nine", "ten", "eleven"]
         if (self._min > 32):
             hour = hours_a[(self._hour + 1) % 24]
         else:
