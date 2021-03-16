@@ -189,6 +189,9 @@ def handle_exec(c, fname):
     print_log(log)
     log.close()
 
+def handle_battery_level(c):
+    print(f'Battery: {c.run_command("watch.battery.level()")}%')
+    
 def handle_memory_free(c):
     # wasp namespace to avoid having to import into the global space
     print(f'Before GC: {c.run_command("wasp.gc.mem_free()"):7}')
@@ -329,6 +332,8 @@ if __name__ == '__main__':
             description='Wasp-os command and control client')
     parser.add_argument('--as', dest='upload_as', default=None,
             help="Filename to use on the target (e.g. wasptool --upload docs/main/chrono.py --as main.py")
+    parser.add_argument('--battery', action='store_true',
+            help="Report remaining battery charge")
     parser.add_argument('--bootloader', action='store_true',
             help="Reboot into the bootloader mode for OTA update")
     parser.add_argument('--binary', action='store_true',
@@ -441,5 +446,8 @@ if __name__ == '__main__':
     if args.bootloader:
         handle_reset(console, ota=True)
         sys.exit(0)
+        
+    if args.battery:
+        handle_battery_level(console)
 
     console.unsync()
