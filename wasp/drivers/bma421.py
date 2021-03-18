@@ -28,7 +28,7 @@ class BMA421:
         dev.init()
         dev.set_command_register(0xb6)
         time.sleep(0.05)
-        dev.set_reg(bma42x.NV_CONFIG_ADDR, 6);
+        dev.set_reg(bma42x.NV_CONFIG_ADDR, 6)
 
         # Configure the sensor for basic step counting
         dev.write_config_file()
@@ -49,3 +49,12 @@ class BMA421:
         if value != 0:
             raise ValueError()
         self._dev.reset_step_counter()
+
+    def read_xyz(self):
+        """Report the orientation of the device"""
+        data_tuple = bma42x.BMA42X.read_accel_xyz(self._dev)
+        return (
+            data_tuple[1],
+            data_tuple[0],
+            -data_tuple[2]
+        )
