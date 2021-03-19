@@ -110,7 +110,7 @@ class MusicPlayerApp(object):
         wasp.watch.drawable.fill()
         self.draw()
         wasp.system.request_tick(1000)
-        wasp.system.request_event(wasp.EventMask.SWIPE_LEFTRIGHT |
+        wasp.system.request_event(wasp.EventMask.SWIPE_UPDOWN |
                                   wasp.EventMask.TOUCH)
 
     def background(self):
