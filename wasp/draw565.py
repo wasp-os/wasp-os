@@ -370,15 +370,19 @@ class Draw565(object):
                 if i >= len(s):
                     break
                 ch = s[i]
-                if ch == '\n':
-                    end = i+1
-                    break
-                if ch == ' ':
-                    end = i+1
                 (_, h, w) = font.get_ch(ch)
                 l += w + 1
                 if l > width:
                     break
+
+                # Break the line immediately if requested
+                if ch == '\n':
+                    end = i+1
+                    break
+
+                # Remember the right-most place we can cleanly break the line
+                if ch == ' ':
+                    end = i+1
             if end <= start:
                 end = i
             chunks.append(end)
