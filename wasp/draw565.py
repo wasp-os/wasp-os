@@ -518,3 +518,71 @@ class Draw565(object):
         b = bm - step if bm > step else 0
 
         return (r | g | b)
+
+
+    def _encode565(self,r,g,b):
+        px = ((int(r / 255 * 31) << 11) | (int(g / 255 * 63) << 5) | (int(b / 255 * 31)))
+        return(px)
+            
+    def _read_until_newline_not_comment(self, f):
+        b = bytearray()
+        while len(b) < 512:
+            nb = f.read(1)
+            if(nb == b'\n'):
+                break
+            b = b + nb
+        if(len(b) >= 512):
+            raise ValueError('Long comment in P6 file')
+        if(b[0]  == 35):
+            b = read_until_newline_not_comment(f)
+        return b
+    
+    def fill_ppm(self, ppm, enlarge=240):
+        """write ppm image format to screen 
+
+        The ppm format is a basic format, but combined with the 
+        fill function, for a photo-like image can be more efficient 
+        than RLE. 
+
+        Example:
+
+        .. code-block:: python
+
+            draw = wasp.watch.drawable
+            draw.fill_ppm('/tmp/image.ppm')
+
+        :param ppm: file location of P6 raw format image e.g /flash/image.ppm
+        :param enlarge: to enlarge the size of ppm - default 240
+        """
+        # Got to be care bytearray must be less than ~594
+        # read in small amounts. 
+        f = open(ppm,  'rb')
+        ppm_type = f.read(3)
+        if(ppm_type != b'P6\n'):
+            raise ValueError('Not P6 format')
+        x_y = self._read_until_newline_not_comment(f)
+        max_value = int(self._read_until_newline_not_comment(f).decode())
+        x = int(x_y.decode().split(' ')[0])
+        y = int(x_y.decode().split(' ')[1])
+        if(x>y):
+            pixel_size = int(enlarge/x)
+        else:
+            pixel_size = int(enlarge/y)            
+        if(pixel_size<1):
+            raise ValueError('Too many pixels')
+    
+        self.fill()
+        ppm_data = bytearray()
+        for my in range(0,y):
+            for mx in range(0,x):
+                ppm_data = f.read(3)
+                self.fill(self._encode565(int(ppm_data[0]), 
+                                 int(ppm_data[1]), 
+                                 int(ppm_data[2])
+                                 ), 
+                        mx*pixel_size, 
+                        my*pixel_size, 
+                        pixel_size, 
+                        pixel_size)
+        f.close()
+
