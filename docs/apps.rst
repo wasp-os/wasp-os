@@ -36,6 +36,8 @@ Built-in
 
 .. automodule:: apps.pager
 
+.. automodule:: apps.phone
+
 Applications
 ------------
 

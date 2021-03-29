@@ -56,6 +56,8 @@ def GB(cmd):
             wasp.system.toggle_music(cmd)
         elif task == 'musicinfo':
             wasp.system.set_music_info(cmd)
+        elif task == 'call':
+            wasp.system.set_phone_state(cmd)
         else:
             pass
             #_info('Command "{}" is not implemented'.format(cmd))
