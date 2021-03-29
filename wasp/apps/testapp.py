@@ -166,6 +166,7 @@ class TestApp():
     def _benchmark_string(self):
         draw = wasp.watch.drawable
         draw.fill(0, 0, 30, 240, 240-30)
+        draw.set_color(0xffff, 0x4208)
         self.scroll.draw()
         t = machine.Timer(id=1, period=8000000)
         t.start()
