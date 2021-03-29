@@ -87,8 +87,8 @@ def _draw_glyph(display, glyph, x, y, bgfg):
     (px, h, w) = glyph
 
     buf = display.linebuffer[0:2*(w+1)]
-    buf[2*w] = 0
-    buf[2*w + 1] = 0
+    buf[2*w] = bgfg >> 24
+    buf[2*w + 1] = (bgfg >> 16) & 0xff
     bytes_per_row = (w + 7) // 8
 
     display.set_window(x, y, w+1, h)
@@ -324,7 +324,6 @@ class Draw565(object):
         for ch in s:
             glyph = font.get_ch(ch)
             _draw_glyph(display, glyph, x, y, bgfg)
-            self.fill(bg, x+glyph[2], y, 1, glyph[1])
             x += glyph[2] + 1
 
         if width:
