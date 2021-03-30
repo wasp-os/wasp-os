@@ -224,6 +224,10 @@ application (and the "blank" white screen is a torch application):
    :alt: Countdown timer application running in the wasp-os simulator
    :width: 179
 
+.. image:: res/WeatherApp.png
+   :alt: Weather application running in the wasp-os simulator
+   :width: 179
+
 .. image:: res/WordClkApp.png
    :alt: Shows a time as words in the wasp-os simulator
    :width: 179

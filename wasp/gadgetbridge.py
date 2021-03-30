@@ -56,6 +56,8 @@ def GB(cmd):
             wasp.system.toggle_music(cmd)
         elif task == 'musicinfo':
             wasp.system.set_music_info(cmd)
+        elif task == 'weather':
+            wasp.system.set_weather_info(cmd)
         else:
             pass
             #_info('Command "{}" is not implemented'.format(cmd))

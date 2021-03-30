@@ -24,6 +24,7 @@ manifest = (
     'apps/snake.py',
     'apps/testapp.py',
     'apps/timer.py',
+    'apps/weather.py',
     'apps/word_clock.py',
     'fonts/__init__.py',
     'fonts/clock.py',

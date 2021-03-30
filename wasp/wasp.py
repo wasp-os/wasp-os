@@ -116,6 +116,7 @@ class Manager():
         self.notifications = {}
         self.musicstate = {}
         self.musicinfo = {}
+        self.weatherinfo = {}
 
         self._theme = (
                 b'\x7b\xef'     # ble
@@ -313,6 +314,9 @@ class Manager():
 
     def set_music_info(self, info):
         self.musicinfo = info
+
+    def set_weather_info(self, info):
+        self.weatherinfo = info
 
     def set_alarm(self, time, action):
         """Queue an alarm.
