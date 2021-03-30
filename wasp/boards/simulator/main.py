@@ -13,6 +13,14 @@ wasp.system.set_music_info({
         'artist': 'Dreams of Bamboo',
     })
 
+wasp.system.set_weather_info({
+    'temp': '22',
+    'hum': '100%',
+    'txt': 'Cloudy',
+    'wind': '25km/h',
+    'loc': 'Toronto'
+})
+
 
 # Increase the display blanking time to avoid spamming the console
 # with backlight activations.

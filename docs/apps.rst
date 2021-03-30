@@ -53,6 +53,8 @@ Applications
 
 .. automodule:: apps.timer
 
+.. automodule:: apps.weather
+
 Games
 -----
 
