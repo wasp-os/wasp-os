@@ -507,6 +507,8 @@ class Manager():
                 self._tick()
             except KeyboardInterrupt:
                 raise
+            except MemoryError:
+                self.switch(PagerApp("Your watch is low on memory.\n\nYou may want to reboot."))
             except Exception as e:
                 # Only print the exception if the watch provides a way to do so!
                 if 'print_exception' in dir(watch):
@@ -523,6 +525,8 @@ class Manager():
         self._scheduled = False
         try:
             self._tick()
+        except MemoryError:
+            self.switch(PagerApp("Your watch is low on memory.\n\nYou may want to reboot."))
         except Exception as e:
             # Only print the exception if the watch provides a way to do so!
             if 'print_exception' in dir(watch):
