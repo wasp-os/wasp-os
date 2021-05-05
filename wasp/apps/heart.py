@@ -8,6 +8,28 @@ A graphing heart rate monitor using a PPG sensor.
 
 .. figure:: res/HeartApp.png
     :width: 179
+
+This program also implements some (entirely optional) debug features to
+store the raw heart data to the filesystem so that the samples can be used
+to further refine the heart rate detection algorithm.
+
+To enable the logging feature select the heart rate application using the
+watch UI and then run the following command via wasptool:
+
+.. code-block:: sh
+
+    ./tools/wasptool --eval 'wasp.system.app.debug = True'
+
+Once debug has been enabled then the watch will automatically log heart
+rate data whenever the heart rate application is running (and only
+when it is running). Setting the debug flag to False will disable the
+logging when the heart rate monitor next exits.
+
+Finally to download the logs for analysis try:
+
+.. code-block:: sh
+
+    ./tools/wasptool --pull hrs.data
 """
 
 import wasp
@@ -17,6 +39,10 @@ import ppg
 class HeartApp():
     """Heart rate monitor application."""
     NAME = 'Heart'
+
+    def __init__(self):
+        self._debug = False
+        self._hrdata = None
 
     def foreground(self):
         """Activate the application."""
@@ -32,11 +58,13 @@ class HeartApp():
         wasp.system.request_tick(1000 // 8)
 
         self._hrdata = ppg.PPG(wasp.watch.hrs.read_hrs())
+        if self._debug:
+            self._hrdata.enable_debug()
         self._x = 0
 
     def background(self):
         wasp.watch.hrs.disable()
-        del self._hrdata
+        self._hrdata = None
 
     def _subtick(self, ticks):
         """Notify the application that its periodic tick is due."""
@@ -87,3 +115,13 @@ class HeartApp():
 
         t.stop()
         del t
+
+    @property
+    def debug(self):
+        return self._debug
+
+    @debug.setter
+    def debug(self, value):
+        self._debug = value
+        if value and self._hrdata:
+            self._hrdata.enable_debug()

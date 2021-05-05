@@ -10,6 +10,7 @@ raw PPG signals into something useful.
 
 import array
 import micropython
+import watch
 
 @micropython.viper
 def _compare(d1, d2, count: int, shift: int) -> int:
@@ -94,6 +95,7 @@ class PPG():
     def __init__(self, spl):
         self._offset = spl
         self.data = array.array('b')
+        self.debug = None
 
         self._hpf = Biquad(0.87033078, -1.74066156, 0.87033078,
                                        -1.72377617, 0.75754694)
@@ -106,6 +108,8 @@ class PPG():
 
         Must be called at 24Hz for accurate heart rate calculations.
         """
+        if self.debug != None:
+            self.debug.append(spl)
         spl -= self._offset
         spl = self._hpf.step(spl)
         spl = self._agc.step(spl)
@@ -167,4 +171,18 @@ class PPG():
         # Clear out the accumulated data
         self.data = array.array('b')
 
+        # Dump the debug data
+        if self.debug:
+            with open('hrs.data', 'ab') as f:
+                # Re-sync marker
+                f.write(b'\xff\xff')
+                now = watch.rtc.get_localtime()
+                f.write(array.array('H', now[:6]))
+                f.write(self.debug)
+            self.debug = array.array('H')
+
         return hr
+
+    def enable_debug(self):
+        if self.debug == None:
+            self.debug = array.array('H')
