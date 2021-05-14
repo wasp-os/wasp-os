@@ -64,10 +64,14 @@ class AlarmApp():
         self.hours.value = 7
         self.ringing = False
 
+        self.snooze_button = widgets.Button(0, 24, 240, 24, "snooze")
+        self.dismiss_button = widgets.Button(0, 200, 240, 24, "dismiss")
+
     def foreground(self):
         """Activate the application."""
         self._draw()
-        wasp.system.request_event(wasp.EventMask.TOUCH)
+        wasp.system.request_event(wasp.EventMask.TOUCH |
+                                  wasp.EventMask.BUTTON)
         wasp.system.request_tick(1000)
         if self.active.state:
             wasp.system.cancel_alarm(self.current_alarm, self._alert)
@@ -88,14 +92,34 @@ class AlarmApp():
         else:
             wasp.system.bar.update()
 
+    def _snooze(self):
+        wasp.system.cancel_alarm(self.current_alarm, self._alert)
+        self.minutes.value += 5
+        self._set_current_alarm()
+
+    def press(self, button, state):
+        if self.ringing and button == 255 and state == 1:
+            self._snooze()
+            self.ringing = False
+        return True
+
     def touch(self, event):
         """Notify the application of a touchscreen touch event."""
         if self.ringing:
-            mute = wasp.watch.display.mute
-            self.ringing = False
-            mute(True)
-            self._draw()
-            mute(False)
+            if self.dismiss_button.touch(event) or \
+               self.snooze_button.touch(event):
+                self.ringing = False
+
+            if self.dismiss_button.touch(event):
+                self.active.state = False
+                wasp.system.cancel_alarm(self.current_alarm, self._alert)
+                wasp.watch.drawable.set_color(0)  # Black
+                self._draw()
+
+            if self.snooze_button.touch(event):
+                self._snooze()
+                wasp.system.navigate(wasp.EventType.HOME)
+
         elif self.hours.touch(event) or self.minutes.touch(event) or \
              self.active.touch(event):
             pass
@@ -121,6 +145,8 @@ class AlarmApp():
             draw.set_font(fonts.sans24)
             draw.string("Alarm", 0, 150, width=240)
             draw.blit(icon, 73, 50)
+            self.dismiss_button.draw()
+            self.snooze_button.draw()
 
     def _alert(self):
         self.ringing = True
