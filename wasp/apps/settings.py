@@ -28,6 +28,16 @@ class SettingsApp():
     NAME = 'Settings'
     ICON = icons.settings
 
+    # TODO: dictionary / set instead of a tuple
+    # TODO: should be static?
+    FACES = (
+        ('clock', 'Clock'),
+        ('chrono', 'Chrono'),
+        ('dual_clock', 'Dual Clock'),
+        ('fibonacci_clock', 'Fibonacci Clock'),
+        ('word_clock', 'Word Clock'),
+    )
+
     def __init__(self):
         self._slider = wasp.widgets.Slider(3, 10, 90)
         self._nfy_slider = wasp.widgets.Slider(3, 10, 90)
@@ -37,9 +47,15 @@ class SettingsApp():
         self._dd = wasp.widgets.Spinner(20, 60, 1, 31, 1)
         self._mm = wasp.widgets.Spinner(90, 60, 1, 12, 1)
         self._yy = wasp.widgets.Spinner(160, 60, 20, 60, 2)
-        self._settings = ['Brightness', 'Notification Level', 'Time', 'Date']
+        self._settings = ['Brightness', 'Notification Level', 'Time', 'Date', 'Watch Face']
         self._sett_index = 0
         self._current_setting = self._settings[0]
+        self._current_face_index = 0
+        self._face_check_boxes = tuple(
+            wasp.widgets.Checkbox(0, (y + 1) * 40, label)
+            for (y, (_, label)) in enumerate(self.FACES)
+        )
+        self._face_check_boxes[0].state = True
 
     def foreground(self):
         self._slider.value = wasp.system.brightness - 1
@@ -68,6 +84,13 @@ class SettingsApp():
                 now[1] = self._mm.value
                 now[2] = self._dd.value
                 wasp.watch.rtc.set_localtime(now)
+        elif self._current_setting == 'Watch Face':
+            self._face_check_boxes[self._current_face_index].state = False
+            self._face_check_boxes[self._current_face_index].update()
+            for i in self._face_check_boxes:
+                if i.touch(event):
+                    break
+
         self._update()
 
     def swipe(self, event):
@@ -115,6 +138,11 @@ class SettingsApp():
             self._dd.draw()
             draw.set_font(fonts.sans24)
             draw.string('DD    MM    YY',0,180, width=240)
+        elif self._current_setting == 'Watch Face':
+            assert len(self._face_check_boxes) < 6, \
+                "Not enough place to show all faces in a single page"
+            for i in self._face_check_boxes:
+                i.draw()
         self._scroll_indicator.draw()
         self._update()
         mute(False)
@@ -140,3 +168,23 @@ class SettingsApp():
                 say = "Silent"
             self._nfy_slider.update()
             draw.string(say, 0, 150, width=240)
+        elif self._current_setting == 'Watch Face':
+            for (i, cb) in enumerate(self._face_check_boxes):
+                if cb.state:
+                    if self._current_face_index != i:
+                        self._current_face_index = i
+                        module, app_class = \
+                            self.FACES[self._current_face_index]
+                        app_class = app_class.replace(' ', '')
+                        wasp.system.register(
+                            'apps.{}.{}App'.format(module, app_class),
+                            quick_ring=True
+                        )
+
+                        # Set the new app as the clock app.
+                        del wasp.system.quick_ring[0]
+                        last = wasp.system.quick_ring[-1]
+                        wasp.system.quick_ring.remove(last)
+                        wasp.system.quick_ring.insert(0, last)
+
+                    break
