@@ -134,4 +134,4 @@ dist: docs
 	(cd $(DIST); ln -s docs/_images/ res)
 	find $(DIST) -name __pycache__ | xargs $(RM) -r
 	tar -C .. -zcf $(DIST).tar.gz $(notdir $(DIST))
-
+	(cd ..; zip -9r $(DIST).zip $(notdir $(DIST)))
