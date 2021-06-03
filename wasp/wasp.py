@@ -18,6 +18,7 @@ import gc
 import machine
 import micropython
 import steplogger
+import sys
 import watch
 import widgets
 
@@ -166,16 +167,21 @@ class Manager():
                 # an exception starting one of the apps...
                 pass
 
-    def register(self, app, quick_ring=False):
+    def register(self, app, quick_ring=False, watch_face=False):
         """Register an application with the system.
 
         :param object app: The application to regsister
         """
         if isinstance(app, str):
-            exec('import ' + app[:app.rindex('.')])
+            modname = app[:app.rindex('.')]
+            exec('import ' + modname)
             app = eval(app + '()')
+            exec('del ' + modname)
+            exec('del sys.modules["' + modname + '"]')
 
-        if quick_ring == True:
+        if watch_face:
+            self.quick_ring[0] = app
+        elif quick_ring:
             self.quick_ring.append(app)
         else:
             self.launcher_ring.append(app)
