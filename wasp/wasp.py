@@ -30,6 +30,7 @@ from apps.settings import SettingsApp
 from apps.steps import StepCounterApp
 from apps.software import SoftwareApp
 from apps.stopwatch import StopwatchApp
+from apps.phone import PhoneApp
 
 class EventType():
     """Enumerated interface actions.
@@ -117,6 +118,8 @@ class Manager():
         self.notifications = {}
         self.musicstate = {}
         self.musicinfo = {}
+        self.call = PhoneApp()
+        self.phonestate = {}
 
         self._theme = (
                 b'\x7b\xef'     # ble
@@ -319,6 +322,12 @@ class Manager():
 
     def set_music_info(self, info):
         self.musicinfo = info
+
+    def set_phone_state(self, info):
+         self.phonestate = info
+         if(self.phonestate.get("cmd") == "start" or self.phonestate.get("cmd") == "incoming"):
+            self.wake()
+            self.switch(self.call)
 
     def set_alarm(self, time, action):
         """Queue an alarm.

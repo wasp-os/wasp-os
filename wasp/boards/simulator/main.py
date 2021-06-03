@@ -13,6 +13,12 @@ wasp.system.set_music_info({
         'artist': 'Dreams of Bamboo',
     })
 
+wasp.system.set_phone_state({
+        'cmd': 'end',
+        'name': '5555555555',
+        'number': 'Unknown Caller',
+    })
+
 
 # Increase the display blanking time to avoid spamming the console
 # with backlight activations.

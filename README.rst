@@ -167,6 +167,10 @@ simulator:
    :alt: Software selection app running on the wasp-os simulator
    :width: 179
 
+.. image:: res/PhoneApp.png
+   :alt: Phone application running on the wasp-os simulator
+   :width: 179
+
 
 wasp-os also contains a library of additional applications for you to choose.
 These are disabled by default but can be easily enabled using the Software
