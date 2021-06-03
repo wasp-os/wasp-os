@@ -1,4 +1,6 @@
 *.hex
+*.patch
+*.steps
 *.zip
 .*.swp
 __pycache__
