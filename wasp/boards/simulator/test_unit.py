@@ -53,7 +53,7 @@ def test_font_width(draw):
     for f in (fonts.sans24, fonts.sans28, fonts.sans36):
         draw.set_font(f)
 
-        assert 3 == draw.bounding_box('0000')[0] % 4
+        assert 0 == draw.bounding_box('0000')[0] % 4
 
         if f.max_ch() >= 90:
             assert draw.bounding_box('IIII')[0] < draw.bounding_box('WWWW')[0]
