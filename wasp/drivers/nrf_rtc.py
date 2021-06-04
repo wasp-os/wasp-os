@@ -45,6 +45,7 @@ class RTC(object):
             self._uptime = 0
             self.set_localtime((2020, 3, 1, 3, 0, 0, 0, 0))
 
+    @micropython.native
     def update(self):
         """Check for counter updates.
 
@@ -59,10 +60,12 @@ class RTC(object):
 
         self.lastcount += split
         self.lastcount &= (1 << 24) - 1   
+        uptime = self._uptime
         self._uptime += split
         machine.mem32[0x200039c8] = self._uptime * 125
 
-        return True
+        # Has the seconds count changed
+        return bool((self._uptime ^ uptime) & 0x08)
 
     def set_localtime(self, t):
         """Set the current wall time.
@@ -103,6 +106,7 @@ class RTC(object):
         localtime = self.get_localtime()
         return localtime[3:6]
 
+    @micropython.native
     def time(self):
         """Get time in the same format as time.time"""
         return self.offset + (self._uptime >> 3)

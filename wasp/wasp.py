@@ -430,6 +430,7 @@ class Manager():
 
         watch.touch.reset_touch_data()
 
+    @micropython.native
     def _tick(self):
         """Handle the system tick.
 
