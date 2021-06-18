@@ -73,12 +73,14 @@ Community
 The wasp-os community is centred around the
 `github project <https://github.com/daniel-thompson/wasp-os>`_ and is
 supplemented with instant messaging via the #wasp-os IRC channel at
-freenode.net.
+libera.chat .
 
-If you are unfamiliar with IRC we recommend the
-`offical freenode web client <https://webchat.freenode.net/#wasp-os>`_. Choose
-a nickname, leave *I have a password* unchecked, set the *Channel* to
-**#wasp-os** and click **Start**. That's it!
+If you are unfamiliar with IRC and don't have a preferred client then
+we recommend connecting to libera.chat using the
+`matrix/IRC bridge <https://app.element.io/#/room/#wasp-os:libera.chat>`_.
+The matrix bridge will allow us to receive messages whilst offline. Follow
+the link above and, if you do not already have a matrix account, register
+yourself. That should be enough to get you chatting!
 
 Videos
 ------
