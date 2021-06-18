@@ -6,6 +6,7 @@
 """
 
 import machine
+import micropython
 import time
 
 #class Stim(object):
