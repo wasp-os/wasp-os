@@ -4,6 +4,7 @@
 """Generic lithium ion battery driver
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 """
+import micropython
 from machine import Pin, ADC
 
 class Battery(object):
@@ -26,6 +27,7 @@ class Battery(object):
         self._charging = charging
         self._power = power
 
+    @micropython.native
     def charging(self):
         """Get the charging state of the battery.
 

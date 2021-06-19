@@ -6,6 +6,7 @@
 """
 
 import array
+import micropython
 import time
 from machine import Pin
 from watch import rtc
@@ -45,6 +46,7 @@ class TouchButton:
         if self.schedule:
             self.schedule(self)
 
+    @micropython.native
     def get_event(self):
         """Receive a touch event.
 
