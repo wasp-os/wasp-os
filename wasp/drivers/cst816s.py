@@ -36,6 +36,12 @@ class CST816S:
         self.tp_rst.on()
         time.sleep_ms(50)
 
+    def version(self):
+        self.wake()
+        v = self.i2c.readfrom_mem(21, 0xa6, 4)
+        self.sleep()
+        return v
+
     def get_touch_data(self, pin_obj):
         """Receive a touch event by interrupt.
 
