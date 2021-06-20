@@ -21,8 +21,8 @@ class StopwatchApp():
     ICON = icons.app
 
     def __init__(self):
+        self._timer = wasp.widgets.Stopwatch(120-36)
         self._reset()
-        self._count = 0
 
     def foreground(self):
         """Activate the application."""
@@ -53,34 +53,27 @@ class StopwatchApp():
         if not state:
             return
 
-        if self._started_at:
-            self._update()
-            self._started_at = 0
+        if self._timer.started:
+            self._timer.stop()
         else:
-            uptime = wasp.watch.rtc.get_uptime_ms()
-            uptime //= 10
-            self._started_at = uptime - self._count
-            self._update()
+            self._timer.start()
 
     def touch(self, event):
-        if self._started_at:
-            self._update()
-            self._splits.insert(0, self._count)
+        if self._timer.started:
+            self._splits.insert(0, self._timer.count)
             del self._splits[4:]
             self._nsplits += 1
         else:
             self._reset()
-            self._update()
 
+        self._update()
         self._draw_splits()
 
     def tick(self, ticks):
         self._update()
 
     def _reset(self):
-        self._started_at = 0
-        self._count = 0
-        self._last_count = -1
+        self._timer.reset()
         self._splits = []
         self._nsplits = 0
 
@@ -114,41 +107,10 @@ class StopwatchApp():
         draw = wasp.watch.drawable
         draw.fill()
 
-        self._last_count = -1
-        self._update()
         wasp.system.bar.draw()
+        self._timer.draw()
         self._draw_splits()
 
     def _update(self):
-        # Before we do anything else let's make sure _count is
-        # up to date
-        if self._started_at:
-            uptime = wasp.watch.rtc.get_uptime_ms()
-            uptime //= 10
-            self._count = uptime - self._started_at
-            if self._count > 999*60*100:
-                self._reset()
-
-        # Update the statusbar
         wasp.system.bar.update()
-
-        if self._last_count != self._count:
-            centisecs = self._count
-            secs = centisecs // 100
-            centisecs %= 100
-            minutes = secs // 60
-            secs %= 60
-
-            t1 = '{}:{:02}'.format(minutes, secs)
-            t2 = '{:02}'.format(centisecs)
-
-            draw = wasp.watch.drawable
-            draw.set_font(fonts.sans36)
-            draw.set_color(draw.lighten(wasp.system.theme('ui'), wasp.system.theme('contrast')))
-            w = fonts.width(fonts.sans36, t1)
-            draw.string(t1, 180-w, 120-36)
-            draw.fill(0, 0, 120-36, 180-w, 36)
-
-            draw.set_font(fonts.sans24)
-            draw.string(t2, 180, 120-36+18, width=46)
-            self._last_count = self._count
+        self._timer.update()

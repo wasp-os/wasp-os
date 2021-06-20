@@ -80,7 +80,7 @@ def test_stopwatch(system):
 
     wasp.watch.button.value(0)
     system.step()
-    assert(system.app._started_at > 0)
+    assert(system.app._timer._started_at > 0)
     wasp.watch.button.value(1)
 
     system.step()
@@ -89,7 +89,7 @@ def test_stopwatch(system):
 
     wasp.watch.button.value(0)
     system.step()
-    assert(system.app._started_at == 0)
+    assert(system.app._timer._started_at == 0)
     wasp.watch.button.value(1)
 
     system.step()
