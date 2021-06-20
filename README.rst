@@ -145,6 +145,10 @@ simulator:
    :alt: Digital clock application running on the wasp-os simulator
    :width: 179
 
+.. image:: res/DemoApp.png
+   :alt: Simple always-on demo for showing off wasp-os at conferences and shows
+   :width: 179
+
 .. image:: res/HeartApp.png
    :alt: Heart rate application running on the wasp-os simulator
    :width: 179

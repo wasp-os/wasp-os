@@ -45,6 +45,8 @@ Applications
 
 .. automodule:: apps.calc
 
+.. automodule:: apps.demo
+
 .. automodule:: apps.flashlight
 
 .. automodule:: apps.haiku

@@ -8,6 +8,19 @@ This demo is simply an alternating sweep of the Pine64 and
 MicroPython logos. It cycles through a variety of colours
 and swaps between the logos every 5 images (so if you change
 anything make sure len(colors) is not a multiple of 5).
+
+.. figure:: res/DemoApp.png
+    :width: 179
+
+The demo also includes code to keep the devie awake making it
+suitable to run as an always-on application to demonstrate wasp-os at
+conferences and shows.
+
+.. note::
+
+    Due to it's niche purpose and relatively large size this app is not
+    included by default in the flash images. It must be separately installed
+    and enabled.
 """
 
 import wasp
