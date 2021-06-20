@@ -22,15 +22,9 @@ import sys
 import watch
 import widgets
 
-from apps.clock import ClockApp
-from apps.faces import FacesApp
-from apps.heart import HeartApp
 from apps.launcher import LauncherApp
 from apps.pager import PagerApp, CrashApp, NotificationApp
-from apps.settings import SettingsApp
 from apps.steps import StepCounterApp
-from apps.software import SoftwareApp
-from apps.stopwatch import StopwatchApp
 
 class EventType():
     """Enumerated interface actions.
@@ -149,39 +143,62 @@ class Manager():
         self._scheduled = False
         self._scheduling = False
 
-        # TODO: Eventually these should move to main.py
-        for app, qr in ( (ClockApp, True),
-                         (StepCounterApp, True),
-                         (StopwatchApp, True),
-                         (HeartApp, True),
-                         (FacesApp, False),
-                         (SettingsApp, False),
-                         (SoftwareApp, False),
-                       ):
-            try:
-                a = app()
+    def secondary_init(self):
+        if not self.app:
+            # Register default apps if main hasn't put anything on the quick ring
+            if not self.quick_ring:
+                self.register_defaults()
 
-                # Special case for watches with working step counters!
-                if isinstance(a, StepCounterApp):
-                    self.steps = steplogger.StepLogger(self)
+            # System start up...
+            watch.display.poweron()
+            watch.display.mute(True)
+            watch.backlight.set(self._brightness)
+            self.sleep_at = watch.rtc.uptime + 90
+            if watch.free:
+                gc.collect()
+                free = gc.mem_free()
 
-                self.register(a, qr)
-            except:
-                # Let's not bring the whole device down just because there's
-                # an exception starting one of the apps...
-                pass
+            self.switch(self.quick_ring[0])
 
-    def register(self, app, quick_ring=False, watch_face=False):
+    def register_defaults(self):
+        """Register the default applications."""
+        self.register('apps.clock.ClockApp', True, no_except=True)
+        self.register('apps.steps.StepCounterApp', True, no_except=True)
+        self.register('apps.stopwatch.StopwatchApp', True, no_except=True)
+        self.register('apps.heart.HeartApp', True, no_except=True)
+
+        self.register('apps.faces.FacesApp', no_except=True)
+        self.register('apps.settings.SettingsApp', no_except=True)
+        self.register('apps.software.SoftwareApp', no_except=True)
+
+    def register(self, app, quick_ring=False, watch_face=False, no_except=False):
         """Register an application with the system.
 
-        :param object app: The application to regsister
+        :param object app: The application to register
+        :param object quick_ring: Place the application on the quick ring
+        :param object watch_face: Make the new application the default watch face
+        :param object no_except: Ignore exceptions when instantiating applications
         """
         if isinstance(app, str):
             modname = app[:app.rindex('.')]
             exec('import ' + modname)
-            app = eval(app + '()')
+            if no_except:
+                try:
+                    app = eval(app + '()')
+                except:
+                    app = None
+            else:
+                    app = eval(app + '()')
             exec('del ' + modname)
             exec('del sys.modules["' + modname + '"]')
+            if not app:
+                return
+
+        # "Special case" for watches that have working step counters!
+        # More usefully it allows other apps to detect the presence/absence
+        # of a working step counter by looking at wasp.system.steps .
+        if isinstance(app, StepCounterApp):
+            self.steps = steplogger.StepLogger(self)
 
         if watch_face:
             self.quick_ring[0] = app
@@ -234,20 +251,11 @@ class Manager():
                 except:
                     # Clear out the old app to ensure we don't recurse when
                     # we switch to to the CrashApp. It's a bit freaky but
-                    # True has an empty directory this is better than
-                    # None because it won't re-runt he system start up
-                    # code.
+                    # True has an empty directory and is is better than
+                    # None because it won't re-run the system start up
+                    # code (else clause).
                     self.app = True
                     raise
-        else:
-            # System start up...
-            watch.display.poweron()
-            watch.display.mute(True)
-            watch.backlight.set(self._brightness)
-            self.sleep_at = watch.rtc.uptime + 90
-            if watch.free:
-                gc.collect()
-                free = gc.mem_free()
 
         # Clear out any configuration from the old application
         self.event_mask = 0
@@ -492,8 +500,7 @@ class Manager():
             print('Watch already running in the background')
             return
 
-        if not self.app:
-            self.switch(self.quick_ring[0])
+        self.secondary_init()
 
         # Reminder: wasptool uses this string to confirm the device has
         # been set running again.
@@ -545,8 +552,7 @@ class Manager():
 
     def schedule(self, enable=True):
         """Run the system manager synchronously."""
-        if not self.app:
-            self.switch(self.quick_ring[0])
+        self.secondary_init()
 
         if enable:
             watch.schedule = self._schedule

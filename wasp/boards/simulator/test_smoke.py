@@ -13,6 +13,7 @@ wasp.system.step = step
 wasp.watch.touch.press = wasp.watch.touch.i2c.sim.press
 wasp.watch.touch.swipe = wasp.watch.touch.i2c.sim.swipe
 
+wasp.system.secondary_init()
 wasp.system.apps = {}
 for app in wasp.system.quick_ring + wasp.system.launcher_ring:
     wasp.system.apps[app.NAME] = app
