@@ -305,7 +305,7 @@ class Checkbox():
 class GfxButton():
     """A button with a graphical icon."""
     def __init__(self, x, y, gfx):
-        self._im = (x, y)
+        self._im = bytes((x, y))
         self.gfx = gfx
 
     def draw(self):
@@ -410,7 +410,7 @@ class Spinner():
     widget and requires 60x120 px.
     """
     def __init__(self, x, y, mn, mx, field=1):
-        self._im = (x, y, mn, mx, field)
+        self._im = bytes((x, y, mn, mx, field))
         self.value = mn
 
     def draw(self):
