@@ -26,13 +26,12 @@ wasp.system.set_weather_info({
 # with backlight activations.
 wasp.system.blank_after = 300
 
-# Instantiate the analogue clock application and replace the default
+# Replace the default (digital) clock with an alternative
 # (digital) clock with this alternative.
-#from chrono import ChronoApp
-#clock = wasp.system.quick_ring[0]
-#wasp.system.quick_ring[0] = ChronoApp()
-#wasp.system.switch(wasp.system.quick_ring[0])
-#wasp.system.register(clock)
+#wasp.system.register('apps.chrono.ChronoApp', watch_face=True)
+
+# Enable the demostration application
+#wasp.system.register('apps.demo.DemoApp')
 
 # Adopt a basic all-orange theme
 #wasp.system.set_theme(
