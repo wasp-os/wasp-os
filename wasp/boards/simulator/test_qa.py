@@ -3,7 +3,7 @@ import wasp
 import importlib
 import os
 
-EXCLUDE = ('Notifications', 'Template', 'Demo')
+EXCLUDE = ('Notifications', 'Template', 'Demo', 'Faces')
 
 def test_README(constructor):
     if constructor.NAME in EXCLUDE:

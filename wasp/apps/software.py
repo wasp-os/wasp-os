@@ -39,9 +39,7 @@ class SoftwareApp():
         db = []
         db.append(('alarm', factory('Alarm')))
         db.append(('calc', factory('Calculator')))
-        db.append(('chrono', factory('Chrono')))
-        db.append(('dual_clock', factory('Dual Clock')))
-        db.append(('fibonacci_clock', factory('Fibonacci Clock')))
+        db.append(('faces', factory('Faces')))
         db.append(('gameoflife', factory('Game Of Life')))
         db.append(('musicplayer', factory('Music Player')))
         db.append(('play2048', factory('Play 2048')))
@@ -50,7 +48,6 @@ class SoftwareApp():
         db.append(('testapp', factory('Test')))
         db.append(('timer', factory('Timer')))
         db.append(('weather', factory('Weather')))
-        db.append(('word_clock', factory('Word Clock')))
 
         # Get the initial state for the checkboxes
         for _, checkbox in db:

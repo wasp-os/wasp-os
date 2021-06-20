@@ -9,6 +9,8 @@ Application Library
 Watch faces
 -----------
 
+.. automodule:: apps.faces
+
 .. automodule:: apps.clock
 
 .. automodule:: apps.chrono

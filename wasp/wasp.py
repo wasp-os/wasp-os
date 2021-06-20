@@ -23,6 +23,7 @@ import watch
 import widgets
 
 from apps.clock import ClockApp
+from apps.faces import FacesApp
 from apps.heart import HeartApp
 from apps.launcher import LauncherApp
 from apps.pager import PagerApp, CrashApp, NotificationApp
@@ -153,8 +154,10 @@ class Manager():
                          (StepCounterApp, True),
                          (StopwatchApp, True),
                          (HeartApp, True),
+                         (FacesApp, False),
+                         (SettingsApp, False),
                          (SoftwareApp, False),
-                         (SettingsApp, False) ):
+                       ):
             try:
                 a = app()
 
