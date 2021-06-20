@@ -271,13 +271,15 @@ def encode_8bit(im):
 def render_c(image, fname, indent, depth):
     extra_indent = ' ' * indent
     if len(image) == 3:
-        print(f'{extra_indent}// {depth}-bit RLE, generated from {fname}, '
-              f'{len(image[2])} bytes')
         (x, y, pixels) = image
+        print(f'{extra_indent}// {depth}-bit RLE, {x}x{y}, generated from {fname}, '
+              f'{len(image[2])} bytes')
     else:
-        print(f'{extra_indent}// {depth}-bit RLE, generated from {fname}, '
-              f'{len(image)} bytes')
+        x = image[1]
+        y = image[2]
         pixels = image
+        print(f'{extra_indent}// {depth}-bit RLE, {x}x{y}, generated from {fname}, '
+              f'{len(image)} bytes')
 
     print(f'{extra_indent}static const uint8_t {varname(fname)}[] = {{')
     print(f'{extra_indent} ', end='')
@@ -294,15 +296,17 @@ def render_c(image, fname, indent, depth):
 def render_py(image, fname, indent, depth):
     extra_indent = ' ' * indent
     if len(image) == 3:
-        print(f'{extra_indent}# {depth}-bit RLE, generated from {fname}, '
-              f'{len(image[2])} bytes')
         (x, y, pixels) = image
+        print(f'{extra_indent}# {depth}-bit RLE, {x}x{y}, generated from {fname}, '
+              f'{len(image[2])} bytes')
         print(f'{extra_indent}{varname(fname)} = (')
         print(f'{extra_indent}    {x}, {y},')
     else:
-        print(f'{extra_indent}# {depth}-bit RLE, generated from {fname}, '
-              f'{len(image)} bytes')
+        x = image[1]
+        y = image[2]
         pixels = image[3:]
+        print(f'{extra_indent}# {depth}-bit RLE, {x}x{y}, generated from {fname}, '
+              f'{len(image)} bytes')
         print(f'{extra_indent}{varname(fname)} = (')
         print(f'{extra_indent}    {image[0:1]}')
         print(f'{extra_indent}    {image[1:3]}')
