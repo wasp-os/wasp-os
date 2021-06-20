@@ -63,6 +63,18 @@ class TemplateApp():
         """Notify the application the device is waking up."""
         pass
 
+    def preview(self):
+        """Provide a preview for the watch face selection.
+
+        preview() must be implemented by watch face applications because it
+        is called by the watch face selector. When called the application should
+        redraw the screen as through it was the foreground() application. The
+        application will not be active after the preview.
+
+        Other applications should not implement this entry point.
+        """
+        pass
+
     def press(self, button, state):
         """Notify the application of a button-press event."""
         draw = wasp.watch.drawable

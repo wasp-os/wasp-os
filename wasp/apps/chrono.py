@@ -50,6 +50,11 @@ class ChronoApp():
         """Periodic callback to update the display."""
         self._draw()
 
+    def preview(self):
+        """Provide a preview for the watch face selection."""
+        wasp.system.bar.clock = False
+        self._draw(True)
+
     def _draw(self, redraw=False):
         """Draw or lazily update the display.
 
