@@ -53,6 +53,8 @@ Applications
 
 .. automodule:: apps.musicplayer
 
+.. automodule:: apps.sports
+
 .. automodule:: apps.testapp
 
 .. automodule:: apps.timer

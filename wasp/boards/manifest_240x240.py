@@ -20,6 +20,7 @@ manifest = (
     'apps/play2048.py',
     'apps/settings.py',
     'apps/software.py',
+    'apps/sports.py',
     'apps/steps.py',
     'apps/stopwatch.py',
     'apps/snake.py',

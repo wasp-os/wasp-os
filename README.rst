@@ -153,6 +153,10 @@ simulator:
    :alt: Heart rate application running on the wasp-os simulator
    :width: 179
 
+.. image:: res/SportsApp.png
+   :alt: Sports applications, a combined stopwatch and step counter
+   :width: 179
+
 .. image:: res/StopclockApp.png
    :alt: Stop watch application running on the wasp-os simulator
    :width: 179
