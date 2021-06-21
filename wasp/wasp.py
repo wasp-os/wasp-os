@@ -144,6 +144,8 @@ class Manager():
         self._scheduling = False
 
     def secondary_init(self):
+        global free
+
         if not self.app:
             # Register default apps if main hasn't put anything on the quick ring
             if not self.quick_ring:
@@ -242,8 +244,6 @@ class Manager():
     def switch(self, app):
         """Switch to the requested application.
         """
-        global free
-
         if self.app:
             if 'background' in dir(self.app):
                 try:
