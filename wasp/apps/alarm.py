@@ -1,6 +1,7 @@
 # SPDX-License-Identifier: LGPL-3.0-or-later
 # Copyright (C) 2020 Daniel Thompson
 # Copyright (C) 2020 Joris Warmbier
+# Copyright (C) 2021 Adam Blair
 """Alarm Application
 ~~~~~~~~~~~~~~~~~~~~
 
@@ -12,11 +13,12 @@ An application to set a vibration alarm. All settings can be accessed from the W
         Screenshot of the Alarm Application
 
 """
-
 import wasp
 import fonts
 import time
 import widgets
+import array
+from micropython import const
 
 # 2-bit RLE, generated from res/alarm_icon.png, 390 bytes
 icon = (
@@ -49,7 +51,29 @@ icon = (
     b'\x11\x83\x17'
 )
 
-class AlarmApp():
+# Enabled masks
+_MONDAY = const(0x01)
+_TUESDAY = const(0x02)
+_WEDNESDAY = const(0x04)
+_THURSDAY = const(0x08)
+_FRIDAY = const(0x10)
+_SATURDAY = const(0x20)
+_SUNDAY = const(0x40)
+_WEEKDAYS = const(0x1F)
+_WEEKENDS = const(0x60)
+_EVERY_DAY = const(0x7F)
+_IS_ACTIVE = const(0x80)
+
+# Alarm data indices
+_HOUR_IDX = const(0)
+_MIN_IDX = const(1)
+_ENABLED_IDX = const(2)
+
+# Pages
+_HOME_PAGE = const(-1)
+_RINGING_PAGE = const(-2)
+
+class AlarmApp:
     """Allows the user to set a vibration alarm.
     """
     NAME = 'Alarm'
@@ -57,83 +81,294 @@ class AlarmApp():
 
     def __init__(self):
         """Initialize the application."""
-        self.active = widgets.Checkbox(104, 200)
-        self.hours = widgets.Spinner(50, 60, 0, 23, 2)
-        self.minutes = widgets.Spinner(130, 60, 0, 59, 2)
 
-        self.hours.value = 7
-        self.ringing = False
+        self.page = _HOME_PAGE
+        self.alarms = (bytearray(3), bytearray(3), bytearray(3), bytearray(3))
+        self.pending_alarms = array.array('d', [0.0, 0.0, 0.0, 0.0])
+
+        # Set a nice default
+        self.num_alarms = 1
+        self.alarms[0][_HOUR_IDX] = 8
+        self.alarms[0][_MIN_IDX] = 0
+        self.alarms[0][_ENABLED_IDX] = _WEEKDAYS
+
 
     def foreground(self):
         """Activate the application."""
+
+        self.del_alarm_btn = widgets.Button(170, 204, 70, 35, 'DEL')
+        self.hours_wid = widgets.Spinner(50, 30, 0, 23, 2)
+        self.min_wid = widgets.Spinner(130, 30, 0, 59, 2)
+        self.day_btns = (widgets.ToggleButton(10, 145, 40, 35, 'Mo'),
+                         widgets.ToggleButton(55, 145, 40, 35, 'Tu'),
+                         widgets.ToggleButton(100, 145, 40, 35, 'We'),
+                         widgets.ToggleButton(145, 145, 40, 35, 'Th'),
+                         widgets.ToggleButton(190, 145, 40, 35, 'Fr'),
+                         widgets.ToggleButton(10, 185, 40, 35, 'Sa'),
+                         widgets.ToggleButton(55, 185, 40, 35, 'Su'))
+        self.alarm_checks = (widgets.Checkbox(200, 57), widgets.Checkbox(200, 102),
+                             widgets.Checkbox(200, 147), widgets.Checkbox(200, 192))
+
+        self._deactivate_pending_alarms()
         self._draw()
-        wasp.system.request_event(wasp.EventMask.TOUCH)
+
+        wasp.system.request_event(wasp.EventMask.TOUCH | wasp.EventMask.SWIPE_LEFTRIGHT | wasp.EventMask.BUTTON)
         wasp.system.request_tick(1000)
-        if self.active.state:
-            wasp.system.cancel_alarm(self.current_alarm, self._alert)
 
     def background(self):
         """De-activate the application."""
-        if self.active.state:
-            self._set_current_alarm()
-            wasp.system.set_alarm(self.current_alarm, self._alert)
-            if self.ringing:
-                self.ringing = False
+        if self.page > _HOME_PAGE:
+            self._save_alarm()
+
+        self.page = _HOME_PAGE
+
+        del self.del_alarm_btn
+        del self.hours_wid
+        del self.min_wid
+        del self.alarm_checks
+        del self.day_btns
+
+        self._set_pending_alarms()
 
     def tick(self, ticks):
         """Notify the application that its periodic tick is due."""
-        if self.ringing:
+        if self.page == _RINGING_PAGE:
             wasp.watch.vibrator.pulse(duty=50, ms=500)
             wasp.system.keep_awake()
         else:
             wasp.system.bar.update()
 
+    def press(self, button, state):
+        """"Notify the application of a button press event."""
+        if self.page == _RINGING_PAGE:
+            self._snooze()
+        wasp.system.navigate(wasp.EventType.HOME)
+
+    def swipe(self, event):
+        """"Notify the application of a swipe event."""
+        if self.page == _RINGING_PAGE:
+            self._silence_alarm()
+        elif self.page > _HOME_PAGE:
+            self._save_alarm()
+            self._draw()
+        else:
+            wasp.system.navigate(event[0])
+
     def touch(self, event):
         """Notify the application of a touchscreen touch event."""
-        if self.ringing:
-            mute = wasp.watch.display.mute
-            self.ringing = False
-            mute(True)
-            self._draw()
-            mute(False)
-        elif self.hours.touch(event) or self.minutes.touch(event) or \
-             self.active.touch(event):
-            pass
+        if self.page == _RINGING_PAGE:
+            self._silence_alarm()
+        elif self.page > _HOME_PAGE:
+            if self.hours_wid.touch(event) or self.min_wid.touch(event):
+                return
+            for day_btn in self.day_btns:
+                if day_btn.touch(event):
+                    return
+            if self.del_alarm_btn.touch(event):
+                self._remove_alarm(self.page)
+        elif self.page == _HOME_PAGE:
+            for index, checkbox in enumerate(self.alarm_checks):
+                if checkbox.touch(event):
+                    if checkbox.state:
+                        self.alarms[index][_ENABLED_IDX] |= _IS_ACTIVE
+                    else:
+                        self.alarms[index][_ENABLED_IDX] &= ~_IS_ACTIVE
+                    self._draw(index)
+                    return
+            for index, alarm in enumerate(self.alarms):
+                # Open edit page for clicked alarms
+                if index < self.num_alarms and event[1] < 190 \
+                        and 60 + (index * 45) < event[2] < 60 + ((index + 1) * 45):
+                    self.page = index
+                    self._draw()
+                    return
+                # Add new alarm if plus clicked
+                elif index == self.num_alarms and 60 + (index * 45) < event[2]:
+                    self.num_alarms += 1
+                    self._draw(index)
+                    return
 
-    def _draw(self):
-        """Draw the display from scratch."""
-        draw = wasp.watch.drawable
-        if not self.ringing:
-            draw.fill()
+    def _remove_alarm(self, alarm_index):
+        # Shift alarm indices
+        for index in range(alarm_index, 3):
+            self.alarms[index][_HOUR_IDX] = self.alarms[index + 1][_HOUR_IDX]
+            self.alarms[index][_MIN_IDX] = self.alarms[index + 1][_MIN_IDX]
+            self.alarms[index][_ENABLED_IDX] = self.alarms[index + 1][_ENABLED_IDX]
+            self.pending_alarms[index] = self.pending_alarms[index + 1]
 
-            sbar = wasp.system.bar
-            sbar.clock = True
-            sbar.draw()
+        # Set last alarm to default
+        self.alarms[3][_HOUR_IDX] = 8
+        self.alarms[3][_MIN_IDX] = 0
+        self.alarms[3][_ENABLED_IDX] = 0
 
-            draw.set_font(fonts.sans28)
-            draw.string(':', 110, 120-14, width=20)
+        self.page = _HOME_PAGE
+        self.num_alarms -= 1
+        self._draw()
 
-            self.active.draw()
-            self.hours.draw()
-            self.minutes.draw()
+    def _save_alarm(self):
+        alarm = self.alarms[self.page]
+        alarm[_HOUR_IDX] = self.hours_wid.value
+        alarm[_MIN_IDX] = self.min_wid.value
+        for day_idx, day_btn in enumerate(self.day_btns):
+            if day_btn.state:
+                alarm[_ENABLED_IDX] |= 1 << day_idx
+            else:
+                alarm[_ENABLED_IDX] &= ~(1 << day_idx)
+
+        self.page = _HOME_PAGE
+
+    def _draw(self, update_alarm_row=-1):
+        if self.page == _RINGING_PAGE:
+            self._draw_ringing_page()
+        elif self.page > _HOME_PAGE:
+            self._draw_edit_page()
         else:
+            self._draw_home_page(update_alarm_row)
+
+    def _draw_ringing_page(self):
+        draw = wasp.watch.drawable
+
+        draw.set_color(wasp.system.theme('bright'))
+        draw.fill()
+        draw.set_font(fonts.sans24)
+        draw.string("Alarm", 0, 150, width=240)
+        draw.blit(icon, 73, 50)
+        draw.line(35, 1, 35, 239)
+        draw.string('Z', 10, 80)
+        draw.string('z', 10, 110)
+        draw.string('z', 10, 140)
+
+    def _draw_edit_page(self):
+        draw = wasp.watch.drawable
+        alarm = self.alarms[self.page]
+
+        draw.fill()
+        self._draw_system_bar()
+
+        self.hours_wid.value = alarm[_HOUR_IDX]
+        self.min_wid.value = alarm[_MIN_IDX]
+        draw.set_font(fonts.sans28)
+        draw.string(':', 110, 90-14, width=20)
+
+        self.del_alarm_btn.draw()
+        self.hours_wid.draw()
+        self.min_wid.draw()
+        for day_idx, day_btn in enumerate(self.day_btns):
+            day_btn.state = alarm[_ENABLED_IDX] & (1 << day_idx)
+            day_btn.draw()
+
+    def _draw_home_page(self, update_alarm_row=_HOME_PAGE):
+        draw = wasp.watch.drawable
+        if update_alarm_row == _HOME_PAGE:
+            draw.set_color(wasp.system.theme('bright'))
             draw.fill()
-            draw.set_font(fonts.sans24)
-            draw.string("Alarm", 0, 150, width=240)
-            draw.blit(icon, 73, 50)
+            self._draw_system_bar()
+            draw.line(0, 50, 240, 50, width=1, color=wasp.system.theme('bright'))
+
+        for index in range(len(self.alarms)):
+            if index < self.num_alarms and (update_alarm_row == _HOME_PAGE or update_alarm_row == index):
+                self._draw_alarm_row(index)
+            elif index == self.num_alarms:
+                # Draw the add button
+                draw.set_color(wasp.system.theme('bright'))
+                draw.set_font(fonts.sans28)
+                draw.string('+', 100, 60 + (index * 45))
+
+    def _draw_alarm_row(self, index):
+        draw = wasp.watch.drawable
+        alarm = self.alarms[index]
+
+        self.alarm_checks[index].state = alarm[_ENABLED_IDX] & _IS_ACTIVE
+        self.alarm_checks[index].draw()
+
+        if self.alarm_checks[index].state:
+            draw.set_color(wasp.system.theme('bright'))
+        else:
+            draw.set_color(wasp.system.theme('mid'))
+
+        draw.set_font(fonts.sans28)
+        draw.string("{:02d}:{:02d}".format(alarm[_HOUR_IDX], alarm[_MIN_IDX]), 10, 60 + (index * 45), width=120)
+
+        draw.set_font(fonts.sans18)
+        draw.string(self._get_repeat_code(alarm[_ENABLED_IDX]), 130, 70 + (index * 45), width=60)
+
+        draw.line(0, 95 + (index * 45), 240, 95 + (index * 45), width=1, color=wasp.system.theme('bright'))
+
+    def _draw_system_bar(self):
+        sbar = wasp.system.bar
+        sbar.clock = True
+        sbar.draw()
 
     def _alert(self):
-        self.ringing = True
+        self.page = _RINGING_PAGE
         wasp.system.wake()
         wasp.system.switch(self)
 
-    def _set_current_alarm(self):
+    def _snooze(self):
         now = wasp.watch.rtc.get_localtime()
-        yyyy = now[0]
-        mm = now[1]
-        dd = now[2]
-        HH = self.hours.value
-        MM = self.minutes.value
-        if HH < now[3] or (HH == now[3] and MM <= now[4]):
-            dd += 1
-        self.current_alarm = (time.mktime((yyyy, mm, dd, HH, MM, 0, 0, 0, 0)))
+        alarm = (now[0], now[1], now[2], now[3], now[4] + 10, now[5], 0, 0, 0)
+        wasp.system.set_alarm(time.mktime(alarm), self._alert)
+
+    def _silence_alarm(self):
+        mute = wasp.watch.display.mute
+        mute(True)
+        self._draw()
+        mute(False)
+        wasp.system.navigate(wasp.EventType.HOME)
+
+    def _set_pending_alarms(self):
+        now = wasp.watch.rtc.get_localtime()
+        for index, alarm in enumerate(self.alarms):
+            if index < self.num_alarms and alarm[_ENABLED_IDX] & _IS_ACTIVE:
+                yyyy = now[0]
+                mm = now[1]
+                dd = now[2]
+                HH = alarm[_HOUR_IDX]
+                MM = alarm[_MIN_IDX]
+
+                # If next alarm is tomorrow increment the day
+                if HH < now[3] or (HH == now[3] and MM <= now[4]):
+                    dd += 1
+
+                pending_time = time.mktime((yyyy, mm, dd, HH, MM, 0, 0, 0, 0))
+
+                # If this is not a one time alarm find the next day of the week that is enabled
+                if alarm[_ENABLED_IDX] & ~_IS_ACTIVE != 0:
+                    for _i in range(7):
+                        if (1 << time.localtime(pending_time)[6]) & alarm[_ENABLED_IDX] == 0:
+                            dd += 1
+                            pending_time = time.mktime((yyyy, mm, dd, HH, MM, 0, 0, 0, 0))
+                        else:
+                            break
+
+                self.pending_alarms[index] = pending_time
+                wasp.system.set_alarm(pending_time, self._alert)
+            else:
+                self.pending_alarms[index] = 0.0
+
+    def _deactivate_pending_alarms(self):
+        now = wasp.watch.rtc.get_localtime()
+        now = time.mktime((now[0], now[1], now[2], now[3], now[4], 0, 0, 0, 0))
+        for index, alarm in enumerate(self.alarms):
+            pending_alarm = self.pending_alarms[index]
+            if not pending_alarm == 0.0:
+                wasp.system.cancel_alarm(pending_alarm, self._alert)
+                # If this is a one time alarm and in the past disable it
+                if alarm[_ENABLED_IDX] & ~_IS_ACTIVE == 0 and pending_alarm < now:
+                    alarm[_ENABLED_IDX] &= ~_IS_ACTIVE
+
+    @staticmethod
+    def _get_repeat_code(days):
+        # Ignore the is_active bit
+        days = days & ~_IS_ACTIVE
+
+        if days == _WEEKDAYS:
+            return "wkds"
+        elif days == _WEEKENDS:
+            return "wkns"
+        elif days == _EVERY_DAY:
+            return "evry"
+        elif days == 0:
+            return "once"
+        else:
+            return "cust"

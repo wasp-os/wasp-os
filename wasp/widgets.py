@@ -222,11 +222,14 @@ class Button():
 
     def draw(self):
         """Draw the button."""
-        draw = wasp.watch.drawable
-        im = self._im
-        bg = draw.darken(wasp.system.theme('ui'))
+        bg = wasp.watch.drawable.darken(wasp.system.theme('ui'))
         frame = wasp.system.theme('mid')
         txt = wasp.system.theme('bright')
+        self.update(bg, frame, txt)
+
+    def update(self, bg, frame, txt):
+        draw = wasp.watch.drawable
+        im = self._im
 
         draw.fill(bg, im[0], im[1], im[2], im[3])
         draw.set_color(txt, bg)
@@ -254,6 +257,31 @@ class Button():
             return True
 
         return False
+
+class ToggleButton(Button):
+    """A button with a text label that can be toggled on and off."""
+    def __init__(self, x, y, w, h, label):
+        super().__init__(x, y, w, h, label)
+        self.state = False
+
+    def draw(self):
+        """Draw the button."""
+        draw = wasp.watch.drawable
+
+        if self.state:
+            bg = draw.darken(wasp.system.theme('ui'))
+        else:
+            bg = draw.darken(wasp.system.theme('mid'))
+        frame = wasp.system.theme('mid')
+        txt = wasp.system.theme('bright')
+
+        self.update(bg, frame, txt)
+
+    def touch(self, event):
+        """Handle touch events."""
+        if super().touch(event):
+            self.state = not self.state
+            self.draw()
 
 class Checkbox():
     """A simple (labelled) checkbox."""
@@ -294,9 +322,10 @@ class Checkbox():
 
     def touch(self, event):
         """Handle touch events."""
+        x = event[1]
         y = event[2]
         im = self._im
-        if y >= im[1] and y < im[1]+40:
+        if (self.label or im[0] <= x < im[0]+40) and im[1] <= y < im[1]+40:
             self.state = not self.state
             self.update()
             return True
