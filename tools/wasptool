@@ -228,7 +228,7 @@ def handle_rtc(c):
 
 def check_rtc(c):
     c.sendline('print(watch.rtc.get_localtime())')
-    c.expect('\(([0-9]+), ([0-9]+), ([0-9]+), ([0-9]+), ([0-9]+), ([0-9]+), ([0-9]+), ([0-9]+)\)')
+    c.expect(r'\(([0-9]+), ([0-9]+), ([0-9]+), ([0-9]+), ([0-9]+), ([0-9]+), ([0-9]+), ([0-9]+)\)')
     t = time.localtime()
 
     watch_hms = (int(c.match[4]), int(c.match[5]), int(c.match[6]))
@@ -390,7 +390,7 @@ if __name__ == '__main__':
         console.logfile = io.StringIO()
 
     try:
-        console.expect('Connect.*\(([0-9A-F:]*)\)')
+        console.expect(r'Connect.*\(([0-9A-F:]*)\)')
     except pexpect.exceptions.TIMEOUT:
         print('ERROR: Cannot find suitable wasp-os device')
         if not args.verbose:
