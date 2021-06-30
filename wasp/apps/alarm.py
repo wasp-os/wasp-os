@@ -88,8 +88,10 @@ class AlarmApp:
 
         # Set a nice default
         self.num_alarms = 1
-        self.alarms[0][_HOUR_IDX] = 8
-        self.alarms[0][_MIN_IDX] = 0
+        for alarm in self.alarms:
+            alarm[_HOUR_IDX] = 8
+            alarm[_MIN_IDX] = 0
+            alarm[_ENABLED_IDX] = 0
         self.alarms[0][_ENABLED_IDX] = _WEEKDAYS
 
 
@@ -348,14 +350,14 @@ class AlarmApp:
 
     def _deactivate_pending_alarms(self):
         now = wasp.watch.rtc.get_localtime()
-        now = time.mktime((now[0], now[1], now[2], now[3], now[4], 0, 0, 0, 0))
+        now = time.mktime((now[0], now[1], now[2], now[3], now[4], now[5], 0, 0, 0))
         for index, alarm in enumerate(self.alarms):
             pending_alarm = self.pending_alarms[index]
             if not pending_alarm == 0.0:
                 wasp.system.cancel_alarm(pending_alarm, self._alert)
                 # If this is a one time alarm and in the past disable it
-                if alarm[_ENABLED_IDX] & ~_IS_ACTIVE == 0 and pending_alarm < now:
-                    alarm[_ENABLED_IDX] &= ~_IS_ACTIVE
+                if alarm[_ENABLED_IDX] & ~_IS_ACTIVE == 0 and pending_alarm <= now:
+                    alarm[_ENABLED_IDX] = 0
 
     @staticmethod
     def _get_repeat_code(days):
