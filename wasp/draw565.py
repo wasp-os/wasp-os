@@ -366,12 +366,15 @@ class Draw565(object):
             l = 0
 
             for i in range(start, max+1):
-                if i >= len(s):
+                if i >= max:
+                    end = i
                     break
                 ch = s[i]
                 (_, h, w) = font.get_ch(ch)
                 l += w + 1
                 if l > width:
+                    if end <= start:
+                        end = i
                     break
 
                 # Break the line immediately if requested
@@ -382,8 +385,6 @@ class Draw565(object):
                 # Remember the right-most place we can cleanly break the line
                 if ch == ' ':
                     end = i+1
-            if end <= start:
-                end = i
             chunks.append(end)
 
         return chunks

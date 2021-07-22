@@ -57,3 +57,16 @@ def test_font_width(draw):
 
         if f.max_ch() >= 90:
             assert draw.bounding_box('IIII')[0] < draw.bounding_box('WWWW')[0]
+
+@pytest.mark.parametrize("input,expected", (
+    ('abc', [0, 3]),
+    ('one.two', [0, 7]),
+    ('one two', [0, 7]),
+    ('one two three', [0, 13]),
+    ('abcdefghijklmnopqrstuvwxyz', [0, 17, 26]),
+    ('abcdefghijklm nopqrstuvwxyz', [0, 14, 27]),
+    ('abcde fghij klmno pqrst uvwxyz', [0, 18, 30]),
+
+))
+def test_wrap(draw, input, expected):
+    assert draw.wrap(input, 240) == expected
