@@ -11,6 +11,7 @@ import pexpect
 import time
 import types
 import string
+import subprocess
 import sys
 
 def draw_pbar(percent, quiet=False, end='\r'):
@@ -193,10 +194,14 @@ def handle_battery_level(c):
     print(f'Battery: {c.run_command("watch.battery.level()")}%')
     
 def handle_memory_free(c):
-    # wasp namespace to avoid having to import into the global space
-    print(f'Before GC: {c.run_command("wasp.gc.mem_free()"):7}')
+    before_gc = c.run_command("wasp.gc.mem_free()")
     c.run_command('wasp.gc.collect()')
-    print(f'After GC:  {c.run_command("wasp.gc.mem_free()"):7}')
+    after_gc = c.run_command("wasp.gc.mem_free()")
+
+    p = subprocess.run(["git", "describe", "--tags"], capture_output=True)
+    version = p.stdout.decode('UTF-8').strip()
+
+    print(f'"{version}",{before_gc},{after_gc}')
 
 def handle_reset(c, ota=False):
     cmd = 'reset'
