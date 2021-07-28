@@ -124,10 +124,15 @@ class AlarmApp:
 
         self.page = _HOME_PAGE
 
+        self.del_alarm_btn = None
         del self.del_alarm_btn
+        self.hours_wid = None
         del self.hours_wid
+        self.min_wid = None
         del self.min_wid
+        self.alarm_checks = None
         del self.alarm_checks
+        self.day_btns = None
         del self.day_btns
 
         self._set_pending_alarms()

@@ -67,8 +67,11 @@ class SoftwareApp():
                                   wasp.EventMask.SWIPE_UPDOWN)
 
     def background(self):
+        self.si = None
         del self.si
+        self.page = None
         del self.page
+        self.db = None
         del self.db
 
     def get_page(self):

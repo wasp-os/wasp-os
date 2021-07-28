@@ -37,8 +37,11 @@ class FacesApp():
         wasp.system.request_event(wasp.EventMask.SWIPE_UPDOWN)
 
     def background(self):
+        self.choices = None
         del self.choices
+        self.choice = None
         del self.choice
+        self.si = None
         del self.si
 
         # When the watch face redraws then the change to the scrolling indicator
