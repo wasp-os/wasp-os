@@ -42,6 +42,10 @@ with pip instead:
 
     pip3 install --user -r wasp/requirements.txt
 
+.. warning::
+
+   It is not recommended to use your distro toolchain as it may result in a bricked bootloader that cannot be recovered from on a sealed device.
+
 You will also need a toolchain for the Arm Cortex-M4. wasp-os is developed and
 tested using the `GNU-RM toolchain
 <https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-rm>`_
