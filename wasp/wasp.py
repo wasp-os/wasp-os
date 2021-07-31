@@ -133,7 +133,6 @@ class Manager():
         self._alarms = []
         self._brightness = 2
         self._notifylevel = 2
-        self._screentimeout = 2
         if 'P8' in watch.os.uname().machine:
             self._nfylevels = [0, 225, 450]
         else:
@@ -156,7 +155,7 @@ class Manager():
             watch.display.poweron()
             watch.display.mute(True)
             watch.backlight.set(self._brightness)
-            self.sleep_at = watch.rtc.uptime + (90 * self.screen_timeout)
+            self.sleep_at = watch.rtc.uptime + 90
             if watch.free:
                 gc.collect()
                 free = gc.mem_free()
@@ -236,15 +235,6 @@ class Manager():
     def notify_level(self, value):
         self._notifylevel = value
         self._nfylev_ms = self._nfylevels[self._notifylevel - 1]
-
-    @property
-    def screen_timeout(self):
-        """Cached copy of the current screen timeout"""
-        return self._screentimeout
-
-    @screen_timeout.setter
-    def screen_timeout(self, value):
-        self._screentimeout = value
 
     @property
     def notify_duration(self):
@@ -380,7 +370,7 @@ class Manager():
 
     def keep_awake(self):
         """Reset the keep awake timer."""
-        self.sleep_at = watch.rtc.uptime + (self.blank_after * self.screen_timeout)
+        self.sleep_at = watch.rtc.uptime + self.blank_after
 
     def sleep(self):
         """Enter the deepest sleep state possible.

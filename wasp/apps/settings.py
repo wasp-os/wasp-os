@@ -57,7 +57,7 @@ class SettingsApp():
             wasp.system.notify_level = self._nfy_slider.value + 1
         elif self._current_setting == 'Screen Timeout':
             self._timeout_slider.touch(event)
-            wasp.system.screen_timeout = self._timeout_slider.value + 1
+            wasp.system.blank_after = 15 * (self._timeout_slider.value + 1)
         elif self._current_setting == 'Time':
             if self._HH.touch(event) or self._MM.touch(event):
                 now = list(wasp.watch.rtc.get_localtime())
@@ -102,7 +102,7 @@ class SettingsApp():
         elif self._current_setting == 'Notification Level':
             self._nfy_slider.value = wasp.system.notify_level - 1
         elif self._current_setting == 'Screen Timeout':
-            self._timeout_slider.value = wasp.system.screen_timeout - 1
+            self._timeout_slider.value = 0
         elif self._current_setting == 'Time':
             now = wasp.watch.rtc.get_localtime()
             self._HH.value = now[3]
@@ -147,11 +147,6 @@ class SettingsApp():
             self._nfy_slider.update()
             draw.string(say, 0, 150, width=240)
         elif self._current_setting == 'Screen Timeout':
-            if wasp.system.screen_timeout == 3:
-                say = "Long"
-            elif wasp.system.screen_timeout == 2:
-                say = "Mid"
-            else:
-                say = "Short"
+            say = str(wasp.system.blank_after)
             self._timeout_slider.update()
             draw.string(say, 0, 150, width=240)
