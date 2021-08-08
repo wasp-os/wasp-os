@@ -37,7 +37,9 @@ class SettingsApp():
         self._dd = wasp.widgets.Spinner(20, 60, 1, 31, 1)
         self._mm = wasp.widgets.Spinner(90, 60, 1, 12, 1)
         self._yy = wasp.widgets.Spinner(160, 60, 20, 60, 2)
-        self._settings = ['Brightness', 'Notification Level', 'Time', 'Date']
+        self._von = wasp.widgets.Checkbox(3, 40, 'Vibrate')
+        self._won = wasp.widgets.Checkbox(3, 80, 'Wake Screen')
+        self._settings = ['Brightness', 'Notification Level', 'Time', 'Date', 'Notifications']
         self._sett_index = 0
         self._current_setting = self._settings[0]
 
@@ -68,6 +70,12 @@ class SettingsApp():
                 now[1] = self._mm.value
                 now[2] = self._dd.value
                 wasp.watch.rtc.set_localtime(now)
+        elif self._current_setting == 'Notifications':
+            if self._von.touch(event):
+                wasp.system.vibe_on_notif = self._von.state
+            elif self._won.touch(event):
+                wasp.system.wake_on_notif = self._won.state
+            print(wasp.system.vibe_on_notif, wasp.system.wake_on_notif)
         self._update()
 
     def swipe(self, event):
@@ -115,6 +123,11 @@ class SettingsApp():
             self._dd.draw()
             draw.set_font(fonts.sans24)
             draw.string('DD    MM    YY',0,180, width=240)
+        elif self._current_setting == 'Notifications':
+            self._von.state = wasp.system.vibe_on_notif
+            self._won.state = wasp.system.wake_on_notif
+            self._von.draw()
+            self._won.draw()
         self._scroll_indicator.draw()
         self._update()
         mute(False)

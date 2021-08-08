@@ -49,7 +49,11 @@ def GB(cmd):
             id = cmd['id']
             del cmd['id']
             wasp.system.notify(id, cmd)
-            wasp.watch.vibrator.pulse(ms=wasp.system.notify_duration)
+            if wasp.system.vibe_on_notif:
+                wasp.watch.vibrator.pulse(ms=wasp.system.notify_duration)
+            if wasp.system.wake_on_notif:
+                wasp.system.switch(wasp.NotificationApp())
+                wasp.system.wake()
         elif task == 'notify-':
             wasp.system.unnotify(cmd['id'])
         elif task == 'musicstate':
