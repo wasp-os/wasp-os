@@ -84,9 +84,9 @@ list below:
 
 .. code-block:: sh
 
-    make -j `nproc` BOARD=pinetime all
-    make -j `nproc` BOARD=k9 all
-    make -j `nproc` BOARD=p8 all
+    make -j `nproc` BOARD=pinetime LANGUAGE=en all
+    make -j `nproc` BOARD=k9 LANGUAGE=en all
+    make -j `nproc` BOARD=p8 LANGUAGE=en all
 
 The output of these will be stored in ``build-${BOARD}/``.
 

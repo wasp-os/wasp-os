@@ -108,5 +108,6 @@ class ClockApp():
         draw.string('{} {} {}'.format(now[2], month, now[0]),
                 0, 180, width=240)
 
+
         # Record the minute that is currently being displayed
         self._min = now[4]

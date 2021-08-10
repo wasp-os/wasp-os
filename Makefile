@@ -16,6 +16,7 @@ BOARD_SAFE = $(BOARD)
 endif
 BOARD ?= $(error Please set BOARD=)
 VERSION ?= $(patsubst v%,%,$(shell git describe --tags))
+export MPY_LOCALES = $(PWD)/wasp/locales
 
 clean :
 	$(RM) -r \
@@ -66,6 +67,8 @@ micropython: build-$(BOARD_SAFE) wasp/boards/$(BOARD_SAFE)/watch.py
 		MICROPY_VFS_LFS2=1 \
 		FROZEN_MANIFEST=$(PWD)/wasp/boards/$(BOARD)/manifest.py \
 		USER_C_MODULES=$(PWD)/wasp/modules
+		LOCALES=$(PWD)/locales/$(LANG).mo
+
 	$(PYTHON) -m nordicsemi dfu genpkg \
 		--dev-type 0x0052 \
 		--application micropython/ports/nrf/build-$(BOARD)-s132/firmware.hex \
