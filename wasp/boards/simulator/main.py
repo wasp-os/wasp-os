@@ -14,10 +14,10 @@ wasp.system.set_music_info({
     })
 
 wasp.system.set_weather_info({
-    'temp': '22',
-    'hum': '100%',
+    'temp': 295,
+    'hum': 100,
     'txt': 'Cloudy',
-    'wind': '25km/h',
+    'wind': 25,
     'loc': 'Toronto'
 })
 

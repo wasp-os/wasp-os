@@ -37,7 +37,9 @@ class SettingsApp():
         self._dd = wasp.widgets.Spinner(20, 60, 1, 31, 1)
         self._mm = wasp.widgets.Spinner(90, 60, 1, 12, 1)
         self._yy = wasp.widgets.Spinner(160, 60, 20, 60, 2)
-        self._settings = ['Brightness', 'Notification Level', 'Time', 'Date']
+        self._units = ['Metric', 'Imperial']
+        self._units_toggle = wasp.widgets.Button(32, 90, 176, 48, "Change")
+        self._settings = ['Brightness', 'Notification Level', 'Time', 'Date', 'Units']
         self._sett_index = 0
         self._current_setting = self._settings[0]
 
@@ -68,6 +70,9 @@ class SettingsApp():
                 now[1] = self._mm.value
                 now[2] = self._dd.value
                 wasp.watch.rtc.set_localtime(now)
+        elif self._current_setting == 'Units':
+            if self._units_toggle.touch(event):
+                wasp.system.units = self._units[(self._units.index(wasp.system.units) + 1) % len(self._units)]
         self._update()
 
     def swipe(self, event):
@@ -115,6 +120,8 @@ class SettingsApp():
             self._dd.draw()
             draw.set_font(fonts.sans24)
             draw.string('DD    MM    YY',0,180, width=240)
+        elif self._current_setting == 'Units':
+            self._units_toggle.draw()
         self._scroll_indicator.draw()
         self._update()
         mute(False)
@@ -140,3 +147,5 @@ class SettingsApp():
                 say = "Silent"
             self._nfy_slider.update()
             draw.string(say, 0, 150, width=240)
+        elif self._current_setting == 'Units':
+            draw.string(wasp.system.units, 0, 150, width=240)
