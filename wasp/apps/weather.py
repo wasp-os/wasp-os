@@ -50,10 +50,10 @@ class WeatherApp(object):
     ICON = icon
     
     def __init__(self):
-        self._temp = ''
-        self._hum = ''
+        self._temp = -1
+        self._hum = 0
         self._txt = ''
-        self._wind = ''
+        self._wind = 0
         self._loc = ''
         self._temp_changed = True
         self._hum_changed = True
@@ -136,16 +136,32 @@ class WeatherApp(object):
 
     def _draw(self):
         """Redraw the updated zones."""
-        if self._temp_changed:
-            self._draw_label(self._temp, 54, 36)
-        if self._hum_changed:
-            self._draw_label("Humidity: "+self._hum, 160)
-        if self._txt_changed:
-            self._draw_label(self._txt, 12)
-        if self._wind_changed:
-            self._draw_label("Wind: "+self._wind, 120)
-        if self._loc_changed:
-            self._draw_label(self._loc, 200)
+        draw = wasp.watch.drawable
+        if self._temp != -1:
+            units = wasp.system.units
+            temp = self._temp - 273.15
+            wind = self._wind
+            wind_units = "km/h"
+            if units == "Imperial":
+                temp = (temp * 1.8) + 32
+                wind = wind / 1.609
+                wind_units = "mph"
+            temp = round(temp)
+            wind = round(wind)
+            if self._temp_changed:
+                self._draw_label(str(temp), 54, 36)
+            if self._hum_changed:
+                self._draw_label("Humidity: {}%".format(self._hum), 160)
+            if self._txt_changed:
+                self._draw_label(self._txt, 12)
+            if self._wind_changed:
+                self._draw_label("Wind: {}{}".format(wind, wind_units), 120)
+            if self._loc_changed:
+                self._draw_label(self._loc, 200)
+        else:
+            if self._temp_changed:
+                draw.fill()
+                self._draw_label("No weather data.", 120)
 
     def _draw_label(self, label, pos, size = 24):
         """Redraw label info"""
