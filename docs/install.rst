@@ -67,7 +67,7 @@ To build wasp-os with docker, ensure it is installed and running, then open a te
 
     git clone https://github.com/daniel-thompson/wasp-os
     cd wasp-os
-    /tools/docker/shell
+    ~/wasp-os/tools/docker/shell
 
 This will create a new user with restricted privilages, and drop you into a bash shell.
 
