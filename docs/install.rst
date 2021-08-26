@@ -55,38 +55,54 @@ tested using the `GNU-RM toolchain
 
 Install prerequisites via docker
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-To build via docker, simply invoke `tools/docker/shell` from the root directory
-after having docker installed. This will build the docker image and also drop
-you into a shell with wasp os's source code shared into the container at
-``/home/user/wasp-os``. All ``make`` commands should be usable from this shell,
-including ``make sim`` and ``make check``. Some commands that interact with
-bluetooth such as ``wasptool`` may not work, for now.
-
 .. note::
 
     If you want to use the Docker-based setup, it is assumed that you're using
-    and x86 machine on Linux, running Xorg. Other setup may require some
+    and x86 machine on Linux, running Xorg. Other setups may require some
     patching for now.
 
-Fetch the code from
-`https://github.com/daniel-thompson/wasp-os <https://github.com/daniel-thompson/wasp-os>`_  and download the prerequisites:
+To build wasp-os with docker, ensure it is installed and running, then open a terminal and run the following commands in your home directory:
 
 .. code-block:: sh
 
     git clone https://github.com/daniel-thompson/wasp-os
     cd wasp-os
-    make submodules
-    make softdevice
+    ~/wasp-os/tools/docker/shell
 
-To build the firmware select the command appropriate for your board from the
-list below:
+This will create a new user with restricted privilages, and drop you into a bash shell.
+
+Some important things to note:
+
+All ``make`` commands should be usable from this shell,
+including ``make sim`` and ``make check``. Some commands that interact with
+bluetooth such as ``wasptool`` may not work, for now.
+
+We can compile the modules required with the following commands:
+
+.. code-block:: sh
+
+   make submodules
+   make softdevice
+
+We can the compile source code that you will be flashing to your device with the following commands for each device:
+
+For the pinetime we use:
 
 .. code-block:: sh
 
     make -j `nproc` BOARD=pinetime all
-    make -j `nproc` BOARD=k9 all
-    make -j `nproc` BOARD=p8 all
+
+For the k9 we use:
+
+.. code-block:: sh
+
+   make -j `nproc` BOARD=k9 all
+
+For the p8 we use:
+
+.. code-block:: sh
+
+   make -j `nproc` BOARD=p8 all
 
 The output of these will be stored in ``build-${BOARD}/``.
 
