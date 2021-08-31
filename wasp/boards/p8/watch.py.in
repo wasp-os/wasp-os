@@ -101,7 +101,7 @@ try:
     try:
         boot_msg("Mount FS")
         os.mount(flash, '/flash')
-    except AttributeError:
+    except (AttributeError, OSError) as e:
         # Format the filesystem (and provide a default version of main.py)
         boot_msg("Format FS")
         os.VfsLfs2.mkfs(flash)
