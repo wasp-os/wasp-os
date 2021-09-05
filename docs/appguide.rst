@@ -295,7 +295,7 @@ launcher and it does not start automatically.
 To remove the application simply reboot the watch by pressing and
 holding the physical button until the watch enters OTA mode (this
 takes around five seconds). Once the watch is in OTA mode then
-press the phyiscal button again to return to normal mode with the
+press the physical button again to return to normal mode with the
 application cleared out.
 
 .. _Uploading in source code form:
@@ -329,8 +329,8 @@ and copies it to the external FLASH. After this point ``main.py`` is user
 modifiable and can be used to tweak the configuration of the watch before
 it starts running.
 
-Edit ``wasp/main.py`` to add the following two lines between ``import wasp``
-and the ``wasp.system.run()``:
+Edit ``wasp/main.py`` to add the following two lines and the end of the file
+(after the ``wasp.system.schedule()``:
 
 .. code-block:: python
 
