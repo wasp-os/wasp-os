@@ -16,6 +16,7 @@ whilst still allowing users to activate so many awesome applications!
 
 import wasp
 import icons
+import os
 
 
 class SoftwareApp():
@@ -49,6 +50,20 @@ class SoftwareApp():
         db.append(('testapp', factory('Test')))
         db.append(('timer', factory('Timer')))
         db.append(('weather', factory('Weather')))
+
+        # Handle user-loaded applications
+        try:
+            for app in os.listdir('apps'):
+                name = None
+                if app.endswith('.py'):
+                    name = app[:-3]
+                if app.endswith('.mpy'):
+                    name = app[:-4]
+                if name:
+                    db.append((name, factory(name)))
+        except OSError:
+            # apps does not exist...
+            pass
 
         # Get the initial state for the checkboxes
         for _, checkbox in db:
