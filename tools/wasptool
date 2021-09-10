@@ -287,9 +287,14 @@ def handle_binary_upload(c, fname, tname):
 
     if not tname:
         tname = os.path.basename(fname)
+    else:
+        dname = os.path.dirname(tname)
+        if dname:
+            c.run_command('import os')
+            c.sendline(f'os.mkdir("{dname}")')
+            c.run_command('del os')
 
-    c.sendline(f'f = open("{tname}", "wb")')
-    c.expect('>>> ')
+    c.run_command(f'f = open("{tname}", "wb")')
 
     # Absorb the file to be uploaded
     with open(fname, 'rb') as f:
@@ -303,20 +308,23 @@ def handle_binary_upload(c, fname, tname):
 
     # Send the data
     for i in pbar(range(0, chunksz*nchunks, chunksz), verbose):
-        c.sendline(f'f.write({repr(data[i:i+chunksz])})')
-        c.expect('>>> ')
+        c.run_command(f'f.write({repr(data[i:i+chunksz])})')
     if lastchunk:
-        c.sendline(f'f.write({repr(data[-lastchunk:])})')
-        c.expect('>>> ')
+        c.run_command(f'f.write({repr(data[-lastchunk:])})')
 
-    c.sendline('f.close()')
-    c.expect('>>> ')
+    c.run_command('f.close()')
 
 def handle_upload(c, fname, tname):
     verbose = bool(c.logfile)
 
     if not tname:
         tname = os.path.basename(fname)
+    else:
+        dname = os.path.dirname(tname)
+        if dname:
+            c.run_command('import os')
+            c.sendline(f'os.mkdir("{dname}")')
+            c.run_command('del os')
 
     c.run_command('from shell import upload')
 
