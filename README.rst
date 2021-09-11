@@ -4,7 +4,7 @@ Watch Application System in Python
 Introduction
 ------------
 
-Wasp-os is a firmware for smart watches that are based on the nRF52 family of
+Wasp-os is a firmware for smartwatches that are based on the nRF52 family of
 microcontrollers, and especially for hacker friendly watches such as the Pine64
 PineTime. Wasp-os features full heart rate monitoring and step counting support
 together with multiple clock faces, a stopwatch, an alarm clock, a countdown
@@ -21,7 +21,7 @@ relying on Bluetooth Low Energy for over-the-air updates.
 Documentation
 -------------
 
-Wasp-os is has `extensive documentation <https://wasp-os.readthedocs.io>`_
+Wasp-os has `extensive documentation <https://wasp-os.readthedocs.io>`_
 which includes a detailed `Application Writer's Guide
 <https://wasp-os.readthedocs.io/en/latest/appguide.html>`_ to help you
 get started coding for wasp-os as quickly as possible.
@@ -40,11 +40,11 @@ Use the
 `Installation Guide <https://wasp-os.readthedocs.io/en/latest/install.html>`_
 to learn how to build and install wasp-os on these devices.
 
-At the end of the install process your watch will show the time (03:00)
+At the end of the installation process, your watch will show the time (03:00)
 together with a date and a battery meter. When the watch goes into power
-saving mode you can use the button to wake it again.
+saving mode, you can use the button to wake it again.
 
-At this point you will also be able to use the Nordic UART Service to
+At this point, you will also be able to use the Nordic UART Service to
 access the MicroPython REPL. You can use ``tools/wasptool --console``
 to access the MicroPython REPL.
 
@@ -64,7 +64,7 @@ Or, if you have a suitable GNU/Linux workstation, just use:
 
 which can run these commands automatically.
 
-As mentioned above there are many drivers and features still to be
+As mentioned above, there are many drivers and features still to be
 developed, see the :ref:`Roadmap` for current status.
 
 Community
@@ -134,7 +134,7 @@ PineTime:
    :alt: wasp-os digital clock app running on PineTime
    :width: 233
 
-Screenshots of the built in applications running on the wasp-os
+Screenshots of the built-in applications running on the wasp-os
 simulator:
 
 .. image:: res/Bootloader.png
@@ -178,7 +178,7 @@ simulator:
    :width: 179
 
 
-wasp-os also contains a library of additional applications for you to choose.
+Wasp-os also contains a library of additional applications for you to choose.
 These are disabled by default but can be easily enabled using the Software
 application (and the "blank" white screen is a torch application):
 
