@@ -32,50 +32,17 @@ _MAXINPUT = const(16)
 _FONTH = const(24)
 _FONT = fonts.sans24
 
-_LINEH = int(_FONTH * 1.25)
-_MAXLINES = floor(_HEIGHT / _LINEH) - 1 # the "-1" is the input line
+# Precomputed for efficiency
+_LINEH = const(30) # int(_FONTH * 1.25)
+_MAXLINES = const(7) # floor(_HEIGHT / _LINEH) - 1 # the "-1" is the input line
 
-_code = {
-        ""     : " ",
-
-        ".-"   : "A",
-        "-..." : "B",
-        "-.-." : "C",
-        "-.."  : "D",
-        "."    : "E",
-        "..-." : "F",
-        "--."  : "G",
-        "...." : "H",
-        ".."   : "I",
-        ".---" : "J",
-        "-.-"  : "K",
-        ".-.." : "L",
-        "--"   : "M",
-        "-."   : "N",
-        "---"  : "O",
-        ".--." : "P",
-        "--.-" : "Q",
-        ".-."  : "R",
-        "..."  : "S",
-        "-"    : "T",
-        "..-"  : "U",
-        "...-" : "V",
-        ".--"  : "W",
-        "-..-" : "X",
-        "-.--" : "Y",
-        "--.." : "Z",
-
-        ".----": "1",
-        "..---": "2",
-        "...--": "3",
-        "....-": "4",
-        ".....": "5",
-        "-....": "6",
-        "--...": "7",
-        "---..": "8",
-        "----.": "9",
-        "-----": "0",
-        }
+# The morse lookup table, represented as a flattened binary tree.
+# The head is the value of the node, the tail are the subtrees:
+# left half of the tail = the next symbol is a dot
+# right half of the tail = the next symbol is a line
+_CODE = " EISH54V?3UF????2ARL?????WP??J?1TNDB6?X??KC??Y??MGZ7?Q??O?8??90"
+# Or, letters only:
+#_CODE = " EISHVUF?ARL?WPJTNDBXKCYMGZQO??"
 
 class MorseApp():
     NAME = 'Morse'
@@ -110,7 +77,7 @@ class MorseApp():
             self._update()
 
     def touch(self, event):
-        addition = _code[self.letter] if self.letter in _code else "/{}/".format(self.letter)
+        addition = self._lookup(self.letter)
         self.letter = ""
         merged = self.text[-1] + addition
         # Check if the new text overflows the screen and add a new line if that's the case
@@ -143,6 +110,27 @@ class MorseApp():
         The full text area is updated in _draw() instead."""
         draw = wasp.watch.drawable
         draw.string(self.text[-1], 0, _LINEH*(len(self.text)-1))
-        guess = _code[self.letter] if self.letter in _code else "?"
+        guess = self._lookup(self.letter)
         draw.string("{} {}".format(self.letter, guess), 0, _HEIGHT - _FONTH, width=_WIDTH)
 
+    def _lookup(self, s):
+        i = 0 # start of the subtree (current node)
+        l = len(_CODE) # length of the subtree
+
+        for c in s:
+            # first discard the head, which represent the previous guess
+            i += 1
+            l -= 1
+
+            # Check if we can no longer bisect while there are still dots/lines
+            if l <= 0: return "?"
+
+            # Update the bounds to the appropriate subtree
+            # (left or right of the tail).
+            # The length will always be half:
+            l //= 2
+            # The index will be either at the beginning of the tail,
+            # or at its half, in which case we subtract the current length,
+            # which is half of the old length:
+            if c == "-": i += l
+        return _CODE[i]
