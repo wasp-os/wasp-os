@@ -42,7 +42,6 @@ class SoftwareApp():
         db.append(('calc', factory('Calculator')))
         db.append(('faces', factory('Faces')))
         db.append(('gameoflife', factory('Game Of Life')))
-        db.append(('morse', factory('Morse')))
         db.append(('musicplayer', factory('Music Player')))
         db.append(('play2048', factory('Play 2048')))
         db.append(('snake', factory('Snake Game')))

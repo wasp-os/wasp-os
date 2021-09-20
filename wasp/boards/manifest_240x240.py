@@ -14,7 +14,6 @@ manifest = (
     'apps/gameoflife.py',
     'apps/haiku.py',
     'apps/heart.py',
-    'apps/morse.py',
     'apps/musicplayer.py',
     'apps/launcher.py',
     'apps/pager.py',
