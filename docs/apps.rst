@@ -51,6 +51,8 @@ Applications
 
 .. automodule:: apps.flashlight
 
+.. automodule:: Gallery
+
 .. automodule:: apps.haiku
 
 .. automodule:: Morse
