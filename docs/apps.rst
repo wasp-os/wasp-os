@@ -51,7 +51,7 @@ Applications
 
 .. automodule:: apps.haiku
 
-.. automodule:: apps.morse
+.. automodule:: Morse
 
 .. automodule:: apps.musicplayer
 
