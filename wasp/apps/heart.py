@@ -90,6 +90,8 @@ class HeartApp():
         x = self._x
         draw.fill(0, x, 32, 1, 208-spl)
         draw.fill(color, x, 239-spl, 1, spl)
+        if x < 238:
+            draw.fill(0, x+1, 32, 2, 208)
         x += 2
         if x >= 240:
             x = 0
