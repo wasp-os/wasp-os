@@ -31,6 +31,7 @@ class TorchApp(object):
 
     def background(self):
         """De-activate the application (without losing state)."""
+        self.__activated = False
         wasp.system.brightness = self._brightness
 
     def tick(self, ticks):
