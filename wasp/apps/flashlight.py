@@ -55,20 +55,23 @@ class TorchApp(object):
 
         if self.__activated:
             draw.fill(white)
+            self.draw_torch(0, 0)
             wasp.system.brightness = 3
 
         else:
             draw.fill()
+            self.draw_torch(wasp.system.theme('mid'), white)
             wasp.system.brightness = self._brightness
 
-            x = 108
-            mid = wasp.system.theme('mid')
+    def draw_torch(self, torch, light):
+        draw = wasp.watch.drawable
+        x = 108
 
-            draw.fill(mid, x, 107, 24, 9)
-            for i in range(1, 8):
-                draw.line(x+i, 115+i, x+23-i, 115+i, color=mid)
-            draw.fill(mid, x+8, 123, 8, 15)
+        draw.fill(torch, x, 107, 24, 9)
+        for i in range(1, 8):
+            draw.line(x+i, 115+i, x+23-i, 115+i, color=torch)
+        draw.fill(torch, x+8, 123, 8, 15)
 
-            draw.line(x-3, 94, x+5, 102, 2, white)
-            draw.line(x+17, 102, x+25, 94, 2, white)
-            draw.line(x+11, 89, x+11, 100, 2, white)
+        draw.line(x-3, 94, x+5, 102, 2, light)
+        draw.line(x+17, 102, x+25, 94, 2, light)
+        draw.line(x+11, 89, x+11, 100, 2, light)
