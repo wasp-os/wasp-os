@@ -6,9 +6,11 @@ import pytest
 def discover_app_constructors():
     apps = []
 
-    globs = glob.glob('wasp/apps/*.py')
-    names = [ g[5:-3].replace('/', '.') for g in globs ]
-    modules = [ importlib.import_module(n) for n in names ]
+    globs_system = glob.glob('wasp/apps/*.py')
+    names_system = [ g[5:-3].replace('/', '.') for g in globs_system ]
+    globs_user = glob.glob('apps/*.py')
+    names_user = [ g[:-3].replace('/', '.') for g in globs_user ]
+    modules = [ importlib.import_module(n) for n in names_system + names_user ]
 
     for m in modules:
         for sym in m.__dict__.keys():

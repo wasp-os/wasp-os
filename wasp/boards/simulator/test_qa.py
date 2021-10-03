@@ -3,7 +3,7 @@ import wasp
 import importlib
 import os
 
-EXCLUDE = ('Notifications', 'Template', 'Faces')
+EXCLUDE = ('Notifications', 'Template', 'Faces', 'ReadMe')
 
 def test_README(constructor):
     if constructor.NAME in EXCLUDE:
@@ -29,8 +29,9 @@ def test_app_library(constructor):
         waspdoc = f.read()
 
     # Every application must be listed in the Application Library
-    needle = f'.. automodule:: {constructor.__module__}'
-    assert needle in appdoc
+    needle_system = f'.. automodule:: {constructor.__module__}'
+    needle_user_defined = f'.. automodule:: {constructor.__module__}'.replace('apps.', '')
+    assert needle_system in appdoc or needle_user_defined in appdoc
 
 def test_docstrings(constructor):
     if constructor.NAME in EXCLUDE:
