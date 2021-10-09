@@ -98,8 +98,8 @@ class CalculatorApp():
         # Draw the background
         draw.fill(0, 0, 0, 239, 47)
         draw.fill(0, 236, 239, 3)
-        draw.fill(bg, 141, 48, 239-141, 235-48)
-        draw.fill(bg2, 0, 48, 140, 235-48)
+        draw.fill(bg, 141, 48, 239-141, 236-48)
+        draw.fill(bg2, 0, 48, 141, 236-48)
 
         # Make grid:
         draw.set_color(lo)
