@@ -45,7 +45,7 @@ class StopwatchApp():
 
         No other swipe event is possible for this application.
         """
-        if not self._started_at:
+        if not self._timer._started_at:
             self._reset()
         return True     # Request system default handling
 
@@ -84,7 +84,7 @@ class StopwatchApp():
             draw.fill(0, 0, 120, 240, 120)
             return
         y = 240 - 6 - (len(splits) * 24)
-        
+
         draw.set_font(fonts.sans24)
         draw.set_color(wasp.system.theme('mid'))
 
