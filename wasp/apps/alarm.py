@@ -175,7 +175,7 @@ class AlarmApp:
                 self._remove_alarm(self.page)
         elif self.page == _HOME_PAGE:
             for index, checkbox in enumerate(self.alarm_checks):
-                if checkbox.touch(event):
+                if index < self.num_alarms and checkbox.touch(event):
                     if checkbox.state:
                         self.alarms[index][_ENABLED_IDX] |= _IS_ACTIVE
                     else:
