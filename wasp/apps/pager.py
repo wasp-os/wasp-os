@@ -96,8 +96,6 @@ class NotificationApp(PagerApp):
             body = notes[note]['body'] if 'body' in notes[note] else ''
             self._msg = self._msg + '({}/{}){}:\n{}\n\n'.format(i, l, title, body)
             i += 1
-
-
         wasp.system.request_event(wasp.EventMask.TOUCH)
         super().foreground()
 
