@@ -3,6 +3,7 @@
 *.steps
 *.zip
 .*.swp
+*.mpy
 __pycache__
 cscope.out
 docs/build
