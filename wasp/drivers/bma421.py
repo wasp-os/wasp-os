@@ -49,3 +49,7 @@ class BMA421:
         if value != 0:
             raise ValueError()
         self._dev.reset_step_counter()
+
+    def accel_xyz(self):
+        """Return a triple with acceleration values"""
+        return self._dev.read_accel_xyz()
