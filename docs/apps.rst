@@ -45,6 +45,8 @@ Applications
 
 .. automodule:: apps.alarm
 
+.. automodule:: Beacon
+
 .. automodule:: apps.calc
 
 .. automodule:: apps.demo
