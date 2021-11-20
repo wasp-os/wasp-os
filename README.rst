@@ -257,3 +257,7 @@ application (and the "blank" white screen is a torch application):
 .. image:: res/WordClkApp.png
    :alt: Shows a time as words in the wasp-os simulator
    :width: 179
+
+.. image:: res/LevelApp.png
+   :alt: Shows a time as words in the wasp-os simulator
+   :width: 179
