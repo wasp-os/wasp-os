@@ -130,3 +130,8 @@ def lightsleep(ms=10):
 
 def deepsleep(ms=10):
     lightsleep(ms)
+
+def reset():
+    # We don't simulate an actual watch reset, but it should be enough for what
+    # we want to test
+    print("RESET")

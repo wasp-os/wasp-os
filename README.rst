@@ -149,6 +149,10 @@ simulator:
    :alt: Simple always-on demo for showing off wasp-os at conferences and shows
    :width: 179
 
+.. image:: res/DisaBLEApp.png
+   :alt: Small application for disabling bluetooth to save power and enhance security
+   :width: 179
+
 .. image:: res/HeartApp.png
    :alt: Heart rate application running on the wasp-os simulator
    :width: 179

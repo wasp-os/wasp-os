@@ -7,6 +7,7 @@ manifest = (
     'apps/calc.py',
     'apps/clock.py',
     'apps/chrono.py',
+    'apps/disaBLE.py',
     'apps/dual_clock.py',
     'apps/faces.py',
     'apps/fibonacci_clock.py',
