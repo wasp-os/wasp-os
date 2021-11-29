@@ -17,6 +17,7 @@ whilst still allowing users to activate so many awesome applications!
 import wasp
 import icons
 import os
+import gc
 
 
 class SoftwareApp():
@@ -114,6 +115,7 @@ class SoftwareApp():
             if checkbox.touch(event):
                 label = checkbox.label.replace(' ', '')
                 if checkbox.state:
+                    gc.collect()
                     wasp.system.register('apps.{}.{}App'.format(module, label))
                 else:
                     for app in wasp.system.launcher_ring:
