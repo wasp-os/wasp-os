@@ -88,29 +88,32 @@ class CalculatorApp():
 
     def _draw(self):
         draw = wasp.watch.drawable
+        theme = wasp.system.theme
+        line = draw.line
+        fill = draw.fill
 
-        hi = wasp.system.theme('bright')
-        lo = wasp.system.theme('mid')
+        hi = theme('bright')
+        lo = theme('mid')
         mid = draw.lighten(lo, 2)
-        bg = draw.darken(wasp.system.theme('ui'), wasp.system.theme('contrast'))
+        bg = draw.darken(theme('ui'), theme('contrast'))
         bg2 = draw.darken(bg, 2)
 
         # Draw the background
-        draw.fill(0, 0, 0, 239, 47)
-        draw.fill(0, 236, 239, 3)
-        draw.fill(bg, 141, 48, 239-141, 236-48)
-        draw.fill(bg2, 0, 48, 141, 236-48)
+        fill(0, 0, 0, 239, 47)
+        fill(0, 236, 239, 3)
+        fill(bg, 141, 48, 239-141, 236-48)
+        fill(bg2, 0, 48, 141, 236-48)
 
         # Make grid:
         draw.set_color(lo)
         for i in range(4):
             # horizontal lines
-            draw.line(x0=0,y0=(i+1)*47,x1=239,y1=(i+1)*47)
+            line(x0=0,y0=(i+1)*47,x1=239,y1=(i+1)*47)
             # vertical lines
-            draw.line(x0=(i+1)*47,y0=47,x1=(i+1)*47,y1=235)
-        draw.line(x0=0, y0=47, x1=0, y1=236)
-        draw.line(x0=239, y0=47, x1=239, y1=236)
-        draw.line(x0=0, y0=236, x1=239, y1=236)
+            line(x0=(i+1)*47,y0=47,x1=(i+1)*47,y1=235)
+        line(x0=0, y0=47, x1=0, y1=236)
+        line(x0=239, y0=47, x1=239, y1=236)
+        line(x0=0, y0=236, x1=239, y1=236)
 
         # Draw button labels
         draw.set_color(hi, bg2)
