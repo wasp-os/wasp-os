@@ -45,7 +45,7 @@ with pip instead:
 You will also need a toolchain for the Arm Cortex-M4. wasp-os is developed and
 tested using the `GNU-RM toolchain
 <https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-rm>`_
-(9-2019-q4) from Arm.
+(10-2020-q4) from Arm.
 
 .. note::
 

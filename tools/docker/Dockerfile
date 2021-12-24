@@ -15,7 +15,7 @@ RUN set -xe; \
     pip3 install cbor pysdl2 pygobject cryptography;
 
 RUN set -xe; \
-    wget --progress=dot:mega -O - https://developer.arm.com/-/media/Files/downloads/gnu-rm/9-2019q4/gcc-arm-none-eabi-9-2019-q4-major-x86_64-linux.tar.bz2 | tar xjf - -C /opt
+    wget --progress=dot:mega -O - https://developer.arm.com/-/media/Files/downloads/gnu-rm/10-2020q4/gcc-arm-none-eabi-10-2020-q4-major-x86_64-linux.tar.bz2 | tar xjf - -C /opt
 
 RUN set -xe; \
     addgroup --gid $gid user; \
