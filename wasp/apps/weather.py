@@ -63,11 +63,12 @@ class WeatherApp(object):
 
     def foreground(self):
         """Activate the application."""
-        temp = wasp.system.weatherinfo.get('temp')
-        hum = wasp.system.weatherinfo.get('hum')
-        txt = wasp.system.weatherinfo.get('txt')
-        wind = wasp.system.weatherinfo.get('wind')
-        loc = wasp.system.weatherinfo.get('loc')
+        get_info = wasp.system.weatherinfo.get
+        temp = get_info('temp')
+        hum = get_info('hum')
+        txt = get_info('txt')
+        wind = get_info('wind')
+        loc = get_info('loc')
         if temp:
             self._temp = temp
         if hum:
@@ -92,11 +93,12 @@ class WeatherApp(object):
 
     def tick(self, ticks):
         wasp.system.keep_awake()
-        temp_now = wasp.system.weatherinfo.get('temp')
-        hum_now = wasp.system.weatherinfo.get('hum')
-        txt_now = wasp.system.weatherinfo.get('txt')
-        wind_now = wasp.system.weatherinfo.get('wind')
-        loc_now = wasp.system.weatherinfo.get('loc')
+        get_info = wasp.system.weatherinfo.get
+        temp_now = get_info('temp')
+        hum_now = get_info('hum')
+        txt_now = get_info('txt')
+        wind_now = get_info('wind')
+        loc_now = get_info('loc')
         if temp_now:
             if temp_now != self._temp:
                 self._temp = temp_now
