@@ -60,6 +60,12 @@ jobs:
           make -j `nproc` VERSION=${{ github.sha }} dist
           mv ../wasp-os-${{ github.sha }}.tar.gz .
 
+    - name: Build extra apps
+      id:   apps
+      run:  |
+          export PATH=$PATH:${{ runner.temp }}/arm-none-eabi/bin
+          make -j `nproc` apps
+
     - name: Upload full binary distribution
       id:   upload-binaries
       uses: actions/upload-artifact@v2
@@ -87,3 +93,10 @@ jobs:
       with:
           name: k9-${{ github.sha }}
           path: build-k9
+
+    - name: Upload extra apps binaries
+      id:   upload-apps
+      uses: actions/upload-artifact@v2
+      with:
+          name: apps-${{ github.sha }}
+          path: apps/*.mpy
