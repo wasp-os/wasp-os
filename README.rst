@@ -246,6 +246,10 @@ application (and the "blank" white screen is a torch application):
    :alt: Weather application running in the wasp-os simulator
    :width: 179
 
+.. image:: res/WeekClkApp.png
+   :alt: Digital clock application, including the week day
+   :width: 179
+
 .. image:: res/WordClkApp.png
    :alt: Shows a time as words in the wasp-os simulator
    :width: 179
