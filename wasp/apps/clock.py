@@ -62,6 +62,14 @@ class ClockApp():
         wasp.system.bar.clock = False
         self._draw(True)
 
+    def _day_string(self, now):
+        """Produce a string representing the current day"""
+        # Format the month as text
+        month = now[1] - 1
+        month = MONTH[month*3:(month+1)*3]
+
+        return '{} {} {}'.format(now[2], month, now[0])
+
     def _draw(self, redraw=False):
         """Draw or lazily update the display.
 
@@ -93,18 +101,13 @@ class ClockApp():
                 # Skip the update
                 return
 
-        # Format the month as text
-        month = now[1] - 1
-        month = MONTH[month*3:(month+1)*3]
-
         # Draw the changeable parts of the watch face
         draw.blit(DIGITS[now[4]  % 10], 4*48, 80, fg=hi)
         draw.blit(DIGITS[now[4] // 10], 3*48, 80, fg=lo)
         draw.blit(DIGITS[now[3]  % 10], 1*48, 80, fg=hi)
         draw.blit(DIGITS[now[3] // 10], 0*48, 80, fg=lo)
         draw.set_color(hi)
-        draw.string('{} {} {}'.format(now[2], month, now[0]),
-                0, 180, width=240)
+        draw.string(self._day_string(now), 0, 180, width=240)
 
         # Record the minute that is currently being displayed
         self._min = now[4]
