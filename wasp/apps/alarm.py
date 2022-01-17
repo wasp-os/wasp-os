@@ -147,14 +147,12 @@ class AlarmApp:
 
     def press(self, button, state):
         """"Notify the application of a button press event."""
-        if self.page == _RINGING_PAGE:
-            self._snooze()
         wasp.system.navigate(wasp.EventType.HOME)
 
     def swipe(self, event):
         """"Notify the application of a swipe event."""
         if self.page == _RINGING_PAGE:
-            self._silence_alarm()
+            self._snooze()
         elif self.page > _HOME_PAGE:
             self._save_alarm()
             self._draw()
@@ -164,7 +162,7 @@ class AlarmApp:
     def touch(self, event):
         """Notify the application of a touchscreen touch event."""
         if self.page == _RINGING_PAGE:
-            self._silence_alarm()
+            self._snooze()
         elif self.page > _HOME_PAGE:
             if self.hours_wid.touch(event) or self.min_wid.touch(event):
                 return
@@ -239,11 +237,13 @@ class AlarmApp:
         draw.fill()
         draw.set_font(fonts.sans24)
         draw.string("Alarm", 0, 150, width=240)
+        draw.string("Touch to snooze", 0, 180, width=240)
         draw.blit(icon, 73, 50)
         draw.line(35, 1, 35, 239)
-        draw.string('Z', 10, 80)
-        draw.string('z', 10, 110)
-        draw.string('z', 10, 140)
+        draw.string('S', 10, 65)
+        draw.string('t', 10, 95)
+        draw.string('o', 10, 125)
+        draw.string('p', 10, 155)
 
     def _draw_edit_page(self):
         draw = wasp.watch.drawable
@@ -315,12 +315,6 @@ class AlarmApp:
         now = wasp.watch.rtc.get_localtime()
         alarm = (now[0], now[1], now[2], now[3], now[4] + 10, now[5], 0, 0, 0)
         wasp.system.set_alarm(time.mktime(alarm), self._alert)
-
-    def _silence_alarm(self):
-        mute = wasp.watch.display.mute
-        mute(True)
-        self._draw()
-        mute(False)
         wasp.system.navigate(wasp.EventType.HOME)
 
     def _set_pending_alarms(self):
