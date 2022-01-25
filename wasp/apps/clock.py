@@ -12,7 +12,6 @@ Shows a time (as HH:MM) together with a battery meter and the date.
 
 import wasp
 
-import icons
 import fonts.clock as digits
 
 DIGITS = (
@@ -26,7 +25,6 @@ MONTH = 'JanFebMarAprMayJunJulAugSepOctNovDec'
 class ClockApp():
     """Simple digital clock application."""
     NAME = 'Clock'
-    ICON = icons.clock
 
     def foreground(self):
         """Activate the application.
