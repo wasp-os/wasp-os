@@ -14,15 +14,12 @@ Shows a time as words together with a battery meter and the date.
 
 import wasp
 
-import icons
-
 MONTH = 'JanFebMarAprMayJunJulAugSepOctNovDec'
 
 
 class WordClockApp():
     """Simple digital clock application."""
     NAME = 'WordClk'
-    ICON = icons.app
 
     def foreground(self):
         """Activate the application.
