@@ -6,7 +6,7 @@
 import argparse
 import io
 import random
-import os.path
+import os
 import pexpect
 import time
 import types
@@ -258,6 +258,24 @@ def handle_binary_download(c, tname, fname):
     sz = eval(stat)
     bytes_read = 0
 
+    if os.path.exists(fname):
+        if args.force_pull:
+            print(f"Will overwrite local file '{fname}'")
+        else:
+            raise Exception(f"Local file '{fname}' already exists, use --force argument to overwrite it")
+
+    if "/" in fname:  # create local directories if needed
+        pile = "./"
+        for local_dir in fname.split("/")[:-1]:
+            if local_dir == ".":
+                continue
+            try:
+                os.mkdir(f"{pile}/{local_dir}/")
+                print(f"Created local dir {pile}/{local_dir}/")
+            except FileExistsError:  # folder already exists
+                pass
+            pile += local_dir + "/"
+
     with open(fname, 'wb') as f:
         while True:
             draw_pbar(100 * bytes_read / sz, verbose)
@@ -364,6 +382,8 @@ if __name__ == '__main__':
             help='Report on the current memory usage.')
     parser.add_argument('--pull',
             help='Fetch a file from the target')
+    parser.add_argument('--force', action='store_true', dest='force_pull',
+            help='Force pull to overwrite local file if a file with the same name already exists')
     parser.add_argument('--push',
             help='Push a file to the target')
     parser.add_argument('--reset', action='store_true',
