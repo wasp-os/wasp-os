@@ -245,6 +245,9 @@ class Manager():
     def switch(self, app):
         """Switch to the requested application.
         """
+        if self.app is app:
+            return
+
         if self.app:
             if 'background' in dir(self.app):
                 try:
