@@ -298,6 +298,10 @@ takes around five seconds). Once the watch is in OTA mode then
 press the physical button again to return to normal mode with the
 application cleared out.
 
+When in need to compare execution speed of several pieces of code
+, one can also use `--exec` to quickly time portions of code. A
+boiler plate code is provided in `./tools/wasptool/code_timer.py`.
+
 .. _Uploading in source code form:
 
 Uploading in source code form
