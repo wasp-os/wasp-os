@@ -31,4 +31,3 @@ for i in range(100):
 sum(vals1)/len(vals1)
 sum(vals2)/len(vals2)
 wasp.gc.collect()
-
