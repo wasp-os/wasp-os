@@ -245,6 +245,9 @@ def check_rtc(c):
 def handle_binary_download(c, tname, fname):
     verbose = bool(c.logfile)
 
+    if tname.startswith("/"):
+        fname = "." + fname
+
     c.run_command('import os')
     stat = c.run_command(f'os.stat("{tname}")[6]')
     if 'Error' in stat:
