@@ -32,4 +32,5 @@ for i in range(100):
 print("Benchmark results:")
 print("Function 1: {:5f}".format(sum(vals1)/len(vals1)))
 print("Function 2: {:5f}".format(sum(vals2)/len(vals2)))
+del t, n_iterations, vals1, vals2, i
 wasp.gc.collect()
