@@ -36,40 +36,58 @@ class BatteryMeter:
         """
         icon = icons.battery
         draw = watch.drawable
+        level = watch.battery.level()
+        unit = wasp.system.battery_unit
 
-        if watch.battery.charging():
-            if self.level != -1:
-                draw.blit(icon, 239-icon[1], 0,
-                             fg=wasp.system.theme('battery'))
-                self.level = -1
-        else:
-            level = watch.battery.level()
-            if level == self.level:
-                return
+        if level == self.level:
+            return
 
-
-            green = level // 3
-            if green > 31:
-                green = 31
-            red = 31-green
-            rgb = (red << 11) + (green << 6)
-
-            if self.level < 0 or ((level > 5) ^ (self.level > 5)):
-                if level  > 5:
+        if unit == "Icon":
+            if watch.battery.charging():
+                if self.level != -1:
                     draw.blit(icon, 239-icon[1], 0,
-                             fg=wasp.system.theme('battery'))
-                else:
-                    rgb = 0xf800
-                    draw.blit(icon, 239-icon[1], 0, fg=0xf800)
+                              fg=wasp.system.theme('battery'))
+                    self.level = -1
+            else:
+                green = level // 3
+                if green > 31:
+                    green = 31
+                red = 31-green
+                rgb = (red << 11) + (green << 6)
 
-            w = icon[1] - 10
-            x = 239 - 5 - w
-            h = 2*level // 11
-            if 18 - h:
-                draw.fill(0, x, 9, w, 18 - h)
-            if h:
-                draw.fill(rgb, x, 27 - h, w, h)
+                if self.level < 0 or ((level > 5) ^ (self.level > 5)):
+                    if level  > 5:
+                        draw.blit(icon, 239-icon[1], 0,
+                                 fg=wasp.system.theme('battery'))
+                    else:
+                        rgb = 0xf800
+                        draw.blit(icon, 239-icon[1], 0, fg=0xf800)
 
+                w = icon[1] - 10
+                x = 239 - 5 - w
+                h = 2*level // 11
+                if 18 - h:
+                    draw.fill(0, x, 9, w, 18 - h)
+                if h:
+                    draw.fill(rgb, x, 27 - h, w, h)
+                self.level = level
+        elif unit == "Percent" or unit == "mV":
+            draw.set_font(fonts.sans18)
+            if watch.battery.charging():
+                col = 0x57e0 # green
+            elif level <= 30:
+                col =  0xf800 # red
+            else:
+                col = 0xFFFF  # white
+            draw.set_color(col)
+            if unit == "mV":
+                mv = round(watch.battery.voltage_mv()/1000, 1)
+                disp = "  {}V".format(mv)
+
+            else:
+                disp = "   {}%".format(level)
+            draw.string(disp, x=230, y=0, width=10, right=True)
+            draw.reset()
             self.level = level
 
 class Clock:
