@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: LGPL-3.0-or-later
+# Copyright (C) 2022 thiswillbeyourgithub user of github.com
 # code_timer.py
 # put the code you want to compare in the content of f1 and f2
 # then use './wasptool --exec code_timer.py'
