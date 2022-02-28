@@ -72,13 +72,13 @@ any change in its lifecycle.
         ACTIVE -> BACKGROUND [ label=" background()   " ];
         ACTIVE -> RET_TO_CLOCK [ label=" sleep() -> False   " ];
         RET_TO_CLOCK -> BACKGROUND [ label=" background()   " ];
-        ACTIVE -> SLEEPING [ label=" sleep() -> True   " ];
-        SLEEPING -> ACTIVE [ label=" wake()   " ];
+        ACTIVE -> SYSTEM_SLEEPING [ label=" sleep() -> True   " ];
+        SYSTEM_SLEEPING -> ACTIVE [ label=" wake()   " ];
 
         START [ shape=box ];
         BACKGROUND [ shape=box, style=rounded ]
         ACTIVE [ shape=box, style=rounded ]
-        SLEEPING [ shape=box, style=rounded ]
+        SYSTEM_SLEEPING [ shape=box, style=rounded ]
         RET_TO_CLOCK [ label="Return to ClockApp" ];
     }
 
