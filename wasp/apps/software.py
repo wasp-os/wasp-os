@@ -41,7 +41,6 @@ class SoftwareApp():
         db = []
         db.append(('alarm', factory('Alarm')))
         db.append(('calc', factory('Calculator')))
-        db.append(('disaBLE', factory('DisaBLE')))
         db.append(('faces', factory('Faces')))
         db.append(('gameoflife', factory('Game Of Life')))
         db.append(('musicplayer', factory('Music Player')))

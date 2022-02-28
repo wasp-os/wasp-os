@@ -49,8 +49,6 @@ Applications
 
 .. automodule:: apps.demo
 
-.. automodule:: apps.disaBLE
-
 .. automodule:: apps.flashlight
 
 .. automodule:: apps.haiku
