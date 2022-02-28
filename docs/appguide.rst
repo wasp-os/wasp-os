@@ -49,6 +49,8 @@ Some of the key points of interest in this example application are:
    a common wasp-os idiom that is normally used to pattern to distinguish a full
    refresh of the screen from an fast update (a redraw).
 
+The full list of application entry points can be found at the bottom of this page.
+
 Application life-cycle
 ----------------------
 
@@ -120,7 +122,8 @@ resumes.
 
     Most applications should not implement :py:meth:`~.TemplateApp.sleep`
     since it is often a better user experience for the watch to return to the
-    default application when they complete an interaction.
+
+The full list of application entry points can be found at the bottom of this page.
 
 API primer
 ----------
