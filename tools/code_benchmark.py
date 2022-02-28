@@ -7,30 +7,24 @@
 
 wasp.gc.collect()
 t = wasp.machine.Timer(id=1, period=8000000)
+n_iterations = 20
+from array import array
+vals1 = array("f")
+vals2 = array("f")
 
-# example : comparing pow(5, 5) with 5**5
-from math import pow
-
-def f1():
-    return 5**5
-def f2():
-    return pow(5, 5)
-
-vals1 = []
-vals2 = []
-a = 0
-for i in range(100):
+for i in range(n_iterations):
     t.start()
-    a = f1()
+    # put code #1 here
     vals1.append(t.time())
     t.stop()
+
     t.start()
-    a = f2()
+    # put code #2 here
     vals2.append(t.time())
     t.stop()
 
 print("Benchmark results:")
-print("Function 1: {:5f}".format(sum(vals1)/len(vals1)))
-print("Function 2: {:5f}".format(sum(vals2)/len(vals2)))
+print("Function 1: {:3f}".format(sum(vals1)/n_iterations))
+print("Function 2: {:3f}".format(sum(vals2)/n_iterations))
 del t, n_iterations, vals1, vals2, i
 wasp.gc.collect()
