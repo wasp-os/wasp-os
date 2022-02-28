@@ -3,7 +3,7 @@
 
 """
 put the code you want to compare in the content of f1 and f2
-then use './wasptool --exec code_timer.py'
+then use './wasptool --exec code_benchmark.py'
 to see which is faster on the watch
 """
 
