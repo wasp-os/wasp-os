@@ -5,7 +5,6 @@
 #then use './wasptool --exec code_benchmark.py'
 #to see which is faster on the watch
 
-import wasp
 wasp.gc.collect()
 t = wasp.machine.Timer(id=1, period=8000000)
 
