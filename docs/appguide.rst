@@ -158,8 +158,8 @@ event notifications and timer callbacks:
   and specify the tick frequency.
 
 Additionally if your application is a game or a similar program that should
-not allow the watch to go to sleep (turning off the screen) when it is running then it should
-arrange to call :py:meth:`~.Manager.keep_awake` from the application's
+not allow the watch to turn off the screen while running (i.e. go to sleep)
+then it should arrange to call :py:meth:`~.Manager.keep_awake` from the application's
 :py:meth:`~.TemplateApp.tick` method.
 
 Drawing
