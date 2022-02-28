@@ -70,8 +70,8 @@ any change in its lifecycle.
         BACKGROUND -> START [ label=" __del__()   " ];
         BACKGROUND -> ACTIVE [ label=" foreground()   " ];
         ACTIVE -> BACKGROUND [ label=" background()   " ];
-        ACTIVE -> GO_TO_CLOCK [ label=" sleep() -> False   " ];
-        GO_TO_CLOCK -> BACKGROUND [ label=" background()   " ];
+        ACTIVE -> RET_TO_CLOCK [ label=" sleep() -> False   " ];
+        RET_TO_CLOCK -> BACKGROUND [ label=" background()   " ];
         ACTIVE -> SLEEPING [ label=" sleep() -> True   " ];
         SLEEPING -> ACTIVE [ label=" wake()   " ];
 
@@ -79,7 +79,7 @@ any change in its lifecycle.
         BACKGROUND [ shape=box, style=rounded ]
         ACTIVE [ shape=box, style=rounded ]
         SLEEPING [ shape=box, style=rounded ]
-        GO_TO_CLOCK [ label="GOTO ClockApp" ];
+        RET_TO_CLOCK [ label="Return to ClockApp" ];
     }
 
 When an application is initialized is enters the ``BACKGROUND`` state. A
