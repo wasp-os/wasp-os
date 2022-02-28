@@ -44,7 +44,8 @@ class TemplateApp():
         pass
 
     def foreground(self):
-        """Activate the application."""
+        """Called when the application is launched, for example by pressing
+        its icon."""
         self._draw()
         wasp.system.request_event(wasp.EventMask.TOUCH |
                                   wasp.EventMask.SWIPE_UPDOWN |
@@ -52,15 +53,21 @@ class TemplateApp():
         wasp.system.request_tick(1000)
 
     def background(self):
-        """De-activate the application."""
+        """Called when the leaving the application, either because of screen
+        timeout of directly by the user."""
         pass
 
     def sleep(self):
-        """Notify the application the device is about to sleep."""
+        """Called by the system to notify the application that the screen is
+        about to be turned off. Most apps should not implement it.
+        If not implemented or returning True: goes back to the default clock
+        application. If implemented and returning False: turning the screen
+        back on will show the current application"""
         return False
 
     def wake(self):
-        """Notify the application the device is waking up."""
+        """Notify the application that the screen is waking up. Generally used
+        to redraw the screen or to re-enable ticks."""
         pass
 
     def preview(self):
@@ -89,7 +96,8 @@ class TemplateApp():
             draw.string('Swipe down', 0, 108, width=240)
 
     def tick(self, ticks):
-        """Notify the application that its periodic tick is due."""
+        """Notify the application that a periodic tick is due. Note that
+        ticks are not called when watch is sleeping (i.e. screen is off)."""
         pass
 
     def touch(self, event):
@@ -99,12 +107,13 @@ class TemplateApp():
                 event[1], event[2]), 0, 108, width=240)
 
     def _draw(self):
-        """Draw the display from scratch."""
+        """Draw or redraw the entirety of the display."""
         draw = wasp.watch.drawable
         draw.fill()
         draw.string(self.NAME, 0, 6, width=240)
         self._update()
 
     def _update(self):
-        """Update the dynamic parts of the application display."""
+        """Draw a specific part of the display. Usually used to update only the
+        dynamic parts of the application display."""
         pass
