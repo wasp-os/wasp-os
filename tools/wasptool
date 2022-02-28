@@ -370,7 +370,7 @@ if __name__ == '__main__':
     parser.add_argument('--bootloader', action='store_true',
             help="Reboot into the bootloader mode for OTA update")
     parser.add_argument('--binary', action='store_true',
-            help="Enable non-ASCII mode for suitable commands (such as upload)")
+            help="Enable non-ASCII mode for upload command")
     parser.add_argument('--console', action='store_true',
             help='Launch a REPL session')
     parser.add_argument('--check-rtc', action='store_true',
