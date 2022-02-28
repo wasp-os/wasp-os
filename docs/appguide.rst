@@ -97,31 +97,38 @@ A backgrounded application enters the ``ACTIVE`` state via a call to
 :py:meth:`~.TemplateApp.foreground`. When it is active the application owns the
 screen and must draw and maintain its user interface.
 
-If the system manager wants to put the watch to sleep then it will tell the
-active application to :py:meth:`~.TemplateApp.sleep`.
-If the application returns True then the application will remain active
-whilst the watch is asleep.
-It will receive no events nor the application tick whilst the system is
-asleep and, instead, must wait for a :py:meth:`~.TemplateApp.wake` notification
-telling the application that the device is waking up and that it may
-update the screen if needed.
+If the screen timeout is near, the system manager will want to turn the screen
+off to save power. It will call the sleep entry point of the currently 
+active application (here, it would be :py:meth:`~.TemplateApp.sleep`).
+Several situations are possible:
 
-If an application does not support sleeping then it can simply not implement
-:py:meth:`~.TemplateApp.sleep` or :py:meth:`~.TemplateApp.wake`.
-In this case the system manager will automatically return to the default
-application, typically the main clock face.
+* If no sleep() method was implemented in the app, a default sleep()
+  method will be used to turn the screen off, put the application in the
+  background and switch to the default application (usually the main clock
+  application). Turning the screen on will appear as though the user
+  exited the application.
+* If the sleep() method was implemented and returns True, turning the
+  screen back on will directly show the app instead of the home menu.
+* If the sleep() method returns False, turning the screen on will show
+  the main clock application.
 
-Some applications may support sleeping only under certain circumstances. For
-example a stopwatch may choose to remain active when the watch sleeps only if
-the stopwatch is running.
-This type of application must implement :py:meth:`~.TemplateApp.sleep` and
-return False when it does not want to remain active when the system
-resumes.
+Here, "sleep" only refers to the appearance of the watch (screen turned off,
+unresponsive to touch) and not to any kind of power saving feature. For
+example, sleeping has no effect on bluetooth connectivity.
+
+Note that while the system is asleep (no matter what method were
+implemented, if any), the application cannot receive events
+nor ticks. Instead, it must wait for a :py:meth:`~.TemplateApp.wake`
+notification telling the application that the device is waking up,
+allowing it to update the screen if needed.
 
 .. note::
 
     Most applications should not implement :py:meth:`~.TemplateApp.sleep`
     since it is often a better user experience for the watch to return to the
+    default application when they complete an interaction. Notable
+    exceptions include clock related apps like the stopwatch, which returns
+    True when the stopwatch is running and False instead.
 
 The full list of application entry points can be found at the bottom of this page.
 
@@ -151,7 +158,7 @@ event notifications and timer callbacks:
   and specify the tick frequency.
 
 Additionally if your application is a game or a similar program that should
-not allow the watch to go to sleep when it is running then it should
+not allow the watch to go to sleep (turning off the screen) when it is running then it should
 arrange to call :py:meth:`~.Manager.keep_awake` from the application's
 :py:meth:`~.TemplateApp.tick` method.
 
