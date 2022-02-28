@@ -438,8 +438,8 @@ class Spinner():
     In order to have large enough hit boxes the spinner is a fairly large
     widget and requires 60x120 px.
     """
-    def __init__(self, x, y, mn, mx, field=1):
-        self._im = bytes((x, y, mn, mx, field))
+    def __init__(self, x, y, mn, mx, field=1, incr=1):
+        self._im = bytes((x, y, mn, mx, field, incr))
         self.value = mn
 
     def draw(self):
@@ -468,13 +468,15 @@ class Spinner():
         im = self._im
         if x >= im[0] and x < im[0]+60 and y >= im[1] and y < im[1]+120:
             if y < im[1] + 60:
-                self.value += 1
+                self.value += im[5]
                 if self.value > im[3]:
                     self.value = im[2]
             else:
-                self.value -= 1
+                self.value -= im[5]
                 if self.value < im[2]:
                     self.value = im[3]
+            while self.value % im[5] != 0:
+                self.value -= 1
 
             self.update()
             return True
