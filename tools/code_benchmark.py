@@ -32,6 +32,7 @@ for i in range(100):
     vals2.append(t.time())
     t.stop()
 
-sum(vals1)/len(vals1)
-sum(vals2)/len(vals2)
+print("Benchmark results:")
+print("Function 1: {:5f}".format(sum(vals1)/len(vals1)))
+print("Function 2: {:5f}".format(sum(vals2)/len(vals2)))
 wasp.gc.collect()
