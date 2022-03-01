@@ -102,15 +102,11 @@ off to save power. It will call the sleep entry point of the currently
 active application (here, it would be :py:meth:`~.TemplateApp.sleep`).
 Several situations are possible:
 
-* If no sleep() method was implemented in the app, a default sleep()
-  method will be used to turn the screen off, put the application in the
-  background and switch to the default application (usually the main clock
-  application). Turning the screen on will appear as though the user
-  exited the application.
-* If the sleep() method was implemented and returns True, turning the
-  screen back on will directly show the app instead of the home menu.
-* If the sleep() method returns False, turning the screen on will show
-  the main clock application.
+
+* App implements :py:meth:~/TemplateApp.sleep() and returns True
+* Either the app does not implement :py:meth:~/TemplateApp.sleep()
+  or the app implements :py:meth:~/TemplateApp.sleep() and it returns False.
+
 
 Here, "sleep" only refers to the appearance of the watch (screen turned off,
 unresponsive to touch) and not to any kind of power saving feature. For
