@@ -67,7 +67,7 @@ class TemplateApp():
 
     def wake(self):
         """Notify the application that the screen is waking up. Generally used
-        to redraw the screen or to re-enable ticks."""
+        to redraw the screen."""
         pass
 
     def preview(self):
