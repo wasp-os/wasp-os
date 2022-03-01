@@ -107,7 +107,7 @@ class TemplateApp():
                 event[1], event[2]), 0, 108, width=240)
 
     def _draw(self):
-        """Draw or redraw the entirety of the display."""
+        """Fully draw the entirety of the display."""
         draw = wasp.watch.drawable
         draw.fill()
         draw.string(self.NAME, 0, 6, width=240)
