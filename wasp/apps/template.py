@@ -44,8 +44,8 @@ class TemplateApp():
         pass
 
     def foreground(self):
-        """Called when the application is launched, for example by pressing
-        its icon in the launcher."""
+        """Called when the application is launched, for example when the user
+        presses its icon in the launcher."""
         self._draw()
         wasp.system.request_event(wasp.EventMask.TOUCH |
                                   wasp.EventMask.SWIPE_UPDOWN |
