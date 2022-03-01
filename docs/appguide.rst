@@ -130,7 +130,16 @@ allowing it to update the screen if needed.
     exceptions include clock related apps like the stopwatch, which returns
     True when the stopwatch is running and False instead.
 
-The full list of application entry points can be found at the bottom of this page.
+Application entry points
+------------------------
+
+Applications provide entry points for the system manager to use to notify
+the application of a change in system state or an user interface event.
+
+.. automodule:: apps.template
+   :members:
+   :private-members:
+   :special-members:
 
 API primer
 ----------
@@ -426,14 +435,3 @@ section to add an import and register for you application from ``main.py``
         ./tools/wasptool\
             --exec wasp/drivers/cst816s.py\
             --eval "watch.touch = CST816S(watch.i2c)"`
-
-Application entry points
-------------------------
-
-Applications provide entry points for the system manager to use to notify
-the application of a change in system state or an user interface event.
-
-.. automodule:: apps.template
-   :members:
-   :private-members:
-   :special-members:
