@@ -51,7 +51,7 @@ Applications
 
 .. automodule:: apps.flashlight
 
-.. automodule:: Gallery
+.. automodule:: apps.gallery
 
 .. automodule:: apps.haiku
 
@@ -70,7 +70,7 @@ Applications
 Games
 -----
 
-.. automodule:: apps.gameoflife
+.. automodule:: GameOfLife
 
 .. automodule:: apps.play2048
 

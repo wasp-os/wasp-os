@@ -10,4 +10,4 @@ wasp.system.schedule()
 # watch will still (partially) boot even if we end up taking
 # an exception during application init.
 wasp.system.register('apps.flashlight.TorchApp')
-wasp.system.register('apps.gameoflife.GameOfLifeApp')
+wasp.system.register('apps.gallery.GalleryApp')
