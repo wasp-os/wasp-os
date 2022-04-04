@@ -51,6 +51,7 @@ class SoftwareApp():
         db.append(('flashlight', factory('Torch')))
         db.append(('testapp', factory('Test')))
         db.append(('timer', factory('Timer')))
+        db.append(('Pomodoro', factory('Pomodoro')))
         db.append(('weather', factory('Weather')))
 
         # Handle user-loaded applications
