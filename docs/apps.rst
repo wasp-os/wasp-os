@@ -71,6 +71,8 @@ Applications
 
 .. automodule:: apps.timer
 
+.. automodule:: apps.Pomodoro
+
 .. automodule:: apps.weather
 
 Games
