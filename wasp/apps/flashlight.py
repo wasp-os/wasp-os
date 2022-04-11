@@ -4,14 +4,13 @@
 """Flashlight
 ~~~~~~~~~~~~~
 
-Shows a pure white screen with the backlight set to maximum.
+Shows a bright screen that you can tap to change brightness or switch to redlight.
 
 .. figure:: res/TorchApp.png
     :width: 179
 """
 
 import wasp
-
 import icons
 
 class TorchApp(object):
@@ -21,14 +20,16 @@ class TorchApp(object):
 
     def foreground(self):
         """Activate the application."""
-        self.draw()
         wasp.system.request_tick(1000)
+        wasp.system.request_event(wasp.EventMask.TOUCH)
 
         self._brightness = wasp.system.brightness
         wasp.system.brightness = 3
+        self.n_touch = 0
+        self.draw()
 
     def background(self):
-        """De-activate the application (without losing state)."""
+        """De-activate the application (without losing original state)."""
         wasp.system.brightness = self._brightness
 
     def tick(self, ticks):
@@ -36,4 +37,14 @@ class TorchApp(object):
 
     def draw(self):
         """Redraw the display from scratch."""
-        wasp.watch.drawable.fill(0xffff)
+        if self.n_touch % 6 < 3:
+            wasp.watch.drawable.fill(0xffff)
+        else:
+            wasp.watch.drawable.fill(0xf800)
+        print("ok")
+
+    def touch(self, event):
+        self.n_touch += 1
+        n = (wasp.system.brightness - 1) % 3
+        wasp.system.brightness = n if n else 3
+        self.draw()
