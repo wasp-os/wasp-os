@@ -13,6 +13,7 @@ Shows a bright screen that you can tap to change brightness or switch to redligh
 import wasp
 import icons
 
+
 class TorchApp(object):
     """Trivial flashlight application."""
     NAME = 'Torch'
@@ -20,13 +21,13 @@ class TorchApp(object):
 
     def foreground(self):
         """Activate the application."""
-        wasp.system.request_tick(1000)
+        wasp.system.request_tick(3000)
         wasp.system.request_event(wasp.EventMask.TOUCH)
 
         self._brightness = wasp.system.brightness
         wasp.system.brightness = 3
-        self.n_touch = 0
-        self.draw()
+        self._ntouch = 1
+        wasp.watch.drawable.fill(0xffff)  # white
 
     def background(self):
         """De-activate the application (without losing original state)."""
@@ -35,16 +36,12 @@ class TorchApp(object):
     def tick(self, ticks):
         wasp.system.keep_awake()
 
-    def draw(self):
-        """Redraw the display from scratch."""
-        if self.n_touch % 6 < 3:
-            wasp.watch.drawable.fill(0xffff)
-        else:
-            wasp.watch.drawable.fill(0xf800)
-        print("ok")
-
     def touch(self, event):
-        self.n_touch += 1
-        n = (wasp.system.brightness - 1) % 3
-        wasp.system.brightness = n if n else 3
-        self.draw()
+        self._ntouch += 1
+        self._ntouch %= 6
+        wasp.system.brightness = (-self._ntouch) % 3 + 1
+        if (-self._ntouch + 1) % 3 == 0:
+            if -self._ntouch % 6 < 3:
+                wasp.watch.drawable.fill(0xf800)  # red
+            else:
+                wasp.watch.drawable.fill(0xffff)  # white
