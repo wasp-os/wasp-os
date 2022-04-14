@@ -498,7 +498,9 @@ class Manager():
 
         This allows all watch management activities to handle in the
         normal execution context meaning any exceptions and other problems
-        can be observed interactively via the console.
+        can be observed interactively via the console. This is used by the
+        simulator or for debugging is not normally called. The watch instead
+        calls self.schedule() directly at startup from main.py.
         """
         if self._scheduling:
             print('Watch already running in the background')
