@@ -3,7 +3,9 @@
 """Pomodoro Application
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-A pomodoro app, forked from timer.py.
+A pomodoro app, forked from timer.py. Swipe laterally to load presets and vertically
+to change number of vibration. Vibration pattern are randomized if vibrating
+more than 4 times.
 
     .. figure:: res/PomodApp.png
         :width: 179
@@ -16,6 +18,7 @@ import wasp
 import fonts
 import widgets
 import math
+import random
 from micropython import const
 
 # 2-bit RLE, 96x64, generated from png provided by plan5, 239 bytes
@@ -42,66 +45,98 @@ icon = (
 _STOPPED = const(0)
 _RUNNING = const(1)
 _RINGING = const(2)
-_REPEAT_BUZZ = const(2)  # auto stop vibrating after _REPEAT_BUZZ vibrations
-_REPEAT_MAX = const(999)  # auto stop repeat after 999 runs
+_REPEAT_MAX = const(99)  # auto stop repeat after 99 runs
+_FIELDS = const(1234567890)
+_MAX_VIB = const(15)  # max number of second the watch you vibrate
+
+# you can add your own presets here:
+_PRESETS = ['15,4', '10,3', '20,5']
 
 
 class PomodoroApp():
-    """Allows the user to set a vibration alarm.
-    """
+    """Allows the user to set a periodic vibration alarm, Pomodoro style."""
     NAME = 'Pomod'
     ICON = icon
 
     def __init__(self):
-        """Initialize the application."""
-        self.minutes = widgets.Spinner(40, 60, 0, 99, 2)
-        self.minutes2 = widgets.Spinner(140, 60, 0, 99, 2)
         self.current_alarm = None
-        self.n_vibr = 0
+        self.nb_vibrat_total = 0  # number of time it vibrated
+        self.nb_vibrat_per_alarm = 10  # number of times to vibrate each time
 
-        self.minutes.value = 15
-        self.minutes2.value = 5
+        self.last_preset = 0
+        self.queue = _PRESETS[0]
+        self.last_run = -1
         self.state = _STOPPED
 
     def foreground(self):
-        """Activate the application."""
         self._draw()
-        wasp.system.request_event(wasp.EventMask.TOUCH)
+        wasp.system.request_event(wasp.EventMask.TOUCH |
+                                  wasp.EventMask.SWIPE_LEFTRIGHT |
+                                  wasp.EventMask.SWIPE_UPDOWN)
         wasp.system.request_tick(1000)
 
     def background(self):
-        """De-activate the application."""
         if self.state == _RINGING:
-            self.state = _STOPPED
+            self._start()
 
     def sleep(self):
-        """doesn't exit when screen turns off"""
+        """don't exit when screen turns off"""
         return True
 
     def tick(self, ticks):
-        """Notify the application that its periodic tick is due."""
         if self.state == _RINGING:
-            wasp.watch.vibrator.pulse(duty=50, ms=950)
+            if self.nb_vibrat_per_alarm <= 3:
+                wasp.watch.vibrator.pulse(duty=50, ms=650)
+            else:
+                wasp.watch.time.sleep(random.randint(0, 150) * 0.001)  # offset pattern
+                if random.random() > 0.8:  # one very long vibration
+                    wasp.watch.vibrator.pulse(duty=random.randint(20, 60), ms=1000)
+                elif random.random() > 0.66:  # one long vibration
+                    wasp.watch.vibrator.pulse(duty=random.randint(20, 60),
+                                              ms=random.randint(750, 850))
+                else:  # burst of vibration
+                    wasp.watch.vibrator.pulse(duty=20, ms=random.randint(100, 200))
+                    wasp.watch.time.sleep(random.randint(50, 150) * 0.001)
+                    wasp.watch.vibrator.pulse(duty=20, ms=random.randint(100, 200))
+                    wasp.watch.time.sleep(random.randint(50, 150) * 0.001)
+                    wasp.watch.vibrator.pulse(duty=20, ms=random.randint(100, 200))
             wasp.system.keep_awake()
-
-            self.n_vibr += 1
-            if self.n_vibr % _REPEAT_BUZZ == 0:  # vibrated _REPEAT_BUZZ times
-                # so no more repeat needed
-                if self.n_vibr // _REPEAT_BUZZ < _REPEAT_MAX:  # restart another
+            self.nb_vibrat_total += 1
+            if self.nb_vibrat_total % self.nb_vibrat_per_alarm == 0:
+                # vibrated self.nb_vibrat_per_alarm times so
+                # no more repeat needed
+                if self.nb_vibrat_total // self.nb_vibrat_per_alarm // len(self.squeue) < _REPEAT_MAX:
+                    # restart another
                     self._start()
-                else:  # stop from running for days
+                else:  # avoid running for days if forgotten
                     self._stop()
-                    self.n_vibr = 0
+
         else:
             self._update()
 
+    def swipe(self, event):
+        if self.state == _STOPPED:
+            draw = wasp.watch.drawable
+            draw.set_font(fonts.sans24)
+            if event[0] == wasp.EventType.UP:
+                self.nb_vibrat_per_alarm = max(1, (self.nb_vibrat_per_alarm + 1) % _MAX_VIB)
+            elif event[0] == wasp.EventType.DOWN:
+                self.nb_vibrat_per_alarm -= 1
+                if self.nb_vibrat_per_alarm == 0:
+                    self.nb_vibrat_per_alarm = _MAX_VIB
+            else:
+                if event[0] == wasp.EventType.RIGHT:
+                    self.last_preset += 1
+                elif event[0] == wasp.EventType.LEFT:
+                    self.last_preset -= 1
+                self.last_preset %= len(_PRESETS)
+                self.queue = _PRESETS[self.last_preset]
+            draw.string(self.queue, 0, 35, right=True, width=240)
+            draw.string("V{}".format(self.nb_vibrat_per_alarm), 0, 35)
+
     def touch(self, event):
-        """Notify the application of a touchscreen touch event."""
-        self.n_vibr = 0
         if self.state == _RINGING:
             mute = wasp.watch.display.mute
-            mute(True)
-            self._stop()
             mute(False)
         elif self.state == _RUNNING:
             if self.btn_stop.touch(event):
@@ -110,26 +145,61 @@ class PomodoroApp():
                 wasp.system.cancel_alarm(self.current_alarm, self._alert)
                 self.current_alarm += 60
                 wasp.system.set_alarm(self.current_alarm, self._alert)
+                wasp.watch.vibrator.pulse(duty=25, ms=50)
                 self._update()
-        else:
-            if self.minutes.touch(event) or self.minutes2.touch(event):
-                pass
+        elif self.state == _STOPPED:
+            if self.btn_del.touch(event):
+                if len(self.queue) > 1:
+                    self.queue = self.queue[:-1]
+                else:
+                    self.queue = ""
             elif self.btn_start.touch(event):
-                self._start()
+                if self.queue != "" and not self.queue.endswith(","):
+                    self.squeue = [int(x) for x in self.queue.split(",")]
+                    self._start(first_run=True)
+                    return
+            elif len(self.queue) < 13:
+                if self.btn_add.touch(event):
+                    if len(self.queue) >= 1 and self.queue[-1] != ",":
+                        self.queue += ","
+                else:
+                    for i, b in enumerate(self.btns):
+                        if b.touch(event):
+                            self.queue += str((i + 1) % 10)
+                            break
+            draw = wasp.watch.drawable
+            draw.set_font(fonts.sans24)
+            draw.string(self.queue, 0, 35, right=True, width=240)
+            draw.string("V{}".format(self.nb_vibrat_per_alarm), 0, 35)
 
-    def _start(self):
+    def _start(self, first_run=False):
+        if self.btns is not None:  # save some memory
+            for b in self.btns:
+                b = None
+                del b
+            self.btns = None
+        wasp.gc.collect()
+
         self.state = _RUNNING
         now = wasp.watch.rtc.time()
-        m = self.minutes.value if self.n_vibr // _REPEAT_BUZZ % 2 == 0 else self.minutes2.value
+        self.last_run += 1
+        if self.last_run >= len(self.squeue):
+            self.last_run = 0
+        m = self.squeue[self.last_run]
 
         # reduce by one second if repeating, to avoid growing offset
-        self.current_alarm = now + max(m * 60 - _REPEAT_BUZZ, 1)
+        if first_run:
+            self.current_alarm = now + max(m * 60, 1)
+        else:
+            self.current_alarm = now + max(m * 60 - self.nb_vibrat_per_alarm, 1)
         wasp.system.set_alarm(self.current_alarm, self._alert)
         self._draw()
 
     def _stop(self):
         self.state = _STOPPED
         wasp.system.cancel_alarm(self.current_alarm, self._alert)
+        self.last_run = -1
+        self.nb_vibrat_total = 0
         self._draw()
 
     def _draw(self):
@@ -141,55 +211,78 @@ class PomodoroApp():
         sbar.draw()
 
         if self.state == _RINGING:
-            draw.set_font(fonts.sans18)
+            draw.set_font(fonts.sans24)
             draw.string(self.NAME, 0, 150, width=240)
             draw.blit(icon, 73, 50)
         elif self.state == _RUNNING:
-            self.btn_stop = widgets.Button(x=0, y=200, w=200, h=40, label="STOP")
+            self.btn_stop = widgets.Button(x=0, y=200, w=160, h=40,
+                                           label="STOP")
             self.btn_stop.draw()
-            self.btn_add = widgets.Button(x=180, y=200, w=60, h=40, label="+1")
+            self.btn_add = widgets.Button(x=160, y=200, w=80, h=40,
+                                          label="+1")
             self.btn_add.draw()
             draw.reset()
-
-            t = "Timer 1" if self.n_vibr // _REPEAT_BUZZ % 2 == 0 else "Timer 2"
-            draw.set_font(fonts.sans18)
-            n = self.n_vibr // _REPEAT_BUZZ
-            t += " (#{})".format(n//2)
+            t = "Timer #{}/{}  ({})".format(self.last_run + 1,
+                                            len(self.squeue),
+                                            self.nb_vibrat_total // self.nb_vibrat_per_alarm // len(self.squeue))
             draw.string(t, 10, 60)
             draw.set_font(fonts.sans28)
             draw.string(':', 110, 106, width=20)
 
             self._update()
             draw.set_font(fonts.sans18)
-        else:  # _STOPPED
-            draw.set_font(fonts.sans18)
-            draw.string('T1', 56, 50)
-            draw.string('T2', 156, 50)
-
-            self.minutes.draw()
-            self.minutes2.draw()
-
-            self.btn_start = widgets.Button(x=20, y=200, w=200, h=40, label="START")
-            self.btn_start.draw()
+        elif self.state == _STOPPED:
+            self.btns = []
+            fields = str(_FIELDS)
+            for y in range(2):
+                for x in range(5):
+                    btn = widgets.Button(x=x*48,
+                                         y=y*65+60,
+                                         w=49,
+                                         h=59,
+                                         label=fields[x + 5*y])
+                    btn.draw()
+                    self.btns.append(btn)
+            self.btn_del = widgets.Button(x=0,
+                                          y=190,
+                                          w=76,
+                                          h=50,
+                                          label="Del.")
+            self.btn_del.draw()
+            self.btn_add = widgets.Button(x=80,
+                                          y=190,
+                                          w=76,
+                                          h=50,
+                                          label="Then")
+            self.btn_add.draw()
+            self.btn_start = widgets.Button(x=160,
+                                            y=190,
+                                            w=80,
+                                            h=50,
+                                            label="Go")
+            self.btn_start.update(txt=0, frame=wasp.system.theme('mid'),
+                                  bg=0xf800)
             draw.reset()
+            draw.set_font(fonts.sans24)
+            draw.string(self.queue, 0, 35, right=True, width=240)
+            draw.string("V{}".format(self.nb_vibrat_per_alarm), 0, 35)
 
     def _update(self):
         wasp.system.bar.update()
         draw = wasp.watch.drawable
         if self.state == _RUNNING:
             now = wasp.watch.rtc.time()
-            s = self.current_alarm - now
-            if s<0:
-                s = 0
-            m = str(math.floor(s // 60))
-            s = str(math.floor(s) % 60)
-            if len(m) < 2:
-                m = '0' + m
-            if len(s) < 2:
-                s = '0' + s
+            s = max(self.current_alarm - now, 0)
+            m = math.floor(s // 60)
+            s = math.floor(s) % 60
+            if len(str(m)) > 5:
+                prefix = "+"
+                m = int(str(m)[-4:])
+            else:
+                prefix = ""
             draw.set_font(fonts.sans28)
-            draw.string(m, 50, 106, width=60)
-            draw.string(s, 130, 106, width=60)
+            draw.string("{}{:02d}:{:02d}".format(prefix, m, s), 90, 106,
+                        width=60)
 
     def _alert(self):
         self.state = _RINGING
