@@ -36,10 +36,6 @@ class DisaBLEApp():
         b'\xff\x00\xff\x00\xff\x00g'
     )
 
-
-    def __init__(self):
-        self._btn = widgets.Button(10, 120, 220, 80, 'Disable' if ble.enabled() else 'Reboot to enable')
-
     def foreground(self):
         self._draw()
         wasp.system.request_event(wasp.EventMask.TOUCH)
@@ -49,13 +45,15 @@ class DisaBLEApp():
         draw.set_color(wasp.system.theme('bright'))
         draw.fill()
         draw.string('BLE status: ' + ('ON' if ble.enabled() else 'OFF'), 0, 60, width=240)
+        self._btn = widgets.Button(10, 120, 220, 80, 'Disable' if ble.enabled() else 'Reboot to enable')
         self._btn.draw()
 
     def touch(self, event):
         if self._btn.touch(event):
             if ble.enabled():
                 ble.disable()
-                self._btn = widgets.Button(10, 120, 220, 80, 'Reboot to enable')
                 self._draw()
             else:
                 wasp.machine.reset()
+        else:
+            self._draw()
