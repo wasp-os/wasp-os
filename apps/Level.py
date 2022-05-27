@@ -77,17 +77,19 @@ class LevelApp():
     def _update(self):
         if not self.prompt:
             draw = wasp.watch.drawable
+            # Clear the old bubble
             draw.fill(None, self.old_xy[0] - 3 + _X_CENTER, self.old_xy[1] - 3 + _Y_CENTER, 6, 6)
             # draw guide lines
             draw.line(0, _Y_CENTER, _X_MAX, _Y_CENTER, color = wasp.system.theme('mid'))
             draw.line(_X_CENTER, 0, _X_CENTER, _Y_MAX, color = wasp.system.theme('mid'))
-            # We save x as y and -y as x because we use the screen's coordinate
-            # system.
-            # We also clamp and scale the values down a bit to make them fit better,
-            # and apply the calibration
-            (new_y, new_x, _) = watch.accel.accel_xyz()
+            (new_x, new_y, _) = watch.accel.accel_xyz()
+            # We clamp and scale the values down a bit to make them fit better,
+            # and apply the calibration.
+            # The scaling factor is negative because when gravity pulls in one
+            # direction we want the bubble to go the other direction.
             new_x = min(_X_CENTER, max(-_X_CENTER, (new_x-self.calibration[0])//-3))
-            new_y = min(_Y_CENTER, max(-_Y_CENTER, (new_y-self.calibration[1])//3))
+            new_y = min(_Y_CENTER, max(-_Y_CENTER, (new_y-self.calibration[1])//-3))
+            # Draw the new bubble
             draw.fill(wasp.system.theme('bright'), new_x - 3 + _X_CENTER, new_y - 3 + _Y_CENTER, 6, 6)
             self.old_xy = (new_x, new_y)
 
@@ -99,7 +101,7 @@ class LevelApp():
         if self.prompt:
             # Handle buttons
             if self.calibrate.touch(event):
-                (y, x, _) = watch.accel.accel_xyz()
+                (x, y, _) = watch.accel.accel_xyz()
                 self.calibration = (x, y)
             if self.reset.touch(event):
                 self.calibration = (0,0)
