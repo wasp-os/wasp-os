@@ -8,17 +8,33 @@
 import bma42x
 import time
 
+# Sensor orientation definition.
+# The 6 most significant bits define the indexes of the x, y, and z values
+# in the acceleration tuple returned by the sensor, while the 3 least
+# significant bits define their sign (1 = keep original sign, 0 = negate).
+#
+#         Z index ─────────────────┐
+#         Y index ───────────────┐ │
+#         X index ─────────────┐ │ │
+#                              ├┐├┐├┐
+_DEFAULT_ORIENTATION = const(0b010010101)
+#          1 = keep, 0 = negate      │││
+#          X sign ───────────────────┘││
+#          Y sign ────────────────────┘│
+#          Z sign ─────────────────────┘
+
 class BMA421:
     """BMA421 driver
 
     .. automethod:: __init__
     """
-    def __init__(self, i2c):
+    def __init__(self, i2c, orientation=_DEFAULT_ORIENTATION):
         """Configure the driver.
 
         :param machine.I2C i2c: I2C bus used to access the sensor.
         """
         self._dev = bma42x.BMA42X(i2c)
+        self._orientation = orientation
 
     def reset(self):
         """Reset and reinitialize the sensor."""
@@ -52,4 +68,8 @@ class BMA421:
 
     def accel_xyz(self):
         """Return a triple with acceleration values"""
-        return self._dev.read_accel_xyz()
+        raw = self._dev.read_accel_xyz()
+        x = raw[self._orientation >> 7 & 0b11] * ((self._orientation >> 1 & 0b10) - 1)
+        y = raw[self._orientation >> 5 & 0b11] * ((self._orientation      & 0b10) - 1)
+        z = raw[self._orientation >> 3 & 0b11] * ((self._orientation << 1 & 0b10) - 1)
+        return (x, y, z)
