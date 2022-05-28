@@ -14,10 +14,12 @@ _ID = const(0x00)
 _ENABLE = const(0x01)
 _ENABLE_HEN = const(0x80)
 _ENABLE_HWT = const(0x70)
+_ENABLE_PDRIVE1 = const(0x08)
 _C1DATAM = const(0x08)
 _C0DATAM = const(0x09)
 _C0DATAH = const(0x0a)
 _PDRIVER = const(0x0c)
+_PDRIVER_PDRIVE0 = const(0x40)
 _C1DATAH = const(0x0d)
 _C1DATAL = const(0x0e)
 _C0DATAL = const(0x0f)
@@ -89,11 +91,21 @@ class HRS3300:
         self.write_reg(_HGAIN, hgain << 2)
 
     def set_drive(self, drive):
+        """
+        Set LED drive current
+
+        Parameters:
+            drive (int) LED drive current
+                0 = 12.5 mA
+                1 = 20   mA
+                2 = 30   mA
+                3 = 40   mA
+        """
         en = self.read_reg(_ENABLE)
         pd = self.read_reg(_PDRIVER)
        
-        en = (en & 0xf7) | ((drive & 2) << 2)
-        pd = (pd & 0xbf) | ((drive & 1) << 6)
+        en = (en & ~_ENABLE_PDRIVE1 ) | ((drive & 2) << 2)
+        pd = (pd & ~_PDRIVER_PDRIVE0) | ((drive & 1) << 6)
 
         self.write_reg(_ENABLE, en)
         self.write_reg(_PDRIVER, pd)
