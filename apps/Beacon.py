@@ -19,14 +19,6 @@ import wasp
 import machine
 from micropython import const
 
-_ENABLE = const(0x01)
-_PDRIVER = const(0x0c)
-
-_ENABLE_HEN = const(0x80)
-_ENABLE_PDRIVE1 = const(0x08)
-_PDRIVER_PDRIVE0 = const(0x40)
-_ENABLE_HWT = const(0x70)
-
 class BeaconApp():
     NAME = "Beacon"
     # 2-bit RLE, 96x64, generated from res/beacon_icon.png, 336 bytes
@@ -61,8 +53,6 @@ class BeaconApp():
         self._checkbox = wasp.widgets.Checkbox(10, 45, "Enable beacon")
         self._slider_current = wasp.widgets.Slider(4, 10, 110, 0x27e4)
         self._slider_wait_time = wasp.widgets.Slider(8, 10, 180)
-        self._reg_enable = 0x00 # off, 800ms, part of 12.5mA
-        self._reg_pdriver = 0x2e #0x4e # part of 12.5mA, PON=1, magic
 
     def foreground(self):
         wasp.system.bar.clock = True
@@ -78,53 +68,37 @@ class BeaconApp():
         self._slider_current.draw()
         draw.string("Frequency:", 10, 155)
         self._slider_wait_time.draw()
-        self._update()
+        self._draw_preview()
 
     def touch(self, event):
-        updated = self._checkbox.touch(event)
-        if event[2] >= 180:
-            updated |= self._slider_wait_time.touch(event)
-        elif event[2] >= 110:
-            updated |= self._slider_current.touch(event)
-        self._update()
-        if updated:
+        if self._checkbox.touch(event):
             if self._checkbox.state:
-                self._enable_led()
+                wasp.watch.hrs.enable()
+                wasp.watch.hrs.set_hwt(self._slider_wait_time.value)
+                wasp.watch.hrs.set_drive(self._slider_current.value)
             else:
-                self._disable_led()
-
-    def _update(self):
+                wasp.watch.hrs.disable()
+            self._checkbox.update()
+        elif event[2] >= 180:
+            if self._slider_wait_time.touch(event):
+                wasp.watch.hrs.set_hwt(self._slider_wait_time.value)
+                self._slider_wait_time.update()
+                self._draw_preview()
+        elif event[2] >= 110:
+            if self._slider_current.touch(event):
+                wasp.watch.hrs.set_drive(self._slider_current.value)
+                self._slider_current.update()
+                self._draw_preview()
         wasp.system.bar.update()
-        self._checkbox.update()
-        self._slider_current.update()
-        self._slider_wait_time.update()
 
-        # Draw a dashed line representing intensity and frequency
-        # with thickness and separation of dashes
+    def _draw_preview(self):
+        """
+        Draw a dashed line representing intensity and frequency
+        with thickness and separation of dashes
+        """
         draw = wasp.watch.drawable
         draw.fill(None, 10, 220, 227, 20)
         x = 10
         while x < 220:
             wasp.watch.drawable.fill(0x27e4, x, 227, 8, (self._slider_current.value + 1) * 3)
             x += (8 - self._slider_wait_time.value) * 8
-
-    def _enable_led(self):
-        self._reg_enable |= _ENABLE_HEN
-        if self._slider_current.value % 2:
-            self._reg_pdriver |= _PDRIVER_PDRIVE0
-        else:
-            self._reg_pdriver &= ~_PDRIVER_PDRIVE0
-        if self._slider_current.value >> 1:
-            self._reg_enable |= _ENABLE_PDRIVE1
-        else:
-            self._reg_enable &= ~_ENABLE_PDRIVE1
-        self._reg_enable = (self._reg_enable & (~_ENABLE_HWT)) | (self._slider_wait_time.value << 4)
-        wasp.watch.hrs.write_reg(_PDRIVER, self._reg_pdriver)
-        #print("writing PDRIVER={:08b}".format(self._reg_pdriver))
-        wasp.watch.hrs.write_reg(_ENABLE, self._reg_enable)
-        #print("writing ENABLE={:08b}".format(self._reg_enable))
-
-    def _disable_led(self):
-        self._reg_enable &= ~_ENABLE_HEN
-        wasp.watch.hrs.write_reg(_ENABLE, self._reg_enable)
-        #print("writing ENABLE={:08b}".format(self._reg_enable))

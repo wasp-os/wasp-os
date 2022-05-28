@@ -180,6 +180,12 @@ class HRS():
 
         return d
 
+    def set_drive(self, drive):
+        pass
+
+    def set_hwt(self, t):
+        pass
+
 backlight = Backlight()
 spi = SPI(0)
 spi.init(polarity=1, phase=1, baudrate=8000000)

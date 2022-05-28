@@ -13,6 +13,7 @@ _I2CADDR = const(0x44)
 _ID = const(0x00)
 _ENABLE = const(0x01)
 _ENABLE_HEN = const(0x80)
+_ENABLE_HWT = const(0x70)
 _C1DATAM = const(0x08)
 _C0DATAM = const(0x09)
 _C0DATAH = const(0x0a)
@@ -96,3 +97,22 @@ class HRS3300:
 
         self.write_reg(_ENABLE, en)
         self.write_reg(_PDRIVER, pd)
+
+    def set_hwt(self, t):
+        """
+        Set wait time between each conversion cycle
+
+        Parameters:
+            t (int) Wait time between each conversion cycle
+                0 = 800   ms
+                1 = 400   ms
+                2 = 200   ms
+                3 = 100   ms
+                4 =  75   ms
+                5 =  50   ms
+                6 =  12.5 ms
+                7 =   0   ms
+        """
+        en = self.read_reg(_ENABLE)
+        en = (en & ~_ENABLE_HWT) | (t << 4)
+        self.write_reg(_ENABLE, en)
