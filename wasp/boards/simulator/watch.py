@@ -48,6 +48,10 @@ class Accelerometer:
     def steps(self, value):
         self.reset()
 
+    def accel_xyz(self):
+        # TODO randomly alter the values over time
+        return (0,0,0)
+
 class Backlight(object):
     def __init__(self, level=1):
         pass

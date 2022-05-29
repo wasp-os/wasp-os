@@ -258,6 +258,10 @@ application (and the "blank" white screen is a torch application):
    :alt: Shows a time as words in the wasp-os simulator
    :width: 179
 
+.. image:: res/LevelApp.png
+   :alt: Shows a time as words in the wasp-os simulator
+   :width: 179
+
 .. image:: res/BeaconApp.png
    :alt: Flash the relatively powerful HRS LED repeatedly
    :width: 179
