@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: LGPL-3.0-or-later
-# Copyright (C) 2020 Wolfgang Ginolas
+# Copyright (C) 2022 github user thiswillbeyourgithub
 """Pomodoro Application
 ~~~~~~~~~~~~~~~~~~~~~~~
 
