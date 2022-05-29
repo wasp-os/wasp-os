@@ -159,6 +159,12 @@ class HRS():
         self._i = 0
         self._step = 1
 
+    def read_reg(self, addr):
+        pass
+
+    def write_reg(self, addr, val):
+        pass
+
     def enable(self):
         pass
 
@@ -177,6 +183,12 @@ class HRS():
             self._step = 1
 
         return d
+
+    def set_drive(self, drive):
+        pass
+
+    def set_hwt(self, t):
+        pass
 
 backlight = Backlight()
 spi = SPI(0)
