@@ -126,12 +126,12 @@ time being lost during an update.
 Watchdog protocol
 ~~~~~~~~~~~~~~~~~
 
-Form-factor devices such as smart watches and fitness trackers do not usually
+Form-factor devices such as smartwatches and fitness trackers do not usually
 have any hardware mechanism to allow the user to force a failed device into
 bootloader mode. This makes them difficult to develop on because opening the
 case to access a SWD or reset pins may compromise their waterproofing.
 
-wasp-os uses a watchdog timer (WDT) combined with a single hardware button in
+Wasp-os uses a watchdog timer (WDT) combined with a single hardware button in
 order to provide a robust mechanism to allow the user to force entry into a
 over-the-air firmware recovery mode that allows the buggy application to be
 replaced.
@@ -143,15 +143,15 @@ are intentionally minimal.
 The bootloader implements an over-the-air recovery mode, as well as handling
 normal boot, where it's role is to display the splash screen.
 
-Additionally the bootloader implements several watchdog related features
+Additionally, the bootloader implements several watchdog related features
 necessary for robust reboot handling:
 
 1. The bootloader configures the watchdog prior to booting the main
    application. This is a simple, single channel reload request, watchdog
-   with a 5 second timeout.
+   with a 5-second timeout.
 
 2. The bootloader checks the reset reason prior too booting the main
-   application. If it detects a watchdog reset the bootloader switches
+   application. If it detects a watchdog reset, the bootloader switches
    automatically to DFU mode.
 
 3. The bootlaoder initialized the pinmux allowing the hardware button
@@ -160,7 +160,7 @@ necessary for robust reboot handling:
 4. The bootloader monitors the hardware button and switches back to the main
    application when it is pressed.
     
-From this list #1 and #2 are needed to ensure robust WDT handling whilst #3
+From this list #1 and #2 are needed to ensure robust WDT handling, whilst #3
 and # 4 ensure the user can switch back to application from the device
 itself if they ever accidentally trigger entry to recovery mode.
 
@@ -168,7 +168,7 @@ The application's role is to carefully pet the watchdog so that it will
 trigger automatically if the hardware button is held down for five
 seconds. Key points for application robustness include:
 
-1. Unlike a normal watchdog we can be fairly reckless about where in the
+1. Unlike a normal watchdog, we can be fairly reckless about where in the
    code we pet the dog. For example petting the dog from a timer interrupt
    is fine because we only need the dog to bark if the hardware button is
    pressed.
@@ -179,13 +179,13 @@ seconds. Key points for application robustness include:
 3. The routine to pet the dog is also predicated on the hardware button
    still being correctly configured.
 
-To avoid mistakes the application should contain no subroutines that 
+To avoid mistakes, the application should contain no subroutines that 
 unconditionally pet the dog; they should all implement #2 and #3 from
 the above list.
 
 Note: *nRF52 microcontrollers implement a distributed pin-muxing
-mechanism meaning most peripheral can acidentally "steal" a pin
+mechanism meaning most peripheral can accidentally "steal" a pin
 if the pin is requested by the peripheral. This requires a fully
 robust implementation of #3 to visit the PSEL registers of every
 peripheral that can control pins. The code currently used in
-wasp-os does not yet meet this criteria.*
+wasp-os does not yet meet these criteria.*

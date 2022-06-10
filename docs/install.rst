@@ -16,7 +16,7 @@ Building wasp-os and launching the wasp-os simulator requires Python 3.6
 (or later) and the following python modules: click, numpy, pexpect, PIL
 (or Pillow), pydbus, pygobject, pyserial, pysdl2.
 
-On Debian Buster the required python modules can be obtained using the
+On Debian Buster, the required python modules can be obtained using the
 following commands:
 
 .. code-block:: sh
@@ -27,7 +27,7 @@ following commands:
       python3-serial unzip
     pip3 install --user cbor pysdl2
 
-Additionally if you wish to regenerate the documentation you will require
+Additionally, if you wish to regenerate the documentation you will require
 a complete sphinx toolchain:
 
 .. code-block:: sh
@@ -35,7 +35,7 @@ a complete sphinx toolchain:
     sudo apt install sphinx graphviz python3-recommonmark
 
 Alternatively, if your operating system does not package some or any of
-the above mentioned Python modules then you can install all of them
+the above-mentioned Python modules, then you can install all of them
 with pip instead:
 
 .. code-block:: sh
@@ -84,7 +84,7 @@ We can compile the modules required with the following commands:
    make submodules
    make softdevice
 
-We can the compile source code that you will be flashing to your device with the following commands for each device:
+We can then compile source code that you will be flashing to your device with the following commands for each device:
 
 For the pinetime we use:
 
@@ -133,8 +133,8 @@ The CI builds are built automatically whenever the wasp-os source code is
 changed. That means the builds are less well tested than the official
 releases but they contain all the recently added features and fixes so if
 you want to run the latest and greatest wasp-os on your watch then the CI
-builds are fo you. To download the latest CI build you need to be logged
-into a github account and you can navigate to the latest CI build using
+builds are for you. To download the latest CI build, you need to be logged
+into a GitHub account and you can navigate to the latest CI build using
 the link below (follow the link to the most recent "workflow run results"
 and then scroll down to find the artifacts):
 `https://github.com/daniel-thompson/wasp-os/actions?query=is%3Asuccess+branch%3Amaster+workflow%3Abinary
@@ -144,14 +144,14 @@ and then scroll down to find the artifacts):
 
     If you have a sealed device (e.g. no means to debrick your watch using
     an SWD debug probe) then be aware that, because CI builds are cutting
-    edge, there is a smal risk of bricking. In particular it is
-    strongly recommended not to install the booloader from the CI builds
-    on sealed devices. Instead use the bootloader from the previous official
+    edge, there is a small risk of bricking. In particular, it is
+    strongly recommended not to install the bootloader from the CI builds
+    on sealed devices. Instead, use the bootloader from the previous official
     release. If in doubt... wait!
 
-If you fork the wasp-os repo on github then CI builds will automatically be
+If you fork the wasp-os repo on GitHub, then CI builds will automatically be
 enabled for your fork too! This can be very useful as any changes you commit to
-the repo will be automatically tested and github will share the results with
+the repo will be automatically tested and GitHub will share the results with
 you. You can also download *your* CI builds for testing using a similar
 approach to the one above.
 
@@ -161,7 +161,7 @@ Device Support
 Wasp-os can run on multiple devices and, in time, will hopefully be ported to
 many more.
 
-In terms of deciding which device to buy we can suggest two criteria to help.
+In terms of deciding which device to buy, we can suggest two criteria to help.
 
 The first is simply based on aesthetic appeal. A watch is something that you
 take everywhere and sits somewhere between clothing and jewellery. That means
@@ -175,7 +175,7 @@ second criteria is not technical, it is about community. The Pine64 PineTime is
 unique among the devices supported by wasp-os because it is intended that the
 watch be used to run a variety of different open source or free software
 operating systems. By manufacturing a watch with the intention that it be
-hacked every which way from Sunday then we get a bigger, stronger community
+hacked every which way from Sunday, then we get a bigger, stronger community
 focused on the PineTime. There is a vibrant support forum, multiple different
 OS developers (who share ideas and knowledge even when hacking on very different
 code bases) combined with a `near complete set of hardware documentation
@@ -183,21 +183,21 @@ code bases) combined with a `near complete set of hardware documentation
 
 There's definitely a lot of fun to be had buying something off-the-shelf and
 hacking it to become something the manufacturer never intended. We know this
-because we've done it! However there is also enormous benefit from
+because we've done it! However, there is also enormous benefit from
 participating in a community, especially if you enjoy working with or learning
 from other developers. Devices that can repurposed to run wasp-os are often
 only sold for short periods and may experience undocumented technical changes
 between manufacturing runs that can cause compatibility problems. This makes it
 hard for a large community to form around these devices.
 
-Thus the second criteria it to think about your own needs and abilities. If
+Thus, the second criteria it to think about your own needs and abilities. If
 you want to enjoy the social and community aspects of working together on open
-source watch development then you should look very closely at the PineTime.
+source watch development, then you should look very closely at the PineTime.
 
 Pine64 PineTime
 ~~~~~~~~~~~~~~~
 
-`Pine64 PineTime <https://www.pine64.org/pinetime/>`_ is a square smart watch
+`Pine64 PineTime <https://www.pine64.org/pinetime/>`_ is a square smartwatch
 based on an nRF52832 SoC and includes a 240x240 colour display with touch
 screen, a step counter and a heart rate sensor.
 
@@ -212,14 +212,14 @@ required. nRF Connect for Android can be used to install both the
     The early adopter PineTime Developer Edition came pre-programmed
     with a proprietary test firmware rather than the current factory
     default OS. If you have an early adopter unit then it will appear
-    in the device list as *Y7S*. In this case the process needed for an
+    in the device list as *Y7S*. In this case, the process needed for an
     OTA update is different. Use DaFlasher for Android to install both
     the :ref:`wasp-bootloader<Bootloader DaFlasher>` and the
     :ref:`main OS image<Main OS DaFlasher>`.
 
 The `developer edition <https://store.pine64.org/?product=pinetime-dev-kit>`_
 comes without the case glued shut. This allows access to the Serial Wire
-Debug (SWD) pins which can make debugging easier. On developer edition
+Debug (SWD) pins, which can make debugging easier. On developer edition
 devices it is also possible to install the wasp-bootloader using an
 :ref:`SWD programmer<Bootloader SWD>`.
 
@@ -237,7 +237,7 @@ it is not a substitute for testing on real hardware. See
 :ref:`Testing on the simulator` for more details on how to use the
 simulator.
 
-To launch the simulator try:
+To launch the simulator, try:
 
 .. code-block:: sh
 
@@ -247,7 +247,7 @@ Colmi P8
 ~~~~~~~~
 
 The `Colmi P8 <https://www.colmi.com/products/p8-smartwatch>`_ is an almost
-square smart watch based on an nRF52832 SoC and includes a 240x240 colour
+square smartwatch based on an nRF52832 SoC and includes a 240x240 colour
 display with touch screen, a step counter and a heart rate sensor.
 
 .. warning::
@@ -255,7 +255,7 @@ display with touch screen, a step counter and a heart rate sensor.
     The P8 has multiple hardware revisions and the newest version (the
     one that includes a magnetic charger) uses a different and,
     currently, unsupported step counter module. The new models will
-    boot wasp-os successfully but the step counter application will
+    boot wasp-os successfully, but the step counter application will
     be disabled and cannot function.
 
 DaFlasher for Android can be used to install both the
@@ -266,15 +266,15 @@ required.
 Senbono K9
 ~~~~~~~~~~
 
-The Senbono K9 is a circular smart watch based on an nRF52832 SoC and includes
+The Senbono K9 is a circular smartwatch based on an nRF52832 SoC and includes
 with a square 240x240 colour with a touch screen, a step counter and a heart
 rate sensor.
 
 The wasp-os port for Senbono K9 does not, at this point, include a driver for
 the touch screen because the protocol has not yet been reverse engineered. The
 touch screen enumerates via I2C at address 70d (0x46) and the interrupt can
-be used to detect touch screen activity but the touch coordinates cannot be
-read from the hardware. Currently the touch screen can only act as a
+be used to detect touch screen activity, but the touch coordinates cannot be
+read from the hardware. Currently, the touch screen can only act as a
 multi-function button and can be used to cycle through the quick ring and
 display notifications. This makes the device usable but not fully featured.
 
@@ -306,9 +306,9 @@ can be used to install wasp-bootloader:
   `nRF Connect <https://play.google.com/store/apps/details?id=no.nordicsemi.android.mcp>`_
   for Android if you do not already have it.
 * Wake the device so that Infinitime is showing a watch face.
-* Connect to the *Infinitime* device usnig nRF Connect, click the DFU button
+* Connect to the *Infinitime* device using nRF Connect, click the DFU button
   and send ``reloader-mcuboot.zip`` to the device.
-* When the progress meter reaches 100% the nRF Connect will disconnect
+* When the progress meter reaches 100%, the nRF Connect will disconnect
   and the watch will reboot.
 * The watch will boot the reloader application which draws a small blue
   pine cone in the centre of the screen. The pine cone acts a progress
@@ -325,7 +325,7 @@ can be used to install wasp-bootloader:
 
 .. note::
 
-    If you want to restore the PineTime factory firmware then you can
+    If you want to restore the PineTime factory firmware, then you can
     use nRF Connect to do this. Perform a long press reset and then
     use nRF Connect to send ``reloader-factory.zip`` to the *PineDFU*
     device.
@@ -352,7 +352,7 @@ To install the bootloader using DaFlasher for Android:
 * Read the disclaimer carefully, then click **Ok**.
   PineTime).
 * Click **Select file** and choose ``DaFitBootloader23Hacked.bin``, then wait
-  for the payload to be transferred and for the install process to complete
+  for the payload to be transferred and for the installation process to complete
   on the watch (leaving three coloured squares on the display).
 * Press the Back button to return to the scanner and connect to the device.
   The device name will have changed to *ATCdfu*.
@@ -361,23 +361,22 @@ To install the bootloader using DaFlasher for Android:
   for the payload to transfer and the update to take place. The watch should
   be showing a single red square which is captioned *ATCnetz.de*.
 * Click **Select DFU file** again and select
-  ``bootloader-daflasher.zip``. Once the update is complete the watch will
+  ``bootloader-daflasher.zip``. Once the update is complete, the watch will
   show the wasp-os logo and some additional on-screen prompt.
 
 It is important to ensure that both ``bootloader-daflasher.zip``
 and ``micropython.zip`` match the device you are installing for. There are
 no runtime compatibility checks.
 
-An end-to-end video of the above process (and the final install of wasp-
-os) is also available:
+An end-to-end video of the above process (and the final installation of wasp-os) is also available:
 
 .. image:: https://img.youtube.com/vi/VJoDtMy-4pk/0.jpg
    :target: https://www.youtube.com/watch?v=VJoDtMy-4pk
-   :alt: Installing MicroPython on a Colmi P8 smart watch using DaFlasher
+   :alt: Installing MicroPython on a Colmi P8 smartwatch using DaFlasher
    :width: 320
    :height: 240
 
-`Installing MicroPython on a Colmi P8 smart watch using DaFlasher <https://www.youtube.com/watch?v=VJoDtMy-4pk>`_
+`Installing MicroPython on a Colmi P8 smartwatch using DaFlasher <https://www.youtube.com/watch?v=VJoDtMy-4pk>`_
 
 .. warning::
 
@@ -385,39 +384,39 @@ os) is also available:
     has been installed the factory firmware will be permanently removed
     from the device.
 
-    Although it is not possible to restore the factory firmware it is
+    Although it is not possible to restore the factory firmware, it is
     possible to switch back to Softdevice 5.0.1 and/or Softdevice 2.0.1
     on order to run alternative firmwares such as
     `ATCwatch <https://github.com/atc1441/ATCwatch>`_. The zip updates
     in `DaFlasherFiles <https://github.com/atc1441/DaFlasherFiles>`_ cannot
-    be applied directly but we can return to the DaFlasher bootloaders
+    be applied directly, but we can return to the DaFlasher bootloaders
     by installing
     `DS-D6-adafruit-back-to-desay-sd132v201.zip <https://github.com/fanoush/ds-d6/blob/master/micropython/DS-D6-adafruit-back-to-desay-sd132v201.zip>`_
     followed by
     `ATCdfuFromSD2toSD5.zip <https://github.com/atc1441/DaFlasherFiles/blob/master/ATCdfuFromSD2toSD5.zip>`_
-
+    
 .. _Bootloader SWD:
 
 Using an SWD programmer
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-There are many different SWD programmers that can be used to install
+There are many SWD programmers that can be used to install
 wasp-bootloader. Use the
 `PineTime SWD programming guide <https://wiki.pine64.org/index.php/Reprogramming_the_PineTime>`_
-to lookup the specific instructions for your programmer.
+to look up the specific instructions for your programmer.
 
 Use the SWD programmer to install ``bootloader.hex`` to the device.
 This file is an Intel HEX file containing both the bootloader and the Nordic
-SoftDevice. Once the bootloader is installed the watch will boot, display a
+SoftDevice. Once the bootloader is installed, the watch will boot, display a
 logo and wait for a OTA update.
 
 .. note::
 
-    If you have a new device then it may have been delivered with flash
+    If you have a new device, then it may have been delivered with flash
     protection enabled. You must disable the flash protection before trying to
     program it.
 
-    Be careful to disconnect cleanly from the debug software since just pulling
+    Be careful to disconnect cleanly from the debug software, since just pulling
     out the SWD cable will mean the nRF52 will still believe it is being
     debugged (which harms battery life because the device won't properly enter
     deep sleep states).
@@ -439,7 +438,7 @@ To install the main firmware using nRF Connect for Android:
 * Ensure the watch is running in :ref:`OTA update mode<OTA update mode>`.
 * Connect to the device (e.g. *PineDFU* if you have a PineTime) using
   nRFConnect, click the DFU button and send ``micropython.zip`` to the device.
-* When the upload is complete the watch will reboot and launch the digital
+* When the upload is complete, the watch will reboot and launch the digital
   clock application.
 
 .. _Main OS DaFlasher:
@@ -458,7 +457,7 @@ To install the main firmware using DaFlasher for Android:
   PineTime).
 * Click **Do DFU Update**.
 * Click **Select DFU file** and select ``micropython.zip``.
-* When the upload is complete the watch will reboot and launch the digital
+* When the upload is complete, the watch will reboot and launch the digital
   clock application.
 
 wasptool for GNU/Linux
@@ -477,8 +476,8 @@ To install the main firmware from a GNU/Linux workstation:
 Troubleshooting
 ---------------
 
-there are three boot modes of the device: ota update mode, safe mode and normal
-operation. understanding these modes is useful to help troubleshoot
+There are three boot modes of the device: ota update mode, safe mode and normal
+operation. Understanding these modes is useful to help troubleshoot
 installation and boot problems.
 
 .. _OTA update mode:
@@ -486,7 +485,7 @@ installation and boot problems.
 OTA update mode
 ~~~~~~~~~~~~~~~
 
-Bootloader mode is entered automatically of the boot image is invalid or if the
+Bootloader mode is entered automatically if the boot image is invalid or if the
 watchdog fires when running in another operating mode. OTA update mode can also
 be can also be entered manually by holding a physical button on the device for
 five seconds until the boot logo re-appears. When running in OTA update
@@ -494,13 +493,13 @@ mode pressing the physical button will attempt to launch the application.
 
 .. note::
 
-    To remain in OTA update mode it is import to release the button as
-    soon as the boot logo appears otherwise you may acidentally request
+    To remain in OTA update mode, it is import to release the button as
+    soon as the boot logo appears, otherwise you may accidentally request
     the bootloader restart the application!
 
-When the bootloader starts it will display a boot logo for two seconds and will
+When the bootloader starts, it will display a boot logo for two seconds and will
 then either boot the application or enter OTA update mode. OTA update mode
-is easily recognised by the Bluetooth logo in the bottom right hand corner of
+is easily recognized by the Bluetooth logo in the bottom right-hand corner of
 the display.
 
 .. image:: res/Bootloader.png
@@ -517,7 +516,7 @@ Safe mode
 Safe mode is a special boot mode of the application that does not execute
 ``main.py`` automatically (and hence that the watch will not fully boot).
 This ensures the Python REPL is accessible for debugging. Safe mode also
-causes the watch to show it's boot activity on the screen which can be
+causes the watch to show its boot activity on the screen, which can be
 useful for fixing hardware problems.
 
 Safe mode is entered if the physical button is held down when the boot
@@ -526,14 +525,14 @@ enter safe mode is to hold down the physical button until ``Init button``
 appear on the screen, then release it.
 
 A device running in safe mode will display the message ``Safe mode``
-on the display. To exit safe mode return to OTA update mode by
+on the display. To exit safe mode, return to OTA update mode by
 holding down the physical button for five seconds and from there
 a short press of the button will return the device to Normal operation.
 
 Normal operation
 ~~~~~~~~~~~~~~~~
 
-Underneath the covers normal operation is near identical to safe mode. There
+Underneath the covers, normal operation is near identical to safe mode. There
 are only two differences:
 
  * the boot messages will not appear unless a fault is detected (in which
@@ -545,34 +544,34 @@ formats the external flash as a file system.
 
 Most problems with normal mode operation occur either because ``main.py`` is
 missing, out-of-date or corrupt. These issues most commonly result in an
-entirely black screen when running the watch is running in normal mode.
+entirely black screen when running, the watch is running in normal mode.
 
 .. note::
 
    If the system reports FAILED at boot, in either safe mode or normal
    operation, then the best troubleshooting approach is to review
    the `issue tracker <https://github.com/daniel-thommpson/wasp-os/issues>`_.
-   Initially look through the open issues and see if your problem is similar,
-   if so there may be useful advice in the comments on the ticket. Otherwise
-   if you cannot find anything similar then please raise a new issue.
+   Initially, look through the open issues and see if your problem is similar,
+   if so, there may be useful advice in the comments on the ticket. Otherwise
+   if you cannot find anything similar, then please raise a new issue.
 
 main.py
 ~~~~~~~
 
-By default main.py includes the following commands and, in normal operation,
+By default, main.py includes the following commands and, in normal operation,
 these will be executed to boot the watch:
 
 .. literalinclude:: main.py
 
 One of the most powerful troubleshooting techniques (and one that is usually
 effective in debugging "black screen" issues) is to switch to safe mode and
-run the contents of ``main.py`` by hand using a bluetooth console (typically
+run the contents of ``main.py`` by hand using a Bluetooth console (typically
 either ``wasptool --console`` or an Android tool such as Serial Bluetooth
 Terminal). Either the watch will start running when started by hand or it will
-issue diagnostics via the console which can be captured and shared via the
+issue diagnostics via the console, which can be captured and shared via the
 `issue tracker <https://github.com/daniel-thommpson/wasp-os/issues>`_.
 
-If the watch can be successfully started by hand then it is likely the copy
+If the watch can be successfully started by hand, then it is likely the copy
 of ``main.py`` on your watch is broken, missing or out of date. You can explore
 the watch's filesystem using the shell module:
 
@@ -583,7 +582,7 @@ the watch's filesystem using the shell module:
    ls
    cat('main.py')
 
-If your copy of ``main.py`` needs to be updated you can use wasptool
+If your copy of ``main.py`` needs to be updated, you can use wasptool
 to upload a new version:
 
 .. code-block:: sh

@@ -9,8 +9,8 @@ Introduction
 ------------
 
 Anyone can contribute to the wasp-os project. Contributions are typically made
-via github using the typical fork-and-pull-request approach. Contributors who
-do not wish to use github are welcome to share patches using ``git
+via GitHub using the typical fork-and-pull-request approach. Contributors who
+do not wish to use GitHub are welcome to share patches using ``git
 format-patch --to wasp-os@redfelineninja.org.uk`` and ``git send-email``. In
 both cases, the code will be reviewed by a project maintainer, so please
 anticipate review comments and requests for changes. Typically pull
@@ -24,13 +24,13 @@ patch or has the right to share the code under the open source license
 appropriate for the file being modified.
 
 A ``Signed-off-by`` tag is an explicit statement that your contribution comes
-under one of (a), (b), (c), or (d) from the list below so please be sure to
+under one of (a), (b), (c), or (d) from the list below, so please be sure to
 read carefully what you are certifying by adding your Signed-off-by.
 
-Additionally please be aware that that contributors, like all other members of
+Additionally, please be aware that that contributors, like all other members of
 the wasp-os community, are expected to meet the community guidelines described
 in the project's code of conduct when interacting within all community spaces
-(including the wasp-os github presence).
+(including the wasp-os GitHub presence).
 
 Coding Style
 ------------
@@ -64,7 +64,7 @@ Quick fixes
 
 The most common review feedback for contributions to wasp-os is a request that
 the contributor include their sign-off. For a single patch at the head of the
-current branch (and shared as a github pull request) this can be handled fairly
+current branch (and shared as a GitHub pull request) this can be handled fairly
 easily:
 
 .. code-block:: sh
@@ -72,7 +72,7 @@ easily:
     git commit --amend --signoff
     git push <myfork> HEAD
 
-Additionally, please be aware that github will not send out automatic
+Additionally, please be aware that GitHub will not send out automatic
 notifications to let the maintainer know that you have pushed an update to the
 pull-request. Follow up the above with a comment on the pull request thread
 saying that your contribution has been updated and is ready for another look.
