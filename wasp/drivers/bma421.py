@@ -7,6 +7,8 @@
 
 import bma42x
 import time
+import motion
+from machine import Pin
 
 # Sensor orientation definition.
 # The 6 most significant bits define the indexes of the x, y, and z values
@@ -17,24 +19,33 @@ import time
 #         Y index ───────────────┐ │
 #         X index ─────────────┐ │ │
 #                              ├┐├┐├┐
-_DEFAULT_ORIENTATION = const(0b010010101)
+_DEFAULT_ORIENTATION = const(0b010010000)
 #          1 = keep, 0 = negate      │││
 #          X sign ───────────────────┘││
 #          Y sign ────────────────────┘│
 #          Z sign ─────────────────────┘
+
+# Ref: BMA425 data sheet (register INT_STATUS_0)
+_STATUS_MASK_WRIST_TILT = const(0b1000)
 
 class BMA421:
     """BMA421 driver
 
     .. automethod:: __init__
     """
-    def __init__(self, i2c, orientation=_DEFAULT_ORIENTATION):
+    def __init__(self, i2c, intr=None, orientation=_DEFAULT_ORIENTATION):
         """Configure the driver.
 
         :param machine.I2C i2c: I2C bus used to access the sensor.
         """
         self._dev = bma42x.BMA42X(i2c)
         self._orientation = orientation
+        self._gesture_int = intr
+        self._gesture_event = motion.AccelGestureEvent.NONE
+        self.hardware_gesture_available = False
+
+        if self._gesture_int != None:
+            self._gesture_int.irq(trigger=Pin.IRQ_FALLING, handler=self.handle_interrupt)
 
     def reset(self):
         """Reset and reinitialize the sensor."""
@@ -54,6 +65,37 @@ class BMA421:
                                bandwidth=bma42x.ACCEL_NORMAL_AVG4,
                                perf_mode=bma42x.CIC_AVG_MODE)
         dev.feature_enable(bma42x.STEP_CNTR, True)
+
+        # Set axes remapping
+        # This works only for hardware-based intelligence.
+        # Software readout is remapped manually in accel_xyz().
+        dev.set_remap_axes(self._orientation)
+
+        self.hardware_gesture_available = dev.get_chip_id() == bma42x.BMA425_CHIP_ID
+
+        # Enable gesture interrupts
+        if self.hardware_gesture_available:
+            dev.set_int_pin_config(int_line=bma42x.INTR1_MAP,
+                                     edge_ctrl=bma42x.LEVEL_TRIGGER,
+                                     lvl=bma42x.ACTIVE_LOW,
+                                     od=bma42x.PUSH_PULL,
+                                     output_en=True, input_en=False)
+            dev.feature_enable(bma42x.WRIST_WEAR, True)
+            dev.map_interrupt(bma42x.INTR1_MAP, bma42x.WRIST_WEAR_INT, True)
+
+    def handle_interrupt(self, pin_obj):
+        """Interrupt handler for gesture events originating from the sensor"""
+        status = self._dev.read_int_status()
+        if status & _STATUS_MASK_WRIST_TILT:
+            self._gesture_event = motion.AccelGestureEvent.WRIST_TILT
+
+    def get_gesture_event(self):
+        """Receive the latest gesture event if any"""
+        return self._gesture_event
+
+    def reset_gesture_event(self):
+        """Call after processing the gesture event"""
+        self._gesture_event = motion.AccelGestureEvent.NONE
 
     @property
     def steps(self):

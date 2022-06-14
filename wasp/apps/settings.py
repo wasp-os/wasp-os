@@ -39,7 +39,8 @@ class SettingsApp():
         self._yy = wasp.widgets.Spinner(160, 60, 20, 60, 2)
         self._units = ['Metric', 'Imperial']
         self._units_toggle = wasp.widgets.Button(32, 90, 176, 48, "Change")
-        self._settings = ['Brightness', 'Notification Level', 'Time', 'Date', 'Units']
+        self._raise_to_wake_toggle = wasp.widgets.Button(32, 90, 176, 48, "On/Off")
+        self._settings = ['Brightness', 'Notification Level', 'Time', 'Date', 'Units', 'Raise To Wake']
         self._sett_index = 0
         self._current_setting = self._settings[0]
 
@@ -73,6 +74,9 @@ class SettingsApp():
         elif self._current_setting == 'Units':
             if self._units_toggle.touch(event):
                 wasp.system.units = self._units[(self._units.index(wasp.system.units) + 1) % len(self._units)]
+        elif self._current_setting == "Raise To Wake":
+            if self._raise_to_wake_toggle.touch(event):
+                wasp.system.raise_wake = not wasp.system.raise_wake
         self._update()
 
     def swipe(self, event):
@@ -122,6 +126,8 @@ class SettingsApp():
             draw.string('DD    MM    YY',0,180, width=240)
         elif self._current_setting == 'Units':
             self._units_toggle.draw()
+        elif self._current_setting == 'Raise To Wake':
+            self._raise_to_wake_toggle.draw()
         self._scroll_indicator.draw()
         self._update()
         mute(False)
@@ -149,3 +155,9 @@ class SettingsApp():
             draw.string(say, 0, 150, width=240)
         elif self._current_setting == 'Units':
             draw.string(wasp.system.units, 0, 150, width=240)
+        elif self._current_setting == 'Raise To Wake':
+            if wasp.system.raise_wake:
+                say = "On"
+            else:
+                say = "Off"
+            draw.string(say, 0, 150, width=240)
