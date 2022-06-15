@@ -4,6 +4,7 @@
 # Copyright (c) 2020 Daniel Thompson
 
 import argparse
+import binascii
 import io
 import random
 import os.path
@@ -294,12 +295,17 @@ def handle_binary_upload(c, fname, tname):
             c.sendline(f'os.mkdir("{dname}")')
             c.run_command('del os')
 
+    c.run_command('import ubinascii')
     c.run_command(f'f = open("{tname}", "wb")')
+    # We define a function with a short name to reduce the constant per-chunk
+    # overhead.
+    # We use a lambda to avoid the "..." prompt triggered by def.
+    c.run_command(f'w = lambda d: f.write(ubinascii.a2b_base64(d))')
 
     # Absorb the file to be uploaded
     with open(fname, 'rb') as f:
         data = f.read()
-    chunksz = 24
+    chunksz = 64
     nchunks = len(data) // chunksz
     lastchunk = len(data) % chunksz
 
@@ -308,11 +314,13 @@ def handle_binary_upload(c, fname, tname):
 
     # Send the data
     for i in pbar(range(0, chunksz*nchunks, chunksz), verbose):
-        c.run_command(f'f.write({repr(data[i:i+chunksz])})')
+        c.run_command(f'w({repr(binascii.b2a_base64(data[i:i+chunksz]))})')
     if lastchunk:
-        c.run_command(f'f.write({repr(data[-lastchunk:])})')
+        c.run_command(f'w({repr(binascii.b2a_base64(data[-lastchunk:]))})')
 
     c.run_command('f.close()')
+    c.run_command('del w')
+    c.run_command('del ubinascii')
 
 def handle_upload(c, fname, tname):
     verbose = bool(c.logfile)
