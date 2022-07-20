@@ -140,6 +140,8 @@ class AlarmApp:
 
         self._set_pending_alarms()
         try:
+            if self.num_alarms == 0:
+                return
             with open("alarms", "w") as f:
                 for n in range(self.num_alarms):
                     al = self.alarms[n]
