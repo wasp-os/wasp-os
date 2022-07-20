@@ -103,7 +103,7 @@ class AlarmApp:
 
         self.del_alarm_btn = widgets.Button(170, 204, 70, 35, 'DEL')
         self.hours_wid = widgets.Spinner(50, 30, 0, 23, 2)
-        self.min_wid = widgets.Spinner(130, 30, 0, 59, 2)
+        self.min_wid = widgets.Spinner(130, 30, 0, 59, 2, 5)
         self.day_btns = (widgets.ToggleButton(10, 145, 40, 35, 'Mo'),
                          widgets.ToggleButton(55, 145, 40, 35, 'Tu'),
                          widgets.ToggleButton(100, 145, 40, 35, 'We'),
