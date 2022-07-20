@@ -6,7 +6,7 @@
 ~~~~~~~~~~~~~~~~~~~~
 
 An application to set a vibration alarm. All settings can be accessed from the Watch UI.
-Press the button to turn of ringing alarms.
+Press the button to turn off ringing alarms.
 
     .. figure:: res/AlarmApp.png
         :width: 179
@@ -91,10 +91,10 @@ class AlarmApp:
         try:
             with open("alarms", "r") as f:
                 alarms = "".join(f.readlines()).split(";")
-                for alarm in alarms:
-                    n = self.num_alarms
-                    self.alarms[n][:] = map(int, alarm.split(","))
-                    self.num_alarms += 1
+            for alarm in alarms:
+                n = self.num_alarms
+                self.alarms[n][:] = map(int, alarm.split(","))
+                self.num_alarms += 1
         except Exception:
             pass
 
