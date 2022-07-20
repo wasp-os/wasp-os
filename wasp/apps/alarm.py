@@ -6,6 +6,7 @@
 ~~~~~~~~~~~~~~~~~~~~
 
 An application to set a vibration alarm. All settings can be accessed from the Watch UI.
+Press the button to turn of ringing alarms.
 
     .. figure:: res/AlarmApp.png
         :width: 179
