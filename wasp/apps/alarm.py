@@ -87,14 +87,16 @@ class AlarmApp:
         self.alarms = (bytearray(3), bytearray(3), bytearray(3), bytearray(3))
         self.pending_alarms = array.array('d', [0.0, 0.0, 0.0, 0.0])
 
-        # Set a nice default
-        self.num_alarms = 1
-        for alarm in self.alarms:
-            alarm[_HOUR_IDX] = 8
-            alarm[_MIN_IDX] = 0
-            alarm[_ENABLED_IDX] = 0
-        self.alarms[0][_ENABLED_IDX] = _WEEKDAYS
-
+        self.num_alarms = 0
+        try:
+            with open("alarms", "r") as f:
+                alarms = "".join(f.readlines()).split(";")
+                for alarm in alarms:
+                    n = self.num_alarms
+                    self.alarms[n][:] = map(int, alarm.split(","))
+                    self.num_alarms += 1
+        except Exception:
+            pass
 
     def foreground(self):
         """Activate the application."""
@@ -137,6 +139,14 @@ class AlarmApp:
         del self.day_btns
 
         self._set_pending_alarms()
+        try:
+            with open("alarms", "w") as f:
+                for n in range(self.num_alarms):
+                    al = self.alarms[n]
+                    f.write(",".join(map(str, al)) + ";")
+        except Exception:
+            pass
+
 
     def tick(self, ticks):
         """Notify the application that its periodic tick is due."""
