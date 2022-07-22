@@ -8,6 +8,7 @@ wasp.system.set_theme(
         b'\xff\x00'     # ble
         b'\xff\x00'     # scroll-indicator
         b'\xff\x00'     # battery
+        b'\xff\x00'     # battery-charging
         b'\xff\x00'     # status-clock
         b'\xff\x00'     # notify-icon
         b'\xff\x00'     # bright
