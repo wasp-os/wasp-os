@@ -119,6 +119,7 @@ class Manager():
                 b'\x7b\xef'     # ble
                 b'\x7b\xef'     # scroll-indicator
                 b'\x7b\xef'     # battery
+                b'\xff\xe0'     # battery-charging
                 b'\xe7\x3c'     # status-clock
                 b'\x7b\xef'     # notify-icon
                 b'\xff\xff'     # bright
@@ -582,6 +583,7 @@ class Manager():
         theme_parts = ("ble",
                        "scroll-indicator",
                        "battery",
+                       "battery-charging",
                        "status-clock",
                        "notify-icon",
                        "bright",
