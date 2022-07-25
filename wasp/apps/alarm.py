@@ -90,10 +90,15 @@ class AlarmApp:
         self.num_alarms = 0
         try:
             with open("alarms.txt", "r") as f:
-                alarms = "".join(f.readlines()).split(";")
+                alarms = f.readlines()[0].split(";")
+            if "" in alarms:
+                alarms.remove("")
             for alarm in alarms:
                 n = self.num_alarms
-                self.alarms[n][:] = map(int, alarm.split(","))
+                h, m, st = map(int, alarm.split(","))
+                self.alarms[n][0] = h
+                self.alarms[n][1] = m
+                self.alarms[n][2] = st
                 self.num_alarms += 1
         except Exception:
             pass
