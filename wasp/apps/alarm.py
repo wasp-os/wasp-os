@@ -89,7 +89,7 @@ class AlarmApp:
 
         self.num_alarms = 0
         try:
-            with open("alarms", "r") as f:
+            with open("alarms.txt", "r") as f:
                 alarms = "".join(f.readlines()).split(";")
             for alarm in alarms:
                 n = self.num_alarms
@@ -142,7 +142,7 @@ class AlarmApp:
         try:
             if self.num_alarms == 0:
                 return
-            with open("alarms", "w") as f:
+            with open("alarms.txt", "w") as f:
                 for n in range(self.num_alarms):
                     al = self.alarms[n]
                     f.write(",".join(map(str, al)) + ";")
