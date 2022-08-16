@@ -6,6 +6,7 @@
 ~~~~~~~~~~~~~~~~~~~~
 
 An application to set a vibration alarm. All settings can be accessed from the Watch UI.
+Press the button to turn off ringing alarms.
 
     .. figure:: res/AlarmApp.png
         :width: 179
@@ -86,21 +87,29 @@ class AlarmApp:
         self.alarms = (bytearray(3), bytearray(3), bytearray(3), bytearray(3))
         self.pending_alarms = array.array('d', [0.0, 0.0, 0.0, 0.0])
 
-        # Set a nice default
-        self.num_alarms = 1
-        for alarm in self.alarms:
-            alarm[_HOUR_IDX] = 8
-            alarm[_MIN_IDX] = 0
-            alarm[_ENABLED_IDX] = 0
-        self.alarms[0][_ENABLED_IDX] = _WEEKDAYS
-
+        self.num_alarms = 0
+        try:
+            with open("alarms.txt", "r") as f:
+                alarms = f.readlines()[0].split(";")
+            if "" in alarms:
+                alarms.remove("")
+            for alarm in alarms:
+                n = self.num_alarms
+                h, m, st = map(int, alarm.split(","))
+                self.alarms[n][0] = h
+                self.alarms[n][1] = m
+                self.alarms[n][2] = st
+                self.num_alarms += 1
+        except Exception:
+            pass
+        self._set_pending_alarms()
 
     def foreground(self):
         """Activate the application."""
 
         self.del_alarm_btn = widgets.Button(170, 204, 70, 35, 'DEL')
         self.hours_wid = widgets.Spinner(50, 30, 0, 23, 2)
-        self.min_wid = widgets.Spinner(130, 30, 0, 59, 2)
+        self.min_wid = widgets.Spinner(130, 30, 0, 59, 2, 5)
         self.day_btns = (widgets.ToggleButton(10, 145, 40, 35, 'Mo'),
                          widgets.ToggleButton(55, 145, 40, 35, 'Tu'),
                          widgets.ToggleButton(100, 145, 40, 35, 'We'),
@@ -136,6 +145,16 @@ class AlarmApp:
         del self.day_btns
 
         self._set_pending_alarms()
+        try:
+            if self.num_alarms == 0:
+                return
+            with open("alarms.txt", "w") as f:
+                for n in range(self.num_alarms):
+                    al = self.alarms[n]
+                    f.write(",".join(map(str, al)) + ";")
+        except Exception:
+            pass
+
 
     def tick(self, ticks):
         """Notify the application that its periodic tick is due."""
