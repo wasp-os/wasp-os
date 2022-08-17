@@ -78,6 +78,8 @@ class PomodoroApp():
     def background(self):
         if self.state == _RINGING:
             self._start()
+        elif self.state == _STOPPED:
+            self.__init__()
 
     def sleep(self):
         """don't exit when screen turns off"""
