@@ -20,6 +20,7 @@ import time
 import widgets
 import array
 from micropython import const
+from apps.pager import PagerApp
 
 # 2-bit RLE, generated from res/alarm_icon.png, 390 bytes
 icon = (
@@ -100,8 +101,9 @@ class AlarmApp:
                 self.alarms[n][_MIN_IDX] = m
                 self.alarms[n][_ENABLED_IDX] = st
                 self.num_alarms += 1
-        except Exception:
-            pass
+        except Exception as err:
+            wasp.system.switch(PagerApp("Error when reloading alarms: "
+                                         "'{}'".format(err)))
         self._set_pending_alarms()
 
     def foreground(self):
@@ -152,9 +154,9 @@ class AlarmApp:
                 for n in range(self.num_alarms):
                     al = self.alarms[n]
                     f.write(",".join(map(str, al)) + ";")
-        except Exception:
-            pass
-
+        except Exception as err:
+            wasp.system.switch(PagerApp("Error when saving alarms for next"
+                                         " reboot: '{}'".format(err)))
 
     def tick(self, ticks):
         """Notify the application that its periodic tick is due."""
