@@ -96,9 +96,9 @@ class AlarmApp:
             for alarm in alarms:
                 n = self.num_alarms
                 h, m, st = map(int, alarm.split(","))
-                self.alarms[n][0] = h
-                self.alarms[n][1] = m
-                self.alarms[n][2] = st
+                self.alarms[n][_HOUR_IDX] = h
+                self.alarms[n][_MIN_IDX] = m
+                self.alarms[n][_ENABLED_IDX] = st
                 self.num_alarms += 1
         except Exception:
             pass
