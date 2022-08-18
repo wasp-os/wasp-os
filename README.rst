@@ -258,6 +258,10 @@ application (and the "blank" white screen is a torch application):
    :alt: Shows a time as words in the wasp-os simulator
    :width: 179
 
+.. image:: res/SleepTkApp.png
+   :alt: Sleep Alarm clock with nice features and tracking
+   :width: 179
+
 .. image:: res/LevelApp.png
    :alt: Shows a time as words in the wasp-os simulator
    :width: 179

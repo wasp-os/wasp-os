@@ -63,6 +63,8 @@ Applications
 
 .. automodule:: Morse
 
+.. automodule:: SleepTk
+
 .. automodule:: apps.musicplayer
 
 .. automodule:: apps.sports
