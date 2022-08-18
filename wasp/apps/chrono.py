@@ -8,8 +8,6 @@ Shows the time as a traditional watch face together with a battery meter.
 
 .. figure:: res/ChronoApp.png
     :width: 179
-
-    Screenshot of the analogue clock application
 """
 
 import wasp

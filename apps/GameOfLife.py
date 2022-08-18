@@ -6,10 +6,8 @@
 The Game of Life is a "no player game" played on a two dimensional grid
 where the rules interact to make interesting patterns.
 
-    .. figure:: res/LifeApp.png
-        :width: 179
-
-        Screenshot of the Game of Life application
+.. figure:: res/LifeApp.png
+    :width: 179
 
 The game is based on four simple rules:
 

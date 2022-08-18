@@ -5,11 +5,8 @@
 """Weather for GadgetBridge and wasp-os companion
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    .. figure:: res/WeatherApp.png
-        :width: 179
-
-        Screenshot of the Weather application
-
+.. figure:: res/WeatherApp.png
+    :width: 179
 """
 
 import wasp

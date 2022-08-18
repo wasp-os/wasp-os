@@ -6,10 +6,8 @@
 A popular sliding block puzzle game in which tiles are combined to make the
 number 2048.
 
-    .. figure:: res/2048App.png
-        :width: 179
-
-        Screenshot of the 2048 game application
+.. figure:: res/2048App.png
+    :width: 179
 """
 
 import wasp
