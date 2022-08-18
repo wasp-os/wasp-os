@@ -72,6 +72,8 @@ class BatteryMeter:
                     draw.fill(rgb, x, 27 - h, w, h)
                 self.level = level
         elif unit == "Percent" or unit == "mV":
+            old_font = draw._font
+            old_col = draw._bgfg
             draw.set_font(fonts.sans18)
             if watch.battery.charging():
                 col = 0x57e0 # green
@@ -81,13 +83,13 @@ class BatteryMeter:
                 col = 0xFFFF  # white
             draw.set_color(col)
             if unit == "mV":
-                mv = round(watch.battery.voltage_mv()/1000, 1)
-                disp = "  {}V".format(mv)
-
+                mv = round(watch.battery.voltage_mv()/1000, 2)
+                disp = "   {}V".format(mv)
             else:
                 disp = "   {}%".format(level)
             draw.string(disp, x=230, y=0, width=10, right=True)
-            draw.reset()
+            draw.set_font(old_font)
+            draw.set_color(old_col)
             self.level = level
 
 class Clock:
