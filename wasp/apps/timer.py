@@ -61,15 +61,21 @@ class TimerApp():
 
     def __init__(self):
         """Initialize the application."""
+        self._already_initialized = False
+
+    def _actual_init(self):
         self.minutes = widgets.Spinner(50, 60, 0, 99, 2)
         self.seconds = widgets.Spinner(130, 60, 0, 59, 2)
         self.current_alarm = None
 
         self.minutes.value = 10
         self.state = _STOPPED
+        return True
 
     def foreground(self):
         """Activate the application."""
+        if not self._already_initialized:
+            self._already_initialized = self._actual_init()
         self._draw()
         wasp.system.request_event(wasp.EventMask.TOUCH)
         wasp.system.request_tick(1000)

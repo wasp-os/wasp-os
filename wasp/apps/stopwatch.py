@@ -21,11 +21,17 @@ class StopwatchApp():
     ICON = icons.app
 
     def __init__(self):
+        self._already_initialized = False
+
+    def _actual_init(self):
         self._timer = wasp.widgets.Stopwatch(120-36)
         self._reset()
+        return True
 
     def foreground(self):
         """Activate the application."""
+        if not self._already_initialized:
+            self._already_initialized = self._actual_init()
         wasp.system.bar.clock = True
         self._draw()
         wasp.system.request_tick(97)
