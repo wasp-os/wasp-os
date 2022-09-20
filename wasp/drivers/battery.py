@@ -5,6 +5,8 @@
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 """
 import micropython
+# don't remove Pin import even though your IDE tells you it's unused, otherwise
+# micropython can't load your battery level.
 from machine import Pin, ADC
 
 class Battery(object):
