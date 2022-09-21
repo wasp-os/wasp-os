@@ -21,7 +21,7 @@ class StopwatchApp():
     ICON = icons.app
 
     def __init__(self):
-        self._timer = Stopwatch(120-36)
+        self._timer_reset()
         self._reset()
 
     def foreground(self):
@@ -45,7 +45,7 @@ class StopwatchApp():
 
         No other swipe event is possible for this application.
         """
-        if not self._timer._started_at:
+        if not self._timer_started_at:
             self._reset()
         return True     # Request system default handling
 
@@ -53,19 +53,24 @@ class StopwatchApp():
         if not state:
             return
 
-        if self._timer.started:
-            self._timer.stop()
-        else:
-            self._timer.start()
-
-    def touch(self, event):
-        if self._timer.started:
-            self._splits.insert(0, self._timer.count)
-            del self._splits[4:]
+        if self._timer_started:
+            self._splits.insert(0, self._timer_count)
+            del self._splits[9:]
             self._nsplits += 1
+            wasp.watch.vibrator.pulse(duty=50, ms=50)
         else:
             self._reset()
+            wasp.watch.vibrator.pulse(duty=50, ms=50)
+        self._draw_splits()
+        self._update()
 
+    def touch(self, event):
+        if self._timer_started:
+            self._timer_stop()
+            wasp.watch.vibrator.pulse(duty=50, ms=50)
+        else:
+            self._timer_start()
+            wasp.watch.vibrator.pulse(duty=50, ms=250)
         self._update()
         self._draw_splits()
 
@@ -73,7 +78,7 @@ class StopwatchApp():
         self._update()
 
     def _reset(self):
-        self._timer.reset()
+        self._timer_reset()
         self._splits = []
         self._nsplits = 0
 
@@ -81,26 +86,35 @@ class StopwatchApp():
         draw = wasp.watch.drawable
         splits = self._splits
         if 0 == len(splits):
-            draw.fill(0, 0, 120, 240, 120)
+            draw.fill(0, 0, 60, 240, 180)
             return
-        y = 240 - 6 - (len(splits) * 24)
+        y = 240 - 6 - (len(splits) * 18)
 
-        draw.set_font(fonts.sans24)
+        draw.set_font(fonts.sans18)
         draw.set_color(wasp.system.theme('mid'))
 
         n = self._nsplits
         for i, s in enumerate(splits):
             centisecs = s
             secs = centisecs // 100
-            centisecs %= 100
             minutes = secs // 60
+            hours = minutes // 60
+            centisecs %= 100
             secs %= 60
+            minutes %= 60
+            if hours != 0:
+                h = "{:02}h".format(hours)
+            else:
+                h = "   "
+            if minutes != 0:
+                m = "{:02}m".format(minutes)
+            else:
+                m = "   "
 
-            t = '# {}   {:02}:{:02}.{:02}'.format(n, minutes, secs, centisecs)
+            t = '#{:02}  {}{}{:02}s{:02}cs'.format(n, h, m, secs, centisecs)
             n -= 1
 
-            w = fonts.width(fonts.sans24, t)
-            draw.string(t, 0, y + (i*24), 240)
+            draw.string(t, 0, y + (i*18), 0, False)
 
     def _draw(self):
         """Draw the display from scratch."""
@@ -108,66 +122,66 @@ class StopwatchApp():
         draw.fill()
 
         wasp.system.bar.draw()
-        self._timer.draw()
+        self._timer_draw()
         self._draw_splits()
 
     def _update(self):
         wasp.system.bar.update()
-        self._timer.update()
+        self._timer_update()
 
-class Stopwatch:
-    """A stopwatch widget"""
-    def __init__(self, y):
-        self._y = y
-        self.reset()
-
-    def start(self):
+    def _timer_start(self):
         uptime = wasp.watch.rtc.get_uptime_ms() // 10
-        self._started_at = uptime - self.count
+        self._timer_started_at = uptime - self._timer_count
 
-    def stop(self):
-        self._started_at = 0
+    def _timer_stop(self):
+        self._timer_started_at = 0
 
     @property
-    def started(self):
-        return bool(self._started_at)
+    def _timer_started(self):
+        return bool(self._timer_started_at)
 
-    def reset(self):
-        self.count = 0
-        self._started_at = 0
-        self._last_count = -1
+    def _timer_reset(self):
+        self._timer_count = 0
+        self._timer_started_at = 0
+        self._timer_last_count = -1
 
-    def draw(self):
-        self._last_count = -1
-        self.update()
+    def _timer_draw(self):
+        self._timer_last_count = -1
+        self._timer_update()
 
-    def update(self):
+    def _timer_update(self):
         # Before we do anything else let's make sure count is
         # up to date
-        if self._started_at:
+        if self._timer_started_at:
             uptime = wasp.watch.rtc.get_uptime_ms() // 10
-            self.count = uptime - self._started_at
-            if self.count > 999*60*100:
-                self.reset()
+            self._timer_count = uptime - self._timer_started_at
+            if self._timer_count > 999*60*100:
+                self._timer_reset()
 
-        if self._last_count != self.count:
-            centisecs = self.count
+        if self._timer_last_count != self._timer_count:
+            centisecs = self._timer_count
             secs = centisecs // 100
-            centisecs %= 100
             minutes = secs // 60
+            hours = minutes // 60
+            centisecs %= 100
+            minutes %= 60
             secs %= 60
+            if hours != 0:
+                h = "{:02}h".format(hours)
+            else:
+                h = ""
+            if minutes != 0:
+                m = "{:02}m".format(minutes)
+            else:
+                m = ""
 
-            t1 = '{}:{:02}'.format(minutes, secs)
-            t2 = '{:02}'.format(centisecs)
+            t = '{}{}{:02}s  {}cs'.format(h, m, secs, centisecs)
 
-            y = self._y
+            y = 35
             draw = wasp.watch.drawable
-            draw.set_font(fonts.sans36)
-            draw.set_color(draw.lighten(wasp.system.theme('ui'), wasp.system.theme('contrast')))
-            w = fonts.width(fonts.sans36, t1)
-            draw.string(t1, 180-w, y)
-            draw.fill(0, 0, y, 180-w, 36)
             draw.set_font(fonts.sans24)
-            draw.string(t2, 180, y+18, width=46)
+            draw.set_color(draw.lighten(wasp.system.theme('ui'), wasp.system.theme('contrast')))
+            draw.string(t, 0, y, 0, False)
 
-            self._last_count = self.count
+            self._timer_last_count = self._timer_count
+
