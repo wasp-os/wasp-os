@@ -82,9 +82,6 @@ class AlarmApp:
 
     def __init__(self):
         """Initialize the application."""
-        self._already_initialized = False
-
-    def _actual_init(self):
         self.page = _HOME_PAGE
         self.alarms = (bytearray(3), bytearray(3), bytearray(3), bytearray(3))
         self.pending_alarms = array.array('d', [0.0, 0.0, 0.0, 0.0])
@@ -109,10 +106,6 @@ class AlarmApp:
 
     def foreground(self):
         """Activate the application."""
-        if not self._already_initialized:
-            self._already_initialized = self._actual_init()
-
-
         self.del_alarm_btn = widgets.Button(170, 204, 70, 35, 'DEL')
         self.hours_wid = widgets.Spinner(50, 30, 0, 23, 2)
         self.min_wid = widgets.Spinner(130, 30, 0, 59, 2, 5)
