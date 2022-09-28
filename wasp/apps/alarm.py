@@ -102,7 +102,6 @@ class AlarmApp:
         except Exception:
             pass
         self._set_pending_alarms()
-        return True
 
     def foreground(self):
         """Activate the application."""
