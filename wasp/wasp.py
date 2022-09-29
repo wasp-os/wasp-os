@@ -21,6 +21,7 @@ import steplogger
 import sys
 import watch
 import widgets
+import os
 
 from apps.launcher import LauncherApp
 from apps.pager import PagerApp, CrashApp, NotificationApp
@@ -594,5 +595,42 @@ class Manager():
             raise IndexError('Theme part {} does not exist'.format(theme_part))
         idx = theme_parts.index(theme_part) * 2
         return (self._theme[idx] << 8) | self._theme[idx+1]
+
+    def store_settings(self, name, value):
+        """Stores any variable as string in a text file in a 'settings'
+        folder, making it persistent across reboots. For example: used
+        to store alarms or stopwatch start time.
+        If value is a list, the items will be separated by a ";". Hence, ";" is
+        not supposed to appear in 'value'.
+        """
+        if "settings" not in os.listdir():
+            os.mkdir("settings")
+        try:
+            with open("settings/" + name, "w") as f:
+                if isinstance(value, list):
+                    f.write(";".join([str(x) for x in value]))
+                else:
+                    f.write(str(value))
+            assert name in os.listdir("settings/")
+            return True
+        except Exception as err:
+            self.notify(watch.rtc.get_uptime_ms(), {
+                "src": "Persistent settings",
+                "title": "Storing failed",
+                "body": "Error when storing '{}': '{}'".format(name, err)})
+
+    def get_settings(self, name, delete=False):
+        if "settings" not in os.listdir():
+            os.mkdir("settings")
+        if name not in os.listdir("settings/"):
+            return None
+        with open("settings/" + name, "r") as f:
+            content = f.readlines()[0]
+            if delete:
+                os.unlink("settings/" + name)
+            if ";" in content:
+                return content.split(";")
+            else:
+                return content
 
 system = Manager()
