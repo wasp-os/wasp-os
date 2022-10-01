@@ -618,6 +618,7 @@ class Manager():
                 "src": "Persistent settings",
                 "title": "Storing failed",
                 "body": "Error when storing '{}': '{}'".format(name, err)})
+            return None
 
     def get(self, name, delete=False):
         try:
