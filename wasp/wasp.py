@@ -596,7 +596,7 @@ class Manager():
         idx = theme_parts.index(theme_part) * 2
         return (self._theme[idx] << 8) | self._theme[idx+1]
 
-    def store_settings(self, name, value):
+    def set(self, name, value):
         """Stores any variable as string in a text file in a 'settings'
         folder, making it persistent across reboots. For example: used
         to store alarms or stopwatch start time.
@@ -619,7 +619,7 @@ class Manager():
                 "title": "Storing failed",
                 "body": "Error when storing '{}': '{}'".format(name, err)})
 
-    def get_settings(self, name, delete=False):
+    def get(self, name, delete=False):
         if "settings" not in os.listdir():
             os.mkdir("settings")
         if name not in os.listdir("settings/"):
