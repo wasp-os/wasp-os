@@ -620,9 +620,7 @@ class Manager():
                 "body": "Error when storing '{}': '{}'".format(name, err)})
 
     def get(self, name, delete=False):
-        if "settings" not in os.listdir():
-            os.mkdir("settings")
-        if name not in os.listdir("settings/"):
+        if "settings" not in os.listdir() or name not in os.listdir("settings/"):
             return None
         with open("settings/" + name, "r") as f:
             content = f.readlines()[0]
