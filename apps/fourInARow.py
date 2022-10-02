@@ -1,14 +1,15 @@
 # SPDX-License-Identifier: LGPL-3.0-or-later
 # Copyright (C) 2022 Tony Robinson
 
-"""
-Four in a Row
-~~~~~~~~~~~~~
+"""Four in a Row
+~~~~~~~~~~~~~~~~
  
 See https://en.wikipedia.org/wiki/Connect_Four and kaggle.com/competitions/connectx/
 
 There isn't space for a transposition table in RAM, so MTDf isn't implmented
 
+.. figure:: res/4inarowApp.png
+    :width: 179
 """
 
 import wasp, array
