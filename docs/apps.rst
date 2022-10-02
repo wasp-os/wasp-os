@@ -82,4 +82,4 @@ Games
 
 .. automodule:: apps.snake
 
-.. automodule:: apps.fourInARow
+.. automodule:: apps.FourInARow
