@@ -17,11 +17,26 @@ anticipate review comments and requests for changes. Typically pull
 requests will not be merged if there are open questions or requests for
 changes that have not been acted on.
 
-All contributions must include a ``Signed-off-by`` tag added by the contributor
-who submits the patch or patches. The ``Signed-off-by`` tag is added at the end
-of the patch description and certifies that the contributor either wrote the
-patch or has the right to share the code under the open source license
-appropriate for the file being modified.
+All contributions are expected to pass the continuous-integration tests
+before they can be accepted. Currently there are three checks:
+
+1. The code is compiled for all supported devices. If you have been developing
+   your code in the simulator it is a good idea to compile wasp-os for at least
+   one of the supported devices before submitting a pull-request.
+
+2. Automatic testing is performed using the simulator. The automatic tests
+   include a mixture to static QA checks, self-test code and simple "does it
+   run" tests on all applications. It is strongly recommended to run
+   `make check` and fix any reported problems before submitting a pull-request.
+   Alternatively, if you have your own github fork of wasp-os, then
+   github can run these tests for you automatically every time you push a new
+   branch to your fork.
+
+3. All contributions must include a ``Signed-off-by`` tag added by the
+   contributor who submits the patch or patches. The ``Signed-off-by``
+   tag is added at the end of the patch description and certifies that
+   the contributor either wrote the patch or has the right to share the
+   code under the open source license appropriate for the file being modified.
 
 A ``Signed-off-by`` tag is an explicit statement that your contribution comes
 under one of (a), (b), (c), or (d) from the list below so please be sure to
