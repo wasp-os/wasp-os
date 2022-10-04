@@ -90,6 +90,7 @@ try:
     i2c = I2C(1, scl='I2C_SCL', sda='I2C_SDA')
     accel = BMA421(i2c)
     hrs = HRS3300(i2c)
+    hrs.disable()
     touch = CST816S(i2c,
                     Pin('TP_INT', Pin.IN), Pin('TP_RST', Pin.OUT, value=0),
                     _callback)
