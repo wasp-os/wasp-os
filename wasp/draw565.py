@@ -443,7 +443,77 @@ class Draw565(object):
             if e2 <= dx:
                 err += dx;
                 y0 += sy;
-        
+ 
+    def round_rect(self, x, y, w, h, r, color=0xFFFF):
+        """Draw a rounded rectangle.
+
+        .. code-block:: python
+
+            draw = wasp.watch.drawable
+            draw.round_rect(0xFFFF, cx=120, cy=140, r=30, start=0, sweep=90)
+
+
+        :param    x     Top left corner x coordinate
+        :param    y     Top left corner y coordinate
+        :param    w     Width in pixels
+        :param    h     Height in pixels
+        :param    r     Radius of corner rounding
+        :param    color RGB565 Color to draw with
+        """
+        def _circle_helper(x0, y0, r, cornername, color):
+            f = 1 - r
+            ddF_x = 1
+            ddF_y = -2 * r
+            x = 0
+            y = r
+
+            set_window = self._display.set_window
+            quick_write = self._display.quick_write
+
+            def _write_pixel(x, y, color):
+                set_window(x, y, 1, 1)
+                quick_write(bytes(((color >> 8) & 0xFF, color & 0xFF)))
+
+            while x < y:
+                if f >= 0:
+                    y -= 1
+                    ddF_y += 2
+                    f += ddF_y
+
+                x += 1
+                ddF_x += 2
+                f += ddF_x
+                if cornername & 0x4:
+                    _write_pixel(x0 + x, y0 + y, color)
+                    _write_pixel(x0 + y, y0 + x, color)
+
+                if cornername & 0x2:
+                    _write_pixel(x0 + x, y0 - y, color)
+                    _write_pixel(x0 + y, y0 - x, color)
+
+                if cornername & 0x8:
+                    _write_pixel(x0 - y, y0 + x, color)
+                    _write_pixel(x0 - x, y0 + y, color)
+
+                if cornername & 0x1:
+                    _write_pixel(x0 - y, y0 - x, color)
+                    _write_pixel(x0 - x, y0 - y, color)
+
+        max_radius = w / 2 if (w < h) else h / 2
+        if r > max_radius:
+            r = max_radius
+        self.line(x + r, y, x + r + w - 2 * r, y, 1, color)
+        self.line(x + r, y + h - 1, x + r + w - 2 * r, y + h - 1, 1, color)
+        self.line(x, y + r, x, y + r + h - 2 * r, 1, color)
+        self.line(x + w - 1, y + r, x + w - 1, y + r + h - 2 * r, 1, color)
+        self._display.quick_start()
+        _circle_helper(x + r, y + r, r, 1, color)
+        _circle_helper(x + w - r - 1, y + r, r, 2, color)
+        _circle_helper(x + w - r - 1, y + h - r - 1, r, 4, color)
+        _circle_helper(x + r, y + h - r - 1, r, 8, color)
+        self._display.quick_end()
+
+       
     def polar(self, x, y, theta, r0, r1, width=1, color=None):
         """Draw a line using polar coordinates.
 

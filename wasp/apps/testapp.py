@@ -26,7 +26,7 @@ class TestApp():
     ICON = icons.app
 
     def __init__(self):
-        self.tests = ('Alarm', 'Button', 'Checkbox', 'Crash', 'Colours', 'Fill', 'Fill-H', 'Fill-V', 'Free Mem', 'Line', 'Notifications', 'RLE', 'String', 'Touch', 'Wrap')
+        self.tests = ('Alarm', 'Button', 'Checkbox', 'Crash', 'Colours', 'Fill', 'Fill-H', 'Fill-V', 'Free Mem', 'Line', 'Notifications', 'RLE', 'RoundRect', 'String', 'Touch', 'Wrap')
         self.test = self.tests[0]
         self.scroll = wasp.widgets.ScrollIndicator()
 
@@ -56,6 +56,8 @@ class TestApp():
             self.crash()
         elif self.test == 'String':
             self._benchmark_string()
+        elif self.test == 'RoundRect':
+            self._benchmark_round_rect()
         elif self.test == 'Touch':
             draw.string('Button', 0, 108, width=240)
 
@@ -111,7 +113,9 @@ class TestApp():
             self._benchmark_wrap()
         elif self.test == 'Line':
             self._benchmark_line()
-
+        elif self.test == 'RoundRect':
+            self._benchmark_round_rect()
+ 
     def _alarm(self):
         wasp.system.wake()
         wasp.system.switch(PagerApp('Alarm triggered'))
@@ -194,6 +198,23 @@ class TestApp():
             draw.line(120, 120, 120+y, 120-x, 3, 0x07c0)  # green
             draw.line(120, 120, 120-x, 120-y, 5, 0x6b3f)  # blue
             draw.line(120, 120, 120-y, 120+x, 2, 0xffe0)  # yellow
+        elapsed = t.time()
+        t.stop()
+        del t
+        draw.string('{}s'.format(elapsed / 1000000), 12, 24+192)
+
+    def _benchmark_round_rect(self):
+        draw = wasp.watch.drawable
+
+        draw.fill()
+        self.scroll.draw()
+        t = machine.Timer(id=1, period=8000000)
+        t.start()
+        for i in range(4):
+            draw.round_rect(20+i, 20+i, 100+2*i, 100+2*i, 6, 0xfb00)  # red
+            draw.round_rect(25+i, 25+i, 110+2*i, 110+2*i, 6, 0x07c0)  # green
+            draw.round_rect(30+i, 30+i, 120+2*i, 120+2*i, 6, 0x6b3f)  # blue
+            draw.round_rect(35+i, 35+i, 130+2*i, 130+2*i, 6, 0xffe0)  # yellow
         elapsed = t.time()
         t.stop()
         del t
