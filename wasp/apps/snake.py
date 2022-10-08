@@ -9,8 +9,6 @@ This is a classic arcade game called snake.
 .. figure:: res/SnakeApp.png
     :width: 179
 
-    Screenshot of the snake game
-
 You have to direct the white snake to the food block (blue dot) by swiping in the desired direction. You must not hit the border or the snake's body itself.
 Every time the snake eats the food, its length increases by 1. (In the current version there is an error that the length of the snake is not increased by 1 when the snake gets the food for the first time. This has to be fixed).
 

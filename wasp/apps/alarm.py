@@ -8,10 +8,8 @@
 An application to set a vibration alarm. All settings can be accessed from the Watch UI.
 Press the button to turn off ringing alarms.
 
-    .. figure:: res/AlarmApp.png
-        :width: 179
-
-        Screenshot of the Alarm Application
+.. figure:: res/AlarmApp.png
+    :width: 179
 
 """
 import wasp

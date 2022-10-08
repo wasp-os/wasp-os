@@ -5,11 +5,8 @@
 
 An application to set a vibration in a specified amount of time. Like a kitchen timer.
 
-    .. figure:: res/TimerApp.png
-        :width: 179
-
-        Screenshot of the Timer Application
-
+.. figure:: res/TimerApp.png
+    :width: 179
 """
 
 import wasp

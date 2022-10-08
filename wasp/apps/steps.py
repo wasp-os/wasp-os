@@ -6,8 +6,8 @@
 
 Provide a daily step count.
 
-    .. figure:: res/StepsApp.png
-        :width: 179
+.. figure:: res/StepsApp.png
+    :width: 179
 
 The step counts automatically reset at midnight.
 """
