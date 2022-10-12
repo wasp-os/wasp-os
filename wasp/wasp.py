@@ -627,7 +627,13 @@ class Manager():
                 if delete:
                     os.unlink("settings/" + name)
                 if ";" in content:
-                    return content.split(";")
+                    content = content.split(";")
+                    for i, c in enumerate(content):
+                        if content[i] == "True":
+                            content[i] = True
+                        elif content[i] == "False":
+                            content[i] = False
+                    return content
                 else:
                     return content
             return None
