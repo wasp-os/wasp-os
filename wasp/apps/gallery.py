@@ -82,7 +82,7 @@ class GalleryApp():
             increment = -1
         else:
             increment = 0
-        self.index = (self.index + increment) % len(self.files)
+        self.index = (self.index + increment) % (len(self.files) or 1)
         self._draw()
 
     def _invalid_file(self, filename):
