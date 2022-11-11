@@ -310,8 +310,18 @@ class Draw565(object):
         font = self._font
         bg = self._bgfg >> 16
 
+        (w, h) = _bounding_box(s, font)
         if width:
+            wmax = min(width, 240 - x)
+            width = wmax
+        else:
+            wmax = 240 - x
+        while w > wmax:
+            # We need to strip the string
+            s = s[:-1]
             (w, h) = _bounding_box(s, font)
+
+        if width:
             if right:
                 leftpad = width - w
                 rightpad = 0
