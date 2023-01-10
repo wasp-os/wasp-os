@@ -1,9 +1,9 @@
 [submodule "bootloader"]
 	path = bootloader
-	url = https://github.com/daniel-thompson/wasp-bootloader
+	url = https://github.com/wasp-os/wasp-bootloader
 [submodule "micropython"]
 	path = micropython
-	url = https://github.com/daniel-thompson/micropython
+	url = https://github.com/wasp-os/micropython
 [submodule "tools/intelhex"]
 	path = tools/intelhex
 	url = https://github.com/python-intelhex/intelhex
@@ -12,19 +12,19 @@
 	url = https://github.com/adafruit/Adafruit_nRF52_nrfutil.git
 [submodule "wasp/drivers/flash"]
 	path = wasp/drivers/flash
-	url = https://github.com/daniel-thompson/micropython-eeprom
+	url = https://github.com/wasp-os/micropython-eeprom
 [submodule "tools/pynus"]
 	path = tools/pynus
-	url = https://github.com/daniel-thompson/pynus
+	url = https://github.com/wasp-os/pynus
 [submodule "tools/micropython-font-to-py"]
 	path = tools/micropython-font-to-py
 	url = https://github.com/peterhinch/micropython-font-to-py
 [submodule "tools/ota-dfu"]
 	path = tools/ota-dfu
-	url = https://github.com/daniel-thompson/ota-dfu-python
+	url = https://github.com/wasp-os/ota-dfu-python
 [submodule "reloader"]
 	path = reloader
-	url = https://github.com/daniel-thompson/wasp-reloader
+	url = https://github.com/wasp-os/wasp-reloader
 [submodule "wasp/modules/bma42x-upy"]
 	path = wasp/modules/bma42x-upy
-	url = https://github.com/daniel-thompson/bma42x-upy
+	url = https://github.com/wasp-os/bma42x-upy
