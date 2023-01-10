@@ -65,7 +65,7 @@ To build wasp-os with docker, ensure it is installed and running, then open a te
 
 .. code-block:: sh
 
-    git clone https://github.com/daniel-thompson/wasp-os
+    git clone https://github.com/wasp-os/wasp-os
     cd wasp-os
     ~/wasp-os/tools/docker/shell
 
@@ -126,8 +126,8 @@ Official releases are the recommended binary releases for wasp-os. They contain
 this documentation together a set of binaries for each of the supported devices
 in appropriately names directories (``build-<board>/``). The official release
 can be downloaded from:
-`https://github.com/daniel-thompson/wasp-os/releases
-<https://github.com/daniel-thompson/wasp-os/releases>`_ .
+`https://github.com/wasp-os/wasp-os/releases
+<https://github.com/wasp-os/wasp-os/releases>`_ .
 
 The CI builds are built automatically whenever the wasp-os source code is
 changed. That means the builds are less well tested than the official
@@ -137,8 +137,8 @@ builds are fo you. To download the latest CI build you need to be logged
 into a github account and you can navigate to the latest CI build using
 the link below (follow the link to the most recent "workflow run results"
 and then scroll down to find the artifacts):
-`https://github.com/daniel-thompson/wasp-os/actions?query=is%3Asuccess+branch%3Amaster+workflow%3Abinary
-<https://github.com/daniel-thompson/wasp-os/actions?query=is%3Asuccess+branch%3Amaster+workflow%3Abinary>`_ .
+`https://github.com/wasp-os/wasp-os/actions?query=is%3Asuccess+branch%3Amaster+workflow%3Abinary
+<https://github.com/wasp-os/wasp-os/actions?query=is%3Asuccess+branch%3Amaster+workflow%3Abinary>`_ .
 
 .. warning::
 
