@@ -71,7 +71,7 @@ Community
 ---------
 
 The wasp-os community is centred around the
-`github project <https://github.com/daniel-thompson/wasp-os>`_ and is
+`github project <https://github.com/wasp-os/wasp-os>`_ and is
 supplemented with instant messaging via the #wasp-os IRC channel at
 libera.chat .
 
