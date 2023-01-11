@@ -23,6 +23,7 @@ import icons
 import time
 
 from micropython import const
+from gadgetbridge import send_cmd
 
 # 2-bit RLE, generated from res/music_icon.png, 358 bytes
 icon = (
@@ -73,15 +74,6 @@ class MusicPlayerApp(object):
         self._state_changed = True
         self._track_changed = True
         self._artist_changed = True
-
-    def _send_cmd(self, cmd):
-        print('\r')
-        for i in range(1):
-            for i in range(0, len(cmd), 20):
-                print(cmd[i: i + 20], end='')
-                time.sleep(0.2)
-            print(' ')
-        print(' ')
 
     def _fill_space(self, key):
         if key == 'top':
@@ -151,9 +143,9 @@ class MusicPlayerApp(object):
         Notify the application of a touchscreen swipe event.
         """
         if event[0] == wasp.EventType.UP:
-            self._send_cmd('{"t":"music", "n":"volumeup"} ')
+            send_cmd('{"t":"music", "n":"volumeup"} ')
         elif event[0] == wasp.EventType.DOWN:
-            self._send_cmd('{"t":"music", "n":"volumedown"} ')
+            send_cmd('{"t":"music", "n":"volumedown"} ')
 
     def touch(self, event):
         if self._pauseplay.touch(event):
@@ -162,16 +154,16 @@ class MusicPlayerApp(object):
                 self._musicstate = 'play'
                 self._pauseplay.gfx = icons.pause
                 self._pauseplay.draw()
-                self._send_cmd('{"t":"music", "n":"play"} ')
+                send_cmd('{"t":"music", "n":"play"} ')
             else:
                 self._musicstate = 'pause'
                 self._pauseplay.gfx = icons.play
                 self._pauseplay.draw()
-                self._send_cmd('{"t":"music", "n":"pause"} ')
+                send_cmd('{"t":"music", "n":"pause"} ')
         elif self._back.touch(event):
-            self._send_cmd('{"t":"music", "n":"previous"} ')
+            send_cmd('{"t":"music", "n":"previous"} ')
         elif self._fwd.touch(event):
-            self._send_cmd('{"t":"music", "n":"next"} ')
+            send_cmd('{"t":"music", "n":"next"} ')
 
     def draw(self):
         """Redraw the display from scratch."""

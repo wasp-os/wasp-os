@@ -19,6 +19,7 @@ manifest = (
     'apps/launcher.py',
     'apps/pager.py',
     'apps/play2048.py',
+    'apps/phonefinder.py',
     'apps/settings.py',
     'apps/software.py',
     'apps/sports.py',
