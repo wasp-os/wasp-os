@@ -55,6 +55,8 @@ Applications
 
 .. automodule:: apps.flashlight
 
+.. automodule:: PhoneFinder
+
 .. automodule:: apps.gallery
 
 .. automodule:: apps.haiku
