@@ -22,6 +22,7 @@ import io
 import json
 import sys
 import wasp
+import time
 
 # JSON compatibility
 null = None
@@ -66,3 +67,12 @@ def GB(cmd):
         sys.print_exception(e, msg)
         _error(msg.getvalue())
         msg.close()
+
+def send_cmd(cmd = ''):
+    print('\r')
+    for i in range(1):
+        for i in range(0, len(cmd), 20):
+            print(cmd[i: i + 20], end='')
+            time.sleep(0.2)
+        print(' ')
+    print(' ')
