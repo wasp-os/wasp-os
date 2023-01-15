@@ -8,6 +8,7 @@ import micropython
 # don't remove Pin import even though your IDE tells you it's unused, otherwise
 # micropython can't load your battery level.
 from machine import Pin, ADC
+import array
 
 class Battery(object):
     """Generic lithium ion battery driver.
@@ -28,7 +29,7 @@ class Battery(object):
         self._battery = ADC(battery)
         self._charging = charging
         self._power = power
-        self._cache = set()
+        self._cache = array.array("I")
 
     @micropython.native
     def charging(self):
@@ -62,12 +63,21 @@ class Battery(object):
         """
         raw = self._battery.read_u16()
         mv = (2 * 3300 * raw) // 65535
+        cache = self._cache
 
-        if mv not in self._cache:
-            self._cache.add(mv)
-            while len(self._cache) > 2:
-                self._cache.remove(max(self._cache))
-        return min(self._cache)
+        if self._charging.value():  # if charging, reset cache
+            if len(cache):
+                cache = array.array("I")
+            return mv
+        if len(cache) < 2:
+            cache.append(mv)
+            return mv
+        if len(cache) > 2:  # should not happen
+            cache = cache[-2:]
+        if mv != cache[0] and mv != cache[1]:
+            cache[0] = cache[1]
+            cache[1] = mv
+        return sum(cache) / 2
 
     def level(self):
         """Estimate the battery level.
@@ -81,6 +91,5 @@ class Battery(object):
         :returns: Estimate battery level in percent.
         """
         mv = self.voltage_mv()
-        level = ((19 * mv) // 100) - 660
-        level = min(100, max(0, level))
-        return level
+        level = int((mv - 3500) / (700) * 100)  # 0.7V is 4.2-3.5V
+        return min(100, max(0, level))
