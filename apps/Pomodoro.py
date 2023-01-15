@@ -50,7 +50,9 @@ _FIELDS = const(1234567890)
 _MAX_VIB = const(15)  # max number of second the watch you vibrate
 
 # you can add your own presets here:
-_PRESETS = ['15,4', '10,3', '20,5']
+_PRESETS = ['2,10', '10,2', '20,5']
+_TIME_MODE = const(1)  # if 0: duration of vibration will be discounted
+# from timer. if 1: not discounted
 
 
 class PomodoroApp():
@@ -59,16 +61,22 @@ class PomodoroApp():
     ICON = icon
 
     def __init__(self):
-        self.current_alarm = None
-        self.nb_vibrat_total = 0  # number of time it vibrated
-        self.nb_vibrat_per_alarm = 10  # number of times to vibrate each time
+        self._already_initialized = False
 
-        self.last_preset = 0
-        self.queue = _PRESETS[0]
-        self.last_run = -1
+    def _actual_init(self):
+        self.current_alarm = None
+        self.nb_vibrat_total = _STOPPED  # number of time it vibrated
+        self.last_preset = _STOPPED
+        self.last_run = -1  # to keep track of where in the queue we are
         self.state = _STOPPED
 
+        self.queue = _PRESETS[0]
+        self.nb_vibrat_per_alarm = 10 # number of times to vibrate each time
+        return True
+
     def foreground(self):
+        if not self._already_initialized:
+            self._already_initialized = self._actual_init()
         self._draw()
         wasp.system.request_event(wasp.EventMask.TOUCH |
                                   wasp.EventMask.SWIPE_LEFTRIGHT |
@@ -90,18 +98,21 @@ class PomodoroApp():
             if self.nb_vibrat_per_alarm <= 3:
                 wasp.watch.vibrator.pulse(duty=50, ms=650)
             else:
-                wasp.watch.time.sleep(random.randint(0, 150) * 0.001)  # offset pattern
-                if random.random() > 0.8:  # one very long vibration
-                    wasp.watch.vibrator.pulse(duty=random.randint(20, 60), ms=1000)
-                elif random.random() > 0.66:  # one long vibration
-                    wasp.watch.vibrator.pulse(duty=random.randint(20, 60),
-                                              ms=random.randint(750, 850))
+                if random.random() > 0.7:  # one very long vibration
+                    wasp.watch.vibrator.pulse(duty=random.randint(3, 60),
+                                              ms=900)
                 else:  # burst of vibration
-                    wasp.watch.vibrator.pulse(duty=20, ms=random.randint(100, 200))
-                    wasp.watch.time.sleep(random.randint(50, 150) * 0.001)
-                    wasp.watch.vibrator.pulse(duty=20, ms=random.randint(100, 200))
-                    wasp.watch.time.sleep(random.randint(50, 150) * 0.001)
-                    wasp.watch.vibrator.pulse(duty=20, ms=random.randint(100, 200))
+                    max_dur = 900
+                    done = 0
+                    while done <= max_dur:
+                        new_vibr = random.randint(20, 200)
+                        new_sleep = random.randint(0, 300)
+                        while done + new_vibr + new_sleep > max_dur * 1.1:
+                            new_vibr = random.randint(20, 200)
+                            new_sleep = random.randint(0, 300)
+                        wasp.watch.vibrator.pulse(duty=3, ms=new_vibr)
+                        wasp.watch.time.sleep(new_sleep * 0.001)
+                        done += new_vibr + new_sleep
             wasp.system.keep_awake()
             self.nb_vibrat_total += 1
             if self.nb_vibrat_total % self.nb_vibrat_per_alarm == 0:
@@ -190,7 +201,7 @@ class PomodoroApp():
         m = self.squeue[self.last_run]
 
         # reduce by one second if repeating, to avoid growing offset
-        if first_run:
+        if first_run or _TIME_MODE == 1:
             self.current_alarm = now + max(m * 60, 1)
         else:
             self.current_alarm = now + max(m * 60 - self.nb_vibrat_per_alarm, 1)
@@ -208,9 +219,6 @@ class PomodoroApp():
         """Draw the display from scratch."""
         draw = wasp.watch.drawable
         draw.fill()
-        sbar = wasp.system.bar
-        sbar.clock = True
-        sbar.draw()
 
         if self.state == _RINGING:
             draw.set_font(fonts.sans24)
@@ -268,6 +276,9 @@ class PomodoroApp():
             draw.set_font(fonts.sans24)
             draw.string(self.queue, 0, 35, right=True, width=240)
             draw.string("V{}".format(self.nb_vibrat_per_alarm), 0, 35)
+        sbar = wasp.system.bar
+        sbar.clock = True
+        sbar.draw()
 
     def _update(self):
         wasp.system.bar.update()
