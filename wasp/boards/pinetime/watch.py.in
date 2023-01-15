@@ -21,6 +21,7 @@ import draw565
 
 from machine import I2C
 from machine import Pin
+from machine import PWM
 #from machine import Signal
 from machine import SPI
 
@@ -39,6 +40,7 @@ class Backlight(object):
     lo = Pin("BL_LO", Pin.OUT, value=0)
     mid = Pin("BL_MID", Pin.OUT, value=1)
     hi = Pin("BL_HI", Pin.OUT, value=1)
+    pwm = PWM(0, pin=Pin("BL_LO", Pin.OUT), freq=PWM.FREQ_16MHZ, duty=85, period=160000)
 
     def __init__(self, level=1):
         self.set(level)
@@ -47,6 +49,7 @@ class Backlight(object):
         hi = 1
         mid = 1
         lo = 1
+        self.pwm.deinit()
 
         if level >= 3:
             hi = 0
@@ -54,6 +57,8 @@ class Backlight(object):
             mid = 0
         elif level == 1:
             lo = 0
+        else:
+            self.pwm.init()
 
         self.hi(hi)
         self.mid(mid)
