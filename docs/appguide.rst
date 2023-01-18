@@ -417,6 +417,43 @@ section to add an import and register for you application from ``main.py``
             --exec wasp/drivers/cst816s.py\
             --eval "watch.touch = CST816S(watch.i2c)"`
 
+Auto loading applications in flash
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+If there is not enough room on your device to freeze your application
+into the wasp-os binary you can still have it automatically added to
+the software list by uploading it to the apps directory of your device.
+The application will still have the RAM constraints of an app in flash.
+
+To automatically have your uploaded application added to the software:
+
+.. code-block:: sh
+
+    sh$ ./tools/wasptool --binary --upload myapp.mpy --as apps/myapp.mpy
+    Uploading apps/myapp.mpy:
+    [##################################################] 100%
+
+To delete a file from the device:
+
+.. code-block:: sh
+
+    sh$ ./tools/wasptool --console
+    >>>import os
+    >>>os.remove("apps/myapp.mpy")
+    >>>del os
+
+Application naming conventions
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+You app will have two names. A short name that will be displayed on the home
+screen and a long name to be displayed in the software list. Your files must be
+named according to the following rules:
+
+1) The class must be named the long name of the python file plus "App" (ie: "eggtimer.py" and "class EggTimerApp")
+2) Within your class the variable "NAME" must be set to the short name (ie: NAME= 'Timer' )
+3) Your app's documentation screenshot must be stored as the short name plus "App" (ie: res/TimerApp.png)
+4) The png used to generate your icon should be stored as the long name plus icon (ie: res/egg_timer_icon.png)
+
 Application entry points
 ------------------------
 
