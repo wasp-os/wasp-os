@@ -1,15 +1,14 @@
-# SPDX-License-Identifier: MY-LICENSE
-# Copyright (C) YEAR(S), AUTHOR
+# SPDX-License-Identifier: CC0
+# Copyright (C) YEAR(2023), Tigercoding56
 from micropython import const
 import wasp
 import drivers 
 import micropython
 import machine
-import ble
 import time
-print(dir(ble))
 
-@micropython.native
+
+
 class flappybirdApp():
     NAME = "Flappy"
     ICON= (
