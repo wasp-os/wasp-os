@@ -1,5 +1,5 @@
-# SPDX-License-Identifier: MY-LICENSE
-# Copyright (C) YEAR(S), AUTHOR
+# SPDX-License-Identifier: cc0
+# Copyright (C) YEAR(S), Tigercoding56
 from micropython import const
 import wasp
 import drivers 
@@ -7,7 +7,7 @@ import micropython
 import machine
 import ble
 import time
-print(dir(ble))
+
 
 @micropython.native
 class flappybirdApp():
