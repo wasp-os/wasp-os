@@ -28,6 +28,7 @@ manifest = (
     'apps/testapp.py',
     'apps/timer.py',
     'apps/weather.py',
+    'apps/draw.py',
     'apps/week_clock.py',
     'apps/word_clock.py',
     'fonts/__init__.py',
