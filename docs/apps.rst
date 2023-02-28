@@ -82,4 +82,4 @@ Games
 
 .. automodule:: apps.snake
 
-.. automodule:: apps.flappybird
+.. automodule:: Flappybird
