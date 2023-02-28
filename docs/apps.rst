@@ -51,6 +51,8 @@ Applications
 
 .. automodule:: apps.demo
 
+.. automodule:: draw
+
 .. automodule:: apps.disaBLE
 
 .. automodule:: apps.flashlight
