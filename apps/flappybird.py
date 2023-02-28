@@ -37,11 +37,11 @@ class FlappybirdApp():
         self.draw = wasp.watch.drawable
     def pipe(self,y,t):
         x = ((t +(0-self.playerx)) % 300)
-        xt = (((t+5) +(0-self.playerx)) % 300)
+        xt = (((t+7) +(0-self.playerx)) % 300)
         if not (x > 230 or x < 10):
                 self.draw.fill(x=x-5,y=(230 - y),w=10,h=y,bg=0x07e0)
         if not (xt > 236 or xt < 6):
-                self.draw.fill(x=xt,y=(230 - y),w=3,h=y,bg=0x001f)
+                self.draw.fill(x=xt,y=(230 - y),w=4,h=y,bg=0x001f)
         if x > 110 and x < 125:
             if self.playery < y:
                 self.playerx = 0
@@ -75,6 +75,7 @@ class FlappybirdApp():
         self.playerx = (self.playerx + 2)% 300
         self.driver.quick_start()
         self.draw.fill(x=110,y=(230 - self.oly),w=10,h=10,bg=0x001f)
+        self.draw.fill(x=5,y=120,w=2,h=120,bg=0x001f)
         self.draw.fill(x=110,y=(230 - self.playery),w=10,h=10,bg=0xfea8)
         self.oly = self.playery
         for i in range(0,5):
@@ -83,11 +84,9 @@ class FlappybirdApp():
         self.driver.quick_end()
     def touch(self, event):
             if self.velocity < 0:
-                self.velocity = self.velocity + 5
+                self.velocity = self.velocity + 10
             else:
-                self.velocity = self.velocity + 1
-        
-
+                self.velocity = self.velocity + 5
 
 
 
