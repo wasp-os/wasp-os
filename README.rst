@@ -265,3 +265,7 @@ application (and the "blank" white screen is a torch application):
 .. image:: res/BeaconApp.png
    :alt: Flash the relatively powerful HRS LED repeatedly
    :width: 179
+   
+.. image:: res/DrawApp.png
+   :alt: Draw around
+   :width: 179
