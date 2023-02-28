@@ -52,7 +52,6 @@ class SoftwareApp():
         db.append(('testapp', factory('Test')))
         db.append(('timer', factory('Timer')))
         db.append(('weather', factory('Weather')))
-        db.append(('flappybird', factory('Flappy bird')))
 
         # Handle user-loaded applications
         try:
