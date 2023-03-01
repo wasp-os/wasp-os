@@ -51,7 +51,7 @@ Applications
 
 .. automodule:: apps.demo
 
-.. automodule:: draw
+.. automodule:: Draw
 
 .. automodule:: apps.disaBLE
 
