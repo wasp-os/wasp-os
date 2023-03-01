@@ -22,6 +22,7 @@ freeze('../..', manifest_240x240.manifest +
         'gadgetbridge.py',
         'ppg.py',
         'shell.py',
+        'motion.py',
         'wasp.py',
     ),
     opt=3

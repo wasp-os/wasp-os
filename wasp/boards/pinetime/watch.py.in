@@ -90,7 +90,7 @@ try:
             Signal(Pin('CHARGING', Pin.IN), invert=True),
             Signal(Pin('USB_PWR', Pin.IN), invert=True))
     i2c = I2C(1, scl='I2C_SCL', sda='I2C_SDA')
-    accel = BMA421(i2c)
+    accel = BMA421(i2c, Pin('ACCEL_INT', Pin.IN))
     hrs = HRS3300(i2c)
     touch = CST816S(i2c,
                     Pin('TP_INT', Pin.IN), Pin('TP_RST', Pin.OUT, value=0),

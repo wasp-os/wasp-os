@@ -21,6 +21,7 @@ import steplogger
 import sys
 import watch
 import widgets
+import motion
 
 from apps.launcher import LauncherApp
 from apps.pager import PagerApp, CrashApp, NotificationApp
@@ -114,6 +115,8 @@ class Manager():
         self.musicinfo = {}
         self.weatherinfo = {}
         self.units = "Metric"
+        self.raise_wake = False
+        self.motion = motion.MotionDetector()
 
         self._theme = (
                 b'\x7b\xef'     # ble
@@ -493,6 +496,15 @@ class Manager():
                     self._charging != watch.battery.charging():
                 self.wake()
 
+        if self.raise_wake:
+            self.motion.update()
+            event = self.motion.get_gesture_event()
+
+            if event == motion.AccelGestureEvent.WRIST_TILT:
+                self.wake()
+
+            self.motion.reset_gesture_event()
+    
     def run(self, no_except=True):
         """Run the system manager synchronously.
 
