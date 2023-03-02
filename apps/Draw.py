@@ -1,6 +1,11 @@
 # SPDX-License-Identifier: CC0
 # Copyright (C) 2023 benedikt moore (did i do it right?)
-
+"""Drawing Application
+~~~~~~~~~~~~~~~~~~~~
+this application allows users to draw a image which gradually gets erased afterward
+.. figure:: res/DrawApp.png
+    :width: 179
+"""
 import wasp
 import icons
 
@@ -16,7 +21,7 @@ class DrawApp():
     def foreground(self):
         self._draw()
         wasp.system.request_event(wasp.EventMask.TOUCH | wasp.EventMask.SWIPE_UPDOWN|wasp.EventMask.SWIPE_LEFTRIGHT  )
-        wasp.system.request_tick(200)
+        wasp.system.request_tick(400)
 
     def lerp(self,x1,x2,x3):
         return (( x1 - x2 ) * x3 ) +x1
