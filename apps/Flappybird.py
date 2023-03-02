@@ -6,7 +6,12 @@ import drivers
 import micropython
 import machine
 import time
-
+"""Flappy bird game
+~~~~~~~~~~~~~~~~~~~~
+a recreation of the famous flappy bird game
+.. figure:: res/FlappybirdApp.png
+    :width: 179
+"""
 
 
 class FlappybirdApp():
