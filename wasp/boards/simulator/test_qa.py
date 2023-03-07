@@ -4,12 +4,13 @@ import importlib
 import os
 from PIL import Image
 
-EXCLUDE = ('Notifications', 'Template', 'Faces', 'ReadMe')
+EXCLUDE = ('NotificationApp', 'PagerApp', 'TemplateApp', 'FacesApp', 'ReadMeApp')
 
 def test_screenshot(constructor):
-    if constructor.NAME in EXCLUDE:
+    if f'{constructor.__name__}' in EXCLUDE or f'{constructor.__module__}'.startswith('apps.user.'):
         return
-    fname = f'res/{constructor.NAME}App.png'.replace(' ', '')
+
+    fname = f'res/screenshots/{constructor.__name__}.png'.replace(' ', '')
 
     # Every application requires a screenshot be captured for use in the
     # documentation. The screenshots must conform to standard dimensions
@@ -25,9 +26,10 @@ def test_screenshot(constructor):
         assert screenshot.height == 406
 
 def test_README(constructor):
-    if constructor.NAME in EXCLUDE:
+    if f'{constructor.__name__}' in EXCLUDE or f'{constructor.__module__}'.startswith('apps.user.'):
         return
-    fname = f'res/{constructor.NAME}App.png'.replace(' ', '')
+
+    fname = f'res/screenshots/{constructor.__name__}.png'.replace(' ', '')
 
     with open('README.rst') as f:
         readme = f.readlines()
@@ -56,7 +58,7 @@ def test_README(constructor):
         assert ':width: 179' in readme[offset+2]
 
 def test_app_library(constructor):
-    if constructor.NAME in EXCLUDE:
+    if f'{constructor.__name__}' in EXCLUDE or f'{constructor.__module__}'.startswith('apps.user.'):
         return
 
     with open('docs/apps.rst') as f:
@@ -65,14 +67,30 @@ def test_app_library(constructor):
         waspdoc = f.read()
 
     # Every application must be listed in the Application Library
-    needle_system = f'.. automodule:: {constructor.__module__}'
+    needle_system = f'.. automodule:: {constructor.__module__}'.replace('apps.system.', '')
     needle_user_defined = f'.. automodule:: {constructor.__module__}'.replace('apps.', '')
-    assert needle_system in appdoc or needle_user_defined in appdoc
+    needle_watch_faces = f'.. automodule:: {constructor.__module__}'.replace('watch_faces.', '')
+    assert needle_system in appdoc or needle_user_defined in appdoc or needle_watch_faces in appdoc
+
+def test_app_naming(constructor):
+    # The class name of every app must be the PascalCase version of its file name in snake_case appended with "App"
+    if f'{constructor.__name__}' in EXCLUDE or f'{constructor.__module__}'.startswith('apps.user.'):
+        return
+
+    module = f'{constructor.__module__}'
+    if module.startswith('apps.system.'):
+        assert _snake_case_to_pascal_case(module.replace('apps.system.', '')) + 'App' == f'{constructor.__name__}'
+    elif module.startswith('apps.'):
+        assert _snake_case_to_pascal_case(module.replace('apps.', '')) + 'App' == f'{constructor.__name__}'
+    elif module.startswith('watch_faces.'):
+        assert _snake_case_to_pascal_case(module.replace('watch_faces.', '')) + 'App' == f'{constructor.__name__}'
+
 
 def test_docstrings(constructor):
-    if constructor.NAME in EXCLUDE:
+    if f'{constructor.__name__}' in EXCLUDE or f'{constructor.__module__}'.startswith('apps.user.'):
         return
-    fname = f'res/{constructor.NAME}App.png'.replace(' ', '')
+
+    fname = f'res/screenshots/{constructor.__name__}.png'.replace(' ', '')
 
     class_doc = constructor.__doc__
     module_doc = importlib.import_module(constructor.__module__).__doc__
@@ -99,3 +117,9 @@ def test_docstrings(constructor):
     # The second line of the module documentation should be an
     # underline (e.g. the first line must be a section header)
     assert(module_doc.split('\n')[1].startswith('~~~~'))
+
+def _snake_case_to_pascal_case(s):
+        out = ''
+        for word in s.split('_'):
+            out = out + word[:1].upper() + word[1:]
+        return out

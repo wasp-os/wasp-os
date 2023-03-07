@@ -9,77 +9,77 @@ Application Library
 Watch faces
 -----------
 
-.. automodule:: apps.faces
+.. automodule:: faces
 
-.. automodule:: apps.clock
+.. automodule:: clock
 
-.. automodule:: apps.chrono
+.. automodule:: chrono
 
-.. automodule:: apps.dual_clock
+.. automodule:: dual_clock
 
-.. automodule:: apps.fibonacci_clock
+.. automodule:: fibonacci_clock
 
-.. automodule:: apps.week_clock
+.. automodule:: week_clock
 
-.. automodule:: apps.word_clock
+.. automodule:: word_clock
 
 Built-in
 --------
 
-.. automodule:: apps.heart
+.. automodule:: apps.system.step_counter
 
-.. automodule:: apps.stopwatch
+.. automodule:: apps.system.launcher
 
-.. automodule:: apps.steps
+.. automodule:: apps.system.settings
 
-.. automodule:: apps.launcher
+.. automodule:: apps.system.software
 
-.. automodule:: apps.settings
-
-.. automodule:: apps.software
-
-.. automodule:: apps.pager
+.. automodule:: apps.system.pager
 
 Applications
 ------------
 
-.. automodule:: apps.alarm
+.. automodule:: alarm
 
-.. automodule:: Beacon
+.. automodule:: beacon
 
-.. automodule:: apps.calc
+.. automodule:: calculator
 
-.. automodule:: apps.demo
+.. automodule:: demo
 
-.. automodule:: apps.disaBLE
+.. automodule:: disa_b_l_e
 
-.. automodule:: apps.flashlight
+.. automodule:: flashlight
 
-.. automodule:: PhoneFinder
+.. automodule:: gallery
 
-.. automodule:: apps.gallery
+.. automodule:: haiku
 
-.. automodule:: apps.haiku
+.. automodule:: heart
 
-.. automodule:: Level
+.. automodule:: level
 
-.. automodule:: Morse
+.. automodule:: morse
 
-.. automodule:: apps.musicplayer
+.. automodule:: music_player
 
-.. automodule:: apps.sports
+.. automodule:: phone_finder
 
-.. automodule:: apps.testapp
+.. automodule:: sports
 
-.. automodule:: apps.timer
+.. automodule:: stopwatch
 
-.. automodule:: apps.weather
+.. automodule:: test
+
+.. automodule:: timer
+
+.. automodule:: weather
 
 Games
 -----
 
-.. automodule:: GameOfLife
+.. automodule:: game_of_life
 
-.. automodule:: apps.play2048
+.. automodule:: play2048
 
-.. automodule:: apps.snake
+.. automodule:: snake
