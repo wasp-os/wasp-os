@@ -1,1 +1,1 @@
-../wasp/apps/hello.py
+../apps/hello.py

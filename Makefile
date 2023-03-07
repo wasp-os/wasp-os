@@ -23,7 +23,10 @@ clean :
 		reloader/build-$(BOARD) reloader/src/boards/$(BOARD)/bootloader.h \
 		micropython/mpy-cross/build \
 		micropython/ports/nrf/build-$(BOARD)-s132 \
-		wasp/boards/$(BOARD)/watch.py
+		wasp/boards/$(BOARD)/watch.py \
+		wasp/apps/user \
+		wasp/boards/manifest_user_apps.py \
+		wasp/appregistry.py
 
 # Avoid a recursive update... it grabs far too much
 submodules :
@@ -61,7 +64,7 @@ wasp/boards/$(BOARD_SAFE)/watch.py : wasp/boards/$(BOARD_SAFE)/watch.py.in
 micropython/mpy-cross/mpy-cross:
 	$(MAKE) -C micropython/mpy-cross
 
-micropython: build-$(BOARD_SAFE) wasp/boards/$(BOARD_SAFE)/watch.py micropython/mpy-cross/mpy-cross
+micropython: build-$(BOARD_SAFE) wasp/boards/manifest_user_apps.py wasp/boards/$(BOARD_SAFE)/watch.py micropython/mpy-cross/mpy-cross
 	$(RM) micropython/ports/nrf/build-$(BOARD)-s132/frozen_content.c
 	$(MAKE) -C micropython/ports/nrf \
 		BOARD=$(BOARD) SD=s132 \
@@ -72,6 +75,14 @@ micropython: build-$(BOARD_SAFE) wasp/boards/$(BOARD_SAFE)/watch.py micropython/
 		--dev-type 0x0052 \
 		--application micropython/ports/nrf/build-$(BOARD)-s132/firmware.hex \
 		build-$(BOARD)/micropython.zip
+
+wasp/boards/manifest_user_apps.py: wasp.toml
+	$(RM) -r \
+		wasp/apps/user \
+		wasp/boards/manifest_user_apps.py \
+		wasp/appregistry.py
+	mkdir -p wasp/apps/user
+	$(PYTHON) tools/configure_wasp_apps.py wasp.toml
 
 build-$(BOARD_SAFE):
 	mkdir -p build-$(BOARD)
@@ -98,12 +109,12 @@ APPS_MPY=$(APPS_PY:%.py=%.mpy)
 .PHONY: apps
 apps: $(APPS_MPY)
 
-docs:
+docs: wasp/boards/manifest_user_apps.py
 	$(RM) -rf docs/build/html/*
 	$(MAKE) -C docs html
 	touch docs/build/html/.nojekyll
 
-sim:
+sim: wasp/boards/manifest_user_apps.py
 	PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=.:wasp/boards/simulator:wasp \
 	$(PYTHON) -i wasp/boards/simulator/main.py
 
@@ -111,8 +122,8 @@ ifeq ("$(origin K)", "command line")
   PYTEST_RESTRICT = -k '$(K)'
 endif
 
-check:
-	PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=.:wasp/boards/simulator:wasp \
+check: wasp/boards/manifest_user_apps.py
+	PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=.:wasp/boards/simulator:wasp:wasp/apps/system \
 	$(PYTEST) -v -W ignore $(PYTEST_RESTRICT) wasp/boards/simulator
 
 

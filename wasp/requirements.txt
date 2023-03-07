@@ -9,3 +9,4 @@ pygobject
 pyserial
 pysdl2
 pytest
+tomli

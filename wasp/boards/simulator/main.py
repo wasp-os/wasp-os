@@ -5,7 +5,7 @@ import wasp
 
 # Test app is used a lot on the simulator. Let's make sure it is
 # registered by default.
-wasp.system.register('apps.testapp.TestApp')
+wasp.system.register('apps.test.TestApp')
 
 # Ensure there's something interesting to look at ;-)
 wasp.system.set_music_info({

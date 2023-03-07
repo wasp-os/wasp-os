@@ -21,10 +21,11 @@ import steplogger
 import sys
 import watch
 import widgets
+import appregistry
 
-from apps.launcher import LauncherApp
-from apps.pager import PagerApp, CrashApp, NotificationApp
-from apps.steps import StepCounterApp
+from apps.system.launcher import LauncherApp
+from apps.system.pager import PagerApp, CrashApp, NotificationApp
+from apps.system.step_counter import StepCounterApp
 
 class EventType():
     """Enumerated interface actions.
@@ -165,14 +166,13 @@ class Manager():
 
     def register_defaults(self):
         """Register the default applications."""
-        self.register('apps.clock.ClockApp', True, no_except=True)
-        self.register('apps.steps.StepCounterApp', True, no_except=True)
-        self.register('apps.stopwatch.StopwatchApp', True, no_except=True)
-        self.register('apps.heart.HeartApp', True, no_except=True)
 
-        self.register('apps.faces.FacesApp', no_except=True)
-        self.register('apps.settings.SettingsApp', no_except=True)
-        self.register('apps.software.SoftwareApp', no_except=True)
+        for app in appregistry.autoload_list:
+            self.register(app[0], app[1], app[2], app[3])
+
+        self.register('apps.system.step_counter.StepCounterApp', True, no_except=True)
+        self.register('apps.system.settings.SettingsApp', no_except=True)
+        self.register('apps.system.software.SoftwareApp', no_except=True)
 
     def register(self, app, quick_ring=False, watch_face=False, no_except=False):
         """Register an application with the system.

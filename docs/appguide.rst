@@ -203,6 +203,31 @@ a little time into learning the best practices when running
 .. _MicroPython: https://micropython.org/
 __ http://docs.micropython.org/en/latest/reference/constrained.html
 
+App naming conventions and placement
+------------------------------------
+
+Your app must be named in a specific way and placed in the /apps directory to be compatible with wasp-os.
+Watch faces follow the same rules but are placed in the /watch_faces directory.
+
+1. The name of the python file must be in snake case (ie: music_player.py)
+2. The class of your app must be the name of the file in pascal case with "App" appended (ie: MusicPlayerApp)
+3. The NAME variable in your app must short and will be used on the launcher screen (ie: NAME = 'Music')
+
+If you wish to submit your app to the project it must additionally meet these requirements:
+
+1. The app must be added to docs/apps.rst
+2. The app must be added to the README.rst
+3. A simulator screenshot must exist in the /res/screenshots directory having the name of the app class (ie: MusicPlayerApp.png). Press s in the simulator to take a screenshot.
+4. The app must include a README comment at the top of the file (see existing apps)
+5. The app README must include a link to the simulator screenshot in the /res/screenshots directory
+6. If your app has an icon (encouraged) than the image used to generate the RLE must be in the /res/icons directory. Its name should be the snake case name of the app file with "_icon" appended. (ie: music_player_icon.png)
+
+To check if your app meets these requirements you can run the following command:
+
+.. code-block:: sh
+
+    make check
+
 
 How to run your application
 ---------------------------
@@ -391,12 +416,7 @@ because they can execute directly from the internal FLASH rather than running
 from RAM. Additionally the code is pre-compiled, which also means we don't
 need any RAM budget to run the compiler.
 
-Freezing your application requires you to modify the ``manifest.py``
-file for your board (e.g. ``wasp/boards/pinetime/manifest.py``) to include
-your application and then the whole binary must be re-compiled as normal.
-
-After that you an use the same technique described in the previous
-section to add an import and register for you application from ``main.py``
+To freeze your app into the wasp-os binary add it to the wasp.toml file.
 
 .. note::
 
@@ -442,25 +462,13 @@ To delete a file from the device:
     >>>os.remove("apps/myapp.mpy")
     >>>del os
 
-Application naming conventions
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-You app will have two names. A short name that will be displayed on the home
-screen and a long name to be displayed in the software list. Your files must be
-named according to the following rules:
-
-1) The class must be named the long name of the python file plus "App" (ie: "eggtimer.py" and "class EggTimerApp")
-2) Within your class the variable "NAME" must be set to the short name (ie: NAME= 'Timer' )
-3) Your app's documentation screenshot must be stored as the short name plus "App" (ie: res/TimerApp.png)
-4) The png used to generate your icon should be stored as the long name plus icon (ie: res/egg_timer_icon.png)
-
 Application entry points
 ------------------------
 
 Applications provide entry points for the system manager to use to notify
 the application of a change in system state or an user interface event.
 
-.. automodule:: apps.template
+.. automodule:: template
    :members:
    :private-members:
    :special-members:
