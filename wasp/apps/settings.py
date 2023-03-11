@@ -29,6 +29,9 @@ class SettingsApp():
     ICON = icons.settings
 
     def __init__(self):
+        self._already_initialized = False
+
+    def _actual_init(self):
         self._slider = wasp.widgets.Slider(3, 10, 90)
         self._nfy_slider = wasp.widgets.Slider(3, 10, 90)
         self._scroll_indicator = wasp.widgets.ScrollIndicator()
@@ -42,8 +45,11 @@ class SettingsApp():
         self._settings = ['Brightness', 'Notification Level', 'Time', 'Date', 'Units']
         self._sett_index = 0
         self._current_setting = self._settings[0]
+        return True
 
     def foreground(self):
+        if not self._already_initialized:
+            self._already_initialized = self._actual_init()
         self._slider.value = wasp.system.brightness - 1
         self._draw()
         wasp.system.request_event(wasp.EventMask.TOUCH)
