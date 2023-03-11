@@ -29,7 +29,7 @@ class SettingsApp():
     ICON = icons.settings
 
     def __init__(self):
-        self._slider = wasp.widgets.Slider(3, 10, 90)
+        self._bri_slider = wasp.widgets.Slider(4, 10, 90)
         self._nfy_slider = wasp.widgets.Slider(3, 10, 90)
         self._scroll_indicator = wasp.widgets.ScrollIndicator()
         self._HH = wasp.widgets.Spinner(50, 60, 0, 23, 2)
@@ -44,15 +44,15 @@ class SettingsApp():
         self._current_setting = self._settings[0]
 
     def foreground(self):
-        self._slider.value = wasp.system.brightness - 1
+        self._bri_slider.value = wasp.system.brightness
         self._draw()
         wasp.system.request_event(wasp.EventMask.TOUCH)
         wasp.system.request_event(wasp.EventMask.SWIPE_UPDOWN)
 
     def touch(self, event):
         if self._current_setting == 'Brightness':
-            self._slider.touch(event)
-            wasp.system.brightness = self._slider.value + 1
+            self._bri_slider.touch(event)
+            wasp.system.brightness = self._bri_slider.value
         elif self._current_setting == 'Notification Level':
             self._nfy_slider.touch(event)
             wasp.system.notify_level = self._nfy_slider.value + 1
@@ -99,7 +99,7 @@ class SettingsApp():
         draw.set_font(fonts.sans24)
         draw.string(self._current_setting, 0, 6, width=240)
         if self._current_setting == 'Brightness':
-            self._slider.value = wasp.system.brightness - 1
+            self._bri_slider.value = wasp.system.brightness
         elif self._current_setting == 'Notification Level':
             self._nfy_slider.value = wasp.system.notify_level - 1
         elif self._current_setting == 'Time':
@@ -134,9 +134,11 @@ class SettingsApp():
                 say = "High"
             elif wasp.system.brightness == 2:
                 say = "Mid"
-            else:
+            elif wasp.system.brightness == 1:
                 say = "Low"
-            self._slider.update()
+            else:  # == 0
+                say = "Very Low"
+            self._bri_slider.update()
             draw.string(say, 0, 150, width=240)
         elif self._current_setting == 'Notification Level':
             if wasp.system.notify_level == 3:
