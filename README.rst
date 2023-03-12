@@ -269,3 +269,11 @@ application (and the "blank" white screen is a torch application):
 .. image:: res/FinderApp.png
    :alt: Find your phone by causing it to ring
    :width: 179
+
+.. image:: res/ThermApp.png
+   :alt: Therminal-style watch face application running in the wasp-os simulator
+   :width: 179
+
+.. image:: res/MinesApp.png
+   :alt: Minesweeper application running in the wasp-os simulator
+   :width: 179
