@@ -21,7 +21,8 @@ class ThermClockApp():
     def tick(self, ticks):self._d()
     def preview(self):wasp.system.bar.clock = False;self._d(1)
     def _d(self,r=0):
-        d = wasp.watch.drawable;d.set_font(f);t=wasp.watch.rtc.get_localtime()
+        d = wasp.watch.drawable;d.set_font(f)
+        t = wasp.watch.rtc.get_localtime()
         if r:
             d.fill();d.set_color(0x8EE6);d.string("user@watch",0,0);d.string("user@watch",0,160)
             d.set_color(0xFFFF);d.string(": $ info",110,0);d.string(": $",110,160)
