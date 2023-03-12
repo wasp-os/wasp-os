@@ -23,8 +23,6 @@ Watch faces
 
 .. automodule:: apps.word_clock
 
-.. automodule:: therm_clock
-
 Built-in
 --------
 
@@ -85,7 +83,3 @@ Games
 .. automodule:: apps.play2048
 
 .. automodule:: apps.snake
-
-.. automodule:: Mines_light
-
-.. automodule:: Mines_dark

@@ -15,36 +15,6 @@ M,D='JanFebMarAprMayJunJulAugSepOctNovDec','MonTueWedThuFriSatSun'
 class ThermClockApp():
     NAME='Therm'
     s=d=w=b=n=c=st=bl=-1
-    wasp.system.notify(wasp.watch.rtc.get_uptime_ms(),
-    {
-        "src":"Hangouts",
-        "title":"A Name",
-        "body":"message contents1"
-    })
-    wasp.system.notify(wasp.watch.rtc.get_uptime_ms()+1,
-    {
-        "src":"Hangouts",
-        "title":"A Name",
-        "body":"message contents2"
-    })
-    wasp.system.notify(wasp.watch.rtc.get_uptime_ms()+2,
-    {
-        "src":"Hangouts",
-        "title":"A Name",
-        "body":"message contents3"
-    })
-    wasp.system.notify(wasp.watch.rtc.get_uptime_ms()+3,
-    {
-        "src":"Hangouts",
-        "title":"A Name",
-        "body":"message contents4"
-    })
-    wasp.system.notify(wasp.watch.rtc.get_uptime_ms()+4,
-    {
-        "src":"Hangouts",
-        "title":"A Name",
-        "body":"message contents5"
-    })
     def foreground(self):wasp.system.bar.clock=False;self._d(1);wasp.system.request_tick(500)
     def sleep(self):return True
     def wake(self):self._d()
