@@ -16,9 +16,11 @@ import icons
 import io
 import sys
 
-class PagerApp():
+
+class PagerApp:
     """Show a long text message in a pager."""
-    NAME = 'Pager'
+
+    NAME = "Pager"
     ICON = icons.app
 
     def __init__(self, msg):
@@ -62,16 +64,16 @@ class PagerApp():
         draw = wasp.watch.drawable
 
         mute(True)
-        draw.set_color(0xffff)
+        draw.set_color(0xFFFF)
         draw.fill()
 
         page = self._page
         i = page * 9
         j = i + 11
         chunks = self._chunks[i:j]
-        for i in range(len(chunks)-1):
-            sub = self._msg[chunks[i]:chunks[i+1]].rstrip()
-            draw.string(sub, 0, 24*i)
+        for i in range(len(chunks) - 1):
+            sub = self._msg[chunks[i] : chunks[i + 1]].rstrip()
+            draw.string(sub, 0, 24 * i)
 
         scroll = self._scroll
         scroll.up = page > 0
@@ -80,44 +82,54 @@ class PagerApp():
 
         mute(False)
 
+
 class NotificationApp(PagerApp):
-    NAME = 'Notifications'
+    NAME = "Notifications"
 
     def __init__(self):
-        super().__init__('')
+        super().__init__("")
         self.confirmation_view = wasp.widgets.ConfirmationView()
         self.confirm_initial = self._note = 0
 
     def foreground(self):
         self._note = 0
-        wasp.system.request_event(wasp.EventMask.SWIPE_UPDOWN |
-                                  wasp.EventMask.SWIPE_LEFTRIGHT |
-                                  wasp.EventMask.TOUCH |
-                                  wasp.EventMask.BUTTON)
+        wasp.system.request_event(
+            wasp.EventMask.SWIPE_UPDOWN
+            | wasp.EventMask.SWIPE_LEFTRIGHT
+            | wasp.EventMask.TOUCH
+            | wasp.EventMask.BUTTON
+        )
         self._drawnote()
         super().foreground()
-    
+
     def _drawnote(self):
         notes = list(wasp.system.notifications.values())
         note = notes[self._note]
-        title = note['title'] if 'title' in note else 'Untitled'
-        body = note['body'] if 'body' in note else ''
-        self._msg = '{}\n\n{}'.format(title, body)
+        title = note["title"] if "title" in note else "Untitled"
+        body = note["body"] if "body" in note else ""
+        self._msg = "{}\n\n{}".format(title, body)
 
     def background(self):
         self.confirmation_view.active = False
         super().background()
 
     def swipe(self, event):
-        if event[0] == wasp.EventType.DOWN and self._page == 0:self.confirmation_view.draw('Clear notifications?');return
-        if event[0] == wasp.EventType.UP and self._page == self._numpages:self.confirmation_view.draw('Clear notification?');self.confirm_initial = 2;return
+        if event[0] == wasp.EventType.DOWN and self._page == 0:
+            self.confirmation_view.draw("Clear notifications?")
+            return
+        if event[0] == wasp.EventType.UP and self._page == self._numpages:
+            self.confirmation_view.draw("Clear notification?")
+            self.confirm_initial = 2
+            return
         if event[0] == wasp.EventType.LEFT or event[0] == wasp.EventType.RIGHT:
-            notes = len(list(wasp.system.notifications.values()))-1
+            notes = len(list(wasp.system.notifications.values())) - 1
             self._note += 1 if event[0] == wasp.EventType.LEFT else -1
             if self._note < 0 or self._note > notes:
                 self._note = 0 if self._note < 0 else notes
                 wasp.watch.vibrator.pulse()
-            else:self._drawnote();super().foreground()
+            else:
+                self._drawnote()
+                super().foreground()
             return
         super().swipe(event)
 
@@ -125,23 +137,31 @@ class NotificationApp(PagerApp):
         if self.confirmation_view.touch(event):
             if self.confirm_initial == 2:
                 if self.confirmation_view.value:
-                    del wasp.system.notifications[list(wasp.system.notifications.keys())[self._note]]
-                    notes = len(list(wasp.system.notifications.values()))-1
-                    if self._note <= notes or 0 <= self._note-1 <= notes:
-                        if self._note > notes: self._note -= 1
+                    del wasp.system.notifications[
+                        list(wasp.system.notifications.keys())[self._note]
+                    ]
+                    notes = len(list(wasp.system.notifications.values())) - 1
+                    if self._note <= notes or 0 <= self._note - 1 <= notes:
+                        if self._note > notes:
+                            self._note -= 1
                         self._drawnote()
                         super().foreground()
-                    else:wasp.system.navigate(wasp.EventType.BACK)
-                else: self._draw()
+                    else:
+                        wasp.system.navigate(wasp.EventType.BACK)
+                else:
+                    self._draw()
             elif self.confirmation_view.value:
                 wasp.system.notifications = {}
                 wasp.system.navigate(wasp.EventType.BACK)
-            else: self._draw()
+            else:
+                self._draw()
             self.confirm_initial = wasp.EventType.DOWN
-    
-    def press(self, event, press): wasp.system.navigate(wasp.EventType.BACK)
 
-class CrashApp():
+    def press(self, event, press):
+        wasp.system.navigate(wasp.EventType.BACK)
+
+
+class CrashApp:
     """Crash handler application.
 
     This application is launched automatically whenever another
@@ -150,6 +170,7 @@ class CrashApp():
     app deliberately enables inverted video mode in order to deliver
     that message as strongly as possible.
     """
+
     def __init__(self, exc):
         """Capture the exception information.
 
@@ -173,8 +194,9 @@ class CrashApp():
         draw.blit(icons.bomb, 0, 104)
         draw.blit(icons.bomb, 32, 104)
 
-        wasp.system.request_event(wasp.EventMask.SWIPE_UPDOWN |
-                                  wasp.EventMask.SWIPE_LEFTRIGHT)
+        wasp.system.request_event(
+            wasp.EventMask.SWIPE_UPDOWN | wasp.EventMask.SWIPE_LEFTRIGHT
+        )
 
     def background(self):
         """Restore a normal display mode.
