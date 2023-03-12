@@ -1,6 +1,15 @@
 # SPDX-License-Identifier: LGPL-3.0-or-later
 # Copyright (C) 2023 sbot50
 # Disclaimer: Heavily inspired by the therminal watch face of Infinitime
+"""Therminal watch face application
+~~~~~~~~~~~~~~~~~~~~~
+
+Therminal Watch face heavily inspired by Infinitime's therminal watch face.
+
+.. figure:: res/ThermApp.png
+    :width: 179
+"""
+
 import wasp, ble, fonts.firacode as f
 M,D='JanFebMarAprMayJunJulAugSepOctNovDec','MonTueWedThuFriSatSun'
 class ThermClockApp():

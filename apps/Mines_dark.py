@@ -1,5 +1,19 @@
 # SPDX-License-Identifier: LGPL-3.0-or-later
 # Copyright (C) 2023 sbot50
+"""Mines application
+~~~~~~~~~~~~~~~~~~~~~
+
+Classic game of minesweeper.
+
+Click once to reveal a tile
+Click twice to flag a tile
+
+flag all bombs to win!
+
+.. figure:: res/MinesApp.png
+    :width: 179
+"""
+
 import wasp
 from random import seed, randint
 from time import sleep
