@@ -27,7 +27,7 @@ class Mines_darkApp:
     T = [0, 0]
     
     def __init__(self):
-        draw = wasp.watch.drawable
+        self.draw = wasp.watch.drawable
 
     def foreground(self):
         self.start()
