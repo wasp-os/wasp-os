@@ -1,0 +1,102 @@
+name: wasp-os binary distribution
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+    runs-on: ubuntu-20.04
+
+    steps:
+    - name: Checkout files
+      id:   checkout-files
+      uses: actions/checkout@v2
+
+    - name: Check the cached arm-none-eabi-gcc compiler
+      id:   cache-toolchain
+      uses: actions/cache@v2
+      env:
+        cache-name: cache-toolchain-10-2020-q4
+      with:
+          path: ${{ runner.temp }}/arm-none-eabi
+          key:  ${{ runner.os }}-build-${{ env.cache-name }}
+          restore-keys: ${{ runner.os }}-build-${{ env.cache-name }}
+
+    - name: Install arm-none-eabi-gcc
+      id:   install-toolchain
+      # installs arm-none-eabi if the CI environment can't find it in the cache
+      if:   steps.cache-toolchain.outputs.cache-hit != 'true'
+      uses: fiam/arm-none-eabi-gcc@v1.0.4
+      with:
+          release: 10-2020-q4
+          directory: ${{ runner.temp }}/arm-none-eabi
+
+    - name: Install packages
+      id: install-packages
+      run:  |
+          sudo apt-get update
+          sudo apt-get install -y python3-sphinx python3-cryptography python3-cbor graphviz
+          sudo pip3 install recommonmark
+
+    - name: Update submodules
+      id:   update-submodules
+      run:  |
+          export PATH=$PATH:${{ runner.temp }}/arm-none-eabi/bin
+          make -j `nproc` submodules
+    
+    - name: Download softdevice
+      id:   download-softdevice
+      run:  |  
+          export PATH=$PATH:${{ runner.temp }}/arm-none-eabi/bin
+          make -j `nproc` softdevice
+
+    - name: Build wasp-os binary distribution
+      id:   binary-distribution
+      run:  |
+          export PATH=$PATH:${{ runner.temp }}/arm-none-eabi/bin
+          make -j `nproc` VERSION=${{ github.sha }} dist
+          mv ../wasp-os-${{ github.sha }}.tar.gz .
+
+    - name: Build extra apps
+      id:   apps
+      run:  |
+          export PATH=$PATH:${{ runner.temp }}/arm-none-eabi/bin
+          make -j `nproc` apps
+
+    - name: Upload full binary distribution
+      id:   upload-binaries
+      uses: actions/upload-artifact@v2
+      with:
+          name: wasp-os-${{ github.sha }}
+          path: wasp-os-${{ github.sha }}.tar.gz
+
+    - name: Upload pinetime binaries
+      id:   upload-pinetime
+      uses: actions/upload-artifact@v2
+      with:
+          name: pinetime-${{ github.sha }}
+          path: build-pinetime
+
+    - name: Upload Colmi P8 binaries
+      id:   upload-p8
+      uses: actions/upload-artifact@v2
+      with:
+          name: p8-${{ github.sha }}
+          path: build-p8
+
+    - name: Upload Senbono K9 binaries
+      id:   upload-k9
+      uses: actions/upload-artifact@v2
+      with:
+          name: k9-${{ github.sha }}
+          path: build-k9
+
+    - name: Upload extra apps binaries
+      id:   upload-apps
+      uses: actions/upload-artifact@v2
+      with:
+          name: apps-${{ github.sha }}
+          path: apps/*.mpy
