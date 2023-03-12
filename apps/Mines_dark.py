@@ -25,7 +25,9 @@ class Mines_darkApp:
     G = []
     S = B = C = L = 0
     T = [0, 0]
-    draw = wasp.watch.drawable
+    
+    def __init__(self):
+        draw = wasp.watch.drawable
 
     def foreground(self):
         self.start()
