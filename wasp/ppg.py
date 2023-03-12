@@ -163,13 +163,14 @@ class PPG():
         return (60 * 24 * 4) // t3
 
     def get_heart_rate(self):
-        if len(self.data) < 200:
+        if len(self.data) < 24:  # don't estimate under 1 sec of recording
             return None
 
         hr = self._get_heart_rate()
 
-        # Clear out the accumulated data
-        self.data = array.array('b')
+        if hr is not None and len(self.data) > 240:
+            # Clear out passed accumulated data more than 10s ago
+            self.data = array.array('b', self.data[-240:])
 
         # Dump the debug data
         if self.debug:

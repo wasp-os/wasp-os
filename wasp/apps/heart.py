@@ -43,6 +43,7 @@ class HeartApp():
     def __init__(self):
         self._debug = False
         self._hrdata = None
+        self._last_value = wasp.watch.rtc.time()
 
     def foreground(self):
         """Activate the application."""
@@ -72,9 +73,11 @@ class HeartApp():
 
         spl = self._hrdata.preprocess(wasp.watch.hrs.read_hrs())
 
-        if len(self._hrdata.data) >= 240:
+        bpm = self._hrdata.get_heart_rate()
+        if bpm and (wasp.watch.rtc.time() - self._last_value) > 1.5:
+            self._last_value = wasp.watch.rtc.time()
             draw.set_color(wasp.system.theme('bright'))
-            draw.string('{} bpm'.format(self._hrdata.get_heart_rate()),
+            draw.string('{} bpm'.format(bpm),
                         0, 6, width=240)
 
         # Graph is orange by default...
