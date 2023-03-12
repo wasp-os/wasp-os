@@ -81,101 +81,62 @@ class PagerApp():
         mute(False)
 
 class NotificationApp(PagerApp):
-    """
-    Controls:
-    Swipe left/right = go through notifications from old to new
-    Swipe Up (long notif) = see the rest of the text
-    Swipe Up (small notif, end of long notif) = remove notification
-    Swipe Down (long notif) = go back to the top of the notification
-    Swipe Down (small notif, top of long notif) = clear notifications
-    Press button = go back to watch face
-
-    Tweaks:
-    Keep all notifications
-    See all notifications at the same time
-    Remove individual notifications
-    """
     NAME = 'Notifications'
 
     def __init__(self):
         super().__init__('')
         self.confirmation_view = wasp.widgets.ConfirmationView()
-        self.confirm_initial = 0
-        self._note = 0
+        self.confirm_initial = self._note = 0
 
     def foreground(self):
         self._note = 0
+        wasp.system.request_event(wasp.EventMask.SWIPE_UPDOWN |
+                                  wasp.EventMask.SWIPE_LEFTRIGHT |
+                                  wasp.EventMask.TOUCH |
+                                  wasp.EventMask.BUTTON)
+        self._drawnote()
+        super().foreground()
+    
+    def _drawnote(self):
         notes = list(wasp.system.notifications.values())
         note = notes[self._note]
         title = note['title'] if 'title' in note else 'Untitled'
         body = note['body'] if 'body' in note else ''
         self._msg = '{}\n\n{}'.format(title, body)
 
-        wasp.system.request_event(wasp.EventMask.SWIPE_UPDOWN |
-                                  wasp.EventMask.SWIPE_LEFTRIGHT |
-                                  wasp.EventMask.TOUCH |
-                                  wasp.EventMask.BUTTON)
-        super().foreground()
-
     def background(self):
         self.confirmation_view.active = False
         super().background()
 
     def swipe(self, event):
-        if self.confirmation_view.active:
-            if event[0] == wasp.EventType.UP:
-                self.confirmation_view.active = False
-                self._draw()
-                return
-        else:
-            if event[0] == wasp.EventType.DOWN and self._page == 0:
-                self.confirmation_view.draw('Clear notifications?')
-                return
-            if event[0] == wasp.EventType.LEFT or event[0] == wasp.EventType.RIGHT:
-                notes = list(wasp.system.notifications.values())
-                self._note -= 1
-                if event[0] == wasp.EventType.LEFT: self._note += 2
-                if self._note < 0 or self._note > len(notes)-1:
-                    self._note = 0 if self._note < 0 else len(notes)-1
-                    wasp.watch.vibrator.pulse()
-                    return
-                else:
-                    note = notes[self._note]
-                    title = note['title'] if 'title' in note else 'Untitled'
-                    body = note['body'] if 'body' in note else ''
-                    self._msg = '{}\n\n{}'.format(title, body)
-                    super().foreground()
-                    return
-            if event[0] == wasp.EventType.UP and self._page == self._numpages:
-                self.confirmation_view.draw('Clear notification?')
-                self.confirm_initial = wasp.EventType.UP
-                return
+        if event[0] == wasp.EventType.DOWN and self._page == 0:self.confirmation_view.draw('Clear notifications?');return
+        if event[0] == wasp.EventType.UP and self._page == self._numpages:self.confirmation_view.draw('Clear notification?');self.confirm_initial = 2;return
+        if event[0] == wasp.EventType.LEFT or event[0] == wasp.EventType.RIGHT:
+            notes = len(list(wasp.system.notifications.values()))-1
+            self._note += 1 if event[0] == wasp.EventType.LEFT else -1
+            if self._note < 0 or self._note > notes:
+                self._note = 0 if self._note < 0 else notes
+                wasp.watch.vibrator.pulse()
+            else:self._drawnote();super().foreground()
+            return
         super().swipe(event)
 
     def touch(self, event):
         if self.confirmation_view.touch(event):
-            if self.confirm_initial == wasp.EventType.DOWN:
+            if self.confirm_initial == 2:
                 if self.confirmation_view.value:
-                    wasp.system.notifications = {}
-                    wasp.system.navigate(wasp.EventType.BACK)
-                else:
-                    self._draw()
-            else:
-                if self.confirmation_view.value:
-                    keys = list(wasp.system.notifications.keys())
-                    del wasp.system.notifications[keys[self._note]]
-                    notes = list(wasp.system.notifications.values())
-                    if self._note <= len(notes)-1 or 0 <= self._note-1 <= len(notes)-1:
-                        if self._note > len(notes)-1: self._note -= 1
-                        note = notes[self._note]
-                        title = note['title'] if 'title' in note else 'Untitled'
-                        body = note['body'] if 'body' in note else ''
-                        self._msg = '{}\n\n{}'.format(title, body)
+                    del wasp.system.notifications[list(wasp.system.notifications.keys())[self._note]]
+                    notes = len(list(wasp.system.notifications.values()))-1
+                    if self._note <= notes or 0 <= self._note-1 <= notes:
+                        if self._note > notes: self._note -= 1
+                        self._drawnote()
                         super().foreground()
-                    else:
-                        wasp.system.navigate(wasp.EventType.BACK)
-                else:
-                    self._draw()
+                    else:wasp.system.navigate(wasp.EventType.BACK)
+                else: self._draw()
+            elif self.confirmation_view.value:
+                wasp.system.notifications = {}
+                wasp.system.navigate(wasp.EventType.BACK)
+            else: self._draw()
             self.confirm_initial = wasp.EventType.DOWN
     
     def press(self, event, press): wasp.system.navigate(wasp.EventType.BACK)
