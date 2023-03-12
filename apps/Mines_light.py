@@ -1,16 +1,11 @@
 # SPDX-License-Identifier: LGPL-3.0-or-later
 # Copyright (C) 2023 sbot50
-"""
-Controls:
-Click a square to reveal it.
-Double click a square to flag it.
-"""
 import wasp
 from random import seed, randint
 from time import sleep
 import fonts.sans18, fonts.sans24
 
-class MinesApp():
+class Mines_lightApp():
     NAME = "Mines"
     G = []
     S = B = C = L = 0
