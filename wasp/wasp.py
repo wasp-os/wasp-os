@@ -114,6 +114,10 @@ class Manager():
         self.musicinfo = {}
         self.weatherinfo = {}
         self.units = "Metric"
+        self.raise_wake = False
+        self.last_raise_y = 0
+        self.accel_poll_ms = 100
+        self.accel_poll_expiry = 0
 
         self._theme = (
                 b'\x7b\xef'     # ble
@@ -493,6 +497,37 @@ class Manager():
                     self._charging != watch.battery.charging():
                 self.wake()
 
+        if self.raise_wake:
+            now = rtc.get_uptime_ms()
+            if now >= self.accel_poll_expiry:
+                self.accel_poll_expiry = (now + self.accel_poll_ms)
+                if self._do_raise_wake():
+                    self.wake()
+    
+    def _do_raise_wake(self):
+        
+        (x, y, z) = watch.accel.accel_xyz()
+
+        y = -y
+
+        if (x + 335) <= 670 and z < 0:
+            if self.sleep_at:
+                if y <= 0:
+                    return False
+                else:
+                    self.last_raise_y = 0
+                    return False
+
+            if y >= 0:
+                self.last_raise_y = 0
+                return False
+
+            if y + 230 < self.last_raise_y:
+                self.last_raise_y = y
+                return True
+
+            return False
+    
     def run(self, no_except=True):
         """Run the system manager synchronously.
 
