@@ -2,7 +2,7 @@
 # Copyright (C) 2023 sbot50
 # Disclaimer: Heavily inspired by the therminal watch face of Infinitime
 """Therminal watch face application
-~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Therminal Watch face heavily inspired by Infinitime's therminal watch face.
 
