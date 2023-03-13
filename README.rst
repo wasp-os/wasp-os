@@ -269,3 +269,7 @@ application (and the "blank" white screen is a torch application):
 .. image:: res/FinderApp.png
    :alt: Find your phone by causing it to ring
    :width: 179
+
+.. image:: res/MinesApp.png
+   :alt: Minesweeper game with an 8x8 grid
+   :width: 179
