@@ -1,15 +1,22 @@
 # SPDX-License-Identifier: LGPL-3.0-or-later
 # Copyright (C) 2021 github.com/thiswillbeyourgithub/
 
-"""Sleep tracker
+"""
+Sleep tracker
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 SleepTk is an alarm clock app with several dinstinctive features:
-* sleep cycle suggestion (also useful to troubleshoot insomnia)
-* gradual wake up via vibration
-* easy to snooze, hard to stop
-* body movement tracking
-* heart rate tracking
+    * **Privacy friendly**: your data is not sent to anyone, it is stored and analyzed directly on the watch (but you can still download it if needed).
+    * **Completely open source**
+    * **Best alarm time suggestion**: suggests wake up time according to average sleep cycles length.
+    * **Gradual wake**: vibrates the watch a tiny bit a few times before the alarm to lift you gently back to consciousness.
+    * **Natural wake (EXPERIMENTAL)**: small vibration every 30s (customizable) until you wake up, instead of a full blown alarm.
+    * **Easy to snooze but hard to stop** You have to swipe several times to make it stop, but can snooze easily.
+    * **Insomnia insights**: if you turn on the screen during the night, SleepTk will tell you how long you slept and in what part of the sleep cycle you are supposed to be.
+    * **Sleep tracking**: logs your body movement during the night, infers your sleep cycle and write it all down in a `.csv` file.
+    * **Heart tracking**: tracks your heart rate throughout the night. *(edit: will be vastly improved when [this issue][https://github.com/daniel-thompson/wasp-os/pull/363#issuecomment-1257055637) gets sorted out)*
+    * **Status: fully functional except Natural Wake**
+
 
 Still somewhat under developpement, more information at
 [the github](https://github.com/thiswillbeyourgithub/sleep_tracker_pinetime_wasp-os)
@@ -21,8 +28,8 @@ Icon kindly designed by [Emanuel Löffler](https://github.com/plan5)
 
 Note: the time might be inaccurate in the simulator (offset by 1 hour passed
 midnight or something) but is fine on the watch.
-
 """
+
 
 import wasp
 import widgets
