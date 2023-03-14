@@ -1,8 +1,7 @@
 # SPDX-License-Identifier: LGPL-3.0-or-later
 # Copyright (C) 2021 github.com/thiswillbeyourgithub/
 
-"""
-Sleep tracker
+"""Sleep tracker
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 SleepTk is an alarm clock app with several dinstinctive features:
