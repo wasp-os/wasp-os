@@ -2,7 +2,10 @@
 # Copyright (C) 2023 benedikt moore (did i do it right?)
 """Drawing Application
 ~~~~~~~~~~~~~~~~~~~~
-this application allows users to draw a image which gradually gets erased afterward
+
+this application allows users to draw a image
+which gradually gets erased afterward
+
 .. figure:: res/DrawApp.png
     :width: 179
 """
