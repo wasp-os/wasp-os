@@ -8,7 +8,10 @@ import machine
 import time
 """Flappy bird game
 ~~~~~~~~~~~~~~~~~~~~
-a recreation of the famous flappy bird game
+
+a recreation of the famous 
+flappy bird game
+
 .. figure:: res/FlappybirdApp.png
     :width: 179
 """
