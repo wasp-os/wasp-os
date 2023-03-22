@@ -124,6 +124,12 @@ Videos
 
      -
 
+Custom builds
+-------------
+
+Wasp-os is designed to allow users to easily create their own custom builds. Simply modify the wasp.toml file
+to include your favorite apps and watch faces. See the docs for more information on how to build wasp-os.
+
 Screenshots
 -----------
 
@@ -134,138 +140,156 @@ PineTime:
    :alt: wasp-os digital clock app running on PineTime
    :width: 233
 
-Screenshots of the built in applications running on the wasp-os
+Screenshots of the available applications running on the wasp-os
 simulator:
 
 .. image:: res/Bootloader.png
    :alt: Bootloader splash screen overlaid on the simulator watch art
    :width: 179
 
-.. image:: res/ClockApp.png
+Watch faces:
+
+.. image:: res/screenshots/ClockApp.png
    :alt: Digital clock application running on the wasp-os simulator
    :width: 179
 
-.. image:: res/DemoApp.png
-   :alt: Simple always-on demo for showing off wasp-os at conferences and shows
+.. image:: res/screenshots/WeekClockApp.png
+   :alt: Digital clock application with week day running on the wasp-os simulator
    :width: 179
 
-.. image:: res/DisaBLEApp.png
-   :alt: Small application for disabling bluetooth to save power and enhance security
-   :width: 179
-
-.. image:: res/GalleryApp.png
-   :alt: Gallery application running on the wasp-os simulator
-   :width: 179
-
-.. image:: res/HeartApp.png
-   :alt: Heart rate application running on the wasp-os simulator
-   :width: 179
-
-.. image:: res/MorseApp.png
-   :alt: Morse translator/notepad application running on the wasp-os simulator
-   :width: 179
-
-.. image:: res/SportsApp.png
-   :alt: Sports applications, a combined stopwatch and step counter
-   :width: 179
-
-.. image:: res/StopclockApp.png
-   :alt: Stop watch application running on the wasp-os simulator
-   :width: 179
-
-.. image:: res/StepsApp.png
-   :alt: Step counter application running on the wasp-os simulator
-   :width: 179
-
-.. image:: res/LauncherApp.png
-   :alt: Application launcher running on the wasp-os simulator
-   :width: 179
-
-.. image:: res/SettingsApp.png
-   :alt: Settings application running on the wasp-os simulator
-   :width: 179
-
-.. image:: res/SoftwareApp.png
-   :alt: Software selection app running on the wasp-os simulator
-   :width: 179
-
-
-wasp-os also contains a library of additional applications for you to choose.
-These are disabled by default but can be easily enabled using the Software
-application (and the "blank" white screen is a torch application):
-
-.. image:: res/SelfTestApp.png
-   :alt: Self test application running a rendering benchmark on the simulator
-   :width: 179
-
-.. image:: res/TorchApp.png
-   :alt: Torch application running on the wasp-os simulator
-   :width: 179
-
-.. image:: res/ChronoApp.png
+.. image:: res/screenshots/ChronoApp.png
    :alt: Analogue clock application running in the wasp-os simulator
    :width: 179
 
-.. image:: res/DualApp.png
+.. image:: res/screenshots/DualClockApp.png
    :alt: An other clock application running in the wasp-os simulator
    :width: 179
 
-.. image:: res/FiboApp.png
+.. image:: res/screenshots/FibonacciClockApp.png
    :alt: Fibonacci clock application running in the wasp-os simulator
    :width: 179
 
-.. image:: res/HaikuApp.png
-   :alt: Haiku application running in the wasp-os simulator
+.. image:: res/screenshots/WordClockApp.png
+   :alt: Shows a time as words in the wasp-os simulator
    :width: 179
 
-.. image:: res/LifeApp.png
-   :alt: Game of Life running in the wasp-os simulator
-   :width: 179
+Games:
 
-.. image:: res/AlarmApp.png
-   :alt: Alarm clock application running in the wasp-os simulator
-   :width: 179
-
-.. image:: res/MusicApp.png
-   :alt: Music Player running in the wasp-os simulator
-   :width: 179
-
-.. image:: res/CalcApp.png
-   :alt: Calculator running in the wasp-os simulator
-   :width: 179
-
-.. image:: res/2048App.png
+.. image:: res/screenshots/Play2048App.png
    :alt: Let's play the 2048 game (in the wasp-os simulator)
    :width: 179
 
-.. image:: res/SnakeApp.png
+.. image:: res/screenshots/GameOfLifeApp.png
+   :alt: Game of Life running in the wasp-os simulator
+   :width: 179
+
+.. image:: res/screenshots/SnakeApp.png
    :alt: Snake Game running in the wasp-os simulator
    :width: 179
 
-.. image:: res/TimerApp.png
+Time management apps:
+
+.. image:: res/screenshots/AlarmApp.png
+   :alt: Alarm clock application running in the wasp-os simulator
+   :width: 179
+
+.. image:: res/screenshots/StopwatchApp.png
+   :alt: Stop watch application running on the wasp-os simulator
+   :width: 179
+
+.. image:: res/screenshots/TimerApp.png
    :alt: Countdown timer application running in the wasp-os simulator
    :width: 179
 
-.. image:: res/WeatherApp.png
-   :alt: Weather application running in the wasp-os simulator
+System apps:
+
+.. image:: res/screenshots/DisaBLEApp.png
+   :alt: Small application for disabling bluetooth to save power and enhance security
    :width: 179
 
-.. image:: res/WeekClkApp.png
-   :alt: Digital clock application, including the week day
+.. image:: res/screenshots/LauncherApp.png
+   :alt: Application launcher running on the wasp-os simulator
    :width: 179
 
-.. image:: res/WordClkApp.png
-   :alt: Shows a time as words in the wasp-os simulator
+.. image:: res/screenshots/SettingsApp.png
+   :alt: Settings application running on the wasp-os simulator
    :width: 179
 
-.. image:: res/LevelApp.png
-   :alt: Shows a time as words in the wasp-os simulator
+.. image:: res/screenshots/SoftwareApp.png
+   :alt: Software selection app running on the wasp-os simulator
    :width: 179
 
-.. image:: res/BeaconApp.png
+.. image:: res/screenshots/FacesApp.png
+   :alt: Switch watch faces
+   :width: 179
+
+
+Other apps: (The "blank" white screenshot is a flashlight app)
+
+.. image:: res/screenshots/BeaconApp.png
    :alt: Flash the relatively powerful HRS LED repeatedly
    :width: 179
+
+.. image:: res/screenshots/CalculatorApp.png
+   :alt: Calculator running in the wasp-os simulator
+   :width: 179
+
+.. image:: res/screenshots/DemoApp.png
+   :alt: Simple always-on demo for showing off wasp-os at conferences and shows
+   :width: 179
+
+.. image:: res/screenshots/FlashlightApp.png
+   :alt: Torch application running on the wasp-os simulator
+   :width: 179
+
+.. image:: res/screenshots/GalleryApp.png
+   :alt: Gallery application running on the wasp-os simulator
+   :width: 179
+
+.. image:: res/screenshots/HeartApp.png
+   :alt: Heart rate application running on the wasp-os simulator
+   :width: 179
+
+.. image:: res/screenshots/HaikuApp.png
+   :alt: Haiku application running in the wasp-os simulator
+   :width: 179
+
+.. image:: res/screenshots/LevelApp.png
+   :alt: Shows a time as words in the wasp-os simulator
+   :width: 179
+
+.. image:: res/screenshots/MorseApp.png
+   :alt: Morse translator/notepad application running on the wasp-os simulator
+   :width: 179
+
+.. image:: res/screenshots/PhoneFinderApp.png
+   :alt: Find your phone by causing it to ring
+   :width: 179
+
+.. image:: res/screenshots/SportsApp.png
+   :alt: Sports applications, a combined stopwatch and step counter
+   :width: 179
+
+.. image:: res/screenshots/StepCounterApp.png
+   :alt: Step counter application running on the wasp-os simulator
+   :width: 179
+
+.. image:: res/screenshots/TestApp.png
+   :alt: Self test application running a rendering benchmark on the simulator
+   :width: 179
+
+.. image:: res/screenshots/MusicPlayerApp.png
+   :alt: Music Player running in the wasp-os simulator
+   :width: 179
+
    
 .. image:: res/DrawApp.png
    :alt: Draw around
    :width: 179
+
+
+.. image:: res/screenshots/WeatherApp.png
+   :alt: Weather application running in the wasp-os simulator
+   :width: 179
+
+

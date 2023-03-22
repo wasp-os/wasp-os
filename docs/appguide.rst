@@ -203,6 +203,31 @@ a little time into learning the best practices when running
 .. _MicroPython: https://micropython.org/
 __ http://docs.micropython.org/en/latest/reference/constrained.html
 
+App naming conventions and placement
+------------------------------------
+
+Your app must be named in a specific way and placed in the /apps directory to be compatible with wasp-os.
+Watch faces follow the same rules but are placed in the /watch_faces directory.
+
+1. The name of the python file must be in snake case (ie: music_player.py)
+2. The class of your app must be the name of the file in pascal case with "App" appended (ie: MusicPlayerApp)
+3. The NAME variable in your app must short and will be used on the launcher screen (ie: NAME = 'Music')
+
+If you wish to submit your app to the project it must additionally meet these requirements:
+
+1. The app must be added to docs/apps.rst
+2. The app must be added to the README.rst
+3. A simulator screenshot must exist in the /res/screenshots directory having the name of the app class (ie: MusicPlayerApp.png). Press s in the simulator to take a screenshot.
+4. The app must include a README comment at the top of the file (see existing apps)
+5. The app README must include a link to the simulator screenshot in the /res/screenshots directory
+6. If your app has an icon (encouraged) than the image used to generate the RLE must be in the /res/icons directory. Its name should be the snake case name of the app file with "_icon" appended. (ie: music_player_icon.png)
+
+To check if your app meets these requirements you can run the following command:
+
+.. code-block:: sh
+
+    make check
+
 
 How to run your application
 ---------------------------
@@ -391,12 +416,7 @@ because they can execute directly from the internal FLASH rather than running
 from RAM. Additionally the code is pre-compiled, which also means we don't
 need any RAM budget to run the compiler.
 
-Freezing your application requires you to modify the ``manifest.py``
-file for your board (e.g. ``wasp/boards/pinetime/manifest.py``) to include
-your application and then the whole binary must be re-compiled as normal.
-
-After that you an use the same technique described in the previous
-section to add an import and register for you application from ``main.py``
+To freeze your app into the wasp-os binary add it to the wasp.toml file.
 
 .. note::
 
@@ -417,13 +437,38 @@ section to add an import and register for you application from ``main.py``
             --exec wasp/drivers/cst816s.py\
             --eval "watch.touch = CST816S(watch.i2c)"`
 
+Auto loading applications in flash
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+If there is not enough room on your device to freeze your application
+into the wasp-os binary you can still have it automatically added to
+the software list by uploading it to the apps directory of your device.
+The application will still have the RAM constraints of an app in flash.
+
+To automatically have your uploaded application added to the software:
+
+.. code-block:: sh
+
+    sh$ ./tools/wasptool --binary --upload myapp.mpy --as apps/myapp.mpy
+    Uploading apps/myapp.mpy:
+    [##################################################] 100%
+
+To delete a file from the device:
+
+.. code-block:: sh
+
+    sh$ ./tools/wasptool --console
+    >>>import os
+    >>>os.remove("apps/myapp.mpy")
+    >>>del os
+
 Application entry points
 ------------------------
 
 Applications provide entry points for the system manager to use to notify
 the application of a change in system state or an user interface event.
 
-.. automodule:: apps.template
+.. automodule:: template
    :members:
    :private-members:
    :special-members:
