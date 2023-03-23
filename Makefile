@@ -1,4 +1,4 @@
-export PYTHONPATH := $(PWD)/tools/nrfutil:$(PWD)/tools/intelhex:$(PYTHONPATH)
+export PYTHONPATH := $(CURDIR)/tools/nrfutil:$(CURDIR)/tools/intelhex:$(PYTHONPATH)
 
 PYTHON ?= python3
 PYTEST ?= pytest-3
@@ -69,8 +69,8 @@ micropython: build-$(BOARD_SAFE) wasp/boards/manifest_user_apps.py wasp/boards/$
 	$(MAKE) -C micropython/ports/nrf \
 		BOARD=$(BOARD) SD=s132 \
 		MICROPY_VFS_LFS2=1 \
-		FROZEN_MANIFEST=$(PWD)/wasp/boards/$(BOARD)/manifest.py \
-		USER_C_MODULES=$(PWD)/wasp/modules
+		FROZEN_MANIFEST=$(CURDIR)/wasp/boards/$(BOARD)/manifest.py \
+		USER_C_MODULES=$(CURDIR)/wasp/modules
 	$(PYTHON) -m nordicsemi dfu genpkg \
 		--dev-type 0x0052 \
 		--application micropython/ports/nrf/build-$(BOARD)-s132/firmware.hex \
