@@ -9,77 +9,80 @@ Application Library
 Watch faces
 -----------
 
-.. automodule:: apps.faces
+.. automodule:: faces
 
-.. automodule:: apps.clock
+.. automodule:: clock
 
-.. automodule:: apps.chrono
+.. automodule:: chrono
 
-.. automodule:: apps.dual_clock
+.. automodule:: dual_clock
 
-.. automodule:: apps.fibonacci_clock
+.. automodule:: fibonacci_clock
 
-.. automodule:: apps.week_clock
+.. automodule:: week_clock
 
-.. automodule:: apps.word_clock
+.. automodule:: word_clock
 
 Built-in
 --------
 
-.. automodule:: apps.heart
+.. automodule:: apps.system.step_counter
 
-.. automodule:: apps.stopwatch
+.. automodule:: apps.system.launcher
 
-.. automodule:: apps.steps
+.. automodule:: apps.system.settings
 
-.. automodule:: apps.launcher
+.. automodule:: apps.system.software
 
-.. automodule:: apps.settings
-
-.. automodule:: apps.software
-
-.. automodule:: apps.pager
+.. automodule:: apps.system.pager
 
 Applications
 ------------
 
-.. automodule:: apps.alarm
+.. automodule:: alarm
 
-.. automodule:: Beacon
+.. automodule:: beacon
 
-.. automodule:: apps.calc
+.. automodule:: calculator
 
-.. automodule:: apps.demo
+.. automodule:: demo
 
-.. automodule:: apps.disaBLE
+.. automodule:: disa_b_l_e
 
-.. automodule:: apps.flashlight
+.. automodule:: flashlight
 
-.. automodule:: apps.gallery
+.. automodule:: gallery
 
-.. automodule:: apps.haiku
+.. automodule:: haiku
 
-.. automodule:: Level
+.. automodule:: heart
 
-.. automodule:: Morse
+.. automodule:: level
 
-.. automodule:: apps.musicplayer
+.. automodule:: morse
 
-.. automodule:: apps.sports
+.. automodule:: music_player
 
-.. automodule:: apps.testapp
+.. automodule:: phone_finder
 
-.. automodule:: apps.timer
+.. automodule:: sports
 
-.. automodule:: apps.weather
+.. automodule:: stopwatch
+
+.. automodule:: test
+
+.. automodule:: timer
+
+.. automodule:: weather
 
 Games
 -----
 
-.. automodule:: GameOfLife
+.. automodule:: game_of_life
 
-.. automodule:: apps.play2048
-
-.. automodule:: apps.snake
+.. automodule:: play2048
 
 .. automodule:: Flappybird
+
+.. automodule:: snake
+

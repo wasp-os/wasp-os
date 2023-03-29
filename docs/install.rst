@@ -25,7 +25,7 @@ following commands:
       wget git build-essential libsdl2-2.0-0 python3-click python3-gi \
       python3-numpy python3-pexpect python3-pil python3-pip python3-pydbus \
       python3-serial unzip
-    pip3 install --user cbor pysdl2
+    pip3 install --user cbor pysdl2 tomli
 
 Additionally if you wish to regenerate the documentation you will require
 a complete sphinx toolchain:
@@ -113,6 +113,17 @@ To rebuild the documentation:
     make docs
 
 The docs will be browsable in ``docs/build/html`` as per Sphinx standards.
+
+Custom builds
+-------------
+
+Wasp-os can be configured to include a custom selection of apps and watch faces using the wasp.toml file.
+There are many more apps available than can fit on a device. Choose your favorites and roll your own flavor of wasp.
+Apps that are configured as quick_ring will be automatically added to the wasp quick ring (swipe left and right from
+the watch face). If an app is configured with auto load it will load into memory at startup and any apps that
+are not auto loaded can be enabled using the software app. Add as many watch faces as you like and switch
+between them using the faces app.
+
 
 Binary downloads
 ----------------
