@@ -77,6 +77,35 @@ All ``make`` commands should be usable from this shell,
 including ``make sim`` and ``make check``. Some commands that interact with
 bluetooth such as ``wasptool`` may not work, for now.
 
+Install prerequisites via Nix
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. note::
+
+    This setup method does not use the GCC version wasp-os is tested with,
+    but the gcc-arm-embedded package available from nixpkgs.
+    Though this usually works fine, if you encounter any problems please try the
+    manual installation above and report the issue in the issue tracker.
+
+To build wasp-os with `Nix <https://nixos.org/nix>`_, ensure it is installed
+then open a terminal and run the following command in the wasp-os repository:
+
+.. code-block:: sh
+
+    nix-shell tools/nix/shell.nix
+
+Or if you are using the experimental flake commands:
+
+.. code-block:: sh
+
+    nix develop ./tools/nix
+
+You will be dropped in a shell where all required dependencies are available.
+All ``make`` commands should be usable from this shell.
+
+Build
+~~~~~
+
 We can compile the modules required with the following commands:
 
 .. code-block:: sh
