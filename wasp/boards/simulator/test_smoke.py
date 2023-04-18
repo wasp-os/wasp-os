@@ -1,8 +1,8 @@
 import pytest
 import time
 import wasp
-import apps.testapp
-import apps.settings
+import apps.test
+import settings
 
 def step():
     wasp.system._tick()
@@ -32,7 +32,7 @@ def test_step(system):
 
 def test_quick_ring(system):
     names = [ x.NAME for x in system.quick_ring ]
-    assert('Clock' in names)
+    assert('WeekClk' in names)
     assert('Steps' in names)
     assert('Stopclock' in names)
     assert('Heart' in names)
@@ -103,7 +103,7 @@ def test_selftests(system):
     will do something useful! For example it will run the benchmark for every
     one of the benchmark tests.
     """
-    system.switch(apps.testapp.TestApp())
+    system.switch(apps.test.TestApp())
     system.step()
 
     start_point = system.app.test
@@ -117,7 +117,7 @@ def test_selftests(system):
     assert(start_point == system.app.test)
 
 def test_selftest_crash(system):
-    system.switch(apps.testapp.TestApp())
+    system.switch(apps.test.TestApp())
     system.step()
 
     def select(name):
@@ -148,7 +148,7 @@ def test_settings(system):
     This is a simple "does it crash" test and the only thing we do to stimulate
     the app is press in the centre of the screen.
     """
-    system.switch(apps.settings.SettingsApp())
+    system.switch(settings.SettingsApp())
     system.step()
 
     start_point = system.app._current_setting

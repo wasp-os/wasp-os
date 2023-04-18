@@ -282,6 +282,9 @@ class ToggleButton(Button):
         if super().touch(event):
             self.state = not self.state
             self.draw()
+            return True
+        else:
+            return False
 
 class Checkbox():
     """A simple (labelled) checkbox."""

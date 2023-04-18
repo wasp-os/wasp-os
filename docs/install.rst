@@ -25,7 +25,7 @@ following commands:
       wget git build-essential libsdl2-2.0-0 python3-click python3-gi \
       python3-numpy python3-pexpect python3-pil python3-pip python3-pydbus \
       python3-serial unzip
-    pip3 install --user cbor pysdl2
+    pip3 install --user cbor pysdl2 tomli
 
 Additionally if you wish to regenerate the documentation you will require
 a complete sphinx toolchain:
@@ -65,7 +65,7 @@ To build wasp-os with docker, ensure it is installed and running, then open a te
 
 .. code-block:: sh
 
-    git clone https://github.com/daniel-thompson/wasp-os
+    git clone https://github.com/wasp-os/wasp-os
     cd wasp-os
     ~/wasp-os/tools/docker/shell
 
@@ -114,6 +114,17 @@ To rebuild the documentation:
 
 The docs will be browsable in ``docs/build/html`` as per Sphinx standards.
 
+Custom builds
+-------------
+
+Wasp-os can be configured to include a custom selection of apps and watch faces using the wasp.toml file.
+There are many more apps available than can fit on a device. Choose your favorites and roll your own flavor of wasp.
+Apps that are configured as quick_ring will be automatically added to the wasp quick ring (swipe left and right from
+the watch face). If an app is configured with auto load it will load into memory at startup and any apps that
+are not auto loaded can be enabled using the software app. Add as many watch faces as you like and switch
+between them using the faces app.
+
+
 Binary downloads
 ----------------
 
@@ -126,8 +137,8 @@ Official releases are the recommended binary releases for wasp-os. They contain
 this documentation together a set of binaries for each of the supported devices
 in appropriately names directories (``build-<board>/``). The official release
 can be downloaded from:
-`https://github.com/daniel-thompson/wasp-os/releases
-<https://github.com/daniel-thompson/wasp-os/releases>`_ .
+`https://github.com/wasp-os/wasp-os/releases
+<https://github.com/wasp-os/wasp-os/releases>`_ .
 
 The CI builds are built automatically whenever the wasp-os source code is
 changed. That means the builds are less well tested than the official
@@ -137,8 +148,8 @@ builds are fo you. To download the latest CI build you need to be logged
 into a github account and you can navigate to the latest CI build using
 the link below (follow the link to the most recent "workflow run results"
 and then scroll down to find the artifacts):
-`https://github.com/daniel-thompson/wasp-os/actions?query=is%3Asuccess+branch%3Amaster+workflow%3Abinary
-<https://github.com/daniel-thompson/wasp-os/actions?query=is%3Asuccess+branch%3Amaster+workflow%3Abinary>`_ .
+`https://github.com/wasp-os/wasp-os/actions?query=is%3Asuccess+branch%3Amaster+workflow%3Abinary
+<https://github.com/wasp-os/wasp-os/actions?query=is%3Asuccess+branch%3Amaster+workflow%3Abinary>`_ .
 
 .. warning::
 
