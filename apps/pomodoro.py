@@ -7,11 +7,8 @@ A pomodoro app, forked from timer.py. Swipe laterally to load presets and vertic
 to change number of vibration. Vibration patterns are randomized if vibrating
 more than 4 times to make sure you notice.
 
-    .. figure:: res/screenshots/PomodoroApp.png
-        :width: 179
-
-        Screenshot of the Pomodoro Application
-
+.. figure:: res/screenshots/PomodoroApp.png
+    :width: 179
 """
 
 import wasp
@@ -56,7 +53,7 @@ _TIME_MODE = const(1)  # if 0: duration of vibration will be discounted
 
 class PomodoroApp():
     """Allows the user to set a periodic vibration alarm, Pomodoro style."""
-    NAME = 'Pomod'
+    NAME = 'Pomodoro'
     ICON = icon
 
     def __init__(self):
