@@ -262,6 +262,11 @@ Other apps: (The "blank" white screenshot is a flashlight app)
    :alt: Morse translator/notepad application running on the wasp-os simulator
    :width: 179
 
+.. image:: res/screenshots/SleepTkApp.png
+   :alt: Sleep Alarm clock with nice features and tracking
+   :width: 179
+
+
 .. image:: res/screenshots/PhoneFinderApp.png
    :alt: Find your phone by causing it to ring
    :width: 179
