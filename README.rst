@@ -262,6 +262,9 @@ Other apps: (The "blank" white screenshot is a flashlight app)
    :alt: Morse translator/notepad application running on the wasp-os simulator
    :width: 179
 
+.. image:: res/screenshots/PomodApp.png
+   :alt: Customizable pomodoro app with randomized vibration patterns to make sure you notice
+
 .. image:: res/screenshots/PhoneFinderApp.png
    :alt: Find your phone by causing it to ring
    :width: 179
