@@ -137,7 +137,7 @@ class PomodoroApp():
             draw = wasp.watch.drawable
             draw.set_font(fonts.sans24)
             if event[0] == wasp.EventType.UP:
-                self.nb_vibrat_per_alarm = max(1, (self.nb_vibrat_per_alarm + 1) % _MAX_VIB)
+                self.nb_vibrat_per_alarm = max(1, (self.nb_vibrat_per_alarm + 1) % (_MAX_VIB + 1))
             elif event[0] == wasp.EventType.DOWN:
                 self.nb_vibrat_per_alarm -= 1
                 if self.nb_vibrat_per_alarm == 0:
