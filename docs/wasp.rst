@@ -111,7 +111,7 @@ Address    Description
 0x200039d0 Reserved
 0x200039d4 Reserved
 0x200039d8 Reserved
-0x200039cc Guard value. Must be set to 0x10adab1e .
+0x200039dc Guard value. Must be set to 0x10adab1e .
 ========== ===================================================================
 
 Note: *The PNVRAM protocol allows up to 28 bytes to be transfered (compared to
