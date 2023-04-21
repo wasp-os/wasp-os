@@ -623,23 +623,32 @@ class Manager():
             return None
 
     def get(self, name, delete=False):
+        """Retrieve values stored in the 'settings' folder.
+        All retrieved value will be string, except True, False and None which
+        will be replaced automatically.
+
+        See self.set dostring for more.
+        """
         try:
             with open("settings/" + name, "r") as f:
                 content = f.readlines()[0]
                 if delete:
                     os.unlink("settings/" + name)
-                if ";" in content:
-                    content = content.split(";")
-                    for i, c in enumerate(content):
-                        if content[i] == "True":
-                            content[i] = True
-                        elif content[i] == "False":
-                            content[i] = False
-                    return content
-                else:
-                    return content
+                while ";;" in content:
+                    content = content.replace(";;", ";None;")
+                content = content.split(";")
+                for i in range(len(content)):
+                    # cast boolean types
+                    if content[i] == "True":
+                        content[i] = True
+                    elif content[i] == "False":
+                        content[i] = False
+                    elif content[i] == "None":
+                        content[i] = None
+                return content
             return None
         except Exception:
             return None
+
 
 system = Manager()
