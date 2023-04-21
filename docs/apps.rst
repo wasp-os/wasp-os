@@ -65,7 +65,7 @@ Applications
 
 .. automodule:: Morse
 
-.. automodule:: SleepTk
+.. automodule:: sleep_tk
 
 .. automodule:: apps.musicplayer
 

@@ -23,7 +23,7 @@ Still somewhat under developpement, more information at
 
 Icon kindly designed by [Emanuel Löffler](https://github.com/plan5)
 
-.. figure:: res/SleepTkApp.png
+.. figure:: res/screenshots/SleepTkApp.png
     :width: 179
 
 Note: the time might be inaccurate in the simulator (offset by 1 hour passed
