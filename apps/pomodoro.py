@@ -212,7 +212,8 @@ class PomodoroApp():
             self.current_alarm = now + max(m * 60 - self.nb_vibrat_per_alarm, 1)
         wasp.system.set_alarm(self.current_alarm, self._alert)
         self._draw()
-        wasp.system.set("pomodoro", [self.nb_vibrat_per_alarm, self.queue])
+        if hasattr(wasp.system, "set") and callable(wasp.system.set):
+            wasp.system.set("pomodoro", [self.nb_vibrat_per_alarm, self.queue])
 
     def _stop(self):
         self.state = _STOPPED
