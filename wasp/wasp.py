@@ -602,6 +602,8 @@ class Manager():
         to store alarms or stopwatch start time.
         If value is a list, the items will be separated by a ";". Hence, ";" is
         not supposed to appear in 'value'.
+        All retrieved value will be string, except True, False and None which
+        will be replaced automatically.
         """
         if "settings" not in os.listdir():
             os.mkdir("settings")
