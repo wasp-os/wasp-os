@@ -7,7 +7,7 @@ A pomodoro app, forked from timer.py. Swipe laterally to load presets and vertic
 to change number of vibration. Vibration pattern are randomized if vibrating
 more than 4 times.
 
-    .. figure:: res/PomodApp.png
+    .. figure:: res/screenshots/PomodApp.png
         :width: 179
 
         Screenshot of the Pomodoro Application
