@@ -263,7 +263,7 @@ Other apps: (The "blank" white screenshot is a flashlight app)
    :width: 179
 
 .. image:: res/screenshots/SleepTkApp.png
-   :alt: Sleep Alarm clock with nice features and tracking
+   :alt: Sleep and heart rate tracking with advanced alarm clock features
    :width: 179
 
 
