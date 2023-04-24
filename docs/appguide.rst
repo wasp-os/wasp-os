@@ -220,7 +220,7 @@ If you wish to submit your app to the project it must additionally meet these re
 3. A simulator screenshot must exist in the /res/screenshots directory having the name of the app class (ie: MusicPlayerApp.png). Press s in the simulator to take a screenshot.
 4. The app must include a README comment at the top of the file (see existing apps)
 5. The app README must include a link to the simulator screenshot in the /res/screenshots directory
-6. If your app has an icon (encouraged) than the image used to generate the RLE must be in the /res/icons directory. Its name should be the snake case name of the app file with "_icon" appended. (ie: music_player_icon.png)
+6. If your app has an icon (encouraged) then the image used to generate the RLE must be in the /res/icons directory. Its name should be the snake case name of the app file with "_icon" appended. (ie: music_player_icon.png)
 
 To check if your app meets these requirements you can run the following command:
 

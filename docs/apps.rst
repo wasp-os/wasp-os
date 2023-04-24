@@ -69,6 +69,8 @@ Applications
 
 .. automodule:: stopwatch
 
+.. automodule:: sleep_tk
+
 .. automodule:: test
 
 .. automodule:: timer
