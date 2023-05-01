@@ -562,7 +562,7 @@ entirely black screen when running the watch is running in normal mode.
 
    If the system reports FAILED at boot, in either safe mode or normal
    operation, then the best troubleshooting approach is to review
-   the `issue tracker <https://github.com/daniel-thommpson/wasp-os/issues>`_.
+   the `issue tracker <https://github.com/wasp-os/wasp-os/issues>`_.
    Initially look through the open issues and see if your problem is similar,
    if so there may be useful advice in the comments on the ticket. Otherwise
    if you cannot find anything similar then please raise a new issue.
@@ -581,7 +581,7 @@ run the contents of ``main.py`` by hand using a bluetooth console (typically
 either ``wasptool --console`` or an Android tool such as Serial Bluetooth
 Terminal). Either the watch will start running when started by hand or it will
 issue diagnostics via the console which can be captured and shared via the
-`issue tracker <https://github.com/daniel-thommpson/wasp-os/issues>`_.
+`issue tracker <https://github.com/wasp-os/wasp-os/issues>`_.
 
 If the watch can be successfully started by hand then it is likely the copy
 of ``main.py`` on your watch is broken, missing or out of date. You can explore
