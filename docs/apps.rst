@@ -65,6 +65,8 @@ Applications
 
 .. automodule:: phone_finder
 
+.. automodule:: pomodoro
+
 .. automodule:: sports
 
 .. automodule:: stopwatch
