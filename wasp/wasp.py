@@ -315,7 +315,7 @@ class Manager():
                 else:
                     # Nothing to notify... we must handle that here
                     # otherwise the display will flicker.
-                    watch.vibrator.pulse()
+                    self.sleep()
 
         elif direction == EventType.HOME or direction == EventType.BACK:
             if self.app != app_list[0]:
