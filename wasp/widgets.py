@@ -217,8 +217,9 @@ class ScrollIndicator:
 
 class Button():
     """A button with a text label."""
-    def __init__(self, x, y, w, h, label):
+    def __init__(self, x, y, w, h, label, oversized=True):
         self._im = (x, y, w, h, label)
+        self.oversized = oversized
 
     def draw(self):
         """Draw the button."""
@@ -246,12 +247,19 @@ class Button():
         x = event[1]
         y = event[2]
 
-        # Adopt a slightly oversized hit box
         im = self._im
-        x1 = im[0] - 10
-        x2 = x1 + im[2] + 20
-        y1 = im[1] - 10
-        y2 = y1 + im[3] + 20
+
+        if self.oversized:
+            # Adopt a slightly oversized hit box
+            x1 = im[0] - 10
+            x2 = x1 + im[2] + 20
+            y1 = im[1] - 10
+            y2 = y1 + im[3] + 20
+        else:
+            x1 = im[0]
+            x2 = x1 + im[2]
+            y1 = im[1]
+            y2 = y1 + im[3]
 
         if x >= x1 and x < x2 and y >= y1 and y < y2:
             return True
