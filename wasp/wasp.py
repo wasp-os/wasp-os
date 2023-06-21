@@ -374,8 +374,12 @@ class Manager():
         Note: With the current simplistic timer implementation sub-second
         tick intervals are not possible.
         """
-        self.tick_period_ms = period_ms
-        self.tick_expiry = watch.rtc.get_uptime_ms() + period_ms
+        if period_ms:
+            self.tick_period_ms = period_ms
+            self.tick_expiry = watch.rtc.get_uptime_ms() + period_ms
+        else:
+            self.tick_period_ms = 0
+            self.tick_expiry = None
 
     def keep_awake(self):
         """Reset the keep awake timer."""
