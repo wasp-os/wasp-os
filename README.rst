@@ -254,6 +254,10 @@ Other apps: (The "blank" white screenshot is a flashlight app)
    :alt: Haiku application running in the wasp-os simulator
    :width: 179
 
+.. image:: res/screenshots/KbdemoApp.png
+   :alt: Keyboard demonstration running in the wasp-os simulator
+   :width: 179
+
 .. image:: res/screenshots/LevelApp.png
    :alt: Shows a time as words in the wasp-os simulator
    :width: 179
