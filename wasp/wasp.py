@@ -346,7 +346,7 @@ class Manager():
         :param function action: Action to perform when the alarm expires.
         """
         self._alarms.append((time, action))
-        self._alarms.sort(key = _key_alarm)
+        self._alarms.sort(key=_key_alarm)
 
     def cancel_alarm(self, time, action):
         """Unqueue an alarm."""
