@@ -459,11 +459,11 @@ class Draw565(object):
             draw = wasp.watch.drawable
             draw.line(360 / 12, 16, 64)
 
+        :param x: X coordinate of the origin
+        :param y: Y coordinate of the origin
         :param theta: Angle, in degrees
         :param r0: Radius of the start of the line
         :param y0: Radius of the end of the line
-        :param x: X coordinate of the origin
-        :param y: Y coordinate of the origin
         :param width: Width of the line in pixels
         :param color: Colour to draw line in, defaults to the foreground colour
         """
