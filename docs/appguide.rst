@@ -284,7 +284,7 @@ simulator if you add it to ``wasp/boards/simulator/main.pywasp/main.py``. Try ad
 the above example into this file (between ``import wasp`` and
 ``wasp.system.run()``).
 
-You can use something like ``/home/falken/workspace/wasp-os-Elenedeath/wasp/boards/simulator/main.py`` to 
+You can use something like ``while inotifywait -e modify hello.py; do   killall python3;   nohup make sim 2>&1 & done`` to 
 (re)launch the simulator when you change a source file. Currently this does not bring your application to the foreground.
 
 The simulator accepts gestures such as up/down and left/right swipes but the
