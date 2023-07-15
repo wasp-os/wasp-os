@@ -280,9 +280,12 @@ by swiping or using the Arrow keys to bring up the launcher and then clicking
 on your application.
 
 The application can also be registered automatically when you load the
-simulator if you add it to ``wasp/main.py``. Try adding lines 5 and 6 from
+simulator if you add it to ``wasp/boards/simulator/main.pywasp/main.py``. Try adding lines 5 and 6 from
 the above example into this file (between ``import wasp`` and
 ``wasp.system.run()``).
+
+You can use something like ``while inotifywait -e modify hello.py ; do  echo change;make sim; done`` to 
+launch the simulator when you change a source file.
 
 The simulator accepts gestures such as up/down and left/right swipes but the
 simulator also accepts keystrokes for convenience. The arrow keys simulate
