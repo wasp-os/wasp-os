@@ -3,7 +3,7 @@
 
 [[app]]
 file = 'apps/stopwatch.py'
-quick_ring = true
+auto_load = true
 
 [[app]]
 file = 'apps/heart.py'
@@ -19,6 +19,7 @@ auto_load = true
 
 [[app]]
 file = 'apps/calculator.py'
+quick_ring = true
 
 [[app]]
 file = 'apps/disa_b_l_e.py'
