@@ -24,6 +24,14 @@ quick_ring = true
 [[app]]
 file = 'apps/disa_b_l_e.py'
 
+[[app]]
+file = 'apps/play2048.py'
+auto_load = true
+
+[[app]]
+file = 'apps/phone_finder.py'
+auto_load = true
+
 [[app]] # If only one watch face is included this app can be removed
 file = 'apps/faces.py'
 auto_load = true
