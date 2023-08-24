@@ -154,7 +154,7 @@ class Keyboard:
                 if (
                     self._cap_mode
                     or self._last.lower() == value
-                    and self._last[0] in "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+                    and 'A' <= self._last[0] <= 'Z'
                 ):
                     value = value.upper()
 
