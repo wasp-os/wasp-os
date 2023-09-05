@@ -173,6 +173,10 @@ Watch faces:
    :alt: Shows a time as words in the wasp-os simulator
    :width: 179
 
+.. image:: res/screenshots/ResistorClockApp.png
+   :alt: Resistor colour code clock application running in the wasp-os simulator
+   :width: 179
+
 Games:
 
 .. image:: res/screenshots/Play2048App.png

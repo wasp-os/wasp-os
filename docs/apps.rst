@@ -23,6 +23,8 @@ Watch faces
 
 .. automodule:: word_clock
 
+.. automodule:: resistor_clock
+
 Built-in
 --------
 
