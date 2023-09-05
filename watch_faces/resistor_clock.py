@@ -6,6 +6,8 @@
 Following https://hackaday.com/2021/07/15/a-perfect-clock-for-any-hackers-ohm
 display the time as HHMMSS DDMMYYY in 6+8 bands using the resistor colour code.
 
+This is very good if you want to learn the resistor colour codes, you pick them up very rapidly.
+
 Colours taken from https://people.duke.edu/~ng46/topics/color-code.htm (grey moved from CCCCCC to C0C0C0)
 
 Code adapted from fibonacci_clock.py by Johannes Wache
