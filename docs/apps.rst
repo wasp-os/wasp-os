@@ -87,3 +87,5 @@ Games
 .. automodule:: puzzle15
 
 .. automodule:: snake
+
+.. automodule:: four_in_a_row
