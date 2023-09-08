@@ -191,13 +191,10 @@ Games:
    :alt: 15 Puzzle running in the wasp-os simulator
    :width: 179
 
-<<<<<<< HEAD
-=======
 .. image:: res/screenshots/FourInARowApp.png
    :alt: Four In A Row running in the wasp-os simulator
    :width: 179
 
->>>>>>> f9d4b02 (Adding a Four In A Row app)
 Time management apps:
 
 .. image:: res/screenshots/AlarmApp.png
