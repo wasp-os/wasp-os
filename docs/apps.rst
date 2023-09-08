@@ -78,6 +78,8 @@ Applications
 Games
 -----
 
+.. automodule:: four_in_a_row
+
 .. automodule:: game_of_life
 
 .. automodule:: play2048
