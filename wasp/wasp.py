@@ -22,10 +22,14 @@ import sys
 import watch
 import widgets
 import appregistry
+import os
+import time
 
 from apps.system.launcher import LauncherApp
 from apps.system.pager import PagerApp, CrashApp, NotificationApp
 from apps.system.step_counter import StepCounterApp
+
+_INTERVAL = micropython.const(1000)
 
 class EventType():
     """Enumerated interface actions.
@@ -466,13 +470,8 @@ class Manager():
         update = rtc.update()
 
         alarms = self._alarms
-        if update and alarms:
-            now = rtc.time()
-            head = alarms[0]
-
-            if head[0] <= now:
-                alarms.remove(head)
-                head[1]()
+        if update and alarms and alarms[0][0] <= rtc.time():
+            alarms.pop(0)[1]()
 
         if self.sleep_at:
             if update and self.tick_expiry:
@@ -497,10 +496,23 @@ class Manager():
                 self.sleep()
 
             gc.collect()
-        else:
-            if 1 == self._button.get_event() or \
-                    self._charging != watch.battery.charging():
-                self.wake()
+
+        elif alarms:  # sleeping and alarms: sleep until button pressed or next alarm
+            while rtc.update() and rtc.time() < alarms[0][0]:
+                bef = time.ticks_ms()
+                while time.ticks_diff(time.ticks_ms(), bef) <= _INTERVAL:
+                    machine.deepsleep()
+                if self._button.get_event():
+                    self.wake()
+                    return
+        else:  # sleeping without alarms: sleep until button pressed
+            while True:
+                bef = time.ticks_ms()
+                while time.ticks_diff(time.ticks_ms(), bef) <= _INTERVAL:
+                    machine.deepsleep()
+                if self._button.get_event():
+                    self.wake()
+                    return
 
     def run(self, no_except=True):
         """Run the system manager synchronously.
