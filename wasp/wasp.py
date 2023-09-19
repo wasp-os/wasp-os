@@ -497,22 +497,15 @@ class Manager():
 
             gc.collect()
 
-        elif alarms:  # sleeping and alarms: sleep until button pressed or next alarm
-            while rtc.update() and rtc.time() < alarms[0][0]:
-                bef = time.ticks_ms()
-                while time.ticks_diff(time.ticks_ms(), bef) <= _INTERVAL:
-                    machine.deepsleep()
-                if self._button.get_event():
-                    self.wake()
-                    return
-        else:  # sleeping without alarms: sleep until button pressed
+        else:  # screen of so let's sleep more profoundly
             while True:
                 bef = time.ticks_ms()
                 while time.ticks_diff(time.ticks_ms(), bef) <= _INTERVAL:
                     machine.deepsleep()
                 if self._button.get_event():
-                    self.wake()
-                    return
+                    return self.wake()
+                elif alarms and rtc.update() and rtc.time() >= alarms[0][0]:
+                    return self._tick()
 
     def run(self, no_except=True):
         """Run the system manager synchronously.
