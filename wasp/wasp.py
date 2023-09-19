@@ -503,9 +503,10 @@ class Manager():
                 while time.ticks_diff(time.ticks_ms(), bef) <= _INTERVAL:
                     machine.deepsleep()
                 if self._button.get_event():
-                    return self.wake()
+                    self.wake()
+                    return
                 elif alarms and rtc.update() and rtc.time() >= alarms[0][0]:
-                    return self._tick()
+                    return
 
     def run(self, no_except=True):
         """Run the system manager synchronously.
