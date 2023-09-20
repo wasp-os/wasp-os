@@ -497,7 +497,7 @@ class Manager():
 
             gc.collect()
 
-        elif alarms:  # screen off and no alarms: sleep profoundly
+        elif not alarms:  # screen off and no alarms: sleep profoundly
             while True:
                 bef = time.ticks_us()
                 while time.ticks_diff(time.ticks_us(), bef) <= _INTERVAL:
