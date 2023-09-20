@@ -29,7 +29,7 @@ from apps.system.launcher import LauncherApp
 from apps.system.pager import PagerApp, CrashApp, NotificationApp
 from apps.system.step_counter import StepCounterApp
 
-_INTERVAL = micropython.const(1000)
+_INTERVAL = micropython.const(1000000)  # 1s in us
 
 class EventType():
     """Enumerated interface actions.
@@ -497,15 +497,13 @@ class Manager():
 
             gc.collect()
 
-        else:  # screen of so let's sleep more profoundly
+        elif alarms:  # screen off and no alarms: sleep profoundly
             while True:
-                bef = time.ticks_ms()
-                while time.ticks_diff(time.ticks_ms(), bef) <= _INTERVAL:
+                bef = time.ticks_us()
+                while time.ticks_diff(time.ticks_us(), bef) <= _INTERVAL:
                     machine.deepsleep()
                 if self._button.get_event():
                     self.wake()
-                    return
-                elif alarms and rtc.update() and rtc.time() >= alarms[0][0]:
                     return
 
     def run(self, no_except=True):
