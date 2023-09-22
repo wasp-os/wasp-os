@@ -337,7 +337,7 @@ class Draw565(object):
         """
         return _bounding_box(s, self._font)
 
-    def wrap(self, s, width):
+    def wrap(self, s, width, char=False):
         """Chunk a string so it can rendered within a specified width.
 
         Example:
@@ -354,6 +354,7 @@ class Draw565(object):
 
         :param s:     String to be chunked
         :param width: Width to wrap the text into
+        :param char:  Default is False to wrap on words, if True then wrap to nearest character
         :returns:     List of chunk boundaries
         """
         font = self._font
@@ -385,6 +386,9 @@ class Draw565(object):
                 # Remember the right-most place we can cleanly break the line
                 if ch == ' ':
                     end = i+1
+                elif char:
+                    end = i
+
             chunks.append(end)
 
         return chunks
