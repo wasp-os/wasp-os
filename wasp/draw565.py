@@ -290,34 +290,42 @@ class Draw565(object):
         """
         self._font = font
 
-    def string(self, s, x, y, width=None, right=False):
+    def string(self, s, x, y, width=None, right=None, justify=0):
         """Draw a string at the supplied position.
 
         :param s:     String to render
         :param x:     X coordinate for the left-most pixels in the image
         :param y:     Y coordinate for the top-most pixels in the image
-        :param width: If no width is provided then the text will be left
-                      justified, otherwise the text will be centred within the
-                      provided width and, importantly, the remaining width will
-                      be filled with the background colour (to ensure that if
-                      we update one string with a narrower one there is no
+        :param width: If no width is provided then the text will start at the
+                      coordinates provided, otherwise the text will be justified
+                      within the provided width and, importantly, the remaining
+                      width will be filled with the background colour (to ensure
+                      that if we update one string with a narrower one there is no
                       need to "undraw" it)
-        :param right: If True (and width is set) then right justify rather than
-                      centre the text
+        :param right: Deprecated: If True (and width is set) then right justify
+                      rather than centre the text
+        :param justify: Set the justification mode.  The default (0) is to centre,
+                      if set to 1 then right justify, if -1 then left justify.
         """
         display = self._display
         bgfg = self._bgfg
         font = self._font
         bg = self._bgfg >> 16
 
+        if right is not None:
+            justify = int(right)
+        
         if width:
             (w, h) = _bounding_box(s, font)
-            if right:
+            if justify > 0:
                 leftpad = width - w
                 rightpad = 0
-            else:
+            elif justify == 0:
                 leftpad = (width - w) // 2
                 rightpad = width - w - leftpad
+            else:
+                leftpad = 0
+                rightpad = width - w
             self.fill(bg, x, y, leftpad, h)
             x += leftpad
 
