@@ -290,20 +290,18 @@ class Draw565(object):
         """
         self._font = font
 
-    def string(self, s, x, y, width=None, right=False):
+    def string(self, s, x, y, width=None, right=None):
         """Draw a string at the supplied position.
 
         :param s:     String to render
         :param x:     X coordinate for the left-most pixels in the image
         :param y:     Y coordinate for the top-most pixels in the image
-        :param width: If no width is provided then the text will be left
-                      justified, otherwise the text will be centred within the
-                      provided width and, importantly, the remaining width will
-                      be filled with the background colour (to ensure that if
-                      we update one string with a narrower one there is no
-                      need to "undraw" it)
-        :param right: If True (and width is set) then right justify rather than
-                      centre the text
+        :param width: Justify the text within the provided width and, importantly,
+                      fill the full width with the background colour (to ensure
+                      that if we update one string with a narrower one there is no
+                      need to "undraw" it).
+        :param right: Set the justification mode.  The default is to centre, if
+                      set to True then right justify, if False then left justify.
         """
         display = self._display
         bgfg = self._bgfg
@@ -312,12 +310,15 @@ class Draw565(object):
 
         if width:
             (w, h) = _bounding_box(s, font)
-            if right:
+            if right == True:
                 leftpad = width - w
                 rightpad = 0
-            else:
+            elif right == None:
                 leftpad = (width - w) // 2
                 rightpad = width - w - leftpad
+            else:
+                leftpad = 0
+                rightpad = width - w
             self.fill(bg, x, y, leftpad, h)
             x += leftpad
 
