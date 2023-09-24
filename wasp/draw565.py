@@ -150,9 +150,11 @@ class Draw565(object):
         if h is None:
             h = display.height - y
 
-        display.set_window(x, y, w, h)
-
         remaining = w * h
+        if remaining == 0:
+          return
+
+        display.set_window(x, y, w, h)
 
         # Populate the line buffer
         buf = display.linebuffer
