@@ -123,8 +123,8 @@ class ST7789(object):
         window = self.window
         write_data = self.write_data
 
-        xp = x + width - 1
-        yp = y + height - 1
+        xp = max(x + width - 1, 0)
+        yp = max(y + height - 1, 0)
 
         write_cmd(_CASET)
         window[0] = x >> 8
