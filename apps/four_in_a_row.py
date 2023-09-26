@@ -11,9 +11,9 @@ This is the classic two player board game called Four In A Row or Connect4.  You
 
     Screenshot of Four In A Row
 
-There is in intro/menu screen which has very brief instructions, allows you to set the opponent level and gives some stats on the number of games you have won.  Touching the screen sets the level from 0 to 6 which corresponds to the number of lookahead plies.  Swiping down enters the main game.  On your turn a red square counter will appear on the top row.  Touch the screen to move to the desired column, optinally touch again if you don't like your choice then swipe down to commit to playing that column.  The computer will reply with a yellow counter after a delay (dependent on level).  Your aim is to get four in a row before the computer does.  At end of game swipe down to return to the intro/menu screen.
+There is in intro/menu screen which has very brief instructions, allows you to set the opponent level and gives some stats on the number of games you have won.  Touching the screen sets the level from 0 to 6 which corresponds to the number of lookahead plies.  Swiping down enters the main game.  On your turn a red square counter will appear on the top row.  Touch the screen to move to the desired column, optionally touch again if you don't like your choice then swipe down to commit to playing that column.  The computer will reply with a yellow counter after a delay (dependent on level).  Your aim is to get four in a row before the computer does.  At end of game swipe down to return to the intro/menu screen.
 
-This app is powered by a compact version of the Alpha Beta pruning algorithm.  For technical details see https://en.wikipedia.org/wiki/Connect_Four and kaggle.com/competitions/connectx/.  There isn't space for a transposition table in RAM, so MTDf isn't implmented, nevertheless it can play a challenging game.
+This app is powered by a compact version of the Alpha Beta pruning algorithm.  For technical details see https://en.wikipedia.org/wiki/Connect_Four and https://kaggle.com/competitions/connectx/.  There isn't space for a transposition table in RAM, so MTDf isn't implmented, nevertheless it can play a challenging game.
 
 """
 
@@ -95,7 +95,6 @@ def _swapmin(bitNext, bitLast, low, depth, lob, upb):
 def rndColumn():
     return int(wasp.watch.rtc.uptime) % _NCOLUMN  # time used as RNG to save space
 
-# class FourinaRowApp(): # names are different between firmware and /flash
 class FourInARowApp():
     NAME = '4 ina row'
 
