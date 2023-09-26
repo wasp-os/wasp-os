@@ -84,4 +84,6 @@ Games
 
 .. automodule:: play2048
 
+.. automodule:: puzzle15
+
 .. automodule:: snake

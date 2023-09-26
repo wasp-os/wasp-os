@@ -187,6 +187,10 @@ Games:
    :alt: Snake Game running in the wasp-os simulator
    :width: 179
 
+.. image:: res/screenshots/Puzzle15App.png
+   :alt: 15 Puzzle running in the wasp-os simulator
+   :width: 179
+
 Time management apps:
 
 .. image:: res/screenshots/AlarmApp.png
