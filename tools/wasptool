@@ -457,10 +457,7 @@ if __name__ == '__main__':
         handle_eval(console, args.eval)
 
     if args.pull:
-        if args.file_as is None:
-            handle_binary_download(console, args.pull, args.pull)
-        else:
-            handle_binary_download(console, args.pull, args.file_as)
+        handle_binary_download(console, args.pull, args.file_as or args.pull)
 
     if args.push:
         handle_binary_upload(console, args.push, args.push)
