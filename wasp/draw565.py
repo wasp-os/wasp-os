@@ -318,8 +318,9 @@ class Draw565(object):
             else:
                 leftpad = (width - w) // 2
                 rightpad = width - w - leftpad
-            self.fill(bg, x, y, leftpad, h)
-            x += leftpad
+            if leftpad != 0:
+                self.fill(bg, x, y, leftpad, h)
+                x += leftpad
 
         for ch in s:
             glyph = font.get_ch(ch)
