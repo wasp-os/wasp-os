@@ -85,7 +85,7 @@ easily:
 .. code-block:: sh
 
     git commit --amend --signoff
-    git push <myfork> HEAD
+    git push --force-with-lease <myfork> HEAD
 
 Additionally, please be aware that github will not send out automatic
 notifications to let the maintainer know that you have pushed an update to the
