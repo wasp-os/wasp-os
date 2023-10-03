@@ -584,17 +584,14 @@ A default version of ``main.py`` is installed automatically when wasp-os initial
 formats the external flash as a file system.
 
 Most problems with normal mode operation occur either because ``main.py`` is
-missing, out-of-date or corrupt. These issues most commonly result in an
-entirely black screen when running the watch is running in normal mode.
+missing, out-of-date or corrupt, or because too many applications are being started
+by default, resulting in the system running out of RAM. 
 
-Wasp freezes on the ``main.py`` screen
-
-The likely cause is that there is not enough room or memory on your device to
-freeze your applications into the wasp-os binary. To solve this, reduce the
-number of applications you are loading and reinstall. If you are developing
-your own application, it is best that you load the minimal set of applications
-to have the maximum possible amount of available RAM and minimum fragmentation.
-For example, only autoloading the software app will get you the maximum amount of RAM.
+Out of memory problems are best addressed by reducing the number of applications you
+have "frozen" into the wasp-os binary. If you are developing your own application, 
+it is best that you load the minimal set of applications to have the maximum possible 
+amount of available RAM and minimum fragmentation. For example, only autoloading the
+software app will get you the maximum amount of RAM.
 
 .. note::
 
