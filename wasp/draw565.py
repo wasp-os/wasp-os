@@ -298,11 +298,14 @@ class Draw565(object):
         :param s:     String to render
         :param x:     X coordinate for the left-most pixels in the image
         :param y:     Y coordinate for the top-most pixels in the image
-        :param width: Justify the text within the provided width and, importantly,
-                      fill the full width with the background colour (to ensure
+        :param width: If no width is provided then the text will start at the
+                      coordinates provided, otherwise the text will be justified
+                      within the provided width and, importantly, the remaining
+                      width will be filled with the background colour (to ensure
                       that if we update one string with a narrower one there is no
-                      need to "undraw" it).
-        :param right: Deprecated: use justify=1 instead
+                      need to "undraw" it)
+        :param right: Deprecated: If True (and width is set) then right justify
+                      rather than centre the text
         :param justify: Set the justification mode.  The default (0) is to centre, if set to 1 then right justify, if -1 then left justify.
         """
         display = self._display
