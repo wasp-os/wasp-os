@@ -70,9 +70,8 @@ def GB(cmd):
 
 def send_cmd(cmd = ''):
     print('\r')
-    for i in range(1):
-        for i in range(0, len(cmd), 20):
-            print(cmd[i: i + 20], end='')
-            time.sleep(0.2)
-        print(' ')
+    for i in range(0, len(cmd), 20):
+        print(cmd[i: i + 20], end='')
+        time.sleep(0.2)
+    print(' ')
     print(' ')

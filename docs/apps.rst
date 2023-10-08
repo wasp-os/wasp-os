@@ -23,6 +23,8 @@ Watch faces
 
 .. automodule:: word_clock
 
+.. automodule:: resistor_clock
+
 Built-in
 --------
 
@@ -84,4 +86,8 @@ Games
 
 .. automodule:: play2048
 
+.. automodule:: puzzle15
+
 .. automodule:: snake
+
+.. automodule:: four_in_a_row
