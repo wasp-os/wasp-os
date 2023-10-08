@@ -101,6 +101,7 @@ try:
     accel = BMA421(i2c)
     boot_msg("Init HRS3300")
     hrs = HRS3300(i2c)
+    hrs.disable()
     boot_msg("Init touch")
     touch = TouchButton(Pin('TP_INT', Pin.IN),
                         Pin('TP_RST', Pin.OUT, value=0), _callback)

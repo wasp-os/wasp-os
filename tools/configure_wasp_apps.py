@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 """Configure the wasp distribution based on the provided wasp.toml config
 
     This script generates the following files and directories

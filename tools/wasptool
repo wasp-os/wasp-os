@@ -371,8 +371,8 @@ def handle_upload(c, fname, tname):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
             description='Wasp-os command and control client')
-    parser.add_argument('--as', dest='upload_as', default=None,
-            help="Filename to use on the target (e.g. wasptool --upload docs/main/chrono.py --as main.py")
+    parser.add_argument('--as', dest='file_as', default=None,
+            help="Filename to use on the target (e.g. wasptool --upload docs/main/chrono.py --as main.py. Also works with --pull")
     parser.add_argument('--battery', action='store_true',
             help="Report remaining battery charge")
     parser.add_argument('--bootloader', action='store_true',
@@ -457,16 +457,16 @@ if __name__ == '__main__':
         handle_eval(console, args.eval)
 
     if args.pull:
-        handle_binary_download(console, args.pull, args.pull)
+        handle_binary_download(console, args.pull, args.file_as or args.pull)
 
     if args.push:
         handle_binary_upload(console, args.push, args.push)
 
     if args.upload:
         if args.binary:
-            handle_binary_upload(console, args.upload, args.upload_as)
+            handle_binary_upload(console, args.upload, args.file_as)
         else:
-            handle_upload(console, args.upload, args.upload_as)
+            handle_upload(console, args.upload, args.file_as)
 
     if args.memfree:
         handle_memory_free(console)
