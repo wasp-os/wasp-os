@@ -40,7 +40,7 @@ class Backlight(object):
     lo = Pin("BL_LO", Pin.OUT, value=0)
     mid = Pin("BL_MID", Pin.OUT, value=1)
     hi = Pin("BL_HI", Pin.OUT, value=1)
-    pwm = PWM(0, pin=Pin("BL_LO", Pin.OUT), freq=PWM.FREQ_16MHZ, duty=85, period=160000)
+    pwm = PWM(1, pin=Pin("BL_LO", Pin.OUT), freq=PWM.FREQ_16MHZ, duty=85, period=160000)
 
     def __init__(self, level=1):
         self.set(level)
