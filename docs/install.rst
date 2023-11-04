@@ -335,7 +335,7 @@ Installing wasp-bootloader
 Gadgetbridge for Android
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-For Pine64 PineTime devices running Infinitime then Gadgerbridge for Android
+For Pine64 PineTime devices running Infinitime then Gadgetbridge for Android
 can be used to install wasp-bootloader:
 
 * Ensure the watch is fully charged before attempting to install the
@@ -370,7 +370,8 @@ can be used to install wasp-bootloader:
     If you want to restore the PineTime factory firmware then you can
     use Gadgetbridge to do this. Perform a long press reset and then
     use Gadgetbridge to send ``reloader-factory.zip`` to the *PineDFU*
-    device.
+    device. GadgetBridge may list *PINE DFU* as an unsupported device. See the work around
+    for installing the wasp-os firmware for the Android device.
 
 .. _Bootloader DaFlasher:
 
