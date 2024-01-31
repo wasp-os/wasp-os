@@ -215,6 +215,10 @@ Time management apps:
    :alt: Countdown timer application running in the wasp-os simulator
    :width: 179
 
+.. image:: res/screenshots/MonthApp.png
+   :alt: Simple calendar application running in the wasp-os simulator
+   :width: 179
+
 System apps:
 
 .. image:: res/screenshots/DisaBLEApp.png
