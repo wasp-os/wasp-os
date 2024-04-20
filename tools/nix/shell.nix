@@ -28,7 +28,7 @@ in pkgs.mkShell {
     ] ++ ifLinux [
       bluepy
     ]))
-    pkgs.gcc-arm-embedded
+    pkgs.gcc-arm-embedded-11
     pkgs.graphviz
   ] ++ ifLinux [
     pkgs.bluez
