@@ -23,6 +23,9 @@ file = 'apps/calculator.py'
 [[app]]
 file = 'apps/disa_b_l_e.py'
 
+[[app]]
+file = 'apps/bible.py'
+
 [[app]] # If only one watch face is included this app can be removed
 file = 'apps/faces.py'
 auto_load = true
