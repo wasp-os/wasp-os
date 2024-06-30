@@ -1,0 +1,129 @@
+# SPDX-License-Identifier: LGPL-3.0-or-later
+# Copyright (C) 2020 Daniel Thompson
+
+def nop():
+    pass
+schedule = nop
+def _callback(obj):
+    schedule()
+
+# Start measuring time (and feeding the watchdog) before *anything* else
+from machine import RTCounter
+from drivers.nrf_rtc import RTC
+rtc = RTC(RTCounter(1, mode=RTCounter.PERIODIC, period=1, callback=_callback))
+rtc.counter.start()
+
+import gc
+import os
+import time
+
+import draw565
+
+from machine import I2C
+from machine import Pin
+#from machine import Signal
+from machine import SPI
+
+from drivers.battery import Battery
+from drivers.sc7a20 import SC7A20
+from drivers.cst816s import CST816S
+from drivers.hrs3300 import HRS3300
+from drivers.signal import Signal
+from drivers.st7789 import ST7789_SPI
+from drivers.vibrator import Vibrator
+from flash.flash_spi import FLASH
+
+from ubluepy import uart_connected as connected
+
+class Backlight(object):
+    lo = Pin("BL_LO", Pin.OUT, value=0)
+    mid = Pin("BL_MID", Pin.OUT, value=1)
+    hi = Pin("BL_HI", Pin.OUT, value=1)
+
+    def __init__(self, level=1):
+        self.set(level)
+
+    def set(self, level):
+        hi = 1
+        mid = 1
+        lo = 1
+
+        if level >= 3:
+            hi = 0
+        elif level == 2:
+            mid = 0
+        elif level == 1:
+            lo = 0
+
+        self.hi(hi)
+        self.mid(mid)
+        self.lo(lo)
+
+# Setup the display (and manage the backlight)
+backlight = Backlight(0)
+spi = SPI(0)
+spi.init(polarity=1, phase=1, baudrate=8000000)
+display = ST7789_SPI(240, 240, spi,
+        cs=Pin("DISP_CS", Pin.OUT),
+        dc=Pin("DISP_DC", Pin.OUT),
+        res=Pin("DISP_RST", Pin.OUT))
+drawable = draw565.Draw565(display)
+
+def boot_msg(s):
+    drawable.string(s, 0, 108, width=240)
+    if safe_mode:
+        time.sleep_ms(500)
+
+safe_mode = False
+boot_msg("Init button")
+button = Pin('BUTTON', Pin.IN)
+safe_mode = button.value()
+if safe_mode:
+    backlight.set(1)
+    time.sleep(1)
+
+try:
+    # Setup the last few bits and pieces
+    boot_msg("Init hardware")
+    usb_pwr = Signal(Pin('USB_PWR', Pin.IN), invert=True)
+    battery = Battery(Pin('BATTERY', Pin.IN), usb_pwr, usb_pwr)
+    i2c = I2C(1, scl='I2C_SCL', sda='I2C_SDA')
+    accel = SC7A20(i2c=i2c)
+    hrs = HRS3300(i2c)
+    touch = CST816S(i2c,
+                    Pin('TP_INT', Pin.IN), Pin('TP_RST', Pin.OUT, value=0),
+                    _callback)
+    vibrator = Vibrator(Pin('MOTOR', Pin.OUT, value=0), active_low=True)
+
+    # Mount the filesystem
+    boot_msg("Init SPINOR")
+    flash = FLASH(spi, (Pin('NOR_CS', Pin.OUT, value=1),))
+    try:
+        boot_msg("Mount FS")
+        os.mount(flash, '/flash')
+    except AttributeError:
+        # Format the filesystem (and provide a default version of main.py)
+        boot_msg("Format FS")
+        os.VfsLfs2.mkfs(flash)
+        boot_msg("Retry mount FS")
+        os.mount(flash,'/flash')
+        boot_msg("Write main.py")
+        with open('/flash/main.py', 'w') as f:
+            f.write('''\
+#include('main.py')
+''')
+
+    # Only change directory if the button is not pressed (this will
+    # allow us access to fix any problems with main.py)!
+    if not safe_mode:
+        boot_msg("Enter /flash")
+        os.chdir('/flash')
+        boot_msg("main.py")
+    else:
+        boot_msg("Safe mode")
+except:
+    drawable.string("FAILED", 0, 136, width=240)
+backlight.set(1)
+
+gc.collect()
+free = gc.mem_free()
