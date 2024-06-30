@@ -254,7 +254,7 @@ To launch the simulator:
 
     sh$ make sim
     PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=.:wasp/boards/simulator:wasp \\
-    python3 -i wasp/main.py
+    python3 -i wasp/boards/simulator/main.py
     MOTOR: set on
     BACKLIGHT: 2
     Watch is running, use Ctrl-C to stop
@@ -280,8 +280,8 @@ by swiping or using the Arrow keys to bring up the launcher and then clicking
 on your application.
 
 The application can also be registered automatically when you load the
-simulator if you add it to ``wasp/main.py``. Try adding lines 5 and 6 from
-the above example into this file (between ``import wasp`` and
+simulator if you add it to ``wasp/boards/simulator/main.py``. Try adding lines
+5 and 6 from the above example into this file (between ``import wasp`` and
 ``wasp.system.run()``).
 
 The simulator accepts gestures such as up/down and left/right swipes but the
