@@ -14,3 +14,4 @@ wasp/apps/user
 wasp/appregistry.py
 .idea
 .vscode
+logs

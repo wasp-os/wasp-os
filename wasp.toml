@@ -33,6 +33,10 @@ auto_load = true
 file = 'apps/month.py'
 auto_load = true
 
+[[app]]
+file = 'apps/sleep_tk.py'
+auto_load = true
+
 
 [[app]]
 file = 'apps/calculator.py'
