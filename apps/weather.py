@@ -16,7 +16,7 @@ import wasp
 
 import icons
 import time
-import fonts.sans36
+import fonts
 
 # 2-bit RLE, generated from res/weather_icon.png, 309 bytes
 icon = (

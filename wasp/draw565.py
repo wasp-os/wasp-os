@@ -6,7 +6,7 @@
 """
 
 import array
-import fonts.sans24
+import fonts
 import math
 import micropython
 

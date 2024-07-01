@@ -2,7 +2,6 @@
 # Copyright (C) 2020 Daniel Thompson
 
 import wasp
-
 # Test app is used a lot on the simulator. Let's make sure it is
 # registered by default.
 wasp.system.register('apps.test.TestApp')
@@ -34,7 +33,7 @@ wasp.system.blank_after = 300
 #wasp.system.register('apps.demo.DemoApp')
 
 # Adopt a basic all-orange theme
-#wasp.system.set_theme(
+# wasp.system.set_theme(
 #        b'\xff\x00'     # ble
 #        b'\xff\x00'     # scroll-indicator
 #        b'\xff\x00'     # battery

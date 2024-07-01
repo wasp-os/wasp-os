@@ -27,6 +27,7 @@ result by 5 to get the actual number.
 """
 
 import wasp
+import fonts 
 
 COLORS = [0xffff,0xf800,0x07e0,0x001f] # White, red, green and blue
 FIELDS = b'\x05\x03\x02\x01\x01'
@@ -36,12 +37,28 @@ class FibonacciClockApp():
     """Displays the time as a Fibonacci Clock.
     """
     NAME = 'Fibo'
+    
+    class DescriptionType:
+        DATE = 0
+        TIME = 1
+
+    def __init__(self) -> None:
+        self.description_type = FibonacciClockApp.DescriptionType.DATE
 
     def foreground(self):
         """Activate the application."""
+        self.description_type = FibonacciClockApp.DescriptionType.DATE
         wasp.system.bar.clock = False
         self._draw(True)
         wasp.system.request_tick(1000)
+        wasp.system.request_event(wasp.EventMask.TOUCH)
+
+    def touch(self, event):
+        self.description_type += 1
+        if self.description_type > 1:
+            self.description_type = 0
+            
+        self.draw_description()
 
     def sleep(self):
         return True
@@ -51,11 +68,28 @@ class FibonacciClockApp():
 
     def tick(self, ticks):
         self._draw()
+        if self.description_type == FibonacciClockApp.DescriptionType.TIME:
+            self.draw_description()
 
     def preview(self):
         """Provide a preview for the watch face selection."""
         wasp.system.bar.clock = False
         self._draw(True)
+
+
+    def draw_description(self):
+        draw = wasp.watch.drawable
+        draw.set_font(fonts.sans24)
+        now = wasp.watch.rtc.get_localtime()
+        month = now[1] - 1
+        month = MONTH[month*3:(month+1)*3]
+        draw.fill(x=0, y=197, w=240, h=240 - 197)
+        if self.description_type == FibonacciClockApp.DescriptionType.DATE:
+            draw.string('{} {} {}'.format(now[2], month, now[0]),
+                    0, 202, width=240)
+        elif self.description_type == FibonacciClockApp.DescriptionType.TIME:
+            draw.string(f"{now[3]}:{now[4]}:{now[5]}",
+                    0, 202, width=240)
 
     def _draw(self, redraw=False):
         """Draw or lazily update the display."""
@@ -66,7 +100,7 @@ class FibonacciClockApp():
             draw.fill()
             wasp.system.bar.draw()
         else:
-            now = wasp.system.bar.update()
+            now = wasp.system.bar.update()                
             if not now or self._min == now[4]:
                 return
 
@@ -91,10 +125,7 @@ class FibonacciClockApp():
         draw.fill(x=21,y=110,w=73,h=73,bg=COLORS[field_colors[1]]) # 3 field
         draw.fill(x=96,y=60,w=123,h=123,bg=COLORS[field_colors[0]]) # 5 field
 
-        month = now[1] - 1
-        month = MONTH[month*3:(month+1)*3]
-        draw.string('{} {} {}'.format(now[2], month, now[0]),
-                0, 202, width=240)
-
+        self.draw_description()
+        
         # Record the minute that is currently being displayed
         self._min = now[4]

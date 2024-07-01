@@ -15,6 +15,7 @@
     shortcut (and to reduce memory by keeping it out of other namespaces).
 """
 import gc
+from apps.paint import PaintApp
 import machine
 import micropython
 import steplogger
@@ -103,7 +104,6 @@ class Manager():
 
     def __init__(self):
         self.app = None
-
         self.bar = widgets.StatusBar()
 
         self.quick_ring = []
@@ -115,6 +115,14 @@ class Manager():
         self.musicinfo = {}
         self.weatherinfo = {}
         self.units = "Metric"
+        
+        # Custom variables
+        
+        # Raise to wake
+        self.raise_wake = False
+        self.last_raise_y = 0
+        self.accel_poll_ms = 100
+        self.accel_poll_expiry = 0
 
         self._theme = (
                 b'\x7b\xef'     # ble
@@ -130,7 +138,7 @@ class Manager():
                 b'\x00\x0f'     # contrast
         )
 
-        self.blank_after = 15
+        self.blank_after = 15 # seconds
 
         self._alarms = []
         self._brightness = 2
@@ -170,9 +178,10 @@ class Manager():
         for app in appregistry.autoload_list:
             self.register(app[0], app[1], app[2], app[3])
 
-        self.register('apps.system.step_counter.StepCounterApp', True, no_except=True)
+        self.register('apps.system.step_counter.StepCounterApp', no_except=True)
         self.register('apps.system.settings.SettingsApp', no_except=True)
         self.register('apps.system.software.SoftwareApp', no_except=True)
+        self.register(PaintApp())
 
     def register(self, app, quick_ring=False, watch_face=False, no_except=False):
         """Register an application with the system.
@@ -501,6 +510,37 @@ class Manager():
             if 1 == self._button.get_event() or \
                     self._charging != watch.battery.charging():
                 self.wake()
+                
+        if self.raise_wake:
+            now = rtc.get_uptime_ms()
+            if now >= self.accel_poll_expiry:
+                self.accel_poll_expiry = (now + self.accel_poll_ms)
+                if self._do_raise_wake():
+                    self.wake()
+                    
+    def _do_raise_wake(self):
+
+        (x, y, z) = watch.accel.accel_xyz()
+
+        y = -y
+
+        if (x + 335) <= 670 and z < 0:
+            if self.sleep_at:
+                if y <= 0:
+                    return False
+                else:
+                    self.last_raise_y = 0
+                    return False
+
+            if y >= 0:
+                self.last_raise_y = 0
+                return False
+
+            if y + 230 < self.last_raise_y:
+                self.last_raise_y = y
+                return True
+
+            return False
 
     def run(self, no_except=True):
         """Run the system manager synchronously.

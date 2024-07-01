@@ -17,7 +17,7 @@ class StopwatchApp():
     """Stopwatch application."""
     # Stopwatch requires too many pixels to fit into the launcher
 
-    NAME = 'Stopclock'
+    NAME = 'Stopwatch'
     ICON = icons.app
 
     def __init__(self):

@@ -60,8 +60,8 @@ def GB(cmd):
         elif task == 'weather':
             wasp.system.set_weather_info(cmd)
         else:
-            pass
-            #_info('Command "{}" is not implemented'.format(cmd))
+            raise Exception('Command "{}" is not implemented'.format(cmd))
+            # _info('Command "{}" is not implemented'.format(cmd))
     except Exception as e:
         msg = io.StringIO()
         sys.print_exception(e, msg)

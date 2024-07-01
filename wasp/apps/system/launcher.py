@@ -10,6 +10,7 @@
 
 import wasp
 import icons
+import fonts
 
 class LauncherApp():
     """An application launcher application."""
@@ -76,8 +77,17 @@ class LauncherApp():
                 return
             draw.blit(app.ICON if 'ICON' in dir(app) else icons.app, x+13, y+12)
             draw.set_color(wasp.system.theme('mid'))
+            
+            name_bounding_box = draw.bounding_box(app.NAME)
+            if name_bounding_box[0] >= 120:
+                draw.set_font(fonts.sans18)
+                name_bounding_box = draw.bounding_box(app.NAME)
+                if name_bounding_box[0] >= 120:
+                    raise Exception(f"App with name '{app.NAME}' is too long")
+            
             draw.string(app.NAME, x, y+120-30, 120)
-
+            draw.reset()
+            
         draw = wasp.watch.drawable
         page_num = self._page
         page = self._get_page(page_num)

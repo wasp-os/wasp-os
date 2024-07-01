@@ -3,11 +3,11 @@
 
 [[app]]
 file = 'apps/stopwatch.py'
-quick_ring = true
+auto_load = true
 
 [[app]]
 file = 'apps/heart.py'
-quick_ring = true
+auto_load = true
 
 [[app]]
 file = 'apps/alarm.py'
@@ -18,10 +18,32 @@ file = 'apps/timer.py'
 auto_load = true
 
 [[app]]
-file = 'apps/calculator.py'
+file = 'apps/flashlight.py'
+auto_load = true
 
 [[app]]
-file = 'apps/disa_b_l_e.py'
+file = 'apps/music_player.py'
+auto_load = true
+
+[[app]]
+file = 'apps/weather.py'
+auto_load = true
+
+[[app]]
+file = 'apps/month.py'
+auto_load = true
+
+
+[[app]]
+file = 'apps/calculator.py'
+auto_load = true
+quick_ring = true
+
+[[app]]
+file = 'apps/cpr.py'
+auto_load = true
+quick_ring = true
+
 
 [[app]] # If only one watch face is included this app can be removed
 file = 'apps/faces.py'
@@ -30,10 +52,8 @@ no_except = true
 
 [[watchface]]
 file = 'watch_faces/clock.py'
-
-[[watchface]] # Requires ClockApp to also be installed
-file = 'watch_faces/week_clock.py'
-default = true
-
 [[watchface]]
-file = 'watch_faces/chrono.py'
+file = 'watch_faces/dual_clock.py'
+[[watchface]]
+file = 'watch_faces/fibonacci_clock.py'
+default = true

@@ -1,10 +1,10 @@
 # SPDX-License-Identifier: LGPL-3.0-or-later
 # Copyright (C) 2020 Daniel Thompson
 
-import fonts.sans18 as sans18
-import fonts.sans24 as sans24
-import fonts.sans28 as sans28
-import fonts.sans36 as sans36
+import fonts.ubuntu18 as sans18
+import fonts.ubuntu24 as sans24
+import fonts.ubuntu28 as sans28
+import fonts.ubuntu36 as sans36
 
 def height(font):
     return font.height()
