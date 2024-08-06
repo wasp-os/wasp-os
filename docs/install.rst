@@ -243,9 +243,9 @@ screen, a step counter and a heart rate sensor.
 
 wasp-os can be installed directly from the factory default operating
 system using an over-the-air update with no tools or disassembly
-required. nRF Connect for Android can be used to install both the
-:ref:`wasp-bootloader<Bootloader nRF Connect>` and the
-:ref:`main OS image<Main OS nRF Connect>`.
+required. Gadgetbridge for Android can be used to install both the
+:ref:`wasp-bootloader<Bootloader Gadgetbridge>` and the
+:ref:`main OS image<Main OS Gadgetbridge>`.
 
 .. note::
 
@@ -330,12 +330,12 @@ DaFlasher for Android can be used to install both the
 Installing wasp-bootloader
 --------------------------
 
-.. _Bootloader nRF Connect:
+.. _Bootloader Gadgetbridge:
 
-nRF Connect for Android
-~~~~~~~~~~~~~~~~~~~~~~~
+Gadgetbridge for Android
+~~~~~~~~~~~~~~~~~~~~~~~~
 
-For Pine64 PineTime devices running Infinitime then nRF Connect for Android
+For Pine64 PineTime devices running Infinitime then Gadgetbridge for Android
 can be used to install wasp-bootloader:
 
 * Ensure the watch is fully charged before attempting to install the
@@ -343,12 +343,14 @@ can be used to install wasp-bootloader:
   sealed devices.
 * Copy ``reloader-mcuboot.zip`` (see :ref:`Building wasp-os from source`) to
   your Android device and download
-  `nRF Connect <https://play.google.com/store/apps/details?id=no.nordicsemi.android.mcp>`_
+  `Gadgetbridge <https://f-droid.org/en/packages/nodomain.freeyourgadget.gadgetbridge/>`_
   for Android if you do not already have it.
 * Wake the device so that Infinitime is showing a watch face.
-* Connect to the *Infinitime* device usnig nRF Connect, click the DFU button
-  and send ``reloader-mcuboot.zip`` to the device.
-* When the progress meter reaches 100% the nRF Connect will disconnect
+* Connect to the *Infinitime* device usnig Gadgetbridge, tap on the "+" button on the 
+  bottom right of the screen to add a new device, *Infinitime* should be detected.
+* Tap on it and Gadgdetbridge will pair and connect to your device. Use the file browser
+  application and find and send ``reloader-mcuboot.zip`` to the device.
+* When the progress meter reaches 100% Gadgetbridge will disconnect
   and the watch will reboot.
 * The watch will boot the reloader application which draws a small blue
   pine cone in the centre of the screen. The pine cone acts a progress
@@ -366,9 +368,11 @@ can be used to install wasp-bootloader:
 .. note::
 
     If you want to restore the PineTime factory firmware then you can
-    use nRF Connect to do this. Perform a long press reset and then
-    use nRF Connect to send ``reloader-factory.zip`` to the *PineDFU*
-    device.
+    use Gadgetbridge to do this. Perform a long press reset and then
+    use Gadgetbridge to send ``reloader-factory.zip`` to the *PineDFU*
+    device. GadgetBridge may list *PINE DFU* as an unsupported device.
+    See the work around at the end of
+    :ref:`main OS image<Main OS Gadgetbridge>`.
 
 .. _Bootloader DaFlasher:
 
@@ -465,22 +469,34 @@ logo and wait for a OTA update.
 Installing wasp-os
 ------------------
 
-.. _Main OS nRF Connect:
+.. _Main OS Gadgetbridge:
 
-nRF Connect for Android
-~~~~~~~~~~~~~~~~~~~~~~~
+Gadgetbridge for Android
+~~~~~~~~~~~~~~~~~~~~~~~~
 
-To install the main firmware using nRF Connect for Android:
+To install the main firmware using Gadgetbridge for Android:
 
 * Copy ``micropython.zip`` (see :ref:`Building wasp-os from source`) to
   your Android device and download
-  `nRF Connect <https://play.google.com/store/apps/details?id=no.nordicsemi.android.mcp>`_
+  `Gadgetbridge <https://f-droid.org/en/packages/nodomain.freeyourgadget.gadgetbridge/>`_
   for Android if you do not already have it.
 * Ensure the watch is running in :ref:`OTA update mode<OTA update mode>`.
 * Connect to the device (e.g. *PineDFU* if you have a PineTime) using
-  nRFConnect, click the DFU button and send ``micropython.zip`` to the device.
+  Gadgetbridge, use the file browser application and send ``micropython.zip`` to the 
+  device.
 * When the upload is complete the watch will reboot and launch the digital
   clock application.
+
+.. note::
+
+    GadgetBridge may list PINE DFU as an unsupported device. This prevents users from 
+    sending the ``micropython.zip`` file to the device. Do the following to work around
+    this: In GadgetBridge, go to discovery and pairing options and allow unsupported 
+    devices.
+      
+    The Pinetime will show up as an unsupported device. Long-press it and select Add
+    as a test device. A list of devices will show up. Scroll down to Pinetime and select
+    it. The device will be added and you then can upload the ``micropython.zip`` file.
 
 .. _Main OS DaFlasher:
 
@@ -584,8 +600,14 @@ A default version of ``main.py`` is installed automatically when wasp-os initial
 formats the external flash as a file system.
 
 Most problems with normal mode operation occur either because ``main.py`` is
-missing, out-of-date or corrupt. These issues most commonly result in an
-entirely black screen when running the watch is running in normal mode.
+missing, out-of-date or corrupt, or because too many applications are being started
+by default, resulting in the system running out of RAM.
+
+Out of memory problems are best addressed by reducing the number of applications you
+have set to automatically load (auto_load in wasp.toml). If you are developing your
+own application, it is best that you load the minimal set of applications to have
+the maximum possible amount of available RAM and minimum fragmentation. For example,
+only autoloading the software app will get you the maximum amount of RAM.
 
 .. note::
 
