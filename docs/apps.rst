@@ -61,6 +61,8 @@ Applications
 
 .. automodule:: level
 
+.. automodule:: month
+
 .. automodule:: morse
 
 .. automodule:: music_player
