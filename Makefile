@@ -23,10 +23,13 @@ clean :
 		reloader/build-$(BOARD) reloader/src/boards/$(BOARD)/bootloader.h \
 		micropython/mpy-cross/build \
 		micropython/ports/nrf/build-$(BOARD)-s132 \
+		apps/*.mpy \
+		build-$(BOARD) \
 		wasp/boards/$(BOARD)/watch.py \
 		wasp/apps/user \
 		wasp/boards/manifest_user_apps.py \
 		wasp/appregistry.py
+	find . -type f -name '*.py[co]' -delete -o -type d -name __pycache__ -delete
 
 # Avoid a recursive update... it grabs far too much
 submodules :
