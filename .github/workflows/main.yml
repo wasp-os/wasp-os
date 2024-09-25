@@ -68,35 +68,35 @@ jobs:
 
     - name: Upload full binary distribution
       id:   upload-binaries
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v4
       with:
           name: wasp-os-${{ github.sha }}
           path: wasp-os-${{ github.sha }}.tar.gz
 
     - name: Upload pinetime binaries
       id:   upload-pinetime
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v4
       with:
           name: pinetime-${{ github.sha }}
           path: build-pinetime
 
     - name: Upload Colmi P8 binaries
       id:   upload-p8
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v4
       with:
           name: p8-${{ github.sha }}
           path: build-p8
 
     - name: Upload Senbono K9 binaries
       id:   upload-k9
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v4
       with:
           name: k9-${{ github.sha }}
           path: build-k9
 
     - name: Upload extra apps binaries
       id:   upload-apps
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v4
       with:
           name: apps-${{ github.sha }}
           path: apps/*.mpy
