@@ -59,6 +59,8 @@ Applications
 
 .. automodule:: heart
 
+.. automodule:: kbdemo
+
 .. automodule:: level
 
 .. automodule:: morse
