@@ -6,6 +6,9 @@ let
   ifLinux = pkgs.lib.optionals pkgs.stdenv.isLinux;
 
 in pkgs.mkShell {
+  buildInputs = ifLinux [
+    pkgs.gobject-introspection
+  ];
   nativeBuildInputs = [
     (pkgs.python3.withPackages (pp: with pp; [
       cbor
