@@ -69,13 +69,13 @@ To build wasp-os with docker, ensure it is installed and running, then open a te
     cd wasp-os
     ~/wasp-os/tools/docker/shell
 
-This will create a new user with restricted privilages, and drop you into a bash shell.
+This will create a new user with restricted privileges, and drop you into a bash shell.
 
 Some important things to note:
 
 All ``make`` commands should be usable from this shell,
 including ``make sim`` and ``make check``. Some commands that interact with
-bluetooth such as ``wasptool`` may not work, for now.
+Bluetooth, such as ``wasptool``, may not work, for now.
 
 Install prerequisites via Nix
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -184,8 +184,8 @@ and then scroll down to find the artifacts):
 
     If you have a sealed device (e.g. no means to debrick your watch using
     an SWD debug probe) then be aware that, because CI builds are cutting
-    edge, there is a smal risk of bricking. In particular it is
-    strongly recommended not to install the booloader from the CI builds
+    edge, there is a small risk of bricking. In particular it is
+    strongly recommended not to install the bootloader from the CI builds
     on sealed devices. Instead use the bootloader from the previous official
     release. If in doubt... wait!
 
@@ -345,10 +345,10 @@ can be used to install wasp-bootloader:
   your Android device and download
   `Gadgetbridge <https://f-droid.org/en/packages/nodomain.freeyourgadget.gadgetbridge/>`_
   for Android if you do not already have it.
-* Wake the device so that Infinitime is showing a watch face.
-* Connect to the *Infinitime* device usnig Gadgetbridge, tap on the "+" button on the 
-  bottom right of the screen to add a new device, *Infinitime* should be detected.
-* Tap on it and Gadgdetbridge will pair and connect to your device. Use the file browser
+* Wake the device so that InfiniTime is showing a watch face.
+* Connect to the *InfiniTime* device using Gadgetbridge, tap on the "+" button on the
+  bottom right of the screen to add a new device, *InfiniTime* should be detected.
+* Tap on it and Gadgetbridge will pair and connect to your device. Use the file browser
   application and find and send ``reloader-mcuboot.zip`` to the device.
 * When the progress meter reaches 100% Gadgetbridge will disconnect
   and the watch will reboot.
@@ -551,7 +551,7 @@ mode pressing the physical button will attempt to launch the application.
 .. note::
 
     To remain in OTA update mode it is import to release the button as
-    soon as the boot logo appears otherwise you may acidentally request
+    soon as the boot logo appears otherwise you may accidentally request
     the bootloader restart the application!
 
 When the bootloader starts it will display a boot logo for two seconds and will
