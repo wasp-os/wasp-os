@@ -524,3 +524,43 @@ class Draw565(object):
         b = bm - step if bm > step else 0
 
         return (r | g | b)
+
+    def bezier(self, color, precision, control_points):
+        """Draw a bezier curve using control points and specific precision.
+
+        The precision determines how many samples along the line will be taken.
+        When precision is higher, the function is *much* slower, but also draws nicer lines.
+        Control points define the curve, and should be a list of tuples of (x, y) coordinates.
+
+        Example:
+
+        .. code-block:: python
+
+            draw.bezier(0xf800, 100, [(0, 0), (1, 1), (2, 0)])
+
+        :param color:           A RGB565 color in which the curve will be drawn.
+        :param precision:       An integer that controls how precise the line is.
+        :param control_points:  A list of tuples (x, y) that contains the control points for the bezier curve.
+        """
+        def factorial(n):
+            return 1 if n < 2 else n * factorial(n-1)
+        k = len(control_points)
+        kfac = factorial(k)
+        def bezier_pt(u):
+            def binomial(n, p):
+                kn = kfac / (factorial(n) * factorial(k - n))
+                return control_points[n-1][p] * kn * (1-u)**(k-n) * u ** n
+            x = sum([binomial(n+1, 0) for n in range(k)])
+            y = sum([binomial(n+1, 1) for n in range(k)])
+            return x, y
+        a = [bezier_pt(float(n) / precision) for n in range(precision + 1)]
+        x, y = zip(*a)
+        for i in range(1, len(x)):
+            xp = x[i - 1]
+            xn = x[i]
+            yp = y[i - 1]
+            yn = y[i]
+            if xp > xn:
+                xp, xn = xn, xp
+                yp, yn = yn, yp
+            self.line(int(xp), int(yp), int(xn), int(yn), color=color)
