@@ -50,6 +50,15 @@ icon = (
 _STOPPED = const(0)
 _RUNNING = const(1)
 _RINGING = const(2)
+_SELECT = const(3)
+
+_FIVE_BUTTON = const(0)
+_TEN_BUTTON = const(1)
+_FIFTEEN_BUTTON = const(2)
+_THIRTY_BUTTON = const(3)
+_FORTY_FIVE_BUTTON = const(4)
+_SIXTY_BUTTON = const(5)
+_CUSTOM_BUTTON = const(6)
 
 _BUTTON_Y = const(200)
 
@@ -61,23 +70,31 @@ class TimerApp():
 
     def __init__(self):
         """Initialize the application."""
+        self.current_alarm = None
+        self.state = _SELECT
         self.minutes = widgets.Spinner(50, 60, 0, 99, 2)
         self.seconds = widgets.Spinner(130, 60, 0, 59, 2)
-        self.current_alarm = None
-
-        self.minutes.value = 10
-        self.state = _STOPPED
 
     def foreground(self):
         """Activate the application."""
+        self.quick_btns = (widgets.Button(20, 50, 60, 40, '5'),
+                                 widgets.Button(90, 50, 60, 40, '10'),
+                                 widgets.Button(160, 50, 60, 40, '15'),
+                                 widgets.Button(20, 100, 60, 40, '30'),
+                                 widgets.Button(90, 100, 60, 40, '45'),
+                                 widgets.Button(160, 100, 60, 40, '60'),
+                                 widgets.Button(20, 150, 200, 40, 'Custom'))
         self._draw()
         wasp.system.request_event(wasp.EventMask.TOUCH)
         wasp.system.request_tick(1000)
 
     def background(self):
         """De-activate the application."""
-        if self.state == _RINGING:
-            self.state = _STOPPED
+        if self.state == _RINGING or self.state == _STOPPED:
+            self.state = _SELECT
+
+        self.quick_btns = None
+        del self.quick_btns
 
     def tick(self, ticks):
         """Notify the application that its periodic tick is due."""
@@ -88,7 +105,28 @@ class TimerApp():
 
     def touch(self, event):
         """Notify the application of a touchscreen touch event."""
-        if self.state == _RINGING:
+        if self.state == _SELECT:
+            for btn_idx, btn in enumerate(self.quick_btns):
+                if btn.touch(event):
+                    if btn_idx == _CUSTOM_BUTTON:
+                        self._set_delay()
+                        self.state = _STOPPED
+                        self._draw()
+                    else:
+                        if btn_idx == _FIVE_BUTTON:
+                            self._set_delay(5)
+                        elif btn_idx == _TEN_BUTTON:
+                            self._set_delay(10)
+                        elif btn_idx == _FIFTEEN_BUTTON:
+                            self._set_delay(15)
+                        elif btn_idx == _THIRTY_BUTTON:
+                            self._set_delay(30)
+                        elif btn_idx == _FORTY_FIVE_BUTTON:
+                            self._set_delay(45)
+                        elif btn_idx == _SIXTY_BUTTON:
+                            self._set_delay(60)
+                        self._start()
+        elif self.state == _RINGING:
             mute = wasp.watch.display.mute
             mute(True)
             self._stop()
@@ -102,7 +140,6 @@ class TimerApp():
                 y = event[2]
                 if y >= _BUTTON_Y:
                     self._start()
-
 
     def _start(self):
         self.state = _RUNNING
@@ -119,12 +156,16 @@ class TimerApp():
     def _draw(self):
         """Draw the display from scratch."""
         draw = wasp.watch.drawable
+        draw.set_color(0)
         draw.fill()
         sbar = wasp.system.bar
         sbar.clock = True
         sbar.draw()
 
-        if self.state == _RINGING:
+        if self.state == _SELECT:
+            for btn in self.quick_btns:
+                btn.draw()
+        elif self.state == _RINGING:
             draw.set_font(fonts.sans24)
             draw.string(self.NAME, 0, 150, width=240)
             draw.blit(icon, 73, 50)
@@ -171,3 +212,7 @@ class TimerApp():
         self.state = _RINGING
         wasp.system.wake()
         wasp.system.switch(self)
+
+    def _set_delay(self, minutes = 10):
+        self.minutes.value = minutes
+        self.seconds.value = 0
