@@ -34,43 +34,36 @@ class BatteryMeter:
 
         The update is lazy and won't redraw unless the level has changed.
         """
-        icon = icons.battery
+        icon = icons.battery_h
         draw = watch.drawable
 
-        if watch.battery.charging():
-            if self.level != -1:
-                draw.blit(icon, 239-icon[1], 0,
-                             fg=wasp.system.theme('battery'))
-                self.level = -1
-        else:
-            level = watch.battery.level()
-            if level == self.level:
-                return
+        batt_state = 'battery-charging' if watch.battery.charging() else 'battery'
 
+        level = watch.battery.level()
+        if level == self.level:
+            return
+        # Draw the battery icon
+        draw.blit(icon, 239-icon[1], 0, fg=wasp.system.theme(batt_state))
+        # Determine color to use for the indicator based on battery level
+        # Green channel is fully on (64) at 100% battery, decreases as the battery depletes
+        green = int(63 * (level / 100))
+        # Red channel works backwards, fully off at 100% battery, increasing as the battery depletes
+        red = int(31 * ((100 - level) / 100))
 
-            green = level // 3
-            if green > 31:
-                green = 31
-            red = 31-green
-            rgb = (red << 11) + (green << 6)
+        # Cram the above values into a 16-bit RGB565 value
+        rgb = (red << 11) + (green << 5)
+            
+        w = icon[1] - 8
+        x = 239 - 5 - w
+        h = 26
+        # Fill the battery icon with the color
+        draw.fill(rgb, x, 3, w, h)
 
-            if self.level < 0 or ((level > 5) ^ (self.level > 5)):
-                if level  > 5:
-                    draw.blit(icon, 239-icon[1], 0,
-                             fg=wasp.system.theme('battery'))
-                else:
-                    rgb = 0xf800
-                    draw.blit(icon, 239-icon[1], 0, fg=0xf800)
+        draw.set_font(fonts.sans18)
+        draw.set_color(0, rgb)
+        draw.string('{:02d}'.format(level), x, 7, w )
 
-            w = icon[1] - 10
-            x = 239 - 5 - w
-            h = 2*level // 11
-            if 18 - h:
-                draw.fill(0, x, 9, w, 18 - h)
-            if h:
-                draw.fill(rgb, x, 27 - h, w, h)
-
-            self.level = level
+        self.level = level
 
 class Clock:
     """Small clock widget."""
