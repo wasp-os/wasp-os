@@ -170,3 +170,31 @@ dist: docs
 	find $(DIST) -name __pycache__ | xargs $(RM) -r
 	tar -C .. -zcf $(DIST).tar.gz $(notdir $(DIST))
 	(cd ..; zip -9r $(DIST).zip $(notdir $(DIST)))
+
+build-docker-image:
+	docker compose \
+	    --file ./tools/docker/docker-compose-build.yml \
+	    build \
+	        --pull
+
+push-docker-image:
+	docker compose \
+	    --file ./tools/docker/docker-compose-build.yml \
+	    push
+
+run-docker-image:
+	docker run \
+	    --rm \
+	    --volume=$$(pwd):/project/ \
+	    --volume=/run/dbus:/run/dbus:ro \
+	    --user=$$(id -u):$$(id -g) \
+	    --userns=host \
+	    --net=host \
+	    --hostname="wasp-os-dev" \
+	    --name="wasp-os-dev" \
+	    --init \
+	    --interactive \
+	    --tty \
+	    --entrypoint="" \
+	    wasp-os/wasp-os-dev:0.1.0 \
+	        bash
