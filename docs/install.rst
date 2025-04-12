@@ -52,29 +52,31 @@ tested using the `GNU-RM toolchain
     link time optimization is enabled during the MicroPython build
     (LTO is enabled by default).
 
-Install prerequisites via docker
+Install prerequisites via Docker
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 .. note::
 
-    If you want to use the Docker-based setup, it is assumed that you're using
-    and x86 machine on Linux, running Xorg. Other setups may require some
-    patching for now.
+    For the Docker-based setup, an x86 host machine running Linux with Xorg is
+    assumed.  Other setups may require some patching for now.
 
-To build wasp-os with docker, ensure it is installed and running, then open a terminal and run the following commands in your home directory:
+To build or flash wasp-os with Docker, ensure `Docker is installed and set up
+<https://docs.docker.com/engine/install/>`_.
+Then, run the following commands from within the project's root path:
 
 .. code-block:: sh
 
-    git clone https://github.com/wasp-os/wasp-os
-    cd wasp-os
-    ~/wasp-os/tools/docker/shell
+    make build-docker-image
+    make run-docker-image
 
-This will create a new user with restricted privileges, and drop you into a bash shell.
+This will build the wasp-os Docker image locally and launch an interactive
+container from it.  The Docker container runs BASH from the project's root path
+and all ``make`` commands should be usable from this shell, including ``make
+sim`` and ``make check``.
 
-Some important things to note:
-
-All ``make`` commands should be usable from this shell,
-including ``make sim`` and ``make check``. Some commands that interact with
-Bluetooth, such as ``wasptool``, may not work, for now.
+Some commands that interact with Bluetooth, such as ``wasptool``, require that
+Bluetooth is enabled in the host OS.  Bluetooth devices will then be accessible
+from within the Docker container.
 
 Install prerequisites via Nix
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
