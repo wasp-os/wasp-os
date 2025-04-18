@@ -1,6 +1,7 @@
 cbor
 click
 cryptography
+meson-python
 numpy
 pexpect
 Pillow
