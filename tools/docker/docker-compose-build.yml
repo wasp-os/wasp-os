@@ -1,0 +1,15 @@
+x-build-template:
+  &build-default
+  build:
+    context: ../../
+    dockerfile: ./tools/docker/Dockerfile
+    args:
+      - DOCKER_IMG_VER=${DOCKER_IMG_VER}
+  image: wasp-os/wasp-os-dev:${DOCKER_IMG_VER}
+
+services:
+  build-ver:
+    *build-default
+  build-latest:
+    << : *build-default
+    image: wasp-os/wasp-os-dev:latest
