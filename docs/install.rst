@@ -299,6 +299,9 @@ display with touch screen, a step counter and a heart rate sensor.
     boot wasp-os successfully but the step counter application will
     be disabled and cannot function.
 
+    The newer "Colmi P8 Plus" is based on the GR5515 instead of NRF52832
+    and is currently unsupported.
+
 DaFlasher for Android can be used to install both the
 :ref:`wasp-bootloader<Bootloader DaFlasher>` and the
 :ref:`main OS image<Main OS DaFlasher>`. No tools or disassembly is
