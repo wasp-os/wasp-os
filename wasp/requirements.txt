@@ -1,6 +1,7 @@
 cbor
 click
 cryptography
+ecdsa
 meson-python
 numpy
 pexpect
@@ -10,4 +11,5 @@ pygobject
 pyserial
 pysdl2
 pytest
+recommonmark
 tomli
