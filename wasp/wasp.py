@@ -144,6 +144,10 @@ class Manager():
         self._charging = True
         self._scheduled = False
         self._scheduling = False
+        self._imu_int = None
+        if hasattr(watch.accel, '_int1'):
+            self._imu_int = PinHandler(watch.accel._int1)
+            watch.accel.set_tap(1)
 
     def secondary_init(self):
         global free
@@ -381,9 +385,12 @@ class Manager():
             self.tick_period_ms = 0
             self.tick_expiry = None
 
-    def keep_awake(self):
+    def keep_awake(self, at=None):
         """Reset the keep awake timer."""
-        self.sleep_at = watch.rtc.uptime + self.blank_after
+        if at:
+            self.sleep_at = watch.rtc.uptime + at
+        else:
+            self.sleep_at = watch.rtc.uptime + self.blank_after
 
     def sleep(self):
         """Enter the deepest sleep state possible.
@@ -397,7 +404,7 @@ class Manager():
         self._charging = watch.battery.charging()
         self.sleep_at = None
 
-    def wake(self):
+    def wake(self, at=None):
         """Return to a running state.
         """
         if not self.sleep_at:
@@ -501,6 +508,11 @@ class Manager():
             if 1 == self._button.get_event() or \
                     self._charging != watch.battery.charging():
                 self.wake()
+            if self._imu_int:
+                if self._imu_int.get_event():
+                    if watch.accel.tapped:
+                        watch.accel.steps += 1
+                        self.wake(at=5)
 
     def run(self, no_except=True):
         """Run the system manager synchronously.
