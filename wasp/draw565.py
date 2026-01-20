@@ -129,7 +129,7 @@ class Draw565(object):
     def fill(self, bg=None, x=0, y=0, w=None, h=None):
         """Draw a solid colour rectangle.
 
-        If no arguments a provided the whole display will be filled with
+        If no arguments are provided the whole display will be filled with
         the background colour (typically black).
 
         :param bg: Background colour (in RGB565 format)
