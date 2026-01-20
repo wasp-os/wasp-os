@@ -58,15 +58,22 @@ def test_font_width(draw):
         if f.max_ch() >= 90:
             assert draw.bounding_box('IIII')[0] < draw.bounding_box('WWWW')[0]
 
-@pytest.mark.parametrize("input,expected", (
-    ('abc', [0, 3]),
-    ('one.two', [0, 7]),
-    ('one two', [0, 7]),
-    ('one two three', [0, 13]),
-    ('abcdefghijklmnopqrstuvwxyz', [0, 17, 26]),
-    ('abcdefghijklm nopqrstuvwxyz', [0, 14, 27]),
-    ('abcde fghij klmno pqrst uvwxyz', [0, 18, 30]),
+@pytest.mark.parametrize("input,prefer_spaces,expected", (
+    ('abc', True, [0, 3]),
+    ('abc', False, [0, 3]),
+    ('one.two', True, [0, 7]),
+    ('one.two', False, [0, 7]),
+    ('one two', True, [0, 7]),
+    ('one two', False, [0, 7]),
+    ('one two three', True, [0, 13]),
+    ('one two three', False, [0, 13]),
+    ('abcdefghijklmnopqrstuvwxyz', True, [0, 17, 26]),
+    ('abcdefghijklmnopqrstuvwxyz', False, [0, 17, 26]),
+    ('abcdefghijklm nopqrstuvwxyz', True, [0, 14, 27]),
+    ('abcdefghijklm nopqrstuvwxyz', False, [0, 17, 27]),
+    ('abcde fghij klmnopqrst uvwxyz', True, [0, 12, 29]),
+    ('abcde fghij klmnopqrst uvwxyz', False, [0, 18, 29]),
 
 ))
-def test_wrap(draw, input, expected):
-    assert draw.wrap(input, 240) == expected
+def test_wrap(draw, input, prefer_spaces, expected):
+    assert draw.wrap(input, 240, prefer_spaces) == expected
