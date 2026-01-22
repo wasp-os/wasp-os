@@ -46,7 +46,8 @@ class HRS3300:
 
         # 64x gain
         #w(_HGAIN, 0x10)
-        w(_HGAIN, 0x03)
+        # 8x gain
+        w(_HGAIN, 0xc)
 
     def read_reg(self, addr):
         return self._i2c.readfrom_mem(_I2CADDR, addr, 1)[0]
