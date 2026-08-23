@@ -15,6 +15,7 @@ class DefaultTheme():
     BLE_COLOR = 0x7bef
     SCROLL_INDICATOR_COLOR = 0x7bef
     BATTERY_COLOR = 0x7bef
+    BATTERY_CHARGING_COLOR = 0xffe0
     SMALL_CLOCK_COLOR = 0xe73c
     NOTIFICATION_COLOR = 0x7bef
     BRIGHT = 0xffff
@@ -32,6 +33,7 @@ class DefaultTheme():
             *split_bytes(self.BLE_COLOR),
             *split_bytes(self.SCROLL_INDICATOR_COLOR),
             *split_bytes(self.BATTERY_COLOR),
+            *split_bytes(self.BATTERY_CHARGING_COLOR),
             *split_bytes(self.SMALL_CLOCK_COLOR),
             *split_bytes(self.NOTIFICATION_COLOR),
             *split_bytes(self.BRIGHT),
