@@ -1,6 +1,22 @@
 Watch Application System in Python
 ==================================
 
+IMPORTANT: LOOKIKNG FOR NEW MAINTAINER(S)
+-----------------------------------------
+
+Wasp-os is no longer being actively maintained by its original author. There
+are still some very helpful people floating round the project but new developers
+would still be very welcome.
+
+In particular wasp-os is based on a relatively old verson of Micropython and
+would benefit from a version unlift (this needs skill in both Python and
+embedded C). 
+
+Also needed is a release manager to fix the CI builds and to build, test and
+issue new releases. Currently the binary releases (up to wasp-os-0.4) have been
+withdrawn because they do not support the third-geneation PineTime. Until these
+are fixed then building from source is the best (and only) option.
+
 Introduction
 ------------
 
