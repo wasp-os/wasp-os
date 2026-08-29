@@ -12,10 +12,10 @@ In particular wasp-os is based on a relatively old verson of Micropython and
 would benefit from a version unlift (this needs skill in both Python and
 embedded C). 
 
-Also needed is a release manager to fix the CI builds and to build, test and
-issue new releases. Currently the binary releases (up to wasp-os-0.4) have been
-withdrawn because they do not support the third-geneation PineTime. Until these
-are fixed then building from source is the best (and only) option.
+Also needed is a release manager to build, test and issue new releases. Currently
+the binary releases (up to wasp-os-0.4) have been withdrawn because they do not
+support the third-geneation PineTime. Until these are fixed then building from
+source is the best (and only) option.
 
 Introduction
 ------------
