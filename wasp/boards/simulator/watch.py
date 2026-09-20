@@ -124,7 +124,7 @@ class RTC(object):
         #if self.uptime < 60:
         #    # Jump back a little over a day
         #    return time.localtime(time.time() - 100000)
-        return time.localtime()[:8]
+        return time.localtime()
 
     def get_time(self):
         now = self.get_localtime()
