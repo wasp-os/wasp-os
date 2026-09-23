@@ -27,6 +27,8 @@ from apps.system.launcher import LauncherApp
 from apps.system.pager import PagerApp, CrashApp, NotificationApp
 from apps.system.step_counter import StepCounterApp
 
+from keyboard import Keyboard
+
 class EventType():
     """Enumerated interface actions.
 
