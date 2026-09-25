@@ -205,15 +205,18 @@ def handle_memory_free(c):
     print(f'"{version}",{before_gc},{after_gc}')
 
 def handle_reset(c, ota=False):
-    cmd = 'reset'
+    cmd = 'machine.reset'
     if ota:
-        cmd = 'enter_ota_dfu'
+        # Firmware built on the wasp-os fork of MicroPython provides
+        # machine.enter_ota_dfu(); firmware built on upstream MicroPython
+        # provides the standard machine.bootloader() instead.
+        cmd = "getattr(machine, 'enter_ota_dfu', getattr(machine, 'bootloader', None))"
 
     c.send('\x05')
     c.expect('=== ')
     c.sendline('import machine')
     c.expect('=== ')
-    c.sendline(f'machine.{cmd}()')
+    c.sendline(f'{cmd}()')
     c.expect('=== ')
     c.send('\x04')
 

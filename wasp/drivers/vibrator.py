@@ -22,8 +22,6 @@ class Vibrator(object):
         """
         pin.value(active_low)
         self.pin = pin
-        self.freq = PWM.FREQ_16MHZ
-        self.period = 16000
         self.active_low = active_low
 
     def pulse(self, duty=25, ms=40):
@@ -32,7 +30,13 @@ class Vibrator(object):
         :param int duty: Duty cycle, in percent.
         :param int ms:   Duration, in milliseconds.
         """
-        pwm = PWM(0, self.pin, freq=self.freq, duty=duty, period=self.period)
+        if hasattr(PWM, 'FREQ_16MHZ'):
+            # PWM API of the wasp-os fork of MicroPython (v1.12 based):
+            # 16MHz clock with a period of 16000 ticks gives 1kHz.
+            pwm = PWM(0, self.pin, freq=PWM.FREQ_16MHZ, duty=duty, period=16000)
+        else:
+            # Standard machine.PWM API of upstream MicroPython.
+            pwm = PWM(self.pin, freq=1000, duty=duty)
         pwm.init()
         time.sleep_ms(ms)
         pwm.deinit()

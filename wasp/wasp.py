@@ -184,16 +184,20 @@ class Manager():
         """
         if isinstance(app, str):
             modname = app[:app.rindex('.')]
-            exec('import ' + modname)
+            # Use an explicit namespace: since Python 3.13 exec() inside a
+            # function works on a snapshot of the locals, so the import
+            # would not be visible to the eval() (and 'del' would fail).
+            ns = {}
+            exec('import ' + modname, ns)
             if no_except:
                 try:
-                    app = eval(app + '()')
+                    app = eval(app + '()', ns)
                 except:
                     app = None
             else:
-                    app = eval(app + '()')
-            exec('del ' + modname)
-            exec('del sys.modules["' + modname + '"]')
+                    app = eval(app + '()', ns)
+            del ns
+            del sys.modules[modname]
             if not app:
                 return
 
@@ -526,7 +530,7 @@ class Manager():
             # below
             while True:
                 self._tick()
-                machine.deepsleep()
+                machine.lightsleep()
 
         while True:
             try:
@@ -545,7 +549,11 @@ class Manager():
             # ticks. In other words this code will break if we improve the
             # power management... we are currently relying on not being able
             # to stay in the low-power state for very long.
-            machine.deepsleep()
+            #
+            # lightsleep() is a plain wait-for-event on the nRF port. Do not
+            # use deepsleep() here: since upstream MicroPython v1.20 that
+            # resets the chip on nRF.
+            machine.lightsleep()
 
     def _work(self):
         self._scheduled = False

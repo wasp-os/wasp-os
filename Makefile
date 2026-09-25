@@ -65,27 +65,15 @@ wasp/boards/$(BOARD_SAFE)/watch.py : wasp/boards/$(BOARD_SAFE)/watch.py.in
 		|| ($(RM) wasp/boards/$(BOARD)/watch.py; false)
 
 micropython/mpy-cross/mpy-cross:
-	$(MAKE) -C micropython/mpy-cross \
-		CWARN="-Wall -Wno-error"
-		# ^ Disable some Werrors from GCC>=13, specifically
-		#     - dangling-pointer
-		#     - enum-int-mismatch
-		#   TODO update micropython and remove.
-		#   https://github.com/wasp-os/wasp-os/issues/493
+	$(MAKE) -C micropython/mpy-cross
 
 micropython: build-$(BOARD_SAFE) wasp/boards/manifest_user_apps.py wasp/boards/$(BOARD_SAFE)/watch.py micropython/mpy-cross/mpy-cross
 	$(RM) micropython/ports/nrf/build-$(BOARD)-s132/frozen_content.c
 	$(MAKE) -C micropython/ports/nrf \
 		BOARD=$(BOARD) SD=s132 \
-		MICROPY_VFS_LFS2=1 \
+		BOARD_DIR=$(CURDIR)/wasp/boards/$(BOARD)/micropython \
 		FROZEN_MANIFEST=$(CURDIR)/wasp/boards/$(BOARD)/manifest.py \
-		USER_C_MODULES=$(CURDIR)/wasp/modules \
-		COPT="-Wno-error"
-		# ^ Disable some Werrors from GCC>=13, specifically
-		#     - dangling-pointer
-		#     - enum-int-mismatch
-		#   TODO update micropython and remove.
-		#   https://github.com/wasp-os/wasp-os/issues/493
+		USER_C_MODULES=$(CURDIR)/wasp/modules
 	$(PYTHON) -m nordicsemi dfu genpkg \
 		--dev-type 0x0052 \
 		--application micropython/ports/nrf/build-$(BOARD)-s132/firmware.hex \

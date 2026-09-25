@@ -1,16 +1,42 @@
 # SPDX-License-Identifier: LGPL-3.0-or-later
 # Copyright (C) 2020 Daniel Thompson
 
+# Silence the C-level boot heartbeat (see wasp/modules/waspnrf/modwaspnrf.c):
+# it pulses the vibration motor every 2 seconds until told Python has
+# started, which is a useful physical signal if boot ever hangs before
+# reaching this point.
+import waspnrf
+waspnrf.boot_done()
+
 def nop():
     pass
 schedule = nop
+
+# The bootloader starts a 5 second watchdog before handing over to us. We
+# feed it from the RTC tick (8Hz, called from interrupt context) unless the
+# button is held down, which turns a long press into a reset into the
+# bootloader (see "Watchdog protocol" in docs/wasp.rst). This used to be
+# done in C by the wasp-os fork of MicroPython; poking the WDT reload
+# register directly lets us run on an unmodified upstream MicroPython.
+# (waspnrf also feeds the watchdog independently from a hardware timer,
+# started before any Python runs, to cover the gap before this RTC
+# callback exists -- this is a deliberate belt-and-braces duplicate.)
+from micropython import const
+from machine import mem32, Pin
+_WDT_RR0 = const(0x40010600)    # NRF_WDT->RR[0]
+_WDT_RELOAD = const(0x6E524635)
+_wdt_button = Pin('BUTTON', Pin.IN)
+Pin('BUTTON_EN', Pin.OUT, value=1)
 def _callback(obj):
+    if not _wdt_button.value():
+        mem32[_WDT_RR0] = _WDT_RELOAD
     schedule()
 
-# Start measuring time (and feeding the watchdog) before *anything* else
+# Start measuring time (and feeding the watchdog) before *anything* else.
+# RTC0 belongs to the SoftDevice and RTC1 to MicroPython's time.ticks_*().
 from machine import RTCounter
 from drivers.nrf_rtc import RTC
-rtc = RTC(RTCounter(1, mode=RTCounter.PERIODIC, period=1, callback=_callback))
+rtc = RTC(RTCounter(2, mode=RTCounter.PERIODIC, period=1, callback=_callback))
 rtc.counter.start()
 
 import gc
@@ -33,7 +59,7 @@ from drivers.st7789 import ST7789_SPI
 from drivers.vibrator import Vibrator
 from flash.flash_spi import FLASH
 
-from ubluepy import uart_connected as connected
+from waspnrf import uart_connected as connected
 
 class Backlight(object):
     lo = Pin("BL_LO", Pin.OUT, value=0)
@@ -62,7 +88,17 @@ class Backlight(object):
 # Setup the display (and manage the backlight)
 backlight = Backlight(0)
 spi = SPI(0)
+# Upstream's nrf SPI init() silently ignores a re-init (it checks for
+# NRFX_ERROR_INVALID_STATE but nrfx v3 returns NRFX_ERROR_ALREADY), so
+# deinit first to make the mode/baudrate change take effect.
+spi.deinit()
 spi.init(polarity=1, phase=1, baudrate=8000000)
+
+# Create the SPI NOR flash driver now, while the heap is still almost
+# empty: it allocates a 4KB sector buffer that needs a contiguous block,
+# and on upstream MicroPython the heap is too fragmented for that by the
+# time the rest of the hardware has been brought up.
+flash = FLASH(spi, (Pin('NOR_CS', Pin.OUT, value=1),))
 display = ST7789_SPI(240, 240, spi,
         cs=Pin("DISP_CS", Pin.OUT),
         dc=Pin("DISP_DC", Pin.OUT),
@@ -98,9 +134,8 @@ try:
                     _callback)
     vibrator = Vibrator(Pin('MOTOR', Pin.OUT, value=0), active_low=True)
 
-    # Mount the filesystem
+    # Mount the filesystem (the driver object was created early, see above)
     boot_msg("Init SPINOR")
-    flash = FLASH(spi, (Pin('NOR_CS', Pin.OUT, value=1),))
     try:
         boot_msg("Mount FS")
         os.mount(flash, '/flash')
