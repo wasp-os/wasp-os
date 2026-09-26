@@ -26,6 +26,8 @@ class CST816S:
         self.schedule = schedule
         self.dbuf = bytearray(6)
         self.event = array.array('H', (0, 0, 0))
+        self._gesture_released = True
+        self._last_gesture_ms = -1000000
 
         self._reset()
         self.tp_int.irq(trigger=Pin.IRQ_FALLING, handler=self.get_touch_data)
@@ -56,7 +58,57 @@ class CST816S:
         except OSError:
             return None
 
-        event[0] = dbuf[0] # event
+        raw = dbuf[0]
+
+        # dbuf[1] is the touch point count register (see e.g. InfiniTime's
+        # Cst816s.h touchPointNumIndex): the low nibble is the number of
+        # fingers currently in contact with the screen, independent of
+        # dbuf[0]'s gesture code.
+        touching = (dbuf[1] & 0x0f) > 0
+
+        # Directional swipe (event codes 1-4; 5 is a plain touch/drag,
+        # never gated since e.g. dragging a Slider needs a fresh
+        # coordinate on every sample). The CST816S's on-chip gesture
+        # recognizer does not report a slide exactly once per physical
+        # swipe: confirmed on real hardware, during a single continuous
+        # drag it keeps reporting a gesture code -- and can even alternate
+        # between different ones (e.g. UP, a plain TOUCH, then DOWN) --
+        # for as long as contact continues, sometimes well beyond the
+        # duration of a normal swipe motion.
+        #
+        # InfiniTime's TouchHandler::ProcessTouchInfo works around the
+        # same chip behaviour with a "gestureReleased" latch: once a slide
+        # gesture has been accepted, further ones are ignored until the
+        # touch point count goes back to 0 (the finger is lifted). Using
+        # *only* that latch turned out to be unsafe here, though: this
+        # chip does not reliably generate any further interrupt at all
+        # once a gesture has been reported and the finger stays down or
+        # is lifted without further movement -- confirmed on real
+        # hardware, a swipe worked exactly once and then never again
+        # until reset, because we were waiting for a "touching went back
+        # to 0" event that never arrived to reopen the latch. So the
+        # latch is combined with a time-based fallback: it still reopens
+        # immediately on a genuine observed release (for quick, responsive
+        # back-to-back swipes), but reopens after a fixed cooldown
+        # regardless, so a release that is never reported can't leave
+        # swiping permanently dead.
+        if not touching:
+            self._gesture_released = True
+
+        if 0 < raw < 5:
+            if not touching:
+                return
+            now = time.ticks_ms()
+            if not self._gesture_released and \
+                    time.ticks_diff(now, self._last_gesture_ms) < 300:
+                return
+            self._gesture_released = False
+            self._last_gesture_ms = now
+
+        if raw == 0:
+            return
+
+        event[0] = raw # event
         event[1] = ((dbuf[2] & 0xf) << 8) + dbuf[3] # x coord
         event[2] = ((dbuf[4] & 0xf) << 8) + dbuf[5] # y coord
 
@@ -90,6 +142,7 @@ class CST816S:
         """
         self._reset()
         self.event[0] = 0
+        self._gesture_released = True
 
     def sleep(self):
         """Put touch controller chip on sleep mode to save power.
@@ -105,3 +158,4 @@ class CST816S:
 
         # Ensure get_event() cannot return anything
         self.event[0] = 0
+        self._gesture_released = True

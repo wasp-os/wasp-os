@@ -111,11 +111,12 @@ class ST7789Sim(object):
 class CST816SSim():
     def __init__(self):
         self.regs = bytearray(64)
+        self._have_data = False
 
     def readfrom_mem_into(self, addr, reg, dbuf, pins):
         tick(pins)
 
-        if not self.regs[1]:
+        if not self._have_data:
             raise OSError
 
         dbuf[:] = self.regs[reg:len(dbuf)+reg]
@@ -123,6 +124,7 @@ class CST816SSim():
             self.regs[3] = 0
         else:
             self.regs[1] = 0
+        self._have_data = False
 
     def writeto_mem(self, addr, reg, buf, pins):
         tick(pins)
@@ -153,7 +155,20 @@ class CST816SSim():
         elif key.keysym.sym == sdl2.SDLK_n:
             # Allow NEXT to be tested on the simulator
             self.regs[1] = 253
+        self.regs[2] = 1 # touching: this is a complete gesture in one go
         self.regs[3] = 0x80
+        self._have_data = True
+        self.raise_interrupt(pins)
+
+        # A real touch controller reports touching for as long as contact
+        # continues and only clears it once the finger is lifted; the
+        # driver relies on that transition to know a gesture is over and
+        # rearm itself for the next one (see cst816s.py's
+        # _gesture_released). A key press is a single, instantaneous
+        # gesture, so immediately simulate the release too.
+        self.regs[1] = 0
+        self.regs[2] = 0
+        self._have_data = True
         self.raise_interrupt(pins)
 
     def handle_mousebuttondown(self, button, pins):
@@ -186,6 +201,15 @@ class CST816SSim():
 
         self.regs[4] = up_x;
         self.regs[6] = up_y;
+        self.regs[2] = 1 # touching: this is a complete gesture in one go
+        self._have_data = True
+        self.raise_interrupt(pins)
+
+        # See handle_key(): simulate the release too, so the driver's
+        # gesture latch rearms for the next touch.
+        self.regs[1] = 0
+        self.regs[2] = 0
+        self._have_data = True
         self.raise_interrupt(pins)
 
     def press(self, x, y):
@@ -193,6 +217,13 @@ class CST816SSim():
         self.regs[1] = 5
         self.regs[4] = x
         self.regs[6] = y
+        self.regs[2] = 1
+        self._have_data = True
+        self.raise_interrupt(pins)
+
+        self.regs[1] = 0
+        self.regs[2] = 0
+        self._have_data = True
         self.raise_interrupt(pins)
 
     def swipe(self, direction):
@@ -208,7 +239,14 @@ class CST816SSim():
         elif direction == 'next':
             # Allow NEXT to be tested on the simulator
             self.regs[1] = 253
+        self.regs[2] = 1
         self.regs[3] = 0x80
+        self._have_data = True
+        self.raise_interrupt(pins)
+
+        self.regs[1] = 0
+        self.regs[2] = 0
+        self._have_data = True
         self.raise_interrupt(pins)
 
     def raise_interrupt(self, pins):
