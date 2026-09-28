@@ -1,107 +1,151 @@
 # SPDX-License-Identifier: LGPL-3.0-or-later
 # Copyright (C) 2026 Michiel W. Beijen
 
-"""Cache-free SPI NOR flash block device for LittleFS
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+"""SPI NOR flash block device for LittleFS
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Exposes the chip's own 4 KiB erase sector as the LittleFS block size and
 implements the erase ioctl, so LittleFS (which only ever programs freshly
-erased bytes) writes straight to the chip. The generic FlashDevice base
-class instead presents 512 byte blocks and emulates them with a
-read-modify-write cache of a whole sector, which permanently costs 4 KiB
-of heap -- more than 10% of the nRF52832's -- as one contiguous block.
+erased bytes) writes straight to the chip without a read-modify-write
+sector cache. The chip is kept in deep power down between operations.
 """
 
+import time
 from micropython import const
-from bdevice import BlockDevice
-from flash.flash_spi import FLASH
 
 _SEC_BITS = const(12)  # 4 KiB erase sectors
+_SEC_SIZE = const(4096)
 _PAGE = const(256)     # page-program granularity
-_WREN = const(6)
-_PP = const(1)         # index into the command set: page program
 
-class NORFlash(FLASH):
+_READ = const(0x03)
+_PP = const(0x02)      # page program
+_SE = const(0x20)      # sector erase
+_WREN = const(0x06)    # write enable
+_RDSR1 = const(0x05)   # read status register 1
+_RDID = const(0x9f)    # read JEDEC ID
+_DP = const(0xb9)      # deep power down
+_RDP = const(0xab)     # release from deep power down
+
+class NORFlash:
     """SPI NOR flash driver.
 
     .. automethod:: __init__
     """
-    def __init__(self, spi, cspins, size=None, verbose=True):
-        """Specify the bus and chip select(s) of the NOR flash.
+    def __init__(self, spi, cs):
+        """Specify the bus and chip select of the NOR flash.
 
         :param machine.SPI spi: The SPI bus the flash is attached to.
-        :param tuple cspins:    Chip select pins, one per chip.
-        :param int size:        Size per chip in KiB, or None to detect.
-        :param bool verbose:    Report the detected chip(s) on the console.
+        :param machine.Pin cs:  The chip select pin.
         """
         self._spi = spi
-        self._cspins = cspins
-        self._ccs = None
-        self._bufp = bytearray(6)
-        self._mvp = memoryview(self._bufp)
-        self._page_size = _PAGE
-        self._buf = bytearray(32)  # used by is_empty()
-        self._mvbuf = memoryview(self._buf)
-        self.sec_size = 1 << _SEC_BITS
-        size = self.scan(verbose, size)
-        BlockDevice.__init__(self, _SEC_BITS, len(cspins), size * 1024)
-        if size <= 4096:
-            self._cmds = b'\x03\x02\x20'  # 3 byte addresses
-            self._cmdlen = 4
-        else:
-            self._cmds = b'\x13\x12\x21'  # 4 byte addresses
-            self._cmdlen = 5
+        self._cs = cs
+        self._buf = bytearray(4)
+        self._mv = memoryview(self._buf)
+        self._chk = bytearray(32)
+
+        self._wake()
+        mv = self._mv
+        mv[0] = _RDID
+        cs(0)
+        spi.write_readinto(mv, mv)
+        cs(1)
+        self._cmd(_DP)
+        self._size = 1 << mv[3]
+        if self._size > 1 << 24:
+            raise ValueError('only 3 byte addressing is supported')
 
     def readblocks(self, blocknum, buf, offset=0):
-        self.rdchip(offset + (blocknum << _SEC_BITS), memoryview(buf))
+        self._read(offset + (blocknum << _SEC_BITS), buf)
 
     def writeblocks(self, blocknum, buf, offset=None):
         addr = blocknum << _SEC_BITS
         if offset is None:
             # Simple (whole block) protocol: the caller expects an erase.
-            self._sector_erase(addr)
+            self._erase(addr)
         else:
             addr += offset
         self._program(addr, memoryview(buf))
 
     def ioctl(self, op, arg):
         if op == 4:  # block count
-            return self._a_bytes >> _SEC_BITS
+            return self._size >> _SEC_BITS
         if op == 5:  # block size
-            return 1 << _SEC_BITS
+            return _SEC_SIZE
         if op == 6:  # erase block
-            self._sector_erase(arg << _SEC_BITS)
+            self._erase(arg << _SEC_BITS)
             return 0
         # 1 (init), 2 (deinit), 3 (sync): nothing to do
 
+    def _cmd(self, cmd):
+        self._buf[0] = cmd
+        self._cs(0)
+        self._spi.write(self._mv[:1])
+        self._cs(1)
+
+    def _wake(self):
+        self._cmd(_RDP)
+        time.sleep_us(100)
+
+    def _start(self, cmd, addr):
+        mv = self._mv
+        mv[0] = cmd
+        mv[1] = addr >> 16
+        mv[2] = (addr >> 8) & 0xff
+        mv[3] = addr & 0xff
+        self._cs(0)
+        self._spi.write(mv)
+
+    def _wait_rdy(self):
+        mv = self._mv
+        while True:
+            mv[0] = _RDSR1
+            self._cs(0)
+            self._spi.write_readinto(mv[:2], mv[:2])
+            self._cs(1)
+            if not mv[1] & 1:
+                break
+            time.sleep_ms(1)
+        self._cmd(_DP)
+
+    def _read(self, addr, buf):
+        self._wake()
+        self._start(_READ, addr)
+        self._spi.readinto(buf)
+        self._cs(1)
+        self._cmd(_DP)
+
+    def _erase(self, addr):
+        # Skip the erase (and its wear) if the sector is already blank.
+        chk = self._chk
+        blank = True
+        self._wake()
+        self._start(_READ, addr)
+        for _ in range(_SEC_SIZE // len(chk)):
+            self._spi.readinto(chk)
+            if any(b != 0xff for b in chk):
+                blank = False
+                break
+        self._cs(1)
+        if blank:
+            self._cmd(_DP)
+            return
+        self._cmd(_WREN)
+        self._start(_SE, addr)
+        self._cs(1)
+        self._wait_rdy()
+
     def _program(self, addr, mv):
-        mvp = self._mvp
         nbytes = len(mv)
         start = 0
         while nbytes:
             # A page program wraps around within the page: never cross one.
             n = min(nbytes, _PAGE - (addr & (_PAGE - 1)))
-            self._getaddr(addr, 1)
-            cs = self._ccs
             self._wake()
             self._cmd(_WREN)
-            mvp[0] = self._cmds[_PP]
-            cs(0)
-            self._spi.write(mvp[:self._cmdlen])
+            self._start(_PP, addr)
             self._spi.write(mv[start:start + n])
-            cs(1)
+            self._cs(1)
             self._wait_rdy()
             nbytes -= n
             start += n
             addr += n
-
-    # FlashDevice's cached byte-level API is not available on this driver.
-    def sync(self):
-        return 0
-
-    def read(self, addr, mvb):
-        self.rdchip(addr, mvb)
-        return mvb
-
-    def write(self, addr, mvb):
-        raise OSError('unsupported')

@@ -28,9 +28,3 @@ freeze('../..', manifest_240x240.manifest + manifest_user_apps.manifest +
     ),
     opt=3
 )
-freeze('../../drivers/flash',
-    (
-        'bdevice.py',
-        'flash/flash_spi.py'
-    ), opt=3
-)
