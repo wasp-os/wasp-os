@@ -57,7 +57,7 @@ from drivers.hrs3300 import HRS3300
 from drivers.signal import Signal
 from drivers.st7789 import ST7789_SPI
 from drivers.vibrator import Vibrator
-from flash.flash_spi import FLASH
+from drivers.nor_flash import NORFlash
 
 from waspnrf import uart_connected as connected
 
@@ -94,11 +94,7 @@ spi = SPI(0)
 spi.deinit()
 spi.init(polarity=1, phase=1, baudrate=8000000)
 
-# Create the SPI NOR flash driver now, while the heap is still almost
-# empty: it allocates a 4KB sector buffer that needs a contiguous block,
-# and on upstream MicroPython the heap is too fragmented for that by the
-# time the rest of the hardware has been brought up.
-flash = FLASH(spi, (Pin('NOR_CS', Pin.OUT, value=1),))
+flash = NORFlash(spi, (Pin('NOR_CS', Pin.OUT, value=1),))
 display = ST7789_SPI(240, 240, spi,
         cs=Pin("DISP_CS", Pin.OUT),
         dc=Pin("DISP_DC", Pin.OUT),
