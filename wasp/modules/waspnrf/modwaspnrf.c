@@ -9,7 +9,6 @@
 #include "py/mphal.h"
 #include "nrf.h"
 
-#include "nrfx_timer.h"
 #include "hal/nrf_gpio.h"
 #include "hal/nrf_wdt.h"
 #include "hal/nrf_clock.h"
@@ -22,38 +21,44 @@
 // --- watchdog feeder --------------------------------------------------------
 //
 // The wasp-bootloader starts a 5 second watchdog before handing over to us
-// (see "Watchdog protocol" in docs/wasp.rst). We feed it from a hardware
-// timer interrupt, started from MICROPY_BOARD_EARLY_INIT() before any Python
-// runs, unless the button is held down. Holding the button therefore resets
-// the watch into the bootloader, and a Python exception at boot leaves the
-// REPL alive instead of rebooting.
+// (see "Watchdog protocol" in docs/wasp.rst). wasp_wdt_feed() is the only
+// thing that feeds it: once here at early init, and after that from the
+// 8 Hz RTC callback in watch.py via waspnrf.feed(). The RTC callback runs in
+// interrupt context, so long-running Python code does not starve it.
+//
+// It never feeds while the button is held down, so holding the button always
+// resets the watch into the bootloader. Once Python has called
+// waspnrf.alive() for the first time it also requires that it keeps doing
+// so: wasp's system manager calls it on every tick, and if those calls stop
+// for WASP_WDT_GRACE_MS the watchdog resets the watch. Without this a fatal
+// error (whose handler is an endless loop) or a hung main loop left the
+// watch dead with the RTC interrupt still feeding the watchdog. Until the
+// first call it is fed unconditionally, which covers booting and keeps the
+// REPL usable if booting fails with a Python exception.
+//
+// (This used to be fed from a TIMER4 interrupt as well, but the port's
+// timer_init0() uninitialises TIMER4 moments after MICROPY_BOARD_EARLY_INIT,
+// so that interrupt never ran.)
 
 #ifndef WASP_WDT_BUTTON
 #define WASP_WDT_BUTTON      (13)   // PineTime: active high
 #define WASP_WDT_BUTTON_EN   (15)   // must be driven high to read the button
 #endif
 
-static const nrfx_timer_t wasp_wdt_timer = NRFX_TIMER_INSTANCE(4);
+#define WASP_WDT_GRACE_MS    (5000)
 
-// Boot heartbeat (temporary diagnostic): until Python calls
-// waspnrf.boot_done() the motor (P16, active low) pulses for one timer tick
-// every two seconds. Continuous heartbeat == C start-up never reached Python.
-#define WASP_MOTOR (16)
-static volatile bool wasp_python_started;
-static volatile uint32_t wasp_hb_ticks;
+static bool wasp_wdt_armed;
+static uint32_t wasp_wdt_last_alive;
 
-static void wasp_wdt_timer_handler(nrf_timer_event_t event_type, void *p_context) {
-    if (!nrf_gpio_pin_read(WASP_WDT_BUTTON)) {
-        nrf_wdt_reload_request_set(NRF_WDT, NRF_WDT_RR0);
+static void wasp_wdt_feed(void) {
+    if (nrf_gpio_pin_read(WASP_WDT_BUTTON)) {
+        return;
     }
-    if (!wasp_python_started) {
-        wasp_hb_ticks++;
-        if ((wasp_hb_ticks % 8) == 0) {
-            nrf_gpio_pin_clear(WASP_MOTOR);   // on
-        } else {
-            nrf_gpio_pin_set(WASP_MOTOR);     // off
-        }
+    if (wasp_wdt_armed &&
+        (uint32_t)(mp_hal_ticks_ms() - wasp_wdt_last_alive) > WASP_WDT_GRACE_MS) {
+        return;
     }
+    nrf_wdt_reload_request_set(NRF_WDT, NRF_WDT_RR0);
 }
 
 // The bootloader stops the LFCLK right before jumping to us, and MicroPython
@@ -74,7 +79,6 @@ static void wasp_start_lfclk(void) {
 }
 
 void wasp_early_init(void) {
-    nrf_gpio_cfg_output(WASP_MOTOR); nrf_gpio_pin_set(WASP_MOTOR); // motor off
     wasp_start_lfclk();
 
     // Boot probe: backlight dim (BL_LO=P14 active low) as early as possible.
@@ -88,22 +92,10 @@ void wasp_early_init(void) {
     nrf_gpio_pin_set(WASP_WDT_BUTTON_EN);
     nrf_gpio_cfg_input(WASP_WDT_BUTTON, NRF_GPIO_PIN_NOPULL);
 
-    nrfx_timer_config_t config = {
-        .frequency = 1000000,
-        .mode = NRF_TIMER_MODE_TIMER,
-        .bit_width = NRF_TIMER_BIT_WIDTH_32,
-        .interrupt_priority = 6, // SoftDevice compatible
-        .p_context = NULL,
-    };
-    nrfx_timer_init(&wasp_wdt_timer, &config, wasp_wdt_timer_handler);
-    nrfx_timer_extended_compare(&wasp_wdt_timer, NRF_TIMER_CC_CHANNEL0,
-        nrfx_timer_ms_to_ticks(&wasp_wdt_timer, 250),
-        NRF_TIMER_SHORT_COMPARE0_CLEAR_MASK, true);
-    nrfx_timer_enable(&wasp_wdt_timer);
-
-    // First feed straight away: the bootloader may have used up most of the
-    // 5 seconds already (e.g. drawing the splash screen).
-    nrf_wdt_reload_request_set(NRF_WDT, NRF_WDT_RR0);
+    // Feed straight away: the bootloader may have used up most of the 5
+    // seconds already (e.g. drawing the splash screen). From here watch.py's
+    // RTC callback, set up as the very first thing it does, takes over.
+    wasp_wdt_feed();
 }
 
 // --- machine.bootloader() -------------------------------------------------
@@ -136,12 +128,18 @@ static mp_obj_t waspnrf_uart_enabled(void) {
 }
 static MP_DEFINE_CONST_FUN_OBJ_0(waspnrf_uart_enabled_obj, waspnrf_uart_enabled);
 
-static mp_obj_t waspnrf_boot_done(void) {
-    wasp_python_started = true;
-    nrf_gpio_pin_set(WASP_MOTOR);
+static mp_obj_t waspnrf_alive(void) {
+    wasp_wdt_last_alive = mp_hal_ticks_ms();
+    wasp_wdt_armed = true;
     return mp_const_none;
 }
-static MP_DEFINE_CONST_FUN_OBJ_0(waspnrf_boot_done_obj, waspnrf_boot_done);
+static MP_DEFINE_CONST_FUN_OBJ_0(waspnrf_alive_obj, waspnrf_alive);
+
+static mp_obj_t waspnrf_feed(void) {
+    wasp_wdt_feed();
+    return mp_const_none;
+}
+static MP_DEFINE_CONST_FUN_OBJ_0(waspnrf_feed_obj, waspnrf_feed);
 
 static mp_obj_t waspnrf_enter_ota_dfu(void) {
     wasp_enter_bootloader();
@@ -154,7 +152,8 @@ static const mp_rom_map_elem_t waspnrf_module_globals_table[] = {
     { MP_ROM_QSTR(MP_QSTR_uart_connected), MP_ROM_PTR(&waspnrf_uart_connected_obj) },
     { MP_ROM_QSTR(MP_QSTR_uart_enabled), MP_ROM_PTR(&waspnrf_uart_enabled_obj) },
     { MP_ROM_QSTR(MP_QSTR_enter_ota_dfu), MP_ROM_PTR(&waspnrf_enter_ota_dfu_obj) },
-    { MP_ROM_QSTR(MP_QSTR_boot_done), MP_ROM_PTR(&waspnrf_boot_done_obj) },
+    { MP_ROM_QSTR(MP_QSTR_alive), MP_ROM_PTR(&waspnrf_alive_obj) },
+    { MP_ROM_QSTR(MP_QSTR_feed), MP_ROM_PTR(&waspnrf_feed_obj) },
 };
 static MP_DEFINE_CONST_DICT(waspnrf_module_globals, waspnrf_module_globals_table);
 

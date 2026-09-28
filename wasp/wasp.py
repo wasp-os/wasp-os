@@ -82,6 +82,11 @@ class PinHandler():
         self._value = new_value
         return new_value
 
+# Liveness signal for the watchdog, if the board provides one (see
+# boards/pinetime/watch.py.in): calling it on every tick proves that the
+# system manager is still running.
+_alive = getattr(watch, 'alive', None)
+
 def _key_app(d):
     """Get a sort key for apps."""
     return d.NAME
@@ -466,6 +471,9 @@ class Manager():
         circuit logic to quickly exit if we haven't reached a tick
         expiry point.
         """
+        if _alive:
+            _alive()
+
         rtc = watch.rtc
         update = rtc.update()
 

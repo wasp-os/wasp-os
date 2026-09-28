@@ -168,10 +168,9 @@ The application's role is to carefully pet the watchdog so that it will
 trigger automatically if the hardware button is held down for five
 seconds. Key points for application robustness include:
 
-1. Unlike a normal watchdog we can be fairly reckless about where in the
+1. Unlike a normal watchdog we can be fairly relaxed about where in the
    code we pet the dog. For example petting the dog from a timer interrupt
-   is fine because we only need the dog to bark if the hardware button is
-   pressed.
+   is fine, provided #4 below is honoured.
 
 2. The routine to pet the dog is predicated on the hardware button not
    being pressed.
@@ -179,8 +178,17 @@ seconds. Key points for application robustness include:
 3. The routine to pet the dog is also predicated on the hardware button
    still being correctly configured.
 
-To avoid mistakes the application should contain no subroutines that 
-unconditionally pet the dog; they should all implement #2 and #3 from
+4. Once the system is up, the routine to pet the dog is also predicated on
+   the main loop still running. Otherwise a timer interrupt keeps petting
+   the dog after a fatal error or a hang, and the watch stays dead until
+   the button is held down. On the PineTime the dog is petted from the
+   RTC interrupt, the system manager calls ``watch.alive()`` on every
+   tick, and petting stops if that has not happened for five seconds. The watchdog then resets the
+   watch into recovery mode, from where a button press returns to the
+   application.
+
+To avoid mistakes the application should contain no subroutines that
+unconditionally pet the dog; they should all implement #2 to #4 from
 the above list.
 
 Note: *nRF52 microcontrollers implement a distributed pin-muxing

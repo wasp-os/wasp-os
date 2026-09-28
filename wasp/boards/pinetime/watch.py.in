@@ -1,38 +1,22 @@
 # SPDX-License-Identifier: LGPL-3.0-or-later
 # Copyright (C) 2020 Daniel Thompson
 
-# Silence the C-level boot heartbeat (see wasp/modules/waspnrf/modwaspnrf.c):
-# it pulses the vibration motor every 2 seconds until told Python has
-# started, which is a useful physical signal if boot ever hangs before
-# reaching this point.
-import waspnrf
-waspnrf.boot_done()
-
 def nop():
     pass
 schedule = nop
 
-# The bootloader starts a 5 second watchdog before handing over to us. We
-# feed it from the RTC tick (8Hz, called from interrupt context) unless the
-# button is held down, which turns a long press into a reset into the
-# bootloader (see "Watchdog protocol" in docs/wasp.rst). This used to be
-# done in C by the wasp-os fork of MicroPython; poking the WDT reload
-# register directly lets us run on an unmodified upstream MicroPython.
-# (waspnrf also feeds the watchdog independently from a hardware timer,
-# started before any Python runs, to cover the gap before this RTC
-# callback exists -- this is a deliberate belt-and-braces duplicate.)
-from micropython import const
-from machine import mem32, Pin
-_WDT_RR0 = const(0x40010600)    # NRF_WDT->RR[0]
-_WDT_RELOAD = const(0x6E524635)
-_wdt_button = Pin('BUTTON', Pin.IN)
-Pin('BUTTON_EN', Pin.OUT, value=1)
+# The watchdog is fed by the waspnrf C module (see modwaspnrf.c), for as
+# long as the system manager keeps calling alive(): a hung main loop or a
+# fatal error therefore resets the watch. Holding the button stops the
+# feeding too, which turns a long press into a reset into the bootloader
+# (see "Watchdog protocol" in docs/wasp.rst). feed() applies those checks.
+from waspnrf import alive, feed
+
 def _callback(obj):
-    if not _wdt_button.value():
-        mem32[_WDT_RR0] = _WDT_RELOAD
+    feed()
     schedule()
 
-# Start measuring time (and feeding the watchdog) before *anything* else.
+# Start measuring time before *anything* else.
 # RTC0 belongs to the SoftDevice and RTC1 to MicroPython's time.ticks_*().
 from machine import RTCounter
 from drivers.nrf_rtc import RTC
