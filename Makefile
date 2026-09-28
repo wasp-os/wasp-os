@@ -132,9 +132,7 @@ check: wasp/boards/manifest_user_apps.py
 .PHONY: bootloader reloader docs micropython
 
 dist: DIST=../wasp-os-$(VERSION)
-dist: k9
-k9: p8
-p8: pinetime
+dist: pinetime
 pinetime : mrproper
 mrproper :
 	$(RM) -r \
@@ -144,7 +142,7 @@ mrproper :
 		reloader/src/boards/*/bootloader.h \
 		micropython/mpy-cross/build \
 		micropython/ports/nrf/build-*
-k9 p8 pinetime:
+pinetime:
 	$(RM) wasp/boards/$@/watch.py
 	$(MAKE) BOARD=$@ all
 dist: docs

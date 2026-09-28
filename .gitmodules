@@ -4,9 +4,6 @@
 [submodule "micropython"]
 	path = micropython
 	url = https://github.com/mbeijen/micropython
-[submodule "wasp/drivers/flash"]
-	path = wasp/drivers/flash
-	url = https://github.com/wasp-os/micropython-eeprom
 [submodule "tools/pynus"]
 	path = tools/pynus
 	url = https://github.com/wasp-os/pynus
