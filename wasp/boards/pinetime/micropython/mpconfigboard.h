@@ -17,8 +17,6 @@
 #define MICROPY_PY_MACHINE_ADC      (1)
 #define MICROPY_PY_MACHINE_TEMP     (1)
 #define MICROPY_HW_ENABLE_RNG       (1)
-// The battery voltage is sensed through a high impedance divider
-#define MICROPY_HW_SAADC_ACQTIME    NRF_SAADC_ACQTIME_40US
 
 // wasp-os relies on micropython.schedule() to run application code outside
 // interrupt context (see wasp.py Manager._schedule/_work). Upstream only

@@ -16,7 +16,7 @@ class Battery(object):
     .. automethod:: __init__
     """
 
-    def __init__(self, battery, charging, power=None):
+    def __init__(self, battery, charging, power=None, sample_ns=None):
         """Specify the pins used to provide battery status.
 
         :param Pin battery:  The ADC-capable pin that can be used to measure
@@ -25,8 +25,15 @@ class Battery(object):
         :param Pin power:    A pin (or Signal) that reports whether the device
                              has external power, defaults to None (which means
                              use the charging pin for power reporting too).
+        :param int sample_ns: ADC acquisition time. Battery sense dividers
+                             are high impedance and read low with the
+                             default (3us on nRF52), defaults to None
+                             (which means use the port's default).
         """
-        self._battery = ADC(battery)
+        if sample_ns is None:
+            self._battery = ADC(battery)
+        else:
+            self._battery = ADC(battery, sample_ns=sample_ns)
         self._charging = charging
         self._power = power
         self._cache = array.array("I")

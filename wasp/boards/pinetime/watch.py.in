@@ -122,7 +122,8 @@ try:
     battery = Battery(
             Pin('BATTERY', Pin.IN),
             Signal(Pin('CHARGING', Pin.IN), invert=True),
-            Signal(Pin('USB_PWR', Pin.IN), invert=True))
+            Signal(Pin('USB_PWR', Pin.IN), invert=True),
+            sample_ns=40000)
     i2c = I2C(1, scl='I2C_SCL', sda='I2C_SDA')
     accel = BMA421(i2c)
     hrs = HRS3300(i2c)
