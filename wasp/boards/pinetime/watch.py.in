@@ -36,7 +36,9 @@ def _callback(obj):
 # RTC0 belongs to the SoftDevice and RTC1 to MicroPython's time.ticks_*().
 from machine import RTCounter
 from drivers.nrf_rtc import RTC
-rtc = RTC(RTCounter(2, mode=RTCounter.PERIODIC, period=1, callback=_callback))
+#build_time('BUILD_TIME')
+rtc = RTC(RTCounter(2, mode=RTCounter.PERIODIC, period=1, callback=_callback),
+          default=BUILD_TIME)
 rtc.counter.start()
 
 import gc

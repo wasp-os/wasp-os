@@ -25,13 +25,16 @@ class RTC(object):
     .. automethod:: __init__
     """
 
-    def __init__(self, counter):
+    def __init__(self, counter, default=(2020, 3, 1, 3, 0, 0, 0, 0)):
         """Wrap an RTCounter to provide a fully fledged Real Time Clock.
 
         If the PNVRAM is valid then we use it to initialize the RTC otherwise
-        we just make something up.
+        we fall back to the default time (the time of the build is a good
+        choice: it is the earliest the watch can possibly be running).
 
         :param RTCounter counter: The RTCCounter channel to adopt.
+        :param sequence default:  Wall time to start from after a cold boot,
+                                  formatted as (yyyy, mm, dd, HH, MM, SS, ...)
         """
         self.counter = counter
 
@@ -44,7 +47,7 @@ class RTC(object):
             machine.mem32[0x200039c0] = 0x1abe11ed
             machine.mem32[0x200039dc] = 0x10adab1e
             self._uptime = 0
-            self.set_localtime((2020, 3, 1, 3, 0, 0, 0, 0))
+            self.set_localtime(default)
 
     @micropython.native
     def update(self):
