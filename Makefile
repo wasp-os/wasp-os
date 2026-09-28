@@ -41,7 +41,7 @@ submodules :
 bootloader: build-$(BOARD_SAFE)
 	$(RM) bootloader/_build-$(BOARD)_nrf52832//$(BOARD)_nrf52832_bootloader-*-nosd.hex
 	$(MAKE) -C bootloader/ BOARD=$(BOARD)_nrf52832 all genhex
-	$(PYTHON) tools/hexmerge.py \
+	hexmerge.py \
 		bootloader/_build-$(BOARD)_nrf52832/$(BOARD)_nrf52832_bootloader-*-nosd.hex \
 		bootloader/lib/softdevice/s132_nrf52_6.1.1/s132_nrf52_6.1.1_softdevice.hex \
 		-o build-$(BOARD)/bootloader.hex
@@ -63,10 +63,10 @@ wasp/boards/$(BOARD_SAFE)/watch.py : wasp/boards/$(BOARD_SAFE)/watch.py.in
 	(cd wasp; ../tools/preprocess.py boards/$(BOARD)/watch.py.in > boards/$(BOARD)/watch.py) \
 		|| ($(RM) wasp/boards/$(BOARD)/watch.py; false)
 
-micropython/mpy-cross/mpy-cross:
+micropython/mpy-cross/build/mpy-cross:
 	$(MAKE) -C micropython/mpy-cross
 
-micropython: build-$(BOARD_SAFE) wasp/boards/manifest_user_apps.py wasp/boards/$(BOARD_SAFE)/watch.py micropython/mpy-cross/mpy-cross
+micropython: build-$(BOARD_SAFE) wasp/boards/manifest_user_apps.py wasp/boards/$(BOARD_SAFE)/watch.py micropython/mpy-cross/build/mpy-cross
 	$(RM) micropython/ports/nrf/build-$(BOARD)-s132/frozen_content.c
 	$(MAKE) -C micropython/ports/nrf \
 		BOARD=$(BOARD) SD=s132 \
@@ -104,8 +104,8 @@ debug:
 		-ex "attach 1" \
 		-ex "load"
 
-apps/%.mpy: apps/%.py micropython/mpy-cross/mpy-cross
-	./micropython/mpy-cross/mpy-cross -mno-unicode -march=armv7m $<
+apps/%.mpy: apps/%.py micropython/mpy-cross/build/mpy-cross
+	./micropython/mpy-cross/build/mpy-cross -march=armv7m $<
 APPS_PY=$(wildcard apps/*.py)
 APPS_MPY=$(APPS_PY:%.py=%.mpy)
 .PHONY: apps

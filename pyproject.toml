@@ -5,9 +5,13 @@ description = "Wasp-os: a MicroPython-based operating system for smart watches"
 readme = "README.rst"
 license = "LGPL-3.0-or-later"
 requires-python = ">=3.14"
-# Building firmware: DFU packaging and hex file manipulation
+# Building firmware: DFU packaging, hex file manipulation, and signing the
+# reloader image with mcuboot's imgtool (reloader/lib/mcuboot/scripts)
 dependencies = [
     "adafruit-nrfutil>=0.5.3.post16",
+    "cbor>=1.0.0",
+    "click",
+    "cryptography>=2.6",
     "intelhex>=2.3.0",
 ]
 
