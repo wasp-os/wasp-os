@@ -42,7 +42,7 @@ class Vibrator(object):
             self._pwm.init()
         return self._pwm
 
-    def pulse(self, duty=25, ms=40):
+    def pulse(self, duty=50, ms=40):
         """Briefly pulse the motor.
 
         :param int duty: Duty cycle, in percent.
