@@ -34,8 +34,11 @@ class Vibrator(object):
                 self._pwm = PWM(0, self.pin, freq=PWM.FREQ_16MHZ, duty=0,
                                  period=16000)
             else:
-                # Standard machine.PWM API of upstream MicroPython.
-                self._pwm = PWM(self.pin, freq=1000, duty=0)
+                # Standard machine.PWM API of upstream MicroPython. Without
+                # invert a duty of 0 holds the pin low, which switches an
+                # active low motor fully on.
+                self._pwm = PWM(self.pin, freq=1000, duty=0,
+                                invert=self.active_low)
             self._pwm.init()
         return self._pwm
 
@@ -60,22 +63,10 @@ class Vibrator(object):
             pwm.duty(duty)
             time.sleep_ms(ms)
         finally:
-            # Confirmed on real hardware: calling duty(0) on an
-            # already-running PWM does not reliably silence it on the nrf
-            # port -- the motor can be left buzzing indefinitely even
-            # though both pwm.duty() and the GPIO pin itself then report
-            # the correct "off" state, i.e. the peripheral's live output is
-            # not actually being updated even though software believes it
-            # is. A full deinit() (which stops and un-initializes the PWM
-            # peripheral outright, releasing the pin back to plain GPIO
-            # control) was confirmed to reliably stop it where duty(0)
-            # alone did not, so that -- not duty(0) -- is what we rely on
-            # to guarantee the motor is off, at the cost of reconstructing
-            # the PWM peripheral on the next pulse(). This is wrapped in
-            # try/finally so it still runs even if something in between
-            # raises (e.g. a scheduled callback processed during the
-            # sleep_ms()) -- without this a single such exception left the
-            # motor buzzing permanently.
+            # Release the PWM device after every pulse (the nRF52832 only
+            # has three) and hand the pin back to plain GPIO in its resting
+            # state. This runs in a finally so that the motor is switched
+            # off even if a scheduled callback raises during the sleep_ms().
             if self._pwm is not None:
                 self._pwm.deinit()
                 self._pwm = None
