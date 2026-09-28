@@ -12,34 +12,43 @@ Building wasp-os from source
 Install prerequisites
 ~~~~~~~~~~~~~~~~~~~~~
 
-Building wasp-os and launching the wasp-os simulator requires Python 3.6
-(or later) and the following python modules: click, numpy, pexpect, PIL
-(or Pillow), pydbus, pygobject, pyserial, pysdl2.
-
-On Debian Bookworm / Ubuntu 22.04 or later the required python modules can be
-obtained using the following commands:
-
-.. code-block:: sh
-
-    sudo apt install \
-      wget git build-essential libsdl2-2.0-0 python3-cbor python3-click \
-      python3-gi python3-numpy python3-pexpect python3-pil python3-pip \
-      python3-pydbus python3-sdl2 python3-serial python3-tomli unzip
-
-Additionally if you wish to regenerate the documentation you will require
-a complete sphinx toolchain:
+The Python tooling used to build wasp-os and run the simulator is managed
+with `uv <https://docs.astral.sh/uv/>`_, which also fetches a suitable Python
+(3.14 or later) if your system does not have one. After `installing uv
+<https://docs.astral.sh/uv/getting-started/installation/>`_, run this from
+the top of the wasp-os tree:
 
 .. code-block:: sh
 
-    sudo apt install sphinx graphviz python3-recommonmark
+    uv sync
 
-Alternatively, if your operating system does not package some or any of
-the above mentioned Python modules then you can install all of them
-with pip instead:
+This creates a ``.venv`` with everything needed to build firmware and run the
+simulator and its tests. Run ``make`` through uv so that it uses that
+environment, for example ``uv run make -j`nproc` BOARD=pinetime all`` or
+``uv run make check``.
+
+Talking to a watch over Bluetooth (``tools/wasptool``, OTA updates) needs two
+extra modules that build against system libraries, so install their
+development packages first and then add the ``ble`` group. On Debian or
+Ubuntu:
 
 .. code-block:: sh
 
-    pip3 install --user -r wasp/requirements.txt
+    sudo apt install libdbus-1-dev libgirepository-2.0-dev libcairo2-dev pkg-config
+    uv sync --group ble
+
+To regenerate the documentation add the ``docs`` group and install graphviz:
+
+.. code-block:: sh
+
+    sudo apt install graphviz
+    uv sync --group docs
+
+Everything else needs only the usual build tools:
+
+.. code-block:: sh
+
+    sudo apt install wget git build-essential unzip
 
 You will also need a toolchain for the Arm Cortex-M4. wasp-os is developed and
 tested using the `GNU-RM toolchain

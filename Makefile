@@ -1,4 +1,3 @@
-export PYTHONPATH := $(CURDIR)/tools/nrfutil:$(CURDIR)/tools/intelhex:$(PYTHONPATH)
 
 PYTHON ?= python3
 PYTEST ?= $(PYTHON) -m pytest

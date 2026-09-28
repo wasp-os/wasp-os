@@ -39,33 +39,41 @@ jobs:
       id: install-packages
       run:  |
           sudo apt-get update
-          sudo apt-get install -y python3-sphinx python3-cryptography python3-cbor graphviz
-          sudo pip3 install recommonmark tomli
+          sudo apt-get install -y graphviz
+
+    - name: Install uv
+      uses: astral-sh/setup-uv@v6
+      with:
+          enable-cache: true
+
+    - name: Install python modules
+      id:   install-modules
+      run:  uv sync --locked --group docs
 
     - name: Update submodules
       id:   update-submodules
       run:  |
           export PATH=$PATH:${{ runner.temp }}/arm-none-eabi/bin
-          make -j `nproc` submodules
+          uv run make -j `nproc` submodules
 
     - name: Download softdevice
       id:   download-softdevice
       run:  |
           export PATH=$PATH:${{ runner.temp }}/arm-none-eabi/bin
-          make -j `nproc` softdevice
+          uv run make -j `nproc` softdevice
 
     - name: Build wasp-os binary distribution
       id:   binary-distribution
       run:  |
           export PATH=$PATH:${{ runner.temp }}/arm-none-eabi/bin
-          make -j `nproc` VERSION=${{ github.sha }} dist
+          uv run make -j `nproc` VERSION=${{ github.sha }} dist
           mv ../wasp-os-${{ github.sha }}.tar.gz .
 
     - name: Build extra apps
       id:   apps
       run:  |
           export PATH=$PATH:${{ runner.temp }}/arm-none-eabi/bin
-          make -j `nproc` apps
+          uv run make -j `nproc` apps
 
     - name: Upload full binary distribution
       id:   upload-binaries

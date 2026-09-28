@@ -14,3 +14,6 @@ wasp/apps/user
 wasp/appregistry.py
 .idea
 .vscode
+
+# uv-managed virtualenv
+/.venv/
