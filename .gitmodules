@@ -9,7 +9,7 @@
 	url = https://github.com/wasp-os/pynus
 [submodule "tools/ota-dfu"]
 	path = tools/ota-dfu
-	url = https://github.com/wasp-os/ota-dfu-python
+	url = https://github.com/mbeijen/ota-dfu-python
 [submodule "reloader"]
 	path = reloader
 	url = https://github.com/wasp-os/wasp-reloader
