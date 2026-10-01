@@ -25,10 +25,13 @@ sim = [
     "pysdl2-dll",
     "pytest",
 ]
-# Talking to a watch over Bluetooth (tools/wasptool, tools/pynus, OTA DFU).
-# dbus-python and pygobject build against system headers: install your
-# distro's libdbus-1 and gobject-introspection development packages first.
+# Talking to a watch over Bluetooth: bleak for OTA updates (tools/ota-dfu),
+# dbus-python and pygobject for the console (tools/pynus), pexpect for
+# tools/wasptool. dbus-python and pygobject build against system headers:
+# install your distro's libdbus-1 and gobject-introspection development
+# packages first.
 ble = [
+    "bleak>=3.0",
     "dbus-python",
     "pexpect",
     "pygobject",

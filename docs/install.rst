@@ -571,17 +571,27 @@ To install the main firmware using DaFlasher for Android:
 wasptool for GNU/Linux
 ~~~~~~~~~~~~~~~~~~~~~~
 
-To install the main firmware from a GNU/Linux workstation:
+To install the main firmware from a GNU/Linux workstation, set up the ``ble``
+environment (``uv sync --group ble``). If the watch is running wasp-os, one
+command puts it into :ref:`OTA update mode<OTA update mode>` and uploads
+``micropython.zip`` (see :ref:`Building wasp-os from source`):
 
-* Ensure the watch is running in :ref:`OTA update mode<OTA update mode>`.
-* Look up the MAC address for your watch (try: ``sudo hcitool lescan``\ ).
-* Use ota-dfu to upload ``micropython.zip`` (see
-  :ref:`Building wasp-os from source`) to the device, from the ``ble``
-  environment (``uv sync --group ble``). For example:
-  ``uv run --group ble tools/ota-dfu/dfu.py -z build-pinetime/micropython.zip -a A0:B1:C2:D3:E3:F5 --legacy``
+.. code-block:: sh
 
-If the watch is running wasp-os, ``uv run --group ble tools/wasptool
---bootloader`` puts it into OTA update mode first.
+    uv run --group ble tools/wasptool --ota build-pinetime/micropython.zip
+
+A full update takes about three and a half minutes.
+
+If the watch is already in OTA update mode, use ota-dfu directly with the
+watch's Bluetooth address (``bluetoothctl scan le`` lists it; the bootloader
+advertises as *PineDFU*):
+
+.. code-block:: sh
+
+    uv run --group ble tools/ota-dfu/dfu.py --legacy \
+      -z build-pinetime/micropython.zip -a A0:B1:C2:D3:E3:F5
+
+Both exit with a non-zero status if the update fails.
 
 .. _Troubleshooting:
 
