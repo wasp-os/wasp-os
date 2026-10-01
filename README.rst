@@ -8,10 +8,11 @@ Since November 2026 wasp-os is maintained by Michiel W. Beijen, taking over
 from its original author, Daniel Thompson. See the `announcement
 <https://github.com/wasp-os/wasp-os/discussions/537>`_ for what is coming.
 
-Help is very welcome. In particular, wasp-os is based on a relatively old
-version of MicroPython. Moving it to a current release is in progress, and
-the other watches will need porting to it too (this needs skill in both
-Python and embedded C).
+Help is very welcome. wasp-os now builds against current upstream
+MicroPython, but so far only for the PineTime: the Colmi P8 and Senbono K9
+still need porting to it (this needs skill in both Python and embedded C;
+the PineTime's board definition in ``wasp/boards/pinetime/micropython``
+shows what is needed).
 
 The binary releases (up to wasp-os-0.4) have been withdrawn because they do
 not support the third-generation PineTime. Until there are new releases,

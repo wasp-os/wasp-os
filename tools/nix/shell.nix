@@ -10,23 +10,27 @@ in pkgs.mkShell {
     pkgs.gobject-introspection
   ];
   nativeBuildInputs = [
+    # Mirrors pyproject.toml (this shell uses nixpkgs' Python packages
+    # rather than uv)
     (pkgs.python3.withPackages (pp: with pp; [
+      # Firmware build
+      adafruit-nrfutil
       cbor
       click
       cryptography
+      intelhex
+
+      # Simulator, tests and the Bluetooth tools
       dbus-python
       numpy
       pexpect
       pillow
       pygobject3
       pysdl2
-      pyserial
-      tomli
 
       pytest
 
       # Docs
-      recommonmark
       sphinx
     ] ++ ifLinux [
       bluepy
