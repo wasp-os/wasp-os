@@ -14,6 +14,7 @@ import icons
 
 import io
 import sys
+from gadgetbridge import send_cmd
 
 class PagerApp():
     """Show a long text message in a pager."""
@@ -116,6 +117,7 @@ class NotificationApp(PagerApp):
     def touch(self, event):
         if self.confirmation_view.touch(event):
             if self.confirmation_view.value:
+                send_cmd('{"t":"notify", "n":"dismiss_all"} ')
                 wasp.system.notifications = {}
                 wasp.system.navigate(wasp.EventType.BACK)
             else:
