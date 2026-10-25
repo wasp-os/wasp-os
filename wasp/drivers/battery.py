@@ -74,13 +74,13 @@ class Battery(object):
 
         if self._charging.value():  # if charging, reset cache
             if len(cache):
-                cache = array.array("I")
+                self._cache = array.array("I")
             return mv
         if len(cache) < 2:
             cache.append(mv)
             return mv
         if len(cache) > 2:  # should not happen
-            cache = cache[-2:]
+            cache = self._cache = cache[-2:]
         if mv != cache[0] and mv != cache[1]:
             cache[0] = cache[1]
             cache[1] = mv
