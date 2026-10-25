@@ -3,7 +3,7 @@
 	url = https://github.com/wasp-os/wasp-bootloader
 [submodule "micropython"]
 	path = micropython
-	url = https://github.com/mbeijen/micropython
+	url = https://github.com/micropython/micropython
 [submodule "tools/pynus"]
 	path = tools/pynus
 	url = https://github.com/wasp-os/pynus
