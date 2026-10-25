@@ -27,6 +27,7 @@ rtc.counter.start()
 
 import gc
 import os
+import sys
 import time
 
 import draw565
@@ -92,6 +93,25 @@ def boot_msg(s):
     if safe_mode:
         time.sleep_ms(500)
 
+def i2c_recover():
+    # A sensor that browned out mid-transfer (e.g. after the battery ran
+    # flat) can hold SDA low forever. Clock SCL until it lets go, then
+    # issue a STOP. The nrf port has no Pin.OPEN_DRAIN so emulate it:
+    # drive low with OUT, release to the board's pull-ups with IN.
+    sda = Pin('I2C_SDA', Pin.IN)
+    if sda.value():
+        return
+    for _ in range(9):
+        Pin('I2C_SCL', Pin.OUT, value=0)
+        time.sleep_us(5)
+        Pin('I2C_SCL', Pin.IN)
+        time.sleep_us(5)
+        if sda.value():
+            break
+    Pin('I2C_SDA', Pin.OUT, value=0)
+    time.sleep_us(5)
+    Pin('I2C_SDA', Pin.IN)
+
 safe_mode = False
 boot_msg("Init button")
 button = Pin('BUTTON', Pin.IN)
@@ -108,10 +128,15 @@ try:
             Signal(Pin('CHARGING', Pin.IN), invert=True),
             Signal(Pin('USB_PWR', Pin.IN), invert=True),
             sample_ns=40000)
+    i2c_recover()
     i2c = I2C(1, scl='I2C_SCL', sda='I2C_SDA')
     accel = BMA421(i2c)
     hrs = HRS3300(i2c)
-    hrs.disable()
+    try:
+        hrs.disable()
+    except OSError as e:
+        # Not fatal: a stuck HRS must not stop the filesystem mounting
+        sys.print_exception(e)
     touch = CST816S(i2c,
                     Pin('TP_INT', Pin.IN), Pin('TP_RST', Pin.OUT, value=0),
                     _callback)
@@ -142,8 +167,12 @@ try:
         boot_msg("main.py")
     else:
         boot_msg("Safe mode")
-except:
+except BaseException as e:
+    sys.print_exception(e)
     drawable.string("FAILED", 0, 136, width=240)
+    drawable.string('{} {}'.format(type(e).__name__,
+                                   e.args[0] if e.args else ''),
+                    0, 160, width=240)
 backlight.set(1)
 
 gc.collect()
