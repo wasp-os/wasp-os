@@ -61,10 +61,10 @@ class Battery(object):
 
         Assumes a 50/50 voltage divider and a 3.3v power supply
 
-        The last values is kept in a cache and only the minium cached value is
-        shown to the user, this is to avoid the battery level
-        going up and down because of the lack of precision of the mv.
-        Note that this will underestimate battery level.
+        While on battery, the last two distinct readings are kept in a cache
+        and their average is returned, to avoid the battery level going up and
+        down because of the limited precision of the ADC. The cache is cleared
+        while charging, when the raw reading is returned.
 
         :returns: Battery voltage, in millivolts.
         """
@@ -84,7 +84,7 @@ class Battery(object):
         if mv != cache[0] and mv != cache[1]:
             cache[0] = cache[1]
             cache[1] = mv
-        return sum(cache) / 2
+        return sum(cache) // 2
 
     def level(self):
         """Estimate the battery level.
