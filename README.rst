@@ -250,6 +250,10 @@ System apps:
    :alt: Software selection app running on the wasp-os simulator
    :width: 179
 
+.. image:: res/screenshots/AboutApp.png
+   :alt: About app showing the wasp-os version, running on the wasp-os simulator
+   :width: 179
+
 .. image:: res/screenshots/FacesApp.png
    :alt: Switch watch faces
    :width: 179

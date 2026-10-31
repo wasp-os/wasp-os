@@ -187,6 +187,7 @@ class Manager():
         self.register('apps.system.step_counter.StepCounterApp', True, no_except=True)
         self.register('apps.system.settings.SettingsApp', no_except=True)
         self.register('apps.system.software.SoftwareApp', no_except=True)
+        self.register('apps.system.about.AboutApp', no_except=True)
 
     def register(self, app, quick_ring=False, watch_face=False, no_except=False):
         """Register an application with the system.

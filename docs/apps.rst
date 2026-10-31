@@ -36,6 +36,8 @@ Built-in
 
 .. automodule:: apps.system.software
 
+.. automodule:: apps.system.about
+
 .. automodule:: apps.system.pager
 
 Applications

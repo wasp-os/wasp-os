@@ -70,3 +70,14 @@ def test_font_width(draw):
 ))
 def test_wrap(draw, input, expected):
     assert draw.wrap(input, 240) == expected
+
+@pytest.mark.parametrize("secs,expected", (
+    (0, '00:00:00'),
+    (3723, '01:02:03'),
+    (86399, '23:59:59'),
+    (86400, '1d 00:00'),
+    (3 * 86400 + 4 * 3600 + 5 * 60 + 6, '3d 04:05'),
+))
+def test_about_uptime(secs, expected):
+    import apps.system.about as about
+    assert about._uptime(secs) == expected
