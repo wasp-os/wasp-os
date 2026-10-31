@@ -14,7 +14,7 @@ ifdef BOARD
 BOARD_SAFE = $(BOARD)
 endif
 BOARD ?= $(error Please set BOARD=)
-VERSION ?= $(patsubst v%,%,$(shell git describe --tags))
+VERSION ?= $(patsubst v%,%,$(shell git describe --tags --always --dirty))
 
 clean :
 	$(RM) -r \
@@ -27,7 +27,8 @@ clean :
 		wasp/boards/$(BOARD)/watch.py \
 		wasp/apps/user \
 		wasp/boards/manifest_user_apps.py \
-		wasp/appregistry.py
+		wasp/appregistry.py \
+		wasp/version.py
 	find . -type f -name '*.py[co]' -delete -o -type d -name __pycache__ -delete
 
 # Avoid a recursive update... it grabs far too much
@@ -66,7 +67,7 @@ wasp/boards/$(BOARD_SAFE)/watch.py : wasp/boards/$(BOARD_SAFE)/watch.py.in
 micropython/mpy-cross/build/mpy-cross:
 	$(MAKE) -C micropython/mpy-cross
 
-micropython: build-$(BOARD_SAFE) wasp/boards/manifest_user_apps.py wasp/boards/$(BOARD_SAFE)/watch.py micropython/mpy-cross/build/mpy-cross
+micropython: build-$(BOARD_SAFE) wasp/boards/manifest_user_apps.py wasp/version.py wasp/boards/$(BOARD_SAFE)/watch.py micropython/mpy-cross/build/mpy-cross
 	$(RM) micropython/ports/nrf/build-$(BOARD)-s132/frozen_content.c
 	$(MAKE) -C micropython/ports/nrf \
 		BOARD=$(BOARD) SD=s132 \
@@ -85,6 +86,15 @@ wasp/boards/manifest_user_apps.py: wasp.toml
 		wasp/appregistry.py
 	mkdir -p wasp/apps/user
 	$(PYTHON) tools/configure_wasp_apps.py wasp.toml
+
+# The version the watch reports (see the About app). Rewritten only when it
+# changes, so the simulator and the docs don't see a new file every time.
+wasp/version.py: FORCE
+	@echo "VERSION = '$(VERSION)'" > $@.tmp
+	@if cmp -s $@.tmp $@; then $(RM) $@.tmp; else mv $@.tmp $@; fi
+
+.PHONY: FORCE
+FORCE:
 
 build-$(BOARD_SAFE):
 	mkdir -p build-$(BOARD)
@@ -111,12 +121,12 @@ APPS_MPY=$(APPS_PY:%.py=%.mpy)
 .PHONY: apps
 apps: $(APPS_MPY)
 
-docs: wasp/boards/manifest_user_apps.py
+docs: wasp/boards/manifest_user_apps.py wasp/version.py
 	$(RM) -rf docs/build/html/*
 	$(MAKE) -C docs html
 	touch docs/build/html/.nojekyll
 
-sim: wasp/boards/manifest_user_apps.py
+sim: wasp/boards/manifest_user_apps.py wasp/version.py
 	PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=.:wasp/boards/simulator:wasp \
 	$(PYTHON) -i wasp/boards/simulator/main.py
 
@@ -124,7 +134,7 @@ ifeq ("$(origin K)", "command line")
   PYTEST_RESTRICT = -k '$(K)'
 endif
 
-check: wasp/boards/manifest_user_apps.py
+check: wasp/boards/manifest_user_apps.py wasp/version.py
 	PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=.:wasp/boards/simulator:wasp:wasp/apps/system \
 	$(PYTEST) -v -W ignore $(PYTEST_RESTRICT) wasp/boards/simulator
 

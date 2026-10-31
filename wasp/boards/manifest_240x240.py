@@ -19,4 +19,5 @@ manifest = (
     'widgets.py',
     'steplogger.py',
     'appregistry.py',
+    'version.py',
 )
