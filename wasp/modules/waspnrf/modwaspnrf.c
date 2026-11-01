@@ -5,6 +5,9 @@
 // the wasp-os fork of MicroPython. Kept here so that an unmodified upstream
 // MicroPython can be used.
 
+#include <stdio.h>
+#include <string.h>
+
 #include "py/runtime.h"
 #include "py/mphal.h"
 #include "nrf.h"
@@ -111,6 +114,47 @@ __attribute__((naked)) void WDT_IRQHandler(void) {
         );
 }
 
+// --- bootloader version -----------------------------------------------------
+//
+// The bootloader leaves its version in TIMER2's CC[0] as 0xMMmmpp (only the
+// release, from the git tag), saved here before anything can reuse the timer.
+// The full version is in its flash as text, as the firmware revision of its
+// Device Information Service: "<git describe> <SoftDevice> <SD version>".
+
+static uint32_t wasp_bootloader_release;
+
+// The full version string, or just the release if it cannot be found
+static mp_obj_t waspnrf_bootloader_version(void) {
+    uint32_t release = wasp_bootloader_release;
+    if (release == 0 || release > 0xffffff) {
+        return mp_const_none;
+    }
+    char prefix[16];
+    size_t n = snprintf(prefix, sizeof(prefix), "%u.%u.%u", (unsigned)(release >> 16),
+        (unsigned)(release >> 8 & 0xff), (unsigned)(release & 0xff));
+
+    const char *start = (const char *)NRF_UICR->NRFFW[0];
+    const char *end = (const char *)(NRF_FICR->CODEPAGESIZE * NRF_FICR->CODESIZE);
+    if (start >= end) {
+        start = end;
+    }
+    for (const char *p = start + 1; p + n < end; p++) {
+        if (p[-1] != '\0' || memcmp(p, prefix, n) != 0) {
+            continue;
+        }
+        // Up to the terminating NUL: printable, with exactly two spaces
+        size_t len = 0, spaces = 0;
+        while (p + len < end && len < 64 && p[len] >= ' ' && p[len] <= '~') {
+            spaces += p[len++] == ' ';
+        }
+        if (p + len < end && p[len] == '\0' && spaces == 2) {
+            return mp_obj_new_str(p, len);
+        }
+    }
+    return mp_obj_new_str(prefix, n);
+}
+static MP_DEFINE_CONST_FUN_OBJ_0(waspnrf_bootloader_version_obj, waspnrf_bootloader_version);
+
 // The bootloader stops the LFCLK right before jumping to us, and MicroPython
 // starts it again in rtc1_init_time_ticks(). nRF52832 anomaly 132: a start
 // issued 66..138us after a stop can leave the clock dead, which freezes
@@ -129,6 +173,7 @@ static void wasp_start_lfclk(void) {
 }
 
 void wasp_early_init(void) {
+    wasp_bootloader_release = NRF_TIMER2->CC[0];
     wasp_start_lfclk();
 
     // Boot probe: backlight dim (BL_LO=P14 active low) as early as possible.
@@ -228,6 +273,7 @@ static const mp_rom_map_elem_t waspnrf_module_globals_table[] = {
     { MP_ROM_QSTR(MP_QSTR_alive), MP_ROM_PTR(&waspnrf_alive_obj) },
     { MP_ROM_QSTR(MP_QSTR_feed), MP_ROM_PTR(&waspnrf_feed_obj) },
     { MP_ROM_QSTR(MP_QSTR_hang_report), MP_ROM_PTR(&waspnrf_hang_report_obj) },
+    { MP_ROM_QSTR(MP_QSTR_bootloader_version), MP_ROM_PTR(&waspnrf_bootloader_version_obj) },
 };
 static MP_DEFINE_CONST_DICT(waspnrf_module_globals, waspnrf_module_globals_table);
 

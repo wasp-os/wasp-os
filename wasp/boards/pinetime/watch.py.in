@@ -17,6 +17,11 @@ from waspnrf import alive, feed
 from waspnrf import hang_report
 last_hang = hang_report()
 
+# The bootloader's version and its SoftDevice, such as
+# '0.3.0-39-g357b9a5 s132 6.1.1', or None without the wasp bootloader
+from waspnrf import bootloader_version
+bootloader = bootloader_version()
+
 def _callback(obj):
     feed()
     schedule()
