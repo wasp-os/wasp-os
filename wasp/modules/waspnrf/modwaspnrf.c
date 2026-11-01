@@ -61,6 +61,56 @@ static void wasp_wdt_feed(void) {
     nrf_wdt_reload_request_set(NRF_WDT, NRF_WDT_RR0);
 }
 
+// --- hang report ------------------------------------------------------------
+//
+// The watchdog's TIMEOUT interrupt fires two 32 kHz cycles before it resets
+// the watch. Its handler records the code it interrupted at the bottom of the
+// stack area, which neither the bootloader nor wasp-os ever uses, so the
+// record survives the reset and the bootloader. The next boot reads it with
+// waspnrf.hang_report().
+//
+// A fault that keeps recurring is recorded at the faulting instruction,
+// since the port's HardFault_Handler returns to it. A watchdog reset without
+// a record means that the interrupt could not run: the CPU was stuck in an
+// interrupt of the same or higher priority.
+
+#define WASP_HANG_MAGIC      (0x484e4157)   // "WANH"
+
+typedef struct {
+    uint32_t magic;
+    uint32_t pc;
+    uint32_t lr;
+    uint32_t xpsr;
+    uint32_t since_alive;   // ms since the last waspnrf.alive()
+} wasp_hang_t;
+
+extern uint32_t _heap_end;
+#define wasp_hang ((volatile wasp_hang_t *)&_heap_end)
+
+// Not static, so that the name in WDT_IRQHandler survives LTO
+__attribute__((used)) void wasp_wdt_timeout(const uint32_t *frame) {
+    // The exception frame: r0-r3, r12, lr, pc, xpsr
+    wasp_hang->pc = frame[6];
+    wasp_hang->lr = frame[5];
+    wasp_hang->xpsr = frame[7];
+    wasp_hang->since_alive = wasp_wdt_armed ?
+        mp_hal_ticks_ms() - wasp_wdt_last_alive : 0;
+    wasp_hang->magic = WASP_HANG_MAGIC;
+    for (;;) {
+        // The reset follows
+    }
+}
+
+__attribute__((naked)) void WDT_IRQHandler(void) {
+    __asm volatile (
+        "tst lr, #4\n"
+        "ite eq\n"
+        "mrseq r0, msp\n"
+        "mrsne r0, psp\n"
+        "b wasp_wdt_timeout\n"
+        );
+}
+
 // The bootloader stops the LFCLK right before jumping to us, and MicroPython
 // starts it again in rtc1_init_time_ticks(). nRF52832 anomaly 132: a start
 // issued 66..138us after a stop can leave the clock dead, which freezes
@@ -96,6 +146,12 @@ void wasp_early_init(void) {
     // seconds already (e.g. drawing the splash screen). From here watch.py's
     // RTC callback, set up as the very first thing it does, takes over.
     wasp_wdt_feed();
+
+    // The highest priority the SoftDevice leaves to the application, so the
+    // hang report also covers hangs in other interrupts
+    nrf_wdt_int_enable(NRF_WDT, NRF_WDT_INT_TIMEOUT_MASK);
+    NVIC_SetPriority(WDT_IRQn, 2);
+    NVIC_EnableIRQ(WDT_IRQn);
 }
 
 // --- machine.bootloader() -------------------------------------------------
@@ -147,6 +203,23 @@ static mp_obj_t waspnrf_enter_ota_dfu(void) {
 }
 static MP_DEFINE_CONST_FUN_OBJ_0(waspnrf_enter_ota_dfu_obj, waspnrf_enter_ota_dfu);
 
+// (pc, lr, xpsr, ms since alive) of the code that hung before the last
+// watchdog reset, or None. Clears the record.
+static mp_obj_t waspnrf_hang_report(void) {
+    if (wasp_hang->magic != WASP_HANG_MAGIC) {
+        return mp_const_none;
+    }
+    mp_obj_t items[] = {
+        mp_obj_new_int_from_uint(wasp_hang->pc),
+        mp_obj_new_int_from_uint(wasp_hang->lr),
+        mp_obj_new_int_from_uint(wasp_hang->xpsr),
+        mp_obj_new_int_from_uint(wasp_hang->since_alive),
+    };
+    wasp_hang->magic = 0;
+    return mp_obj_new_tuple(4, items);
+}
+static MP_DEFINE_CONST_FUN_OBJ_0(waspnrf_hang_report_obj, waspnrf_hang_report);
+
 static const mp_rom_map_elem_t waspnrf_module_globals_table[] = {
     { MP_ROM_QSTR(MP_QSTR___name__), MP_ROM_QSTR(MP_QSTR_waspnrf) },
     { MP_ROM_QSTR(MP_QSTR_uart_connected), MP_ROM_PTR(&waspnrf_uart_connected_obj) },
@@ -154,6 +227,7 @@ static const mp_rom_map_elem_t waspnrf_module_globals_table[] = {
     { MP_ROM_QSTR(MP_QSTR_enter_ota_dfu), MP_ROM_PTR(&waspnrf_enter_ota_dfu_obj) },
     { MP_ROM_QSTR(MP_QSTR_alive), MP_ROM_PTR(&waspnrf_alive_obj) },
     { MP_ROM_QSTR(MP_QSTR_feed), MP_ROM_PTR(&waspnrf_feed_obj) },
+    { MP_ROM_QSTR(MP_QSTR_hang_report), MP_ROM_PTR(&waspnrf_hang_report_obj) },
 };
 static MP_DEFINE_CONST_DICT(waspnrf_module_globals, waspnrf_module_globals_table);
 

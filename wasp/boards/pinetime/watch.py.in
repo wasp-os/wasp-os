@@ -12,6 +12,11 @@ schedule = nop
 # (see "Watchdog protocol" in docs/wasp.rst). feed() applies those checks.
 from waspnrf import alive, feed
 
+# Where the watch was stuck if the watchdog reset it: (pc, lr, xpsr, ms since
+# the last alive()), or None. Look the pc and lr up in the firmware's ELF file.
+from waspnrf import hang_report
+last_hang = hang_report()
+
 def _callback(obj):
     feed()
     schedule()
