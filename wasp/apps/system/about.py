@@ -5,8 +5,10 @@
 ~~~~~~~~
 
 Shows which version of wasp-os is running, together with the board, the
-MicroPython version, the uptime, the battery voltage and how much RAM and
-flash are free. Handy to include in a bug report.
+MicroPython and bootloader versions, the uptime and the battery voltage.
+Swipe up or down for the SoftDevice, where the watch last hung (if the
+watchdog reset it) and how much RAM and flash are free. Handy to include
+in a bug report.
 
 .. figure:: res/screenshots/AboutApp.png
     :width: 179
@@ -47,10 +49,25 @@ class AboutApp():
 
     def foreground(self):
         """Activate the application."""
+        self._page = 0
+        self._scroll = wasp.widgets.ScrollIndicator()
         self._draw()
+        wasp.system.request_event(wasp.EventMask.SWIPE_UPDOWN)
+
+    def background(self):
+        self._scroll = None
+        del self._scroll
+
+    def swipe(self, event):
+        """Switch between the two pages."""
+        self._page = 1 - self._page
+        mute = wasp.watch.display.mute
+        mute(True)
+        self._draw()
+        mute(False)
 
     def _facts(self):
-        """The board, and the rows to show as (label, value) pairs."""
+        """The board, and the rows of each page as (label, value) pairs."""
         if sys.implementation.name == 'micropython':
             uname = os.uname()
             board = uname.machine.split(' with ')[0]
@@ -67,20 +84,30 @@ class AboutApp():
         ram = _kb(gc.mem_free()) if hasattr(gc, 'mem_free') else '-'
         mv = wasp.watch.battery.voltage_mv()
 
-        return board, (
+        # Such as '0.3.0-39-g357b9a5 s132 6.1.1'
+        bootloader = getattr(wasp.watch, 'bootloader', None)
+        bootloader = bootloader.split(' ', 1) if bootloader else ()
+        hang = getattr(wasp.watch, 'last_hang', None)
+        hang = 'pc {:x} lr {:x}'.format(hang[0], hang[1]) if hang else 'none'
+
+        return board, ((
             python,
+            ('Bootloader', bootloader[0] if bootloader else '-'),
             ('Uptime', _uptime(int(wasp.watch.rtc.uptime))),
             ('Battery', '{}.{:02d} V'.format(mv // 1000, mv % 1000 // 10)),
+        ), (
+            ('SoftDevice', bootloader[1] if len(bootloader) > 1 else '-'),
+            ('Last hang', hang),
             ('RAM free', ram),
             ('Flash free', flash),
-        )
+        ))
 
     def _draw(self):
         """Draw the display from scratch."""
         draw = wasp.watch.drawable
         hi = wasp.system.theme('bright')
         lo = wasp.system.theme('mid')
-        board, rows = self._facts()
+        board, pages = self._facts()
         draw.fill()
 
         draw.set_color(hi)
@@ -91,10 +118,16 @@ class AboutApp():
         draw.set_color(lo)
         draw.string(board, 0, 64, width=240)
 
-        y = 100
-        for label, value in rows:
+        # Right aligned, clear of the scroll indicator. A value that does not
+        # fit next to its label goes on the line below.
+        y = 96
+        for label, value in pages[self._page]:
             draw.set_color(lo)
             draw.string(label, 8, y)
+            width = draw.bounding_box(value)[0]
+            if draw.bounding_box(label)[0] + width > 216 - 16:
+                y += 20
             draw.set_color(hi)
-            draw.string(value, 232 - draw.bounding_box(value)[0], y)
-            y += 27
+            draw.string(value, 216 - width, y)
+            y += 24
+        self._scroll.draw()
