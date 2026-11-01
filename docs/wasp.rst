@@ -121,7 +121,8 @@ FORCE_APP_BOOT cannot be implmented using PNVRAM.*
 The RTC millisecond counter is incremented whenever the bootloader is 
 active (during splash screen or early UART recovery mode, during an
 update). It can be consumed by the application to prevent the current
-time being lost during an update.
+time being lost during an update. The application keeps it below a
+day or so, by moving whole days into the RTC value.
 
 Watchdog protocol
 ~~~~~~~~~~~~~~~~~
