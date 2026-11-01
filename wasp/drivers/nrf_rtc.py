@@ -51,8 +51,15 @@ class RTC(object):
         if machine.mem32[0x200039c0] == 0x1abe11ed and \
            machine.mem32[0x200039dc] == 0x10adab1e:
             self.lastcount = self.counter.counter()
+            # Add the time since MicroPython started, which nothing counted
+            # yet (about half a second). After a soft reboot ticks_ms() does
+            # not start again from zero, and that time was counted already.
+            boot = time.ticks_ms()
+            if boot > 5000:
+                boot = 0
             # Older firmware let the counter grow without limit
-            ticks = (machine.mem32[0x200039c8] & 0xffffffff) // 125
+            ms = (machine.mem32[0x200039c8] & 0xffffffff) + boot
+            ticks = (ms + 62) // 125
             # Uptime counts from this boot: the time before it goes into
             # the offset
             self.offset = machine.mem32[0x200039c4] + (ticks >> 3)
