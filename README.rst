@@ -1,21 +1,21 @@
 Watch Application System in Python
 ==================================
 
-IMPORTANT: LOOKIKNG FOR NEW MAINTAINER(S)
------------------------------------------
+Maintenance
+-----------
 
-Wasp-os is no longer being actively maintained by its original author. There
-are still some very helpful people floating round the project but new developers
-would still be very welcome.
+Since November 2026 wasp-os is maintained by Michiel W. Beijen, taking over
+from its original author, Daniel Thompson. See the `announcement
+<https://github.com/wasp-os/wasp-os/discussions/537>`_ for what is coming.
 
-In particular wasp-os is based on a relatively old verson of Micropython and
-would benefit from a version unlift (this needs skill in both Python and
-embedded C). 
+Help is very welcome. In particular, wasp-os is based on a relatively old
+version of MicroPython. Moving it to a current release is in progress, and
+the other watches will need porting to it too (this needs skill in both
+Python and embedded C).
 
-Also needed is a release manager to build, test and issue new releases. Currently
-the binary releases (up to wasp-os-0.4) have been withdrawn because they do not
-support the third-geneation PineTime. Until these are fixed then building from
-source is the best (and only) option.
+The binary releases (up to wasp-os-0.4) have been withdrawn because they do
+not support the third-generation PineTime. Until there are new releases,
+building from source is the best (and only) option.
 
 Introduction
 ------------
