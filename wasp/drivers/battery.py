@@ -16,7 +16,7 @@ class Battery(object):
     .. automethod:: __init__
     """
 
-    def __init__(self, battery, charging, power=None):
+    def __init__(self, battery, charging, power=None, sample_ns=None):
         """Specify the pins used to provide battery status.
 
         :param Pin battery:  The ADC-capable pin that can be used to measure
@@ -25,8 +25,15 @@ class Battery(object):
         :param Pin power:    A pin (or Signal) that reports whether the device
                              has external power, defaults to None (which means
                              use the charging pin for power reporting too).
+        :param int sample_ns: ADC acquisition time. Battery sense dividers
+                             are high impedance and read low with the
+                             default (3us on nRF52), defaults to None
+                             (which means use the port's default).
         """
-        self._battery = ADC(battery)
+        if sample_ns is None:
+            self._battery = ADC(battery)
+        else:
+            self._battery = ADC(battery, sample_ns=sample_ns)
         self._charging = charging
         self._power = power
         self._cache = array.array("I")
@@ -54,10 +61,10 @@ class Battery(object):
 
         Assumes a 50/50 voltage divider and a 3.3v power supply
 
-        The last values is kept in a cache and only the minium cached value is
-        shown to the user, this is to avoid the battery level
-        going up and down because of the lack of precision of the mv.
-        Note that this will underestimate battery level.
+        While on battery, the last two distinct readings are kept in a cache
+        and their average is returned, to avoid the battery level going up and
+        down because of the limited precision of the ADC. The cache is cleared
+        while charging, when the raw reading is returned.
 
         :returns: Battery voltage, in millivolts.
         """
@@ -67,17 +74,17 @@ class Battery(object):
 
         if self._charging.value():  # if charging, reset cache
             if len(cache):
-                cache = array.array("I")
+                self._cache = array.array("I")
             return mv
         if len(cache) < 2:
             cache.append(mv)
             return mv
         if len(cache) > 2:  # should not happen
-            cache = cache[-2:]
+            cache = self._cache = cache[-2:]
         if mv != cache[0] and mv != cache[1]:
             cache[0] = cache[1]
             cache[1] = mv
-        return sum(cache) / 2
+        return sum(cache) // 2
 
     def level(self):
         """Estimate the battery level.

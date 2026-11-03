@@ -1,0 +1,47 @@
+[project]
+name = "wasp-os"
+version = "0.4"
+description = "Wasp-os: a MicroPython-based operating system for smart watches"
+readme = "README.rst"
+license = "LGPL-3.0-or-later"
+requires-python = ">=3.14"
+# Building firmware: DFU packaging, hex file manipulation, and signing the
+# reloader image with mcuboot's imgtool (reloader/lib/mcuboot/scripts)
+dependencies = [
+    "adafruit-nrfutil>=0.5.3.post16",
+    "cbor>=1.0.0",
+    "click",
+    "cryptography>=2.6",
+    "intelhex>=2.3.0",
+]
+
+[dependency-groups]
+# Simulator and its test suite (make sim, make check)
+sim = [
+    "numpy",
+    "pexpect",
+    "pillow",
+    "pysdl2",
+    "pysdl2-dll",
+    "pytest",
+]
+# Talking to a watch over Bluetooth: bleak for OTA updates (tools/ota-dfu),
+# dbus-python and pygobject for the console (tools/pynus), pexpect for
+# tools/wasptool. dbus-python and pygobject build against system headers:
+# install your distro's libdbus-1 and gobject-introspection development
+# packages first.
+ble = [
+    "bleak>=3.0",
+    "dbus-python",
+    "pexpect",
+    "pygobject",
+]
+# Documentation (make docs)
+docs = [
+    "sphinx",
+]
+
+[tool.uv]
+# Not an installable package: uv just manages the virtualenv for the tools.
+package = false
+default-groups = ["sim"]

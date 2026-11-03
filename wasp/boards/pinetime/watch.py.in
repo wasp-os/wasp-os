@@ -4,17 +4,35 @@
 def nop():
     pass
 schedule = nop
+
+# The watchdog is fed by the waspnrf C module (see modwaspnrf.c), for as
+# long as the system manager keeps calling alive(): a hung main loop or a
+# fatal error therefore resets the watch. Holding the button stops the
+# feeding too, which turns a long press into a reset into the bootloader
+# (see "Watchdog protocol" in docs/wasp.rst). feed() applies those checks.
+from waspnrf import alive, feed
+
+# Where the watch was stuck if the watchdog reset it: (pc, lr, xpsr, ms since
+# the last alive()), or None. Look the pc and lr up in the firmware's ELF file.
+from waspnrf import hang_report
+last_hang = hang_report()
+
 def _callback(obj):
+    feed()
     schedule()
 
-# Start measuring time (and feeding the watchdog) before *anything* else
+# Start measuring time before *anything* else.
+# RTC0 belongs to the SoftDevice and RTC1 to MicroPython's time.ticks_*().
 from machine import RTCounter
 from drivers.nrf_rtc import RTC
-rtc = RTC(RTCounter(1, mode=RTCounter.PERIODIC, period=1, callback=_callback))
+#build_time('BUILD_TIME')
+rtc = RTC(RTCounter(2, mode=RTCounter.PERIODIC, period=1, callback=_callback),
+          default=BUILD_TIME)
 rtc.counter.start()
 
 import gc
 import os
+import sys
 import time
 
 import draw565
@@ -31,9 +49,9 @@ from drivers.hrs3300 import HRS3300
 from drivers.signal import Signal
 from drivers.st7789 import ST7789_SPI
 from drivers.vibrator import Vibrator
-from flash.flash_spi import FLASH
+from drivers.nor_flash import NORFlash
 
-from ubluepy import uart_connected as connected
+from waspnrf import uart_connected as connected
 
 class Backlight(object):
     lo = Pin("BL_LO", Pin.OUT, value=0)
@@ -62,7 +80,13 @@ class Backlight(object):
 # Setup the display (and manage the backlight)
 backlight = Backlight(0)
 spi = SPI(0)
+# Upstream's nrf SPI init() silently ignores a re-init (it checks for
+# NRFX_ERROR_INVALID_STATE but nrfx v3 returns NRFX_ERROR_ALREADY), so
+# deinit first to make the mode/baudrate change take effect.
+spi.deinit()
 spi.init(polarity=1, phase=1, baudrate=8000000)
+
+flash = NORFlash(spi, Pin('NOR_CS', Pin.OUT, value=1))
 display = ST7789_SPI(240, 240, spi,
         cs=Pin("DISP_CS", Pin.OUT),
         dc=Pin("DISP_DC", Pin.OUT),
@@ -73,6 +97,25 @@ def boot_msg(s):
     drawable.string(s, 0, 108, width=240)
     if safe_mode:
         time.sleep_ms(500)
+
+def i2c_recover():
+    # A sensor that browned out mid-transfer (e.g. after the battery ran
+    # flat) can hold SDA low forever. Clock SCL until it lets go, then
+    # issue a STOP. The nrf port has no Pin.OPEN_DRAIN so emulate it:
+    # drive low with OUT, release to the board's pull-ups with IN.
+    sda = Pin('I2C_SDA', Pin.IN)
+    if sda.value():
+        return
+    for _ in range(9):
+        Pin('I2C_SCL', Pin.OUT, value=0)
+        time.sleep_us(5)
+        Pin('I2C_SCL', Pin.IN)
+        time.sleep_us(5)
+        if sda.value():
+            break
+    Pin('I2C_SDA', Pin.OUT, value=0)
+    time.sleep_us(5)
+    Pin('I2C_SDA', Pin.IN)
 
 safe_mode = False
 boot_msg("Init button")
@@ -88,19 +131,24 @@ try:
     battery = Battery(
             Pin('BATTERY', Pin.IN),
             Signal(Pin('CHARGING', Pin.IN), invert=True),
-            Signal(Pin('USB_PWR', Pin.IN), invert=True))
+            Signal(Pin('USB_PWR', Pin.IN), invert=True),
+            sample_ns=40000)
+    i2c_recover()
     i2c = I2C(1, scl='I2C_SCL', sda='I2C_SDA')
     accel = BMA421(i2c)
     hrs = HRS3300(i2c)
-    hrs.disable()
+    try:
+        hrs.disable()
+    except OSError as e:
+        # Not fatal: a stuck HRS must not stop the filesystem mounting
+        sys.print_exception(e)
     touch = CST816S(i2c,
                     Pin('TP_INT', Pin.IN), Pin('TP_RST', Pin.OUT, value=0),
                     _callback)
     vibrator = Vibrator(Pin('MOTOR', Pin.OUT, value=0), active_low=True)
 
-    # Mount the filesystem
+    # Mount the filesystem (the driver object was created early, see above)
     boot_msg("Init SPINOR")
-    flash = FLASH(spi, (Pin('NOR_CS', Pin.OUT, value=1),))
     try:
         boot_msg("Mount FS")
         os.mount(flash, '/flash')
@@ -124,8 +172,12 @@ try:
         boot_msg("main.py")
     else:
         boot_msg("Safe mode")
-except:
+except BaseException as e:
+    sys.print_exception(e)
     drawable.string("FAILED", 0, 136, width=240)
+    drawable.string('{} {}'.format(type(e).__name__,
+                                   e.args[0] if e.args else ''),
+                    0, 160, width=240)
 backlight.set(1)
 
 gc.collect()

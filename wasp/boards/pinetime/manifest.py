@@ -16,6 +16,7 @@ freeze('../..', manifest_240x240.manifest + manifest_user_apps.manifest +
         'drivers/battery.py',
         'drivers/cst816s.py',
         'drivers/hrs3300.py',
+        'drivers/nor_flash.py',
         'drivers/nrf_rtc.py',
         'drivers/signal.py',
         'drivers/st7789.py',
@@ -26,10 +27,4 @@ freeze('../..', manifest_240x240.manifest + manifest_user_apps.manifest +
         'wasp.py',
     ),
     opt=3
-)
-freeze('../../drivers/flash',
-    (
-        'bdevice.py',
-        'flash/flash_spi.py'
-    ), opt=3
 )

@@ -52,9 +52,8 @@ class ST7789(object):
         """Reset and initialize the display."""
         self.reset()
 
-        self.write_cmd(_SLPOUT)
-        sleep_ms(10)
-
+        # Configure the panel before it leaves sleep mode: the ST7789P3, in
+        # PineTimes since 2026, can come up rotated if SLPOUT comes first
         for cmd in (
             (_COLMOD,   b'\x05'), # MCU will send 16-bit RGB565
             (_MADCTL,   b'\x00'), # Left to right, top to bottom
@@ -65,6 +64,8 @@ class ST7789(object):
             self.write_cmd(cmd[0])
             if cmd[1]:
                 self.write_data(cmd[1])
+        self.write_cmd(_SLPOUT)
+        sleep_ms(10)
         self.fill(0)
         self.write_cmd(_DISPON)
 

@@ -16,30 +16,17 @@ jobs:
       id:   checkout-files
       uses: actions/checkout@v4
 
-    - name: Check the cached python downloads
-      id:   cache-modules
-      uses: actions/cache@v4
-      env:
-        cache-name: cache-toolchain
+    - name: Install uv
+      uses: astral-sh/setup-uv@v6
       with:
-        path: ~/.cache/pip
-        key: ${{ runner.os }}-pip-${{ hashFiles('wasp/requirements.txt') }}
-        restore-keys: ${{ runner.os }}-pip-${{ hashFiles('wasp/requirements.txt') }}
-
-    - name: Install packages
-      id: install-packages
-      run: |
-        sudo apt-get update
-        sudo apt-get install libsdl2-2.0.0 meson
+          enable-cache: true
 
     - name: Install python modules
       id:   install-modules
-      run: |
-          pip3 install -r wasp/requirements.txt
+      run:  uv sync --locked
 
     - name: Run the simulator tests
       id:   run-tests
       run:  |
-          PYTEST=$HOME/.local/bin/pytest \
           SDL_VIDEODRIVER=dummy \
-          make check
+          uv run make check

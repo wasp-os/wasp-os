@@ -12,39 +12,48 @@ Building wasp-os from source
 Install prerequisites
 ~~~~~~~~~~~~~~~~~~~~~
 
-Building wasp-os and launching the wasp-os simulator requires Python 3.6
-(or later) and the following python modules: click, numpy, pexpect, PIL
-(or Pillow), pydbus, pygobject, pyserial, pysdl2.
-
-On Debian Bookworm / Ubuntu 22.04 or later the required python modules can be
-obtained using the following commands:
-
-.. code-block:: sh
-
-    sudo apt install \
-      wget git build-essential libsdl2-2.0-0 python3-cbor python3-click \
-      python3-gi python3-numpy python3-pexpect python3-pil python3-pip \
-      python3-pydbus python3-sdl2 python3-serial python3-tomli unzip
-
-Additionally if you wish to regenerate the documentation you will require
-a complete sphinx toolchain:
+The Python tooling used to build wasp-os and run the simulator is managed
+with `uv <https://docs.astral.sh/uv/>`_, which also fetches a suitable Python
+(3.14 or later) if your system does not have one. After `installing uv
+<https://docs.astral.sh/uv/getting-started/installation/>`_, run this from
+the top of the wasp-os tree:
 
 .. code-block:: sh
 
-    sudo apt install sphinx graphviz python3-recommonmark
+    uv sync
 
-Alternatively, if your operating system does not package some or any of
-the above mentioned Python modules then you can install all of them
-with pip instead:
+This creates a ``.venv`` with everything needed to build firmware and run the
+simulator and its tests. Run ``make`` through uv so that it uses that
+environment, for example ``uv run make -j`nproc` BOARD=pinetime all`` or
+``uv run make check``.
+
+Talking to a watch over Bluetooth (``tools/wasptool``, OTA updates) needs two
+extra modules that build against system libraries, so install their
+development packages first and then add the ``ble`` group. On Debian or
+Ubuntu:
 
 .. code-block:: sh
 
-    pip3 install --user -r wasp/requirements.txt
+    sudo apt install libdbus-1-dev libgirepository-2.0-dev libcairo2-dev pkg-config
+    uv sync --group ble
 
-You will also need a toolchain for the Arm Cortex-M4. wasp-os is developed and
-tested using the `GNU-RM toolchain
-<https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-rm>`_
-(10-2020-q4) from Arm.
+To regenerate the documentation add the ``docs`` group and install graphviz:
+
+.. code-block:: sh
+
+    sudo apt install graphviz
+    uv sync --group docs
+
+Building the firmware also needs the usual build tools and a toolchain for
+the Arm Cortex-M4. Your distribution's packages are fine (tested with
+Debian's gcc-arm-none-eabi 14.2); the CI uses the `Arm GNU toolchain
+<https://developer.arm.com/downloads/-/arm-gnu-toolchain-downloads>`_
+10-2020-q4. On Debian or Ubuntu:
+
+.. code-block:: sh
+
+    sudo apt install wget git build-essential unzip \
+      gcc-arm-none-eabi libnewlib-arm-none-eabi
 
 .. note::
 
@@ -107,42 +116,67 @@ All ``make`` commands should be usable from this shell.
 Build
 ~~~~~
 
-We can compile the modules required with the following commands:
+Fetch the submodules and the Nordic SoftDevice (the Bluetooth stack) once:
 
 .. code-block:: sh
 
    make submodules
    make softdevice
 
-We can the compile source code that you will be flashing to your device with the following commands for each device:
-
-For the pinetime we use:
-
-.. code-block:: sh
-
-    make -j `nproc` BOARD=pinetime all
-
-For the k9 we use:
+Then build everything for the PineTime, the only board this branch
+currently builds for (see :ref:`Device Support`):
 
 .. code-block:: sh
 
-   make -j `nproc` BOARD=k9 all
+    uv run make -j `nproc` BOARD=pinetime all
 
-For the p8 we use:
+The output is stored in ``build-pinetime/``:
+
+* ``micropython.zip``: the main OS image, installed over the air (see
+  :ref:`wasptool for GNU/Linux`)
+* ``bootloader.hex`` and ``bootloader-daflasher.zip``: the wasp-bootloader
+* ``reloader*.zip``: the reloader, used to install or update the bootloader
+  over the air
+
+To build only the main OS image use ``uv run make -j `nproc` BOARD=pinetime
+micropython``, and to build the optional apps in ``apps/`` (which can be copied
+to the watch at run time) use ``uv run make apps``.
+
+To run the simulator and its test suite (no toolchain needed):
 
 .. code-block:: sh
 
-   make -j `nproc` BOARD=p8 all
-
-The output of these will be stored in ``build-${BOARD}/``.
+    uv run make sim
+    uv run make check
 
 To rebuild the documentation:
 
 .. code-block:: sh
 
-    make docs
+    uv run --group docs make docs
 
 The docs will be browsable in ``docs/build/html`` as per Sphinx standards.
+
+About the MicroPython build
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+wasp-os builds against upstream `MicroPython <https://micropython.org/>`_
+using its nrf port. Everything wasp-os needs on top of that lives in this
+repository rather than in a MicroPython fork:
+
+* ``wasp/boards/pinetime/micropython/`` is an out-of-tree board definition,
+  passed to the nrf port as ``BOARD_DIR``: the board configuration, pin map and
+  linker scripts.
+* ``wasp/modules/waspnrf/`` is a small C module with the glue the board needs:
+  starting the low frequency clock safely after the bootloader, the watchdog
+  feeding, entering the bootloader for OTA updates and the Bluetooth console
+  status.
+* ``wasp/modules/bma42x-upy`` is the step counter driver, built as a user C
+  module.
+
+The ``micropython`` submodule points at a branch that is upstream MicroPython
+plus nrf port fixes that have been submitted upstream but not merged yet;
+once they are, it can point at upstream directly.
 
 Custom builds
 -------------
@@ -195,6 +229,8 @@ enabled for your fork too! This can be very useful as any changes you commit to
 the repo will be automatically tested and github will share the results with
 you. You can also download *your* CI builds for testing using a similar
 approach to the one above.
+
+.. _Device Support:
 
 Device Support
 --------------
@@ -304,6 +340,12 @@ DaFlasher for Android can be used to install both the
 :ref:`main OS image<Main OS DaFlasher>`. No tools or disassembly is
 required.
 
+.. note::
+
+    The P8 is not currently built: it has no board definition for upstream
+    MicroPython yet (the PineTime's in ``wasp/boards/pinetime/micropython``
+    is the model to follow). Older releases support it.
+
 Senbono K9
 ~~~~~~~~~~
 
@@ -327,6 +369,12 @@ read the display in strong sunlight.
 DaFlasher for Android can be used to install both the
 :ref:`wasp-bootloader<Bootloader DaFlasher>` and the
 :ref:`main OS image<Main OS DaFlasher>`. No tools or disassembly is required.
+
+.. note::
+
+    The K9 is not currently built: it has no board definition for upstream
+    MicroPython yet (the PineTime's in ``wasp/boards/pinetime/micropython``
+    is the model to follow). Older releases support it.
 
 Installing wasp-bootloader
 --------------------------
@@ -518,16 +566,32 @@ To install the main firmware using DaFlasher for Android:
 * When the upload is complete the watch will reboot and launch the digital
   clock application.
 
+.. _wasptool for GNU/Linux:
+
 wasptool for GNU/Linux
 ~~~~~~~~~~~~~~~~~~~~~~
 
-To install the main firmware from a GNU/Linux workstation:
+To install the main firmware from a GNU/Linux workstation, set up the ``ble``
+environment (``uv sync --group ble``). If the watch is running wasp-os, one
+command puts it into :ref:`OTA update mode<OTA update mode>` and uploads
+``micropython.zip`` (see :ref:`Building wasp-os from source`):
 
-* Ensure the watch is running in :ref:`OTA update mode<OTA update mode>`.
-* Look up the MAC address for your watch (try: ``sudo hcitool lescan``\ ).
-* Use ota-dfu to upload ``micropython.zip`` (see
-  :ref:`Building wasp-os from source`) to the device. For example:
-  ``tools/ota-dfu/dfu.py -z micropython.zip -a A0:B1:C2:D3:E3:F5 --legacy``
+.. code-block:: sh
+
+    uv run --group ble tools/wasptool --ota build-pinetime/micropython.zip
+
+A full update takes about three and a half minutes.
+
+If the watch is already in OTA update mode, use ota-dfu directly with the
+watch's Bluetooth address (``bluetoothctl scan le`` lists it; the bootloader
+advertises as *PineDFU*):
+
+.. code-block:: sh
+
+    uv run --group ble tools/ota-dfu/dfu.py --legacy \
+      -z build-pinetime/micropython.zip -a A0:B1:C2:D3:E3:F5
+
+Both exit with a non-zero status if the update fails.
 
 .. _Troubleshooting:
 
