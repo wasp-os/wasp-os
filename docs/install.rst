@@ -527,7 +527,7 @@ To install the main firmware from a GNU/Linux workstation:
 * Look up the MAC address for your watch (try: ``sudo hcitool lescan``\ ).
 * Use ota-dfu to upload ``micropython.zip`` (see
   :ref:`Building wasp-os from source`) to the device. For example:
-  ``tools/ota-dfu/dfu.py -z micropython.zip -a A0:B1:C2:D3:E3:F5 --legacy``
+  ``tools/ota-dfu/dfu.py -z micropython.zip -a A0:B1:C2:D3:E3:F5 --legacy`` (note that dfu.py may be unreliable, messages like `bytes-like object is required` mean to try again)
 
 .. _Troubleshooting:
 
