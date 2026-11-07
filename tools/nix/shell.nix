@@ -3,7 +3,7 @@
 let
   # wasptool and ota-dfu only work on linux, and their dependencies prevent the
   # shell to evaluate on darwin
-  ifLinux = pkgs.lib.optionals pkgs.stdenv.isLinux;
+  ifLinux = pkgs.lib.optionals pkgs.stdenv.hostPlatform.isLinux;
 
 in pkgs.mkShell {
   buildInputs = ifLinux [
@@ -35,7 +35,7 @@ in pkgs.mkShell {
     ] ++ ifLinux [
       bluepy
     ]))
-    pkgs.gcc-arm-embedded-11
+    pkgs.gcc-arm-embedded-14
     pkgs.graphviz
   ] ++ ifLinux [
     pkgs.bluez
