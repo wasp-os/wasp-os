@@ -170,10 +170,19 @@ class Manager():
             self.switch(self.quick_ring[0])
 
     def register_defaults(self):
-        """Register the default applications."""
+        """Register the default applications.
+
+        An application that cannot be loaded, usually because the heap has
+        no room left for it, is reported on the console and skipped: it must
+        not stop the watch from booting. Once the watch is up, the Software
+        app can be used to switch applications off.
+        """
 
         for app in appregistry.autoload_list:
-            self.register(app[0], app[1], app[2], app[3])
+            try:
+                self.register(app[0], app[1], app[2], app[3])
+            except Exception as e:
+                sys.print_exception(e)
 
         self.register('apps.system.step_counter.StepCounterApp', True, no_except=True)
         self.register('apps.system.settings.SettingsApp', no_except=True)
@@ -185,7 +194,9 @@ class Manager():
         :param object app: The application to register
         :param object quick_ring: Place the application on the quick ring
         :param object watch_face: Make the new application the default watch face
-        :param object no_except: Ignore exceptions when instantiating applications
+        :param object no_except: Report, rather than raise, an exception
+                                 while importing or instantiating the
+                                 application
         """
         if isinstance(app, str):
             modname = app[:app.rindex('.')]
@@ -193,16 +204,22 @@ class Manager():
             # function works on a snapshot of the locals, so the import
             # would not be visible to the eval() (and 'del' would fail).
             ns = {}
-            exec('import ' + modname, ns)
-            if no_except:
-                try:
-                    app = eval(app + '()', ns)
-                except:
-                    app = None
-            else:
-                    app = eval(app + '()', ns)
-            del ns
-            del sys.modules[modname]
+            try:
+                exec('import ' + modname, ns)
+                app = eval(app + '()', ns)
+            except Exception as e:
+                # Usually a MemoryError: give back whatever the import
+                # managed to allocate, so that the next application has
+                # a chance
+                app = None
+                ns = None
+                gc.collect()
+                if not no_except:
+                    raise
+                sys.print_exception(e)
+            ns = None
+            if modname in sys.modules:
+                del sys.modules[modname]
             if not app:
                 return
 
