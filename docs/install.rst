@@ -379,6 +379,18 @@ DaFlasher for Android can be used to install both the
 Installing wasp-bootloader
 --------------------------
 
+.. note::
+
+    This step is only for a watch that still runs InfiniTime (or another
+    mcuboot-based firmware). A watch that already runs wasp-os has the
+    wasp-bootloader: skip to :ref:`Installing wasp-os` and send
+    ``micropython.zip`` only. ``reloader-mcuboot.zip`` is built to run under
+    mcuboot; sent through the wasp-bootloader it is written to the application
+    area, the bootloader jumps into it, the watchdog restarts the watch, and
+    the bootloader logo repeats. Holding the button while the watch
+    restarts keeps the bootloader in OTA update mode, where ``micropython.zip``
+    can be sent again.
+
 .. _Bootloader Gadgetbridge:
 
 Gadgetbridge for Android
@@ -515,8 +527,18 @@ logo and wait for a OTA update.
     debugged (which harms battery life because the device won't properly enter
     deep sleep states).
 
+.. _Installing wasp-os:
+
 Installing wasp-os
 ------------------
+
+.. note::
+
+    Updating from wasp-os 0.4 or an earlier build? The filesystem on the
+    watch is reformatted on the first boot, because LittleFS now uses the
+    flash chip's 4 KiB blocks. Copy anything you want to keep off ``/flash``
+    first (``tools/wasptool --pull``), and expect the default ``main.py``
+    afterwards.
 
 .. _Main OS Gadgetbridge:
 
