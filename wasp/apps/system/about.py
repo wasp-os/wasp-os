@@ -6,8 +6,9 @@
 
 Shows which version of wasp-os is running, together with the board, the
 MicroPython and bootloader versions, the uptime and the battery voltage.
-Swipe up or down for the SoftDevice, where the watch last hung (if the
-watchdog reset it) and how much RAM and flash are free. Handy to include
+Swipe up or down for the SoftDevice, the watch's Bluetooth address, where
+the watch last hung (if the watchdog reset it; "button" means a long
+press, not a hang) and how much RAM and flash are free. Handy to include
 in a bug report.
 
 .. figure:: res/screenshots/AboutApp.png
@@ -42,6 +43,14 @@ def _uptime(secs):
 def _kb(n):
     return '{} KB'.format(n // 1024)
 
+def _hang(hang):
+    """Describe watch.last_hang: None, or (pc, lr, xpsr, since_alive, button)."""
+    if not hang:
+        return 'none'
+    if len(hang) > 4 and hang[4]:
+        return 'button'
+    return 'pc {:x} lr {:x}'.format(hang[0], hang[1])
+
 class AboutApp():
     """Show the version of wasp-os and some facts about the watch."""
     NAME = 'About'
@@ -75,10 +84,16 @@ class AboutApp():
             # The filesystem is mounted at /flash; / is an empty root
             st = os.statvfs('/flash')
             flash = _kb(st[0] * st[4])
+            try:
+                import waspnrf
+                address = waspnrf.ble_address() or '-'
+            except (ImportError, OSError):
+                address = '-'
         else:
             board = 'Simulator'
             python = ('Python', sys.version.split()[0])
             flash = '-'
+            address = '-'
 
         gc.collect()
         ram = _kb(gc.mem_free()) if hasattr(gc, 'mem_free') else '-'
@@ -87,8 +102,7 @@ class AboutApp():
         # Such as '0.3.0-39-g357b9a5 s132 6.1.1'
         bootloader = getattr(wasp.watch, 'bootloader', None)
         bootloader = bootloader.split(' ', 1) if bootloader else ()
-        hang = getattr(wasp.watch, 'last_hang', None)
-        hang = 'pc {:x} lr {:x}'.format(hang[0], hang[1]) if hang else 'none'
+        hang = _hang(getattr(wasp.watch, 'last_hang', None))
 
         return board, ((
             python,
@@ -97,6 +111,7 @@ class AboutApp():
             ('Battery', '{}.{:02d} V'.format(mv // 1000, mv % 1000 // 10)),
         ), (
             ('SoftDevice', bootloader[1] if len(bootloader) > 1 else '-'),
+            ('Bluetooth', address),
             ('Last hang', hang),
             ('RAM free', ram),
             ('Flash free', flash),

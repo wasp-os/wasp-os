@@ -197,8 +197,11 @@ it was stuck: the watchdog's timeout interrupt, which runs just before
 the reset, saves the program counter, link register and xPSR of the code
 it interrupted, together with the time since the last ``alive()``, in RAM
 that survives the reset. After the next boot ``watch.last_hang`` holds
-them as a tuple ``(pc, lr, xpsr, ms)``, or ``None`` if there was no hang.
-Look the addresses up in the firmware's ELF file, for example with
+them as a tuple ``(pc, lr, xpsr, ms, button)``, or ``None`` if there was
+no hang. ``button`` is true if the button was held down when the watchdog
+fired: a long press to the bootloader, not a hang, and the addresses then
+just say where an idle watch sleeps (inside the SoftDevice). Otherwise
+look the addresses up in the firmware's ELF file, for example with
 ``arm-none-eabi-addr2line -f -e firmware.elf <pc>``; the low 9 bits of the
 xPSR give the exception that was running (0 means none, 16 and up are
 interrupts). A fault that keeps recurring shows up at the faulting

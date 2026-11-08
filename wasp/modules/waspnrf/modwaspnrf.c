@@ -18,6 +18,7 @@
 #include "soc/nrfx_coredep.h"
 
 #if MICROPY_PY_BLE_NUS
+#include "drivers/bluetooth/ble_drv.h"
 #include "drivers/bluetooth/ble_uart.h"
 #endif
 
@@ -76,6 +77,11 @@ static void wasp_wdt_feed(void) {
 // since the port's HardFault_Handler returns to it. A watchdog reset without
 // a record means that the interrupt could not run: the CPU was stuck in an
 // interrupt of the same or higher priority.
+//
+// The watchdog also fires when the button is held down, as nothing feeds it
+// then (see above): that is how a long press gets to the bootloader. The
+// record says whether the button was down, since the pc looks the same
+// either way: an idle watch sleeps inside the SoftDevice.
 
 #define WASP_HANG_MAGIC      (0x484e4157)   // "WANH"
 
@@ -85,6 +91,7 @@ typedef struct {
     uint32_t lr;
     uint32_t xpsr;
     uint32_t since_alive;   // ms since the last waspnrf.alive()
+    uint32_t button;        // the button was held down: a long press, not a hang
 } wasp_hang_t;
 
 extern uint32_t _heap_end;
@@ -98,6 +105,7 @@ __attribute__((used)) void wasp_wdt_timeout(const uint32_t *frame) {
     wasp_hang->xpsr = frame[7];
     wasp_hang->since_alive = wasp_wdt_armed ?
         mp_hal_ticks_ms() - wasp_wdt_last_alive : 0;
+    wasp_hang->button = nrf_gpio_pin_read(WASP_WDT_BUTTON);
     wasp_hang->magic = WASP_HANG_MAGIC;
     for (;;) {
         // The reset follows
@@ -259,11 +267,29 @@ static mp_obj_t waspnrf_hang_report(void) {
         mp_obj_new_int_from_uint(wasp_hang->lr),
         mp_obj_new_int_from_uint(wasp_hang->xpsr),
         mp_obj_new_int_from_uint(wasp_hang->since_alive),
+        mp_obj_new_bool(wasp_hang->button),
     };
     wasp_hang->magic = 0;
-    return mp_obj_new_tuple(4, items);
+    return mp_obj_new_tuple(5, items);
 }
 static MP_DEFINE_CONST_FUN_OBJ_0(waspnrf_hang_report_obj, waspnrf_hang_report);
+
+// The watch's own Bluetooth address, such as 'C4:F2:A9:0B:7E:11', or None
+// without a Bluetooth stack. Raises OSError if the SoftDevice cannot tell.
+static mp_obj_t waspnrf_ble_address(void) {
+#if MICROPY_PY_BLE_NUS
+    ble_drv_addr_t addr;
+    ble_drv_address_get(&addr);
+    char text[18];
+    snprintf(text, sizeof(text), "%02X:%02X:%02X:%02X:%02X:%02X",
+        addr.addr[5], addr.addr[4], addr.addr[3],
+        addr.addr[2], addr.addr[1], addr.addr[0]);
+    return mp_obj_new_str(text, 17);
+#else
+    return mp_const_none;
+#endif
+}
+static MP_DEFINE_CONST_FUN_OBJ_0(waspnrf_ble_address_obj, waspnrf_ble_address);
 
 static const mp_rom_map_elem_t waspnrf_module_globals_table[] = {
     { MP_ROM_QSTR(MP_QSTR___name__), MP_ROM_QSTR(MP_QSTR_waspnrf) },
@@ -273,6 +299,7 @@ static const mp_rom_map_elem_t waspnrf_module_globals_table[] = {
     { MP_ROM_QSTR(MP_QSTR_alive), MP_ROM_PTR(&waspnrf_alive_obj) },
     { MP_ROM_QSTR(MP_QSTR_feed), MP_ROM_PTR(&waspnrf_feed_obj) },
     { MP_ROM_QSTR(MP_QSTR_hang_report), MP_ROM_PTR(&waspnrf_hang_report_obj) },
+    { MP_ROM_QSTR(MP_QSTR_ble_address), MP_ROM_PTR(&waspnrf_ble_address_obj) },
     { MP_ROM_QSTR(MP_QSTR_bootloader_version), MP_ROM_PTR(&waspnrf_bootloader_version_obj) },
 };
 static MP_DEFINE_CONST_DICT(waspnrf_module_globals, waspnrf_module_globals_table);
