@@ -540,6 +540,13 @@ Installing wasp-os
     first (``tools/wasptool --pull``), and expect the default ``main.py``
     afterwards.
 
+    Going back the other way needs a step more: an older build hangs at
+    "Mount FS" on the new filesystem instead of reformatting it. Wipe the
+    filesystem from the running watch first, then flash the older build,
+    which formats the empty chip on its first boot::
+
+        tools/wasptool --wipe --ota micropython.zip
+
 .. _Main OS Gadgetbridge:
 
 Gadgetbridge for Android

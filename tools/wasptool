@@ -220,6 +220,45 @@ def handle_reset(c, ota=False):
     c.expect('=== ')
     c.send('\x04')
 
+def handle_wipe(c):
+    """Blank the superblock of the /flash filesystem.
+
+    Every wasp-os build formats an empty chip on its first boot, so this
+    is the way back to a build that cannot read the current filesystem:
+    builds from before November 2026 gave LittleFS 512 byte blocks and
+    hang on the 4 KiB layout that newer builds use.
+
+    The superblock pair is blocks 0 and 1 whatever the block size, and
+    overwriting them with 0xff works with both the old cached driver (whose
+    erase ioctl is a no-op) and the new one.
+    """
+    code = (
+        'import gc, os, watch',
+        "os.chdir('/')",
+        "os.umount('/flash')",
+        'gc.collect()',
+        'f = watch.flash',
+        "buf = b'\\xff' * f.ioctl(5, 0)",
+        'for b in range(2):',
+        '    f.ioctl(6, b)',
+        '    f.writeblocks(b, buf)',
+        'f.ioctl(3, 0)',
+        "print('WI' + 'PED')",
+    )
+
+    c.send('\x05')
+    c.expect('=== ')
+    for line in code:
+        c.sendline(line)
+        c.expect('=== ')
+    c.send('\x04')
+    c.expect('>>> ')
+    if 'WIPED' not in c.before:
+        print('ERROR: wipe failed')
+        print(c.before.replace('\r\r\n', '\n').strip('\n'))
+        sys.exit(1)
+    print('Filesystem wiped: /flash is formatted afresh on the next boot')
+
 def handle_rtc(c):
     # Wait for the clock to tick over to the next second
     now = then = time.localtime()
@@ -423,6 +462,8 @@ if __name__ == '__main__':
             help='Title of the notification')
     parser.add_argument('--upload',
             help='Copy the specified file to the wasp-os device')
+    parser.add_argument('--wipe', action='store_true',
+            help="Wipe the /flash filesystem; the watch formats it afresh on the next boot. Use before --ota to go back to a build from before November 2026, which cannot read the current filesystem")
     parser.add_argument('--verbose', action='store_true',
             help='Log interaction with the wasp-os device')
 
@@ -496,6 +537,13 @@ if __name__ == '__main__':
         console.close()
         argv = pynus.split()
         os.execv(argv[0], argv)
+
+    if args.wipe:
+        handle_wipe(console)
+        if not (args.ota or args.reset or args.bootloader):
+            # Let the watch format and remount /flash straight away
+            handle_reset(console)
+            sys.exit(0)
 
     if args.ota:
         handle_reset(console, ota=True)
