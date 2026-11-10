@@ -35,7 +35,9 @@ in pkgs.mkShell {
     ] ++ ifLinux [
       bluepy
     ]))
-    pkgs.gcc-arm-embedded-14
+    # The toolchain the firmware is tested with (Debian ships 14.2 too);
+    # on a nixpkgs without it, whatever version nixpkgs has
+    (pkgs.gcc-arm-embedded-14 or pkgs.gcc-arm-embedded)
     pkgs.graphviz
   ] ++ ifLinux [
     pkgs.bluez

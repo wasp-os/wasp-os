@@ -92,10 +92,11 @@ Install prerequisites via Nix
 
 .. note::
 
-    This setup method does not use the GCC version wasp-os is tested with,
-    but the gcc-arm-embedded package available from nixpkgs.
-    Though this usually works fine, if you encounter any problems please try the
-    manual installation above and report the issue in the issue tracker.
+    This setup method uses the gcc-arm-embedded package from nixpkgs, version
+    14 where nixpkgs has it, which is the toolchain the firmware is tested
+    with; gcc 13 is known to work as well. If you encounter any problems
+    please try the manual installation above and report the issue in the
+    issue tracker.
 
 To build wasp-os with `Nix <https://nixos.org/nix>`_, ensure it is installed
 then open a terminal and run the following command in the wasp-os repository:
