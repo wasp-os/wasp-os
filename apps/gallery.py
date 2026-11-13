@@ -63,7 +63,7 @@ class GalleryApp():
     def foreground(self):
         try:
             self.files = wasp.watch.os.listdir("gallery")
-        except FileNotFoundError:
+        except OSError:
             self.files = []
         # In case some images were deleted, we reset the index every time
         self.index = 0
