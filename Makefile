@@ -91,7 +91,11 @@ micropython: build-$(BOARD_SAFE) wasp/boards/manifest_user_apps.py wasp/boards/$
 		--application micropython/ports/nrf/build-$(BOARD)-s132/firmware.hex \
 		build-$(BOARD)/micropython.zip
 
-wasp/boards/manifest_user_apps.py: wasp.toml
+# The apps and watch faces wasp.toml selects. They are copied into
+# wasp/apps/user to be frozen, so an edited one must be copied again.
+USER_APP_SOURCES = $(shell sed -n "s/^file *= *['\"]\([^'\"]*\)['\"].*/\1/p" wasp.toml)
+
+wasp/boards/manifest_user_apps.py: wasp.toml $(USER_APP_SOURCES)
 	$(RM) -r \
 		wasp/apps/user \
 		wasp/boards/manifest_user_apps.py \
