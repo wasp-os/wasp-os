@@ -213,8 +213,8 @@ builds are fo you. To download the latest CI build you need to be logged
 into a github account and you can navigate to the latest CI build using
 the link below (follow the link to the most recent "workflow run results"
 and then scroll down to find the artifacts):
-`https://github.com/wasp-os/wasp-os/actions?query=is%3Asuccess+branch%3Amaster+workflow%3Abinary
-<https://github.com/wasp-os/wasp-os/actions?query=is%3Asuccess+branch%3Amaster+workflow%3Abinary>`_ .
+`https://github.com/wasp-os/wasp-os/actions?query=is%3Asuccess+branch%3Amain+workflow%3Abinary
+<https://github.com/wasp-os/wasp-os/actions?query=is%3Asuccess+branch%3Amain+workflow%3Abinary>`_ .
 
 .. warning::
 
