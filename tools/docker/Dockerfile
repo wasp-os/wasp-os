@@ -35,31 +35,30 @@ RUN apt-get update && apt-get install --assume-yes --no-install-recommends \
         git \
         graphviz \
         libcairo2-dev \
+        libdbus-1-dev \
         libgirepository-2.0-dev \
         libnewlib-arm-none-eabi \
-        libsdl2-2.0.0 \
         make \
         pkg-config \
         python-is-python3 \
         python3 \
         python3-dev \
-        python3-pil \
-        python3-pip \
-        python3-recommonmark \
-        python3-sphinx \
-        python3-venv \
-        sphinx \
         unzip \
         wget \
     && \
     rm --recursive --force /var/lib/apt/lists/*
 ENV PYTHONUNBUFFERED=1
+# Python tooling: uv installs the interpreter and all dependency groups into a
+# venv outside /project (which is a volume mounted at run time).
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /usr/local/bin/
+ENV UV_PROJECT_ENVIRONMENT=/opt/python/venv \
+    UV_PYTHON_INSTALL_DIR=/opt/python/interpreters \
+    UV_LINK_MODE=copy
+COPY ./pyproject.toml ./uv.lock ./.python-version /tmp/wasp-os/
+RUN cd /tmp/wasp-os && uv sync --locked --all-groups --no-cache && \
+    chmod -R a+rX /opt/python
 ENV VIRTUAL_ENV=/opt/python/venv
-RUN python3 -m venv ${VIRTUAL_ENV}
 ENV PATH="${VIRTUAL_ENV}/bin:$PATH"
-COPY ./wasp/requirements.txt /tmp/requirements.txt
-RUN pip install --no-cache-dir \
-        --requirement /tmp/requirements.txt
 
 # Install main ("payload") software
 # None; Python scripts are provided through volumes at run time.

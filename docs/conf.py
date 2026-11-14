@@ -33,7 +33,6 @@ author = 'Daniel Thompson'
 extensions = [
     'sphinx.ext.autodoc',
     'sphinx.ext.graphviz',
-    'recommonmark',
 ]
 
 # Add any paths that contain templates here, relative to this directory.

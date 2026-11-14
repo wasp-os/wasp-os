@@ -7,7 +7,7 @@
         wasp/appregistry.py
 """
 
-import tomli
+import tomllib
 import os
 import sys
 
@@ -28,7 +28,7 @@ def _file_path_to_display_name(path):
 
 
 with open(sys.argv[1:][0], 'rb') as config_file:
-  config = tomli.load(config_file)
+  config = tomllib.load(config_file)
 
   # Copy selected apps to the wasp app user directory
   for app in config.get('app'):

@@ -82,6 +82,11 @@ class PinHandler():
         self._value = new_value
         return new_value
 
+# Liveness signal for the watchdog, if the board provides one (see
+# boards/pinetime/watch.py.in): calling it on every tick proves that the
+# system manager is still running.
+_alive = getattr(watch, 'alive', None)
+
 def _key_app(d):
     """Get a sort key for apps."""
     return d.NAME
@@ -165,14 +170,24 @@ class Manager():
             self.switch(self.quick_ring[0])
 
     def register_defaults(self):
-        """Register the default applications."""
+        """Register the default applications.
+
+        An application that cannot be loaded, usually because the heap has
+        no room left for it, is reported on the console and skipped: it must
+        not stop the watch from booting. Once the watch is up, the Software
+        app can be used to switch applications off.
+        """
 
         for app in appregistry.autoload_list:
-            self.register(app[0], app[1], app[2], app[3])
+            try:
+                self.register(app[0], app[1], app[2], app[3])
+            except Exception as e:
+                sys.print_exception(e)
 
         self.register('apps.system.step_counter.StepCounterApp', True, no_except=True)
         self.register('apps.system.settings.SettingsApp', no_except=True)
         self.register('apps.system.software.SoftwareApp', no_except=True)
+        self.register('apps.system.about.AboutApp', no_except=True)
 
     def register(self, app, quick_ring=False, watch_face=False, no_except=False):
         """Register an application with the system.
@@ -180,20 +195,32 @@ class Manager():
         :param object app: The application to register
         :param object quick_ring: Place the application on the quick ring
         :param object watch_face: Make the new application the default watch face
-        :param object no_except: Ignore exceptions when instantiating applications
+        :param object no_except: Report, rather than raise, an exception
+                                 while importing or instantiating the
+                                 application
         """
         if isinstance(app, str):
             modname = app[:app.rindex('.')]
-            exec('import ' + modname)
-            if no_except:
-                try:
-                    app = eval(app + '()')
-                except:
-                    app = None
-            else:
-                    app = eval(app + '()')
-            exec('del ' + modname)
-            exec('del sys.modules["' + modname + '"]')
+            # Use an explicit namespace: since Python 3.13 exec() inside a
+            # function works on a snapshot of the locals, so the import
+            # would not be visible to the eval() (and 'del' would fail).
+            ns = {}
+            try:
+                exec('import ' + modname, ns)
+                app = eval(app + '()', ns)
+            except Exception as e:
+                # Usually a MemoryError: give back whatever the import
+                # managed to allocate, so that the next application has
+                # a chance
+                app = None
+                ns = None
+                gc.collect()
+                if not no_except:
+                    raise
+                sys.print_exception(e)
+            ns = None
+            if modname in sys.modules:
+                del sys.modules[modname]
             if not app:
                 return
 
@@ -462,6 +489,9 @@ class Manager():
         circuit logic to quickly exit if we haven't reached a tick
         expiry point.
         """
+        if _alive:
+            _alive()
+
         rtc = watch.rtc
         update = rtc.update()
 
@@ -526,7 +556,7 @@ class Manager():
             # below
             while True:
                 self._tick()
-                machine.deepsleep()
+                machine.lightsleep()
 
         while True:
             try:
@@ -545,7 +575,11 @@ class Manager():
             # ticks. In other words this code will break if we improve the
             # power management... we are currently relying on not being able
             # to stay in the low-power state for very long.
-            machine.deepsleep()
+            #
+            # lightsleep() is a plain wait-for-event on the nRF port. Do not
+            # use deepsleep() here: since upstream MicroPython v1.20 that
+            # resets the chip on nRF.
+            machine.lightsleep()
 
     def _work(self):
         self._scheduled = False

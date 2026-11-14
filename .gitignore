@@ -12,5 +12,9 @@ wasp/boards/*/watch.py
 wasp/boards/manifest_user_apps.py
 wasp/apps/user
 wasp/appregistry.py
+wasp/version.py
 .idea
 .vscode
+
+# uv-managed virtualenv
+/.venv/

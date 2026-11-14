@@ -1,4 +1,3 @@
-export PYTHONPATH := $(CURDIR)/tools/nrfutil:$(CURDIR)/tools/intelhex:$(PYTHONPATH)
 
 PYTHON ?= python3
 PYTEST ?= $(PYTHON) -m pytest
@@ -15,7 +14,7 @@ ifdef BOARD
 BOARD_SAFE = $(BOARD)
 endif
 BOARD ?= $(error Please set BOARD=)
-VERSION ?= $(patsubst v%,%,$(shell git describe --tags))
+VERSION ?= $(patsubst v%,%,$(shell git describe --tags --always --dirty))
 
 clean :
 	$(RM) -r \
@@ -28,7 +27,8 @@ clean :
 		wasp/boards/$(BOARD)/watch.py \
 		wasp/apps/user \
 		wasp/boards/manifest_user_apps.py \
-		wasp/appregistry.py
+		wasp/appregistry.py \
+		wasp/version.py
 	find . -type f -name '*.py[co]' -delete -o -type d -name __pycache__ -delete
 
 # Avoid a recursive update... it grabs far too much
@@ -42,7 +42,7 @@ submodules :
 bootloader: build-$(BOARD_SAFE)
 	$(RM) bootloader/_build-$(BOARD)_nrf52832//$(BOARD)_nrf52832_bootloader-*-nosd.hex
 	$(MAKE) -C bootloader/ BOARD=$(BOARD)_nrf52832 all genhex
-	$(PYTHON) tools/hexmerge.py \
+	hexmerge.py \
 		bootloader/_build-$(BOARD)_nrf52832/$(BOARD)_nrf52832_bootloader-*-nosd.hex \
 		bootloader/lib/softdevice/s132_nrf52_6.1.1/s132_nrf52_6.1.1_softdevice.hex \
 		-o build-$(BOARD)/bootloader.hex
@@ -64,28 +64,16 @@ wasp/boards/$(BOARD_SAFE)/watch.py : wasp/boards/$(BOARD_SAFE)/watch.py.in
 	(cd wasp; ../tools/preprocess.py boards/$(BOARD)/watch.py.in > boards/$(BOARD)/watch.py) \
 		|| ($(RM) wasp/boards/$(BOARD)/watch.py; false)
 
-micropython/mpy-cross/mpy-cross:
-	$(MAKE) -C micropython/mpy-cross \
-		CWARN="-Wall -Wno-error"
-		# ^ Disable some Werrors from GCC>=13, specifically
-		#     - dangling-pointer
-		#     - enum-int-mismatch
-		#   TODO update micropython and remove.
-		#   https://github.com/wasp-os/wasp-os/issues/493
+micropython/mpy-cross/build/mpy-cross:
+	$(MAKE) -C micropython/mpy-cross
 
-micropython: build-$(BOARD_SAFE) wasp/boards/manifest_user_apps.py wasp/boards/$(BOARD_SAFE)/watch.py micropython/mpy-cross/mpy-cross
+micropython: build-$(BOARD_SAFE) wasp/boards/manifest_user_apps.py wasp/version.py wasp/boards/$(BOARD_SAFE)/watch.py micropython/mpy-cross/build/mpy-cross
 	$(RM) micropython/ports/nrf/build-$(BOARD)-s132/frozen_content.c
 	$(MAKE) -C micropython/ports/nrf \
 		BOARD=$(BOARD) SD=s132 \
-		MICROPY_VFS_LFS2=1 \
+		BOARD_DIR=$(CURDIR)/wasp/boards/$(BOARD)/micropython \
 		FROZEN_MANIFEST=$(CURDIR)/wasp/boards/$(BOARD)/manifest.py \
-		USER_C_MODULES=$(CURDIR)/wasp/modules \
-		COPT="-Wno-error"
-		# ^ Disable some Werrors from GCC>=13, specifically
-		#     - dangling-pointer
-		#     - enum-int-mismatch
-		#   TODO update micropython and remove.
-		#   https://github.com/wasp-os/wasp-os/issues/493
+		USER_C_MODULES=$(CURDIR)/wasp/modules
 	$(PYTHON) -m nordicsemi dfu genpkg \
 		--dev-type 0x0052 \
 		--application micropython/ports/nrf/build-$(BOARD)-s132/firmware.hex \
@@ -102,6 +90,15 @@ wasp/boards/manifest_user_apps.py: wasp.toml $(USER_APP_SOURCES)
 		wasp/appregistry.py
 	mkdir -p wasp/apps/user
 	$(PYTHON) tools/configure_wasp_apps.py wasp.toml
+
+# The version the watch reports (see the About app). Rewritten only when it
+# changes, so the simulator and the docs don't see a new file every time.
+wasp/version.py: FORCE
+	@echo "VERSION = '$(VERSION)'" > $@.tmp
+	@if cmp -s $@.tmp $@; then $(RM) $@.tmp; else mv $@.tmp $@; fi
+
+.PHONY: FORCE
+FORCE:
 
 build-$(BOARD_SAFE):
 	mkdir -p build-$(BOARD)
@@ -121,19 +118,19 @@ debug:
 		-ex "attach 1" \
 		-ex "load"
 
-apps/%.mpy: apps/%.py micropython/mpy-cross/mpy-cross
-	./micropython/mpy-cross/mpy-cross -mno-unicode -march=armv7m $<
+apps/%.mpy: apps/%.py micropython/mpy-cross/build/mpy-cross
+	./micropython/mpy-cross/build/mpy-cross -march=armv7m $<
 APPS_PY=$(wildcard apps/*.py)
 APPS_MPY=$(APPS_PY:%.py=%.mpy)
 .PHONY: apps
 apps: $(APPS_MPY)
 
-docs: wasp/boards/manifest_user_apps.py
+docs: wasp/boards/manifest_user_apps.py wasp/version.py
 	$(RM) -rf docs/build/html/*
 	$(MAKE) -C docs html
 	touch docs/build/html/.nojekyll
 
-sim: wasp/boards/manifest_user_apps.py
+sim: wasp/boards/manifest_user_apps.py wasp/version.py
 	PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=.:wasp/boards/simulator:wasp \
 	$(PYTHON) -i wasp/boards/simulator/main.py
 
@@ -141,7 +138,7 @@ ifeq ("$(origin K)", "command line")
   PYTEST_RESTRICT = -k '$(K)'
 endif
 
-check: wasp/boards/manifest_user_apps.py
+check: wasp/boards/manifest_user_apps.py wasp/version.py
 	PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=.:wasp/boards/simulator:wasp:wasp/apps/system \
 	$(PYTEST) -v -W ignore $(PYTEST_RESTRICT) wasp/boards/simulator
 
@@ -149,9 +146,7 @@ check: wasp/boards/manifest_user_apps.py
 .PHONY: bootloader reloader docs micropython
 
 dist: DIST=../wasp-os-$(VERSION)
-dist: k9
-k9: p8
-p8: pinetime
+dist: pinetime
 pinetime : mrproper
 mrproper :
 	$(RM) -r \
@@ -161,7 +156,7 @@ mrproper :
 		reloader/src/boards/*/bootloader.h \
 		micropython/mpy-cross/build \
 		micropython/ports/nrf/build-*
-k9 p8 pinetime:
+pinetime:
 	$(RM) wasp/boards/$@/watch.py
 	$(MAKE) BOARD=$@ all
 dist: docs
