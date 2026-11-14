@@ -151,7 +151,7 @@ class StepCounterApp():
 
         # Bail if there is no data
         if not data:
-            draw.string('No data', 239-160, 0, 160, right=True)
+            draw.string('No data', 239-160, 0, 160, justify=1)
             return
 
         color = wasp.system.theme('spot2')
@@ -174,4 +174,4 @@ class StepCounterApp():
             else:
                 draw.fill(color, x, 239-d, 1, d)
 
-        draw.string(str(total), 239-160, 0, 160, right=True)
+        draw.string(str(total), 239-160, 0, 160, justify=1)

@@ -91,3 +91,53 @@ def test_about_uptime(secs, expected):
 def test_about_hang(hang, expected):
     import apps.system.about as about
     assert about._hang(hang) == expected
+
+class FakeDisplay:
+    """The little of a display that drawing a string needs: records the
+    windows the glyphs are written to."""
+    def __init__(self):
+        self.linebuffer = bytearray(2 * 240)
+        self.windows = []
+
+    def set_window(self, x, y, w, h):
+        self.windows.append((x, y, w, h))
+
+    def quick_start(self):
+        pass
+
+    def quick_write(self, buf):
+        pass
+
+    def quick_end(self):
+        pass
+
+@pytest.mark.parametrize('kwargs, left, right', (
+    ({}, 20, 20),                               # centred, the default
+    ({'justify': 0}, 20, 20),
+    ({'justify': 1}, 40, 0),                    # right
+    ({'justify': -1}, 0, 40),                   # left
+    ({'right': True}, 40, 0),                   # the deprecated spelling
+    ({'right': False, 'justify': -1}, 0, 40),   # right=False changes nothing
+))
+def test_string_justify(draw, monkeypatch, kwargs, left, right):
+    """A string drawn with a width is padded with the background on both
+    sides, as its justification says, and the glyphs go in between."""
+    display = FakeDisplay()
+    draw._display = display
+    fills = []
+    monkeypatch.setattr(draw, 'fill', lambda bg, x, y, w, h: fills.append((x, w)))
+    w, h = draw.bounding_box('AB')
+
+    draw.string('AB', 10, 50, width=w + 40, **kwargs)
+
+    assert fills == [(10, left), (10 + left + w, right)]
+    assert display.windows[0][0] == 10 + left
+    assert display.windows[0][1] == 50
+
+def test_string_without_width(draw, monkeypatch):
+    """Without a width nothing is padded, whatever the justification."""
+    display = FakeDisplay()
+    draw._display = display
+    monkeypatch.setattr(draw, 'fill', lambda *args: pytest.fail('filled'))
+    draw.string('AB', 10, 50, justify=1)
+    assert display.windows[0][0] == 10

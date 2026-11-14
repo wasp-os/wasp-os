@@ -146,7 +146,7 @@ class PomodoroApp():
                     self.last_preset -= 1
                 self.last_preset %= len(_PRESETS)
                 self.queue = _PRESETS[self.last_preset]
-            draw.string(self.queue, 0, 35, right=True, width=240)
+            draw.string(self.queue, 0, 35, justify=1, width=240)
             draw.string("V{}".format(self.nb_vibrat_per_alarm), 0, 35)
 
     def touch(self, event):
@@ -184,7 +184,7 @@ class PomodoroApp():
                             break
             draw = wasp.watch.drawable
             draw.set_font(fonts.sans24)
-            draw.string(self.queue, 0, 35, right=True, width=240)
+            draw.string(self.queue, 0, 35, justify=1, width=240)
             draw.string("V{}".format(self.nb_vibrat_per_alarm), 0, 35)
 
     def _start(self, first_run=False):
@@ -278,7 +278,7 @@ class PomodoroApp():
                                   bg=0xf800)
             draw.reset()
             draw.set_font(fonts.sans24)
-            draw.string(self.queue, 0, 35, right=True, width=240)
+            draw.string(self.queue, 0, 35, justify=1, width=240)
             draw.string("V{}".format(self.nb_vibrat_per_alarm), 0, 35)
         sbar = wasp.system.bar
         sbar.clock = True
