@@ -131,4 +131,4 @@ class CalculatorApp():
     
     def _update(self):
         output = self.output if len(self.output) < 12 else self.output[len(self.output)-12:]
-        wasp.watch.drawable.string(output, 0, 14, width=200, right=True)
+        wasp.watch.drawable.string(output, 0, 14, width=200, justify=1)
