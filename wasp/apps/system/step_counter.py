@@ -120,7 +120,7 @@ class StepCounterApp():
         draw.blit(feet, 12, 132-24)
 
         # Update the status bar
-        now = wasp.system.bar.update()
+        wasp.system.bar.update()
 
         # Update the scroll indicator
         scroll = self._scroll

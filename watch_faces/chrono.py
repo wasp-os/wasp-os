@@ -66,9 +66,9 @@ class ChronoApp():
         hi = wasp.system.theme('bright')
         c1 = draw.darken(wasp.system.theme('spot1'), wasp.system.theme('contrast'))
 
-        if redraw:
-            now = wasp.watch.rtc.get_localtime()
+        now = wasp.watch.rtc.get_localtime()
 
+        if redraw:
             # Clear the display and draw that static parts of the watch face
             draw.fill()
 
@@ -83,9 +83,12 @@ class ChronoApp():
             self._hh = 0
             self._mm = 0
         else:
-            now = wasp.system.bar.update()
-            if not now or self._mm == now[4]:
-                # Skip the update
+            # Redraw the status bar if necessary. This does not overlap the
+            # other elements on the screen.
+            wasp.system.bar.update()
+
+            # Only continue drawing if the minute has changed.
+            if self._mm == now[4]:
                 return
 
         # Undraw old time
