@@ -38,6 +38,7 @@ ble = [
 ]
 # Documentation (make docs)
 docs = [
+    "shibuya>=2026.7.12",
     "sphinx",
 ]
 

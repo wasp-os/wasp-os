@@ -15,7 +15,7 @@ def test_screenshot(constructor):
     # Every application requires a screenshot be captured for use in the
     # documentation. The screenshots must conform to standard dimensions
     # and have a specific name. The apps are shown in a grid at
-    # https://wasp-os.readthedocs.io/en/latest/README.html#screenshots
+    # https://docs.wasp-os.org/README.html#screenshots
     # so your app will look untidy if it does not use the same dimensions
     # as the others.
     #
