@@ -57,7 +57,25 @@ master_doc = 'index'
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 #
-html_theme = 'alabaster'
+html_theme = 'shibuya'
+html_theme_options = {
+    'accent_color': 'amber',
+    'github_url': 'https://github.com/wasp-os/wasp-os',
+    'nav_links': [
+        {'title': 'Install', 'url': 'install'},
+        {'title': 'Apps', 'url': 'apps'},
+        {'title': 'Builds', 'url': 'https://wasp-os.org/', 'external': True},
+    ],
+    'show_ai_links': False,
+}
+# "Edit this page" in the sidebar
+html_context = {
+    'source_type': 'github',
+    'source_user': 'wasp-os',
+    'source_repo': 'wasp-os',
+    'source_version': 'main',
+    'source_docs_path': '/docs/',
+}
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
