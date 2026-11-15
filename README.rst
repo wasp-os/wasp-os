@@ -38,9 +38,9 @@ relying on Bluetooth Low Energy for over-the-air updates.
 Documentation
 -------------
 
-Wasp-os is has `extensive documentation <https://wasp-os.readthedocs.io>`_
+Wasp-os has `extensive documentation <https://docs.wasp-os.org>`_
 which includes a detailed `Application Writer's Guide
-<https://wasp-os.readthedocs.io/en/latest/appguide.html>`_ to help you
+<https://docs.wasp-os.org/appguide.html>`_ to help you
 get started coding for wasp-os as quickly as possible.
 
 Getting Started
@@ -54,7 +54,7 @@ following devices:
  * Senbono K9
 
 Use the
-`Installation Guide <https://wasp-os.readthedocs.io/en/latest/install.html>`_
+`Installation Guide <https://docs.wasp-os.org/install.html>`_
 to learn how to build and install wasp-os on these devices.
 
 At the end of the install process your watch will show the time (03:00)
