@@ -10,6 +10,7 @@
 
 #include "py/runtime.h"
 #include "py/mphal.h"
+#include "py/objexcept.h"
 #include "nrf.h"
 
 #include "hal/nrf_gpio.h"
@@ -32,13 +33,18 @@
 //
 // It never feeds while the button is held down, so holding the button always
 // resets the watch into the bootloader. Once Python has called
-// waspnrf.alive() for the first time it also requires that it keeps doing
-// so: wasp's system manager calls it on every tick, and if those calls stop
-// for WASP_WDT_GRACE_MS the watchdog resets the watch. Without this a fatal
-// error (whose handler is an endless loop) or a hung main loop left the
-// watch dead with the RTC interrupt still feeding the watchdog. Until the
-// first call it is fed unconditionally, which covers booting and keeps the
-// REPL usable if booting fails with a Python exception.
+// waspnrf.alive() for the first time, it also watches that the system
+// manager keeps calling it on every tick:
+//
+//  - silent for WASP_WDT_GRACE_MS: Python code is stuck, so throw a
+//    waspnrf.Hang exception into it, like Ctrl-C over the console. The
+//    manager's loop catches it and shows the crash screen.
+//  - still silent at WASP_WDT_RESET_MS: stuck where no exception reaches
+//    (a fatal error, a stuck bus, an interrupt), so stop feeding and let
+//    the watchdog reset the watch, with the hang report below.
+//
+// Until the first alive() the watchdog is fed unconditionally, which covers
+// booting and keeps the REPL usable if booting fails.
 //
 // (This used to be fed from a TIMER4 interrupt as well, but the port's
 // timer_init0() uninitialises TIMER4 moments after MICROPY_BOARD_EARLY_INIT,
@@ -49,18 +55,36 @@
 #define WASP_WDT_BUTTON_EN   (15)   // must be driven high to read the button
 #endif
 
-#define WASP_WDT_GRACE_MS    (5000)
+#define WASP_WDT_GRACE_MS    (5000)    // throw Hang
+#define WASP_WDT_RESET_MS    (10000)   // stop feeding
 
 static bool wasp_wdt_armed;
+static bool wasp_wdt_thrown;    // Hang has been thrown for this silence
 static uint32_t wasp_wdt_last_alive;
+
+// The Hang exception, allocated in waspnrf.alive() because the interrupt that
+// throws it cannot allocate. A root pointer keeps it from being collected.
+MP_DEFINE_EXCEPTION(Hang, Exception)
+MP_REGISTER_ROOT_POINTER(mp_obj_t wasp_hang_exc);
 
 static void wasp_wdt_feed(void) {
     if (nrf_gpio_pin_read(WASP_WDT_BUTTON)) {
         return;
     }
-    if (wasp_wdt_armed &&
-        (uint32_t)(mp_hal_ticks_ms() - wasp_wdt_last_alive) > WASP_WDT_GRACE_MS) {
-        return;
+    if (wasp_wdt_armed) {
+        uint32_t silent = mp_hal_ticks_ms() - wasp_wdt_last_alive;
+        if (silent > WASP_WDT_RESET_MS) {
+            return;
+        }
+        if (silent > WASP_WDT_GRACE_MS && !wasp_wdt_thrown) {
+            wasp_wdt_thrown = true;
+            mp_obj_t exc = MP_STATE_VM(wasp_hang_exc);
+            if (exc != MP_OBJ_NULL) {
+                // Fresh traceback, as mp_sched_keyboard_interrupt() does
+                ((mp_obj_exception_t *)MP_OBJ_TO_PTR(exc))->traceback_data = NULL;
+                mp_sched_exception(exc);
+            }
+        }
     }
     nrf_wdt_reload_request_set(NRF_WDT, NRF_WDT_RR0);
 }
@@ -238,7 +262,12 @@ static mp_obj_t waspnrf_uart_enabled(void) {
 static MP_DEFINE_CONST_FUN_OBJ_0(waspnrf_uart_enabled_obj, waspnrf_uart_enabled);
 
 static mp_obj_t waspnrf_alive(void) {
+    if (MP_STATE_VM(wasp_hang_exc) == MP_OBJ_NULL) {
+        MP_STATE_VM(wasp_hang_exc) = mp_obj_new_exception_msg(&mp_type_Hang,
+            MP_ERROR_TEXT("the system manager did not run for 5 s"));
+    }
     wasp_wdt_last_alive = mp_hal_ticks_ms();
+    wasp_wdt_thrown = false;
     wasp_wdt_armed = true;
     return mp_const_none;
 }
@@ -297,6 +326,7 @@ static const mp_rom_map_elem_t waspnrf_module_globals_table[] = {
     { MP_ROM_QSTR(MP_QSTR_uart_enabled), MP_ROM_PTR(&waspnrf_uart_enabled_obj) },
     { MP_ROM_QSTR(MP_QSTR_enter_ota_dfu), MP_ROM_PTR(&waspnrf_enter_ota_dfu_obj) },
     { MP_ROM_QSTR(MP_QSTR_alive), MP_ROM_PTR(&waspnrf_alive_obj) },
+    { MP_ROM_QSTR(MP_QSTR_Hang), MP_ROM_PTR(&mp_type_Hang) },
     { MP_ROM_QSTR(MP_QSTR_feed), MP_ROM_PTR(&waspnrf_feed_obj) },
     { MP_ROM_QSTR(MP_QSTR_hang_report), MP_ROM_PTR(&waspnrf_hang_report_obj) },
     { MP_ROM_QSTR(MP_QSTR_ble_address), MP_ROM_PTR(&waspnrf_ble_address_obj) },

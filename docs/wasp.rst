@@ -179,14 +179,21 @@ seconds. Key points for application robustness include:
 3. The routine to pet the dog is also predicated on the hardware button
    still being correctly configured.
 
-4. Once the system is up, the routine to pet the dog is also predicated on
-   the main loop still running. Otherwise a timer interrupt keeps petting
-   the dog after a fatal error or a hang, and the watch stays dead until
-   the button is held down. On the PineTime the dog is petted from the
-   RTC interrupt, the system manager calls ``watch.alive()`` on every
-   tick, and petting stops if that has not happened for five seconds. The watchdog then resets the
-   watch into recovery mode, from where a button press returns to the
-   application.
+4. Once the system is up, the routine to pet the dog also watches that
+   the main loop is still running. Otherwise a timer interrupt keeps
+   petting the dog after a fatal error or a hang, and the watch stays dead
+   until the button is held down. On the PineTime the dog is petted from
+   the RTC interrupt and the system manager calls ``watch.alive()`` on
+   every tick. If that has not happened for five seconds, Python code is
+   stuck somewhere, and the interrupt throws a ``waspnrf.Hang`` exception
+   into it, the way Ctrl-C over the console does. The system manager's
+   loop catches it like any other exception: the crash screen appears,
+   with the traceback of the stuck code a swipe away, and the console
+   stays usable, so the user decides what happens next. Only if the
+   manager is still silent after ten seconds, because the code is stuck
+   where no exception reaches (a fatal error, a stuck bus, an interrupt),
+   does petting stop: the watchdog then resets the watch into recovery
+   mode, from where a button press returns to the application.
 
 To avoid mistakes the application should contain no subroutines that
 unconditionally pet the dog; they should all implement #2 to #4 from
