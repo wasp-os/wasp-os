@@ -18,7 +18,7 @@ requests will not be merged if there are open questions or requests for
 changes that have not been acted on.
 
 All contributions are expected to pass the continuous-integration tests
-before they can be accepted. Currently there are three checks:
+before they can be accepted. Currently there are two checks:
 
 1. The code is compiled for all supported devices. If you have been developing
    your code in the simulator it is a good idea to compile wasp-os for at least
@@ -27,20 +27,15 @@ before they can be accepted. Currently there are three checks:
 2. Automatic testing is performed using the simulator. The automatic tests
    include a mixture to static QA checks, self-test code and simple "does it
    run" tests on all applications. It is strongly recommended to run
-   `make check` and fix any reported problems before submitting a pull-request.
-   Alternatively, if you have your own github fork of wasp-os, then
-   github can run these tests for you automatically every time you push a new
-   branch to your fork.
+   ``uv run make check`` and fix any reported problems before submitting a
+   pull request. Alternatively, if you have your own github fork of wasp-os,
+   then github can run these tests for you automatically every time you push
+   a new branch to your fork.
 
-3. All contributions must include a ``Signed-off-by`` tag added by the
-   contributor who submits the patch or patches. The ``Signed-off-by``
-   tag is added at the end of the patch description and certifies that
-   the contributor either wrote the patch or has the right to share the
-   code under the open source license appropriate for the file being modified.
-
-A ``Signed-off-by`` tag is an explicit statement that your contribution comes
-under one of (a), (b), (c), or (d) from the list below so please be sure to
-read carefully what you are certifying by adding your Signed-off-by.
+By contributing you agree that your contribution is licensed under the same
+license as the file it changes, which for most of wasp-os is the GNU Lesser
+General Public License, version 3 or later. Only contribute code that you
+wrote yourself or have the right to share under that license.
 
 Additionally please be aware that that contributors, like all other members of
 the wasp-os community, are expected to meet the community guidelines described
@@ -53,43 +48,25 @@ Coding Style
 wasp-os uses a similar coding style as micropython and, in particular, Python
 code is expected to follow :pep:`8`.
 
-Developer Certificate of Origin
--------------------------------
-
-.. literalinclude:: dco.txt
-   :language: none
-   :emphasize-lines: 1-2,13
-
-This procedure is the same one used by the Linux kernel project. To sign off a
-patch append an appropriate line at the end of the commit message:
-
-.. code-block:: none
-
-    Signed-off-by: Random Developer <r.developer@example.org>
-
-Adding a sign-off can be automated by using git features such as
-``git commit --signoff``. Please use your real name, anonymous and pseudonymous
-contributions will not be accepted.
-
 Git Hints and Tricks
 --------------------
 
-Quick fixes
-~~~~~~~~~~~
+Updating a pull request
+~~~~~~~~~~~~~~~~~~~~~~~
 
-The most common review feedback for contributions to wasp-os is a request that
-the contributor include their sign-off. For a single patch at the head of the
-current branch (and shared as a github pull request) this can be handled fairly
+Review feedback is best folded into the original commits rather than added
+as fix-up commits on top. For a single patch at the head of the current
+branch (and shared as a github pull request) this can be handled fairly
 easily:
 
 .. code-block:: sh
 
-    git commit --amend --signoff
+    git commit --amend
     git push --force-with-lease <myfork> HEAD
 
 Additionally, please be aware that github will not send out automatic
 notifications to let the maintainer know that you have pushed an update to the
-pull-request. Follow up the above with a comment on the pull request thread
+pull request. Follow up the above with a comment on the pull request thread
 saying that your contribution has been updated and is ready for another look.
 
 Code of Conduct
