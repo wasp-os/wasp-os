@@ -2,6 +2,11 @@
 PYTHON ?= python3
 PYTEST ?= $(PYTHON) -m pytest
 
+# Some toolchains, such as one built with Gentoo's crossdev, enable fortify
+# and the stack protector by default. newlib-nano supports neither, so the
+# firmware would fail to build. Switch them off for every toolchain.
+HARDENING_OFF = -U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=0 -fno-stack-protector
+
 all : bootloader reloader micropython
 
 # If BOARD is undefined then set it up so that expanding it issues an
@@ -73,7 +78,8 @@ micropython: build-$(BOARD_SAFE) wasp/boards/manifest_user_apps.py wasp/version.
 		BOARD=$(BOARD) SD=s132 \
 		BOARD_DIR=$(CURDIR)/wasp/boards/$(BOARD)/micropython \
 		FROZEN_MANIFEST=$(CURDIR)/wasp/boards/$(BOARD)/manifest.py \
-		USER_C_MODULES=$(CURDIR)/wasp/modules
+		USER_C_MODULES=$(CURDIR)/wasp/modules \
+		CFLAGS_EXTRA="$(HARDENING_OFF) $(CFLAGS_EXTRA)"
 	$(PYTHON) -m nordicsemi dfu genpkg \
 		--dev-type 0x0052 \
 		--application micropython/ports/nrf/build-$(BOARD)-s132/firmware.hex \
