@@ -574,6 +574,19 @@ class Manager():
         while True:
             try:
                 self._tick()
+
+                # Currently there is no code to control how fast the system
+                # ticks. In other words this code will break if we improve the
+                # power management... we are currently relying on not being
+                # able to stay in the low-power state for very long.
+                #
+                # lightsleep() is a plain wait-for-event on the nRF port. Do
+                # not use deepsleep() here: since upstream MicroPython v1.20
+                # that resets the chip on nRF.
+                #
+                # Inside the try: an exception thrown in from an interrupt,
+                # such as the watchdog's Hang, surfaces right after the sleep.
+                machine.lightsleep()
             except KeyboardInterrupt:
                 raise
             except MemoryError:
@@ -583,16 +596,6 @@ class Manager():
                 if 'print_exception' in dir(watch):
                     watch.print_exception(e)
                 self.switch(CrashApp(e))
-
-            # Currently there is no code to control how fast the system
-            # ticks. In other words this code will break if we improve the
-            # power management... we are currently relying on not being able
-            # to stay in the low-power state for very long.
-            #
-            # lightsleep() is a plain wait-for-event on the nRF port. Do not
-            # use deepsleep() here: since upstream MicroPython v1.20 that
-            # resets the chip on nRF.
-            machine.lightsleep()
 
     def _work(self):
         self._scheduled = False
