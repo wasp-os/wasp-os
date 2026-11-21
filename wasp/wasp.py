@@ -255,6 +255,19 @@ class Manager():
         watch.backlight.set(self._brightness)
 
     @property
+    def bluetooth(self):
+        """Whether phones and computers can find and connect to the watch.
+
+        Switching it off stops advertising and hangs up. The radio stays
+        on: firmware without it cannot write to flash.
+        """
+        return watch.bluetooth()
+
+    @bluetooth.setter
+    def bluetooth(self, value):
+        watch.bluetooth(value)
+
+    @property
     def notify_level(self):
         """Cached copy of the current notify level"""
         return self._notifylevel

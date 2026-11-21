@@ -237,6 +237,20 @@ static mp_obj_t waspnrf_uart_enabled(void) {
 }
 static MP_DEFINE_CONST_FUN_OBJ_0(waspnrf_uart_enabled_obj, waspnrf_uart_enabled);
 
+// uart_advertise([on]): whether hosts can find and connect to the
+// console. Switching it off stops advertising and hangs up.
+static mp_obj_t waspnrf_uart_advertise(size_t n_args, const mp_obj_t *args) {
+#if MICROPY_PY_BLE_NUS
+    if (n_args) {
+        ble_uart_advertising_set(mp_obj_is_true(args[0]));
+    }
+    return mp_obj_new_bool(ble_uart_advertising());
+#else
+    return mp_const_false;
+#endif
+}
+static MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(waspnrf_uart_advertise_obj, 0, 1, waspnrf_uart_advertise);
+
 static mp_obj_t waspnrf_alive(void) {
     wasp_wdt_last_alive = mp_hal_ticks_ms();
     wasp_wdt_armed = true;
@@ -295,6 +309,7 @@ static const mp_rom_map_elem_t waspnrf_module_globals_table[] = {
     { MP_ROM_QSTR(MP_QSTR___name__), MP_ROM_QSTR(MP_QSTR_waspnrf) },
     { MP_ROM_QSTR(MP_QSTR_uart_connected), MP_ROM_PTR(&waspnrf_uart_connected_obj) },
     { MP_ROM_QSTR(MP_QSTR_uart_enabled), MP_ROM_PTR(&waspnrf_uart_enabled_obj) },
+    { MP_ROM_QSTR(MP_QSTR_uart_advertise), MP_ROM_PTR(&waspnrf_uart_advertise_obj) },
     { MP_ROM_QSTR(MP_QSTR_enter_ota_dfu), MP_ROM_PTR(&waspnrf_enter_ota_dfu_obj) },
     { MP_ROM_QSTR(MP_QSTR_alive), MP_ROM_PTR(&waspnrf_alive_obj) },
     { MP_ROM_QSTR(MP_QSTR_feed), MP_ROM_PTR(&waspnrf_feed_obj) },

@@ -58,6 +58,7 @@ from drivers.vibrator import Vibrator
 from drivers.nor_flash import NORFlash
 
 from waspnrf import uart_connected as connected
+from waspnrf import uart_advertise as bluetooth
 
 class Backlight(object):
     lo = Pin("BL_LO", Pin.OUT, value=0)

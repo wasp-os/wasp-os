@@ -160,3 +160,18 @@ def test_settings(system):
         system.step()
 
     assert(start_point == system.app._current_setting)
+
+def test_bluetooth_setting(system):
+    """The Bluetooth page of Settings switches it off and on again."""
+    system.bluetooth = True
+    system.switch(system.apps['Settings'])
+    settings = system.app
+    while settings._current_setting != 'Bluetooth':
+        system.step()
+        settings.swipe((wasp.EventType.UP, 120, 120))
+    # The Change button
+    settings.touch((wasp.EventType.TOUCH, 120, 114))
+    assert(system.bluetooth is False)
+    assert(not wasp.watch.connected())
+    settings.touch((wasp.EventType.TOUCH, 120, 114))
+    assert(system.bluetooth is True)

@@ -51,8 +51,6 @@ Applications
 
 .. automodule:: demo
 
-.. automodule:: disa_b_l_e
-
 .. automodule:: flashlight
 
 .. automodule:: gallery
