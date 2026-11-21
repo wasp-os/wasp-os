@@ -82,9 +82,9 @@ class ClockApp():
         lo =  wasp.system.theme('mid')
         mid = draw.lighten(lo, 1)
 
-        if redraw:
-            now = wasp.watch.rtc.get_localtime()
+        now = wasp.watch.rtc.get_localtime()
 
+        if redraw:
             # Clear the display and draw that static parts of the watch face
             draw.fill()
             draw.blit(digits.clock_colon, 2*48, 80, fg=mid)
@@ -92,13 +92,12 @@ class ClockApp():
             # Redraw the status bar
             wasp.system.bar.draw()
         else:
-            # The update is doubly lazy... we update the status bar and if
-            # the status bus update reports a change in the time of day 
-            # then we compare the minute on display to make sure we 
-            # only update the main clock once per minute.
-            now = wasp.system.bar.update()
-            if not now or self._min == now[4]:
-                # Skip the update
+            # Redraw the status bar if necessary. This does not overlap the
+            # other elements on the screen.
+            wasp.system.bar.update()
+
+            # Only continue drawing if the minute has changed.
+            if self._min == now[4]:
                 return
 
         # Draw the changeable parts of the watch face

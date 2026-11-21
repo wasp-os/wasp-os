@@ -33,20 +33,23 @@ class BatteryMeter:
         """Update the meter.
 
         The update is lazy and won't redraw unless the level has changed.
+
+        :returns: True if the widget was redrawn, False otherwise.
         """
         icon = icons.battery
         draw = watch.drawable
 
         if watch.battery.charging():
-            if self.level != -1:
-                draw.blit(icon, 239-icon[1], 0,
-                             fg=wasp.system.theme('battery'))
-                self.level = -1
+            if self.level == -1:
+                return False
+
+            draw.blit(icon, 239-icon[1], 0,
+                            fg=wasp.system.theme('battery'))
+            self.level = -1
         else:
             level = watch.battery.level()
             if level == self.level:
-                return
-
+                return False
 
             green = level // 3
             if green > 31:
@@ -72,6 +75,8 @@ class BatteryMeter:
 
             self.level = level
 
+        return True
+
 class Clock:
     """Small clock widget."""
     def __init__(self, enabled=True):
@@ -93,26 +98,26 @@ class Clock:
         This is a lazy update that only redraws if the time has changes
         since the last call *and* the clock is enabled.
 
-        :returns: An time tuple if the time has changed since the last call,
-                  None otherwise.
+        :returns: True if the widget was redrawn, False otherwise.
         """
+        if not self.enabled:
+            return False
+
         now = wasp.watch.rtc.get_localtime()
         on_screen = self.on_screen
 
-        if on_screen and on_screen == now:
-            return None
+        if on_screen and now[3] == on_screen[3] and now[4] == on_screen[4]:
+            return False
 
-        if self.enabled and (not on_screen
-                or now[4] != on_screen[4] or now[3] != on_screen[3]):
-            t1 = '{:02}:{:02}'.format(now[3], now[4])
+        t1 = '{:02}:{:02}'.format(now[3], now[4])
 
-            draw = wasp.watch.drawable
-            draw.set_font(fonts.sans28)
-            draw.set_color(wasp.system.theme('status-clock'))
-            draw.string(t1, 52, 4, 138)
+        draw = wasp.watch.drawable
+        draw.set_font(fonts.sans28)
+        draw.set_color(wasp.system.theme('status-clock'))
+        draw.string(t1, 52, 4, 138)
 
         self.on_screen = now
-        return now
+        return True
 
 class NotificationBar:
     """Show BT status and if there are pending notifications."""
@@ -120,35 +125,44 @@ class NotificationBar:
         self._pos = (x, y)
 
     def draw(self):
-        """Redraw the notification widget.
-
-        For this simple widget :py:meth:`~.draw` is simply a synonym for
-        :py:meth:`~.update` because we unconditionally update from scratch.
-        """
+        """Draw the notification widget from scratch."""
+        self._state = 0
         self.update()
 
     def update(self):
         """Update the widget.
 
-        This widget does not implement lazy redraw internally since this
-        can often be implemented (with less state) by the container.
+        This is a lazy update that only redraws if the state has
+        changed since the last call.
+
+        :returns: True if the widget was redrawn, False otherwise.
         """
         draw = watch.drawable
         (x, y) = self._pos
 
+        new_state = 0
+        dx = 0
+
         if wasp.watch.connected():
-            draw.blit(icons.blestatus, x, y, fg=wasp.system.theme('ble'))
-            if wasp.system.notifications:
-                draw.blit(icons.notification, x+22, y,
-                          fg=wasp.system.theme('notify-icon'))
-            else:
-                draw.fill(0, x+22, y, 30, 32)
-        elif wasp.system.notifications:
-            draw.blit(icons.notification, x, y,
-                      fg=wasp.system.theme('notify-icon'))
-            draw.fill(0, x+30, y, 22, 32)
-        else:
-            draw.fill(0, x, y, 52, 32)
+            if self._state & 1 == 0:
+                draw.blit(icons.blestatus, x + dx, y,
+                            fg=wasp.system.theme('ble'))
+            new_state |= 1
+            dx += 22
+
+        if wasp.system.notifications:
+            if self._state & 2 == 0 or self._state & 1 != new_state & 1:
+                draw.blit(icons.notification, x + dx, y,
+                            fg=wasp.system.theme('notify-icon'))
+            new_state |= 2
+            dx += 30
+
+        if self._state == new_state:
+            return False
+
+        draw.fill(0, x + dx, y, 52 - dx, 32)
+        self._state = new_state
+        return True
 
 class StatusBar:
     """Combo widget to handle notification, time and battery level."""
@@ -177,14 +191,13 @@ class StatusBar:
     def update(self):
         """Lazily update the status bar.
 
-        :returns: An time tuple if the time has changed since the last call,
-                  None otherwise.
+        :returns: True if any widget was redrawn, False otherwise.
         """
-        now = self._clock.update()
-        if now:
-            self._meter.update()
-            self._notif.update()
-        return now
+        updated = False
+        updated |= self._clock.update()
+        updated |= self._meter.update()
+        updated |= self._notif.update()
+        return updated
 
 class ScrollIndicator:
     """Scrolling indicator.

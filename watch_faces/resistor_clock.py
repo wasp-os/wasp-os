@@ -66,15 +66,15 @@ class ResistorClockApp():
         """Draw or lazily update the display."""
 
         draw = wasp.watch.drawable
+        now = wasp.watch.rtc.get_localtime()
 
         if redraw:
-            now = wasp.watch.rtc.get_localtime()
             draw.fill()
             wasp.system.bar.draw()
         else:
-            now = wasp.system.bar.update()
-            if not now:  # or self._sec == now[5]:
-                return
+            # Redraw the status bar if necessary. This does not overlap the
+            # other elements on the screen.
+            wasp.system.bar.update()
 
         # draw time
         for i, c in enumerate('%02d%02d%02d' % now[3:6]):
