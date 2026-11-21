@@ -210,8 +210,16 @@ rtc = RTC()
 touch = CST816S(I2C(0), Pin('TP_INT', Pin.IN, quiet=True), Pin('TP_RST', Pin.OUT, quiet=True))
 vibrator = Vibrator(Pin('MOTOR', Pin.OUT, value=0), active_low=True)
 
+_bluetooth = True
+
+def bluetooth(on=None):
+    global _bluetooth
+    if on is not None:
+        _bluetooth = bool(on)
+    return _bluetooth
+
 def connected():
-    return not (int(rtc.uptime / 30) & 1)
+    return _bluetooth and not (int(rtc.uptime / 30) & 1)
 
 # Free memory cannot be measured on the simulator
 free = 0

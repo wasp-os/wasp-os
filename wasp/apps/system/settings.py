@@ -39,7 +39,8 @@ class SettingsApp():
         self._yy = wasp.widgets.Spinner(160, 60, 20, 60, 2)
         self._units = ['Metric', 'Imperial']
         self._units_toggle = wasp.widgets.Button(32, 90, 176, 48, "Change")
-        self._settings = ['Brightness', 'Notification Level', 'Time', 'Date', 'Units']
+        self._bluetooth_toggle = wasp.widgets.Button(32, 90, 176, 48, "Change")
+        self._settings = ['Brightness', 'Notification Level', 'Time', 'Date', 'Units', 'Bluetooth']
         self._sett_index = 0
         self._current_setting = self._settings[0]
 
@@ -73,6 +74,11 @@ class SettingsApp():
         elif self._current_setting == 'Units':
             if self._units_toggle.touch(event):
                 wasp.system.units = self._units[(self._units.index(wasp.system.units) + 1) % len(self._units)]
+        elif self._current_setting == 'Bluetooth':
+            if self._bluetooth_toggle.touch(event):
+                wasp.system.bluetooth = not wasp.system.bluetooth
+                self._draw()
+                return
         self._update()
 
     def swipe(self, event):
@@ -122,6 +128,8 @@ class SettingsApp():
             draw.string('DD    MM    YY',0,180, width=240)
         elif self._current_setting == 'Units':
             self._units_toggle.draw()
+        elif self._current_setting == 'Bluetooth':
+            self._bluetooth_toggle.draw()
         self._scroll_indicator.draw()
         self._update()
         mute(False)
@@ -149,3 +157,10 @@ class SettingsApp():
             draw.string(say, 0, 150, width=240)
         elif self._current_setting == 'Units':
             draw.string(wasp.system.units, 0, 150, width=240)
+        elif self._current_setting == 'Bluetooth':
+            on = wasp.system.bluetooth
+            draw.string('On' if on else 'Off', 0, 150, width=240)
+            draw.set_font(fonts.sans18)
+            draw.string('Phones can connect' if on else
+                        'Hidden: no connections', 0, 190, width=240)
+            draw.set_font(fonts.sans24)

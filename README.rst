@@ -234,10 +234,6 @@ Time management apps:
 
 System apps:
 
-.. image:: res/screenshots/DisaBLEApp.png
-   :alt: Small application for disabling bluetooth to save power and enhance security
-   :width: 179
-
 .. image:: res/screenshots/LauncherApp.png
    :alt: Application launcher running on the wasp-os simulator
    :width: 179
